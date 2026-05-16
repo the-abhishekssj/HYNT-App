@@ -138,25 +138,47 @@
 .inline-fallback { width: 100%; height: 62px; border-radius: 8px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #7a7a7a; }
 .inline-primary, .inline-secondary { border: 0; border-radius: 10px; padding: 8px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
 .inline-primary {
-  background: #111;
+  background: #000;
   color: #fff;
   -webkit-text-fill-color: #fff;
+  border: 1px solid #000;
   grid-column: 1 / -1;
-  min-height: 44px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   line-height: 1.1;
 }
-.inline-primary:disabled { opacity: 0.5; }
-.inline-secondary { background: #e9fff5; color: #0f8f5a; border: 1px solid #98e4c3; grid-column: 1 / -1; min-height: 36px; }
+.inline-primary:disabled {
+  background: #eee;
+  border-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.12);
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.12);
+}
+.inline-primary:not(:disabled) .flow-btn-label {
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+.inline-primary:disabled .flow-btn-label {
+  color: rgba(0, 0, 0, 0.12);
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.12);
+}
+.inline-secondary {
+  background: #e0e0e0;
+  color: #000;
+  -webkit-text-fill-color: #000;
+  border: 1px solid #000;
+  grid-column: 1 / -1;
+  min-height: 48px;
+}
 .flow-btn-label {
   color: inherit;
   -webkit-text-fill-color: inherit;
   display: inline-block;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-family: 'Urbanist', sans-serif;
+  font-weight: 800;
   line-height: 1;
 }
 .chat-compose-input {
