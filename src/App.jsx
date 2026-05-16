@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import {
   ArrowRight,
   ArrowUp,
+  Bell,
   BookmarkSimple,
-  CalendarBlank,
   CalendarDots,
   CaretDown,
   ChatsCircle,
@@ -71,7 +71,7 @@ function App() {
         <div className="top-row">
           <button className="city-btn" type="button">Mumbai <CaretDown size={12} weight="bold" /></button>
           <div className="top-actions">
-            <button className="icon-btn" type="button"><CalendarBlank size={20} /><span className="badge blue">2</span></button>
+            <button className="icon-btn" type="button"><Bell size={20} /><span className="badge blue">2</span></button>
             <button className="icon-btn" type="button"><ChatsCircle size={22} /><span className="badge green">{unread}</span></button>
           </div>
         </div>
