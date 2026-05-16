@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import {
   ArrowRight,
   ArrowUp,
+  Bookmark,
   Bell,
   BookmarkSimple,
   CalendarDots,
@@ -26,7 +27,7 @@ const roomTags = ['Living Room', 'Bedroom', 'Kitchen', 'Home Office', 'Bathroom'
 const quickActions = [
   { label: 'Brand of the day', icon: null },
   { label: 'Saved Ideas', icon: ImagesSquare },
-  { label: 'Saved Products', icon: BookmarkSimple },
+  { label: 'Saved Products', icon: Bookmark },
   { label: 'Shortlisted Pros', icon: Handshake },
   { label: 'Posted Requirements', icon: HandDeposit },
 ]
@@ -80,7 +81,7 @@ function App() {
       <section className="section quick-wrap">
         {quickActions.map(({ label, icon: Icon }, i) => (
           <button className="quick-item" key={label} type="button">
-            <span className={`quick-icon ${i === 0 ? 'brand' : ''}`}>{Icon ? <Icon size={21} /> : <span className="brand-dot" />}</span>
+            <span className={`quick-icon ${i === 0 ? 'brand' : ''}`}>{Icon ? <Icon size={21} weight="fill" /> : <span className="brand-dot" />}</span>
             <span>{label}</span>
           </button>
         ))}
