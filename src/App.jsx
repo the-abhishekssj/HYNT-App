@@ -40,9 +40,9 @@ const ideas = [
   { badge: '1/16', image: 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80' },
 ]
 const pros = [
-  { name: 'Rohan Kapoor', role: 'Interior Designer', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Arjun Murthy', role: 'Interior Designer', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80' },
-  { name: 'Maya Jain', role: 'Vastu Specialist', image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=600&q=80' },
+  { name: 'Rohan Kapoor', role: 'Interior Designer', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80', city: 'Mumbai' },
+  { name: 'Arjun Murthy', role: 'Interior Designer', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80', city: 'Bengaluru' },
+  { name: 'Maya Jain', role: 'Vastu Specialist', image: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=600&q=80', city: 'Delhi' },
 ]
 const products = [
   { title: 'Alto Modular Kitchen L-Shape', category: 'Kitchen Cabinets', image: 'https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80' },
@@ -75,7 +75,11 @@ const flowSteps = {
 }
 
 function FlowActionButton({ kind = 'primary', children, ...props }) {
-  return <button type="button" className={kind === 'secondary' ? 'inline-secondary' : 'inline-primary'} {...props}>{children}</button>
+  return (
+    <button type="button" className={kind === 'secondary' ? 'inline-secondary' : 'inline-primary'} {...props}>
+      <span className="flow-btn-label">{children}</span>
+    </button>
+  )
 }
 
 function App() {
@@ -269,15 +273,17 @@ function App() {
     if (step.type === 'gallery') {
       return (
         <div className="inline-options tiles-grid">
-          {step.options.map((option) => {
-            const active = selectedInspiration.some((item) => item.label === option.label)
-            return (
-              <button key={option.label} type="button" className={`inline-tile ${active ? 'active' : ''}`} onClick={() => toggleInspiration(option)}>
-                <img src={option.image} alt={option.label} />
-                <span>{option.label}</span>
-              </button>
-            )
-          })}
+          <div className="inline-scroll-grid">
+            {step.options.map((option) => {
+              const active = selectedInspiration.some((item) => item.label === option.label)
+              return (
+                <button key={option.label} type="button" className={`inline-tile ${active ? 'active' : ''}`} onClick={() => toggleInspiration(option)}>
+                  <img src={option.image} alt={option.label} />
+                  <span>{option.label}</span>
+                </button>
+              )
+            })}
+          </div>
           <FlowActionButton kind="secondary" onClick={() => setSelectedInspiration([])}>Clear selected</FlowActionButton>
           <FlowActionButton disabled={!selectedInspiration.length} onClick={confirmInspiration}>Confirm selections ({selectedInspiration.length})</FlowActionButton>
         </div>
@@ -286,17 +292,30 @@ function App() {
 
     if (step.type === 'pros_grid') {
       return (
-        <div className="inline-options tiles-grid pros-picker-grid">
-          {step.options.map((pro) => {
-            const active = selectedPros.includes(pro.name)
-            return (
-              <button key={pro.name} type="button" className={`inline-pro-tile ${active ? 'active' : ''}`} onClick={() => togglePro(pro.name)}>
+        <div className="inline-options pros-picker-list">
+          <div className="inline-scroll-list">
+            {step.options.map((pro) => {
+              const active = selectedPros.includes(pro.name)
+              return (
+              <button key={pro.name} type="button" className={`inline-pro-list-item ${active ? 'active' : ''}`} onClick={() => togglePro(pro.name)}>
                 <img src={pro.image} alt={pro.name} />
-                <strong>{pro.name}</strong>
-                <span>{pro.role}</span>
+                <div className="inline-pro-content">
+                  <div className="inline-pro-head">
+                    <strong>{pro.name}</strong>
+                  </div>
+                  <p>{pro.role}, {pro.city}</p>
+                  <div className="inline-pro-meta">
+                    <b><CheckSquareOffset size={12} />42 Projects</b>
+                    <i />
+                    <b><IdentificationBadge size={12} />5 years</b>
+                    <i />
+                    <b>4.5 · 150 reviews</b>
+                  </div>
+                </div>
               </button>
             )
           })}
+          </div>
           <FlowActionButton kind="secondary" onClick={clearProsSelection}>Clear selected</FlowActionButton>
           <FlowActionButton disabled={!selectedPros.length} onClick={confirmProsSelection}>Confirm professionals ({selectedPros.length})</FlowActionButton>
         </div>
