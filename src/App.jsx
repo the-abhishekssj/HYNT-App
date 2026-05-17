@@ -9,6 +9,7 @@ import {
   CalendarDots,
   Camera,
   CaretDown,
+  CaretUp,
   CaretLeft,
   ChatsCircle,
   CheckSquareOffset,
@@ -292,8 +293,12 @@ function App() {
 
     if (step.type === 'pros_grid') {
       return (
-        <div className="inline-options pros-picker-list">
-          <div className="inline-scroll-list">
+        <div className="inline-options pros-picker-list figma-pros-block">
+          <div className="figma-pros-title">
+            <p>Select professionals to shortlist.</p>
+            <CaretUp size={20} />
+          </div>
+          <div className="inline-scroll-list figma-pros-list">
             {step.options.map((pro) => {
               const active = selectedPros.includes(pro.name)
               return (
@@ -381,6 +386,8 @@ function App() {
 
   if (isChatOpen) {
     const hasText = chatPrompt.trim().length > 0
+    const composeClassName = 'chat-compose'
+    const isProsOverlay = flowStep === 'prosSelect'
     return (
       <main className="hynt-app chat-screen">
         <header className="top-wrap chat-top">
@@ -398,7 +405,9 @@ function App() {
           ))}
         </section>
 
-        <form className="chat-compose" onSubmit={(event) => { event.preventDefault(); sendChatMessage() }}>
+        {isProsOverlay ? <div className="pros-overlay-backdrop" /> : null}
+
+        <form className={composeClassName} onSubmit={(event) => { event.preventDefault(); sendChatMessage() }}>
           <div className="chat-compose-shell">
             {renderFlowInline()}
             <div className="chat-compose-input">
