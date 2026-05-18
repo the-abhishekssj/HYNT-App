@@ -214,6 +214,7 @@ const initialIntent = {
   scope: [],
   professional: [],
 }
+const THINKING_DELAY_MS = 2200
 
 const selectorMeta = {
   style: {
@@ -304,7 +305,7 @@ function App() {
           }
           : message
       )))
-    }, 1500)
+    }, THINKING_DELAY_MS)
     thinkingTimersRef.current.push(timer)
   }
 
@@ -415,7 +416,7 @@ function App() {
             ? appendNextMessage(type)
             : message
         )))
-      }, 1500)
+      }, THINKING_DELAY_MS)
       thinkingTimersRef.current.push(timer)
       return withThinking
     })
@@ -1015,7 +1016,7 @@ function App() {
                     </div>
                   )}
                 </div>
-                <span className="thinking-breathe text-[12px] font-semibold leading-[18px] text-slate-500">Thinking</span>
+                <span className="thinking-breathe text-[12px] font-semibold leading-[18px] text-slate-600">Thinking</span>
               </div>
             ) : (
               <article key={message.id} className={`max-w-[86%] animate-[bubbleIn_240ms_ease-out_both] ${message.role === 'user' ? 'ml-auto rounded-[1.3rem] rounded-br-md bg-[#5FC18A] px-4 py-3 text-right text-sm font-bold text-white shadow-lg shadow-[#5FC18A]/30' : 'mr-auto rounded-[1.5rem] rounded-bl-md border border-white/80 bg-white/82 px-4 py-3 text-left text-sm font-semibold leading-6 text-slate-800 shadow-sm backdrop-blur-xl'}`}>
