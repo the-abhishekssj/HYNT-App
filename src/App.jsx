@@ -742,7 +742,7 @@ function App() {
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder="Ask anything"
-                  className="h-[21px] min-w-0 flex-1 bg-transparent text-[14px] font-medium leading-[21px] text-black outline-none placeholder:text-[#808080] hynt-ai-input"
+                  className="h-[24px] min-w-0 flex-1 bg-transparent text-[16px] font-medium leading-6 text-black outline-none placeholder:text-[#808080] hynt-ai-input"
                 />
                 <button type="submit" aria-label="Send" className="grid h-9 w-6 shrink-0 place-items-center rounded-[10px] bg-[#26c485] text-black">
                   <ArrowUp size={12} weight="bold" />
@@ -966,7 +966,7 @@ function App() {
               value={chatDraft}
               onChange={(event) => setChatDraft(event.target.value)}
               placeholder="Enter message..."
-              className="h-5 min-w-0 flex-1 bg-transparent text-[14px] font-medium leading-[20px] tracking-[-0.408px] text-slate-700 outline-none placeholder:text-[#999]"
+              className="h-6 min-w-0 flex-1 bg-transparent text-[16px] font-medium leading-6 tracking-[-0.2px] text-slate-700 outline-none placeholder:text-[#999]"
             />
             <div className="flex h-9 shrink-0 items-center gap-3 rounded-xl px-1 text-slate-900">
               <ImagesSquare size={24} />

@@ -54,9 +54,9 @@
 .hynt-ai-input,
 .hynt-ai-input::placeholder {
   font-family: 'Urbanist', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 21px;
+  line-height: 24px;
 }
 
 .hynt-room-chip {
