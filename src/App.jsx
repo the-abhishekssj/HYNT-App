@@ -400,6 +400,7 @@ function App() {
     const previousMessage = messages.find((message) => message.id === messageId)
     const shouldContinue = previousMessage && !previousMessage.confirmed
     const intentKey = selectorMeta[type].intentKey
+    const thinkingId = shouldContinue ? makeId('thinking') : null
 
     setIntent((previous) => ({ ...previous, [intentKey]: nextValue }))
     setMessages((previous) => {
@@ -408,9 +409,11 @@ function App() {
           ? { ...message, value: nextValue, confirmed: true }
           : message
       ))
-      if (!shouldContinue) return updated
-      const thinkingId = makeId('thinking')
-      const withThinking = [...updated, { id: thinkingId, role: 'ai', thinking: true }]
+      if (!shouldContinue || !thinkingId) return updated
+      return [...updated, { id: thinkingId, role: 'ai', thinking: true }]
+    })
+
+    if (shouldContinue && thinkingId) {
       const timer = setTimeout(() => {
         const nextMessage = appendNextMessage(type)
         setMessages((live) => [...live, nextMessage])
@@ -420,8 +423,7 @@ function App() {
         thinkingTimersRef.current.push(cleanupTimer)
       }, THINKING_DELAY_MS)
       thinkingTimersRef.current.push(timer)
-      return withThinking
-    })
+    }
     closeModal()
   }
 
@@ -432,13 +434,6 @@ function App() {
 
   useEffect(() => {
     let mounted = true
-    const ua = navigator.userAgent || ''
-    const isIOSWebKit = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Safari') && ua.includes('Mobile'))
-    if (isIOSWebKit) {
-      return () => {
-        mounted = false
-      }
-    }
     import('@rive-app/react-canvas')
       .then((module) => {
         if (mounted) {
