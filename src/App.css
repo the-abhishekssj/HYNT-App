@@ -86,3 +86,18 @@
   font-weight: 600;
   line-height: 18px;
 }
+
+@keyframes thinkingBreathe {
+  0%, 100% {
+    opacity: 0.45;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+.thinking-breathe {
+  animation: thinkingBreathe 1.4s ease-in-out infinite;
+}

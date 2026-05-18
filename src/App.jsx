@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   ArrowUp,
@@ -263,6 +263,9 @@ function App() {
   const [styleAssistDraft, setStyleAssistDraft] = useState([])
   const [budgetModeDraft, setBudgetModeDraft] = useState('flexible')
   const [isBriefDetailOpen, setIsBriefDetailOpen] = useState(false)
+  const [RivePlayer, setRivePlayer] = useState(null)
+  const [allowRiveLoader, setAllowRiveLoader] = useState(false)
+  const thinkingTimersRef = useRef([])
 
   const allIntentFilled = useMemo(() => (
     intent.style.length > 0 && intent.budget?.range && intent.scope.length > 0 && intent.professional.length > 0
@@ -282,18 +285,27 @@ function App() {
     setStyleAssistDraft([])
     setBudgetModeDraft('flexible')
     setIsBriefDetailOpen(false)
+    const thinkingId = makeId('thinking')
     setMessages([
       { id: makeId('ai'), role: 'ai', text: "Hey! Tell me what you're looking for in your space." },
       { id: makeId('user'), role: 'user', text },
-      {
-        id: makeId('ai'),
-        role: 'ai',
-        text: 'Got it. Let me show you some styles that might fit.',
-        selector: 'style',
-        value: [],
-        confirmed: false,
-      },
+      { id: thinkingId, role: 'ai', thinking: true },
     ])
+    const timer = setTimeout(() => {
+      setMessages((previous) => previous.map((message) => (
+        message.id === thinkingId
+          ? {
+            id: makeId('ai'),
+            role: 'ai',
+            text: 'Got it. Let me show you some styles that might fit.',
+            selector: 'style',
+            value: [],
+            confirmed: false,
+          }
+          : message
+      )))
+    }, 1500)
+    thinkingTimersRef.current.push(timer)
   }
 
   const closeChat = () => {
@@ -306,6 +318,8 @@ function App() {
     setStyleAssistDraft([])
     setBudgetModeDraft('flexible')
     setIsBriefDetailOpen(false)
+    thinkingTimersRef.current.forEach(clearTimeout)
+    thinkingTimersRef.current = []
   }
 
   const openSelector = (messageId, type) => {
@@ -392,10 +406,59 @@ function App() {
           ? { ...message, value: nextValue, confirmed: true }
           : message
       ))
-      return shouldContinue ? [...updated, appendNextMessage(type)] : updated
+      if (!shouldContinue) return updated
+      const thinkingId = makeId('thinking')
+      const withThinking = [...updated, { id: thinkingId, role: 'ai', thinking: true }]
+      const timer = setTimeout(() => {
+        setMessages((live) => live.map((message) => (
+          message.id === thinkingId
+            ? appendNextMessage(type)
+            : message
+        )))
+      }, 1500)
+      thinkingTimersRef.current.push(timer)
+      return withThinking
     })
     closeModal()
   }
+
+  useEffect(() => () => {
+    thinkingTimersRef.current.forEach(clearTimeout)
+    thinkingTimersRef.current = []
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+    const ua = navigator.userAgent || ''
+    const isIOSWebKit = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Safari') && ua.includes('Mobile'))
+    if (isIOSWebKit) {
+      return () => {
+        mounted = false
+      }
+    }
+    import('@rive-app/react-canvas')
+      .then((module) => {
+        if (mounted) {
+          const Candidate = module?.default?.default || module?.default
+          if (typeof Candidate === 'function') {
+            setRivePlayer(() => Candidate)
+            setAllowRiveLoader(true)
+          } else {
+            setRivePlayer(null)
+            setAllowRiveLoader(false)
+          }
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setRivePlayer(null)
+          setAllowRiveLoader(false)
+        }
+      })
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const toggleDraftItem = (label) => {
     setDraft((previous) => (
@@ -653,11 +716,16 @@ function App() {
           </div>
           <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
             {selectedPros.map((pro) => (
-              <article key={pro.id} className="h-[222px] w-[138px] shrink-0 rounded-2xl border border-[#cde8d8] bg-white p-2">
+              <article key={pro.id} className="h-[222px] w-[138px] shrink-0 rounded-2xl border border-[#e6e6e6] bg-white p-2">
                 <img src={pro.image} alt={pro.name} className="h-[110px] w-[122px] rounded-xl object-cover" />
                 <div className="mt-2 px-1">
                   <p className="truncate text-[14px] font-bold leading-[1.5] text-black">{pro.name}</p>
                   <p className="truncate text-[12px] font-medium leading-[1.5] text-[#5f5f5f]">{pro.role}</p>
+                </div>
+                <div className="mt-2 flex h-[30px] items-center gap-2 px-0.5 text-[12px] font-semibold leading-[1.5] text-[#808080]">
+                  <span className="flex items-center gap-1"><CheckSquareOffset size={16} />42</span>
+                  <span className="h-3 w-px bg-[#d1d1d1]" />
+                  <span className="flex items-center gap-1"><IdentificationBadge size={16} />5 years</span>
                 </div>
               </article>
             ))}
@@ -934,26 +1002,43 @@ function App() {
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           <div className="flex flex-col gap-4">
           {messages.map((message) => (
-            <article key={message.id} className={`max-w-[86%] animate-[bubbleIn_240ms_ease-out_both] ${message.role === 'user' ? 'ml-auto rounded-[1.3rem] rounded-br-md bg-[#5FC18A] px-4 py-3 text-right text-sm font-bold text-white shadow-lg shadow-[#5FC18A]/30' : 'mr-auto rounded-[1.5rem] rounded-bl-md border border-white/80 bg-white/82 px-4 py-3 text-left text-sm font-semibold leading-6 text-slate-800 shadow-sm backdrop-blur-xl'}`}>
-              <p>{message.text}</p>
-              {renderBubbleAction(message)}
-              {message.summary ? (
-                <button
-                  type="button"
-                  onClick={() => setIsBriefDetailOpen(true)}
-                  className="mt-4 w-full rounded-2xl bg-[linear-gradient(145deg,#071238,#0f2b56)] p-4 text-left text-white shadow-lg shadow-[#071238]/35"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-black">Project brief</p>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold">
-                      <Eye size={13} />
-                      View
-                    </span>
-                  </div>
-                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-white/80">Style: {renderIntentValue(intent.style)} | Budget: {renderIntentValue(intent.budget)}</p>
-                </button>
-              ) : null}
-            </article>
+            message.thinking ? (
+              <div key={message.id} className="-ml-2 mr-auto flex h-12 items-center gap-3 animate-[bubbleIn_240ms_ease-out_both]">
+                <div className="size-12 overflow-hidden">
+                  {allowRiveLoader && RivePlayer ? (
+                    <RivePlayer src="/ai-loader.riv" autoplay className="h-full w-full" />
+                  ) : (
+                    <div className="flex h-full w-full items-center gap-1 px-2">
+                      <span className="size-1.5 animate-pulse rounded-full bg-slate-300" />
+                      <span className="size-1.5 animate-pulse rounded-full bg-slate-300 [animation-delay:120ms]" />
+                      <span className="size-1.5 animate-pulse rounded-full bg-slate-300 [animation-delay:240ms]" />
+                    </div>
+                  )}
+                </div>
+                <span className="thinking-breathe text-[12px] font-semibold leading-[18px] text-slate-500">Thinking</span>
+              </div>
+            ) : (
+              <article key={message.id} className={`max-w-[86%] animate-[bubbleIn_240ms_ease-out_both] ${message.role === 'user' ? 'ml-auto rounded-[1.3rem] rounded-br-md bg-[#5FC18A] px-4 py-3 text-right text-sm font-bold text-white shadow-lg shadow-[#5FC18A]/30' : 'mr-auto rounded-[1.5rem] rounded-bl-md border border-white/80 bg-white/82 px-4 py-3 text-left text-sm font-semibold leading-6 text-slate-800 shadow-sm backdrop-blur-xl'}`}>
+                <p>{message.text}</p>
+                {renderBubbleAction(message)}
+                {message.summary ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsBriefDetailOpen(true)}
+                    className="mt-4 w-full rounded-2xl bg-[linear-gradient(145deg,#071238,#0f2b56)] p-4 text-left text-white shadow-lg shadow-[#071238]/35"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-black">Project brief</p>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold">
+                        <Eye size={13} />
+                        View
+                      </span>
+                    </div>
+                    <p className="mt-3 line-clamp-2 text-sm leading-6 text-white/80">Style: {renderIntentValue(intent.style)} | Budget: {renderIntentValue(intent.budget)}</p>
+                  </button>
+                ) : null}
+              </article>
+            )
           ))}
           </div>
         </div>
