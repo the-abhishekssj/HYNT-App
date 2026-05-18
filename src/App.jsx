@@ -214,7 +214,7 @@ const initialIntent = {
   scope: [],
   professional: [],
 }
-const THINKING_DELAY_MS = 2200
+const THINKING_DELAY_MS = 3500
 
 const selectorMeta = {
   style: {
@@ -293,18 +293,19 @@ function App() {
       { id: thinkingId, role: 'ai', thinking: true },
     ])
     const timer = setTimeout(() => {
-      setMessages((previous) => previous.map((message) => (
-        message.id === thinkingId
-          ? {
-            id: makeId('ai'),
-            role: 'ai',
-            text: 'Got it. Let me show you some styles that might fit.',
-            selector: 'style',
-            value: [],
-            confirmed: false,
-          }
-          : message
-      )))
+      const nextMessage = {
+        id: makeId('ai'),
+        role: 'ai',
+        text: 'Got it. Let me show you some styles that might fit.',
+        selector: 'style',
+        value: [],
+        confirmed: false,
+      }
+      setMessages((previous) => [...previous, nextMessage])
+      const cleanupTimer = setTimeout(() => {
+        setMessages((previous) => previous.filter((message) => message.id !== thinkingId))
+      }, 250)
+      thinkingTimersRef.current.push(cleanupTimer)
     }, THINKING_DELAY_MS)
     thinkingTimersRef.current.push(timer)
   }
@@ -411,11 +412,12 @@ function App() {
       const thinkingId = makeId('thinking')
       const withThinking = [...updated, { id: thinkingId, role: 'ai', thinking: true }]
       const timer = setTimeout(() => {
-        setMessages((live) => live.map((message) => (
-          message.id === thinkingId
-            ? appendNextMessage(type)
-            : message
-        )))
+        const nextMessage = appendNextMessage(type)
+        setMessages((live) => [...live, nextMessage])
+        const cleanupTimer = setTimeout(() => {
+          setMessages((previous) => previous.filter((message) => message.id !== thinkingId))
+        }, 250)
+        thinkingTimersRef.current.push(cleanupTimer)
       }, THINKING_DELAY_MS)
       thinkingTimersRef.current.push(timer)
       return withThinking
