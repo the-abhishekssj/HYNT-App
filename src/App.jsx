@@ -26,7 +26,6 @@ import {
   PencilSimpleLine,
   Plus,
   SlidersHorizontal,
-  Sparkle,
   User,
   Eye,
   Microphone,
@@ -267,6 +266,7 @@ function App() {
   const [isBriefDetailOpen, setIsBriefDetailOpen] = useState(false)
   const [RivePlayer, setRivePlayer] = useState(null)
   const [allowRiveLoader, setAllowRiveLoader] = useState(false)
+  const [showHomeAiRive, setShowHomeAiRive] = useState(false)
   const thinkingTimersRef = useRef([])
   const chatScrollRef = useRef(null)
 
@@ -432,6 +432,13 @@ function App() {
   useEffect(() => () => {
     thinkingTimersRef.current.forEach(clearTimeout)
     thinkingTimersRef.current = []
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowHomeAiRive(true)
+    }, 2000)
+    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
@@ -823,7 +830,13 @@ function App() {
           <section className="mt-5 h-28 px-4">
             <form onSubmit={openChatFromHome} className="h-28 w-[358px] overflow-hidden rounded-3xl border border-[rgba(95,193,138,0.24)] bg-black p-4">
               <div className="flex h-6 items-center gap-2">
-                <Sparkle size={16} weight="fill" className="text-[#5fc18a]" />
+                <span className="grid size-6 place-items-center overflow-hidden">
+                  {showHomeAiRive && allowRiveLoader && RivePlayer ? (
+                    <RivePlayer src="/hynt-home/door-and-star.riv" autoplay className="size-6" />
+                  ) : (
+                    <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
+                  )}
+                </span>
                 <p className="whitespace-nowrap text-[14px] font-medium leading-[1.5] text-white">Home planning with <span className="font-black">HYNT</span> <span className="text-[10.32px] font-medium text-[#5fc18a]">AI</span></p>
               </div>
               <div className="mt-2 flex h-12 items-center overflow-hidden rounded-2xl border border-[#5fc18a] bg-[#fbfbfb] py-[5px] pl-4 pr-1.5">
