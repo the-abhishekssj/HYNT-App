@@ -858,7 +858,7 @@ function App() {
           <section className="mt-5 h-24 px-4 py-2">
             <div className="flex h-6 items-center justify-between">
               <h2 className="text-[16px] font-extrabold capitalize leading-[1.5]">browse by room</h2>
-              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[1.5]">See all <ArrowRight size={20} /></button>
+              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[18px]" style={{ fontSize: '12px' }}>See all <ArrowRight size={20} /></button>
             </div>
             <div className="no-scrollbar mt-4 flex h-10 gap-2 overflow-x-auto">
               {roomTags.map((tag) => (
@@ -902,7 +902,7 @@ function App() {
           <section className="mt-5 h-[286px] py-2">
             <div className="flex h-6 items-center justify-between px-4">
               <h2 className="text-[16px] font-extrabold leading-[1.5]">Professionals for you</h2>
-              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[1.5]">View all <ArrowRight size={20} /></button>
+              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[18px]" style={{ fontSize: '12px' }}>View all <ArrowRight size={20} /></button>
             </div>
             <div className="no-scrollbar mt-4 flex h-[230px] gap-3 overflow-x-auto px-4 py-1">
               {homepagePros.map((pro) => (
@@ -923,9 +923,9 @@ function App() {
           <section className="mt-5 h-[305px] py-2">
             <div className="flex h-6 items-center justify-between px-4">
               <h2 className="text-[16px] font-extrabold leading-[1.5]">Products you might like</h2>
-              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[1.5]">View all <ArrowRight size={20} /></button>
+              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[18px]" style={{ fontSize: '12px' }}>View all <ArrowRight size={20} /></button>
             </div>
-            <div className="no-scrollbar mt-4 flex h-[249px] gap-3 overflow-x-auto px-4">
+            <div className="no-scrollbar mt-4 flex h-[249px] gap-3 overflow-x-auto overflow-y-hidden px-4">
               {homepageProducts.map((product, index) => (
                 <article key={`${product.title}-${index}`} className="h-[249px] w-[184px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-1">
                   <div className="relative h-[139px] overflow-hidden rounded-[15px] border border-[#e0e0e0] bg-white">
@@ -948,7 +948,7 @@ function App() {
           <section className="mt-5 h-[292px]">
             <div className="flex h-6 items-center justify-between px-4">
               <h2 className="text-[16px] font-extrabold leading-[1.5]">Upcoming events</h2>
-              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[1.5]">View all <ArrowRight size={20} /></button>
+              <button type="button" className="flex h-5 items-center gap-1 text-[12px] font-semibold leading-[18px]" style={{ fontSize: '12px' }}>View all <ArrowRight size={20} /></button>
             </div>
             <div className="no-scrollbar mt-4 flex h-[252px] gap-3 overflow-x-auto px-4">
               {homepageEvents.map((event) => (
