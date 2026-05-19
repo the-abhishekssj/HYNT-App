@@ -832,7 +832,7 @@ function App() {
               <div className="flex h-6 items-center gap-2">
                 <span className="grid size-6 place-items-center overflow-hidden">
                   {showHomeAiRive && allowRiveLoader && RivePlayer ? (
-                    <RivePlayer src="/hynt-home/door-and-star.riv" autoplay className="size-6" />
+                    <RivePlayer src="/hynt-home/door-and-star2.riv" autoplay className="size-6" />
                   ) : (
                     <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
                   )}
