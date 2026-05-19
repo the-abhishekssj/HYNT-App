@@ -9,6 +9,7 @@ import {
   Camera,
   CalendarDots,
   CaretDown,
+  CaretRight,
   CaretUp,
   Check,
   CheckSquareOffset,
@@ -267,6 +268,7 @@ function App() {
   const [RivePlayer, setRivePlayer] = useState(null)
   const [allowRiveLoader, setAllowRiveLoader] = useState(false)
   const thinkingTimersRef = useRef([])
+  const chatScrollRef = useRef(null)
 
   const allIntentFilled = useMemo(() => (
     intent.style.length > 0 && intent.budget?.range && intent.scope.length > 0 && intent.professional.length > 0
@@ -431,6 +433,14 @@ function App() {
     thinkingTimersRef.current.forEach(clearTimeout)
     thinkingTimersRef.current = []
   }, [])
+
+  useEffect(() => {
+    if (!isChatOpen || !chatScrollRef.current) return
+    chatScrollRef.current.scrollTo({
+      top: chatScrollRef.current.scrollHeight,
+      behavior: 'smooth',
+    })
+  }, [messages, isChatOpen])
 
   useEffect(() => {
     let mounted = true
@@ -640,7 +650,20 @@ function App() {
                   <span className="mt-2 block text-[12px] font-semibold text-slate-400">{pro.meta}</span>
                   <span className="mt-2 block text-[12px] font-bold text-[#267449]">{pro.tone}</span>
                 </span>
-                <span className={`mt-1 grid size-6 shrink-0 place-items-center rounded-full border ${selected ? 'border-[#5FC18A] bg-[#5FC18A] text-white' : 'border-slate-200 text-transparent'}`}><Check size={14} weight="bold" /></span>
+                <div className="mt-1 flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      window.open(`https://hynt.app/pro/${pro.id}`, '_blank', 'noopener,noreferrer')
+                    }}
+                    aria-label={`Open ${pro.name} profile`}
+                    className="grid size-6 place-items-center rounded-full border border-slate-200 bg-white text-slate-500"
+                  >
+                    <CaretRight size={12} weight="bold" />
+                  </button>
+                  <span className={`grid size-6 place-items-center rounded-full border ${selected ? 'border-[#5FC18A] bg-[#5FC18A] text-white' : 'border-slate-200 text-transparent'}`}><Check size={14} weight="bold" /></span>
+                </div>
               </button>
             )
           })}
@@ -662,9 +685,9 @@ function App() {
       type="button"
       onClick={() => openSelector(message.id, message.selector)}
       className="inline-flex items-center gap-1 text-xs font-black text-slate-700 underline decoration-[#5FC18A] underline-offset-4"
+      aria-label="Edit selection"
     >
       <PencilSimpleLine size={13} weight="bold" />
-      Edit
     </button>
   )
 
@@ -692,11 +715,11 @@ function App() {
             <p className="text-xs font-black uppercase tracking-[0.12em] text-[#267449]">Selected style direction</p>
             {renderInlineAction(message)}
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             {selectedStyles.map((item) => (
-              <div key={item.id} className="overflow-hidden rounded-2xl border border-[#cde8d8] bg-white shadow-sm">
-                <img src={item.image} alt={item.label} className="h-[86px] w-full object-cover" />
-                <p className="px-3 py-2 text-[12px] font-bold text-[#267449]">{item.label}</p>
+              <div key={item.id} className="overflow-hidden rounded-xl border border-[#cde8d8] bg-white shadow-sm">
+                <img src={item.image} alt={item.label} className="h-[82px] w-full object-cover" />
+                <p className="px-2 py-1.5 text-[12px] font-bold leading-4 text-[#267449]">{item.label}</p>
               </div>
             ))}
           </div>
@@ -966,12 +989,13 @@ function App() {
     <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
       <section className="mx-auto flex h-dvh w-full max-w-[480px] flex-col overflow-hidden bg-[#eef3f0]">
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4">
-          <button type="button" onClick={closeChat} className="text-[14px] font-bold text-slate-900">Go back</button>
-          <p className="text-[14px] font-extrabold uppercase tracking-[0.12em] text-[#267449]">HYNT AI</p>
-          <div className="w-[56px]" />
+          <p className="text-left text-[14px] font-extrabold uppercase tracking-[0.12em] text-[#267449]">HYNT AI</p>
+          <button type="button" onClick={closeChat} aria-label="Close chat" className="grid size-8 place-items-center rounded-full bg-slate-100 text-slate-700">
+            <X size={16} weight="bold" />
+          </button>
         </header>
-        <div className="border-b border-slate-200 bg-white p-4">
-          <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="border-b border-slate-200 bg-white px-4 pb-3 pt-3">
+          <div className="mb-2 flex items-start justify-between gap-3">
             <div>
               <h1 className="text-xl font-black tracking-[-0.04em]">Interactive brief</h1>
               <span className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-black ${allIntentFilled ? 'bg-[#5FC18A] text-white' : 'bg-[#eaf1ec] text-slate-500'}`}>{allIntentFilled ? 'Complete' : 'In progress'}</span>
@@ -980,14 +1004,14 @@ function App() {
               <button
                 type="button"
                 onClick={() => setIsBriefCollapsed((previous) => !previous)}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-3 py-1 text-xs font-bold text-slate-700"
+                className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-3 py-1 text-[13px] font-bold leading-[1.2] text-slate-700"
               >
                 {isBriefCollapsed ? <><CaretDown size={12} weight="bold" />Show brief</> : <><CaretUp size={12} weight="bold" />Hide brief</>}
               </button>
             </div>
           </div>
           {!isBriefCollapsed ? (
-            <div className="grid grid-cols-2 gap-2 rounded-[1.35rem] border border-slate-200 bg-white p-2">
+            <div className="grid grid-cols-2 gap-2 rounded-[1.35rem] border border-slate-200 bg-white p-3">
               {[['Style', intent.style], ['Budget', intent.budget], ['Scope', intent.scope], ['Professional', intent.professional]].map(([label, value]) => (
                 <div key={label} className="rounded-2xl bg-white/75 p-3">
                   <p className="text-[0.65rem] font-black uppercase tracking-[0.16em] text-slate-400">{label}</p>
@@ -997,12 +1021,12 @@ function App() {
             </div>
           ) : null}
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div ref={chatScrollRef} className="min-h-0 flex-1 overflow-y-auto p-4">
           <div className="flex flex-col gap-4">
           {messages.map((message) => (
             message.thinking ? (
-              <div key={message.id} className="-ml-2 mr-auto flex h-12 items-center gap-3 animate-[bubbleIn_240ms_ease-out_both]">
-                <div className="size-12 overflow-hidden">
+              <div key={message.id} className="-ml-2 mr-auto flex h-10 items-center gap-3 animate-[bubbleIn_240ms_ease-out_both]">
+                <div className="size-9 overflow-hidden">
                   {allowRiveLoader && RivePlayer ? (
                     <RivePlayer src="/ai-loader.riv" autoplay className="h-full w-full" />
                   ) : (
