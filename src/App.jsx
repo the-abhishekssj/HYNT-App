@@ -25,6 +25,11 @@ import {
   PaperPlaneTilt,
   PencilSimpleLine,
   Plus,
+  Crosshair,
+  Palette,
+  Scroll,
+  MoneyWavy,
+  ReadCvLogo,
   SlidersHorizontal,
   User,
   Eye,
@@ -37,6 +42,7 @@ import './App.css'
 const INR = '\u20b9'
 const EMPTY = '\u2014'
 const RANGE_DASH = '\u2013'
+const FLOW_STORAGE_KEY = 'hynt-active-flow'
 
 const quickActions = [
   { label: 'Brand of the day', icon: null },
@@ -104,6 +110,13 @@ const homepageEvents = [
     interested: '64 interested',
     image: '/hynt-home/event-2.png',
   },
+]
+
+const proTools = [
+  { title: 'Moodboard', subtitle: 'AI + Manual', icon: Palette },
+  { title: 'BOQs', subtitle: 'Autogenerate', icon: Scroll },
+  { title: 'Finance', subtitle: 'Invoice and Track', icon: MoneyWavy },
+  { title: 'Contracts', subtitle: 'Legal Templates', icon: ReadCvLogo },
 ]
 const styleOptions = [
   {
@@ -251,11 +264,244 @@ function makeId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
-function App() {
+function FlowSelection({ onSelectFlow }) {
+  return (
+    <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
+      <section className="mx-auto flex h-dvh w-full max-w-[480px] flex-col px-5 pb-8 pt-10">
+        <header className="mb-8">
+          <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-12 w-auto object-contain" />
+          <h1 className="mt-5 text-[30px] font-black leading-[1.12] tracking-[-0.03em]">Choose your flow</h1>
+          <p className="mt-2 text-[15px] font-medium leading-6 text-[#4a4a4a]">Pick how you want to continue in HYNT.</p>
+        </header>
+        <div className="grid gap-4">
+          <button
+            type="button"
+            onClick={() => onSelectFlow('homeowner')}
+            className="rounded-3xl border border-[#d6e5dd] bg-white p-5 text-left shadow-[0_12px_28px_rgba(22,35,29,0.08)]"
+          >
+            <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 1</p>
+            <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Homeowner</p>
+            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">Browse inspiration, products, professionals, and events.</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectFlow('professional')}
+            className="rounded-3xl border border-[#d6e5dd] bg-white p-5 text-left shadow-[0_12px_28px_rgba(22,35,29,0.08)]"
+          >
+            <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 2</p>
+            <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Professional</p>
+            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">Open the dedicated pro journey (Figma-aligned screen next).</p>
+          </button>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+function ProfessionalHome({ onOpenFlowSwitcher }) {
+  return (
+    <main className="h-dvh w-full overflow-hidden bg-white font-['Urbanist'] text-black">
+      <section className="mx-auto h-dvh w-full max-w-[390px] overflow-y-auto pb-[108px]">
+        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur">
+          <div className="flex h-14 items-center justify-between px-4">
+            <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
+            <div className="flex items-center gap-1">
+              <button type="button" aria-label="Notifications" className="relative grid size-[37px] place-items-center rounded-[10px]">
+                <Bell size={20} />
+                <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
+              </button>
+              <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]">
+                <ChatsCircle size={24} />
+                <span className="absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-[10px] text-white">3</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div className="px-4 pb-4 pt-5">
+          <div className="no-scrollbar flex gap-3 overflow-x-auto">
+            {quickActions.map((action, index) => {
+              const Icon = action.icon
+              return (
+                <div key={action.label} className="flex w-[68px] shrink-0 flex-col items-center gap-3">
+                  <div className={`grid size-14 place-items-center rounded-full border ${index === 0 ? 'border-[#e0e0e0] bg-[#fbfbfb]' : 'border-[#a3a3a3] bg-white'}`}>
+                    {index === 0 ? (
+                      <img src="/hynt-home/brand.png" alt="" className="size-full rounded-full object-cover" />
+                    ) : <Icon size={21} />}
+                  </div>
+                  <p className="text-center text-[11px] font-bold leading-[1.5]">{action.label}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="rounded-[20px] border border-[rgba(95,193,138,0.24)] bg-black p-4">
+            <div className="flex items-center gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-extrabold leading-[1.5] text-white">See all my leads</p>
+                <p className="text-[12px] font-bold leading-[1.5] tracking-[0.12px] text-[#949494]">You have 12 leads waiting for you...</p>
+              </div>
+              <button type="button" className="grid h-10 w-[42px] place-items-center rounded-xl bg-white">
+                <ArrowRight size={16} weight="bold" />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <h2 className="pb-5 text-[16px] font-extrabold leading-[1.5]">Your tools</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {proTools.map((tool) => {
+              const Icon = tool.icon
+              return (
+                <article key={tool.title} className="rounded-2xl border border-[#9e9e9e] p-3">
+                  <Icon size={16} weight="fill" />
+                  <div className="mt-3 flex flex-col gap-0.5">
+                    <p className="font-['Urbanist'] text-[14px] font-semibold leading-[21px] text-[#121815]">{tool.title}</p>
+                    <p className={`font-['Urbanist'] text-[12px] font-medium leading-[18px] ${tool.subtitle.includes('AI') || tool.subtitle.includes('Auto') ? 'text-[#26c485]' : 'text-[#888888]'}`}>{tool.subtitle}</p>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[16px] font-extrabold leading-[1.5]">Browse By Room</h2>
+            <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">See all <ArrowRight size={16} /></div>
+          </div>
+          <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+            {roomTags.map((tag) => (
+              <div key={tag} className="flex h-10 shrink-0 items-center rounded-[20px] border border-[#9e9e9e] px-4 text-[14px] font-medium leading-[21px]">{tag}</div>
+            ))}
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[16px] font-extrabold leading-[1.5]">Ideas For You</h2>
+            <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">Explore all <ArrowRight size={16} /></div>
+          </div>
+          <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+            {homepageIdeas.map((idea) => (
+              <article key={idea.image} className="relative h-48 w-[175px] shrink-0 overflow-hidden rounded-2xl border border-[#e0e0e0]">
+                <img src={idea.image} alt="" className="size-full object-cover" />
+                {idea.badge ? <span className="absolute right-2 top-2 rounded-lg bg-[#eee5d4] px-[11px] py-[3px] text-[12px] font-medium text-[#525252]">{idea.badge}</span> : null}
+                <button type="button" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white"><BookmarkSimple size={16} /></button>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[16px] font-extrabold leading-[1.5]">Products</h2>
+            <ArrowRight size={16} />
+          </div>
+          <div className="no-scrollbar mt-4 flex h-[249px] gap-3 overflow-x-auto overflow-y-hidden pb-1">
+            {homepageProducts.map((product, index) => (
+              <article key={`${product.title}-${index}`} className="h-[249px] w-[184px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-1">
+                <div className="relative h-[139px] overflow-hidden rounded-[15px] border border-[#e0e0e0] bg-white">
+                  <img src={product.image} alt={product.title} className="size-full object-cover" />
+                  <span className="absolute right-2 top-2 rounded-lg bg-white px-2 py-1 text-[12px] font-semibold">1/5</span>
+                </div>
+                <div className="px-2 pb-2 pt-3">
+                  <p className="truncate text-[14px] font-bold leading-[1.35]">{product.title}</p>
+                  <p className="mt-1 text-[12px] font-semibold text-[#808080]">{product.category}</p>
+                  <button type="button" className="mt-2 text-[12px] font-semibold text-[#808080] underline decoration-dotted">Get a quote</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[16px] font-extrabold leading-[1.5]">Professionals</h2>
+            <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">View all <ArrowRight size={16} /></div>
+          </div>
+          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-1">
+            {homepagePros.map((pro) => (
+              <article key={pro.name} className="h-[222px] w-[138px] shrink-0 rounded-2xl border border-[#e6e6e6] bg-white p-2">
+                <img src={pro.image} alt={pro.name} className="h-[110px] w-[122px] rounded-xl object-cover" />
+                <div className="mt-2 px-1">
+                  <p className="truncate text-[14px] font-bold leading-[1.5] text-black">{pro.name}</p>
+                  <p className="truncate text-[12px] font-medium leading-[1.5] text-[#5f5f5f]">{pro.role}</p>
+                </div>
+                <div className="mt-2 flex h-[30px] items-center gap-2 px-0.5 text-[12px] font-semibold text-[#808080]"><span className="flex items-center gap-1"><CheckSquareOffset size={16} />42</span><span className="h-3 w-px bg-[#d1d1d1]" /><span className="flex items-center gap-1"><IdentificationBadge size={16} />5 years</span></div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <section className="px-4 py-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[16px] font-extrabold leading-[1.5]">Upcoming Events</h2>
+            <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">View all <ArrowRight size={16} /></div>
+          </div>
+          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-1">
+            {homepageEvents.map((event) => (
+              <article key={event.title} className="h-[252px] w-[175px] shrink-0 rounded-3xl border border-[#e0e0e0] bg-[#fbfbfb] p-2">
+                <div className="relative h-36 overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
+                  <img src={event.image} alt={event.title} className="size-full object-cover" />
+                  <span className="absolute right-2 top-2 rounded-lg border border-[#333] bg-black/70 px-2 py-1 text-[12px] font-medium text-white backdrop-blur">{event.interested}</span>
+                </div>
+                <div className="px-1 pt-3">
+                  <p className="truncate text-[16px] font-bold leading-[1.5]">{event.title}</p>
+                  <p className="mt-1 flex items-center gap-1 text-[12px] font-semibold text-[#808080]"><CalendarDots size={16} />{event.date}</p>
+                  <p className="mt-1 flex items-center gap-1 text-[12px] font-semibold text-[#808080]"><MapPinSimpleArea size={16} />{event.city}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <div className="flex h-24 items-center justify-center py-5 opacity-30">
+          <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-[58px] w-24 object-contain grayscale" />
+        </div>
+      </section>
+
+      <nav className="fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
+        {[
+          ['Home', House],
+          ['Explore', Kanban],
+          ['Upload', Plus],
+          ['Leads', Crosshair],
+          ['Profile', User],
+        ].map(([label, Icon], index) => (
+          <button key={label} type="button" onClick={label === 'Profile' ? onOpenFlowSwitcher : undefined} className="flex w-16 flex-col items-center justify-center gap-1.5 rounded-[20px] px-2.5 py-2 text-center text-[12px] leading-[1.5] text-black">
+            <Icon size={20} weight={index === 0 ? 'fill' : 'regular'} />
+            <span className={index === 0 ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
+          </button>
+        ))}
+      </nav>
+    </main>
+  )
+}
+
+function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [prompt, setPrompt] = useState('')
   const [chatDraft, setChatDraft] = useState('')
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isBriefCollapsed, setIsBriefCollapsed] = useState(false)
+  const [isFlowSwitcherOpen, setIsFlowSwitcherOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [intent, setIntent] = useState(initialIntent)
   const [activeModal, setActiveModal] = useState(null)
@@ -807,7 +1053,7 @@ function App() {
             <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-8 w-[53.152px] opacity-0" />
             <div className="flex items-center gap-1">
               <button type="button" aria-label="Search" className="grid size-[37px] place-items-center rounded-[10px] opacity-0"><MagnifyingGlass size={20} /></button>
-              <button type="button" aria-label="Notifications" className="relative grid size-[37px] place-items-center rounded-[10px]"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" /></button>
+              <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px]"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" /></button>
               <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]"><ChatsCircle size={24} /><span className="absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-center text-[10px] font-normal leading-none tracking-[-0.041px] text-white">3</span></button>
             </div>
           </div>
@@ -994,6 +1240,39 @@ function App() {
           </button>
         ))}
       </nav>
+
+      <div className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-950/52 backdrop-blur-sm transition-opacity duration-300 ${isFlowSwitcherOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
+        <section className={`w-full max-w-[390px] rounded-t-[2rem] bg-white p-5 transition-transform duration-300 ${isFlowSwitcherOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[20px] font-extrabold leading-[1.35] text-black">Switch profile</h2>
+            <button type="button" aria-label="Close switch profile" onClick={() => setIsFlowSwitcherOpen(false)} className="grid size-8 place-items-center rounded-full bg-slate-100 text-slate-700"><X size={16} weight="bold" /></button>
+          </div>
+          <div className="grid gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                onSelectFlow('homeowner')
+                setIsFlowSwitcherOpen(false)
+              }}
+              className={`rounded-2xl border p-4 text-left ${activeFlow === 'homeowner' ? 'border-[#5FC18A] bg-[#effaf3]' : 'border-[#e4e4e4] bg-white'}`}
+            >
+              <p className="text-[16px] font-bold leading-6 text-black">Homeowner</p>
+              <p className="mt-1 text-[13px] font-medium leading-5 text-[#6d6d6d]">Current homeowner journey</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onSelectFlow('professional')
+                setIsFlowSwitcherOpen(false)
+              }}
+              className={`rounded-2xl border p-4 text-left ${activeFlow === 'professional' ? 'border-[#5FC18A] bg-[#effaf3]' : 'border-[#e4e4e4] bg-white'}`}
+            >
+              <p className="text-[16px] font-bold leading-6 text-black">Professional</p>
+              <p className="mt-1 text-[13px] font-medium leading-5 text-[#6d6d6d]">Dedicated pro journey</p>
+            </button>
+          </div>
+        </section>
+      </div>
     </main>
   )
   if (!isChatOpen) return renderHome()
@@ -1144,6 +1423,24 @@ function App() {
       </div>
     </main>
   )
+}
+
+function App() {
+  const [activeFlow, setActiveFlow] = useState(() => localStorage.getItem(FLOW_STORAGE_KEY))
+
+  const handleSelectFlow = (flow) => {
+    localStorage.setItem(FLOW_STORAGE_KEY, flow)
+    setActiveFlow(flow)
+  }
+
+  const handleResetFlow = () => {
+    localStorage.removeItem(FLOW_STORAGE_KEY)
+    setActiveFlow(null)
+  }
+
+  if (activeFlow === 'homeowner') return <HomeownerFlow activeFlow={activeFlow} onSelectFlow={handleSelectFlow} />
+  if (activeFlow === 'professional') return <ProfessionalHome onOpenFlowSwitcher={handleResetFlow} />
+  return <FlowSelection onSelectFlow={handleSelectFlow} />
 }
 
 export default App
