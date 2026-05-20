@@ -306,7 +306,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <div className="flex h-14 items-center justify-between px-4">
             <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
             <div className="flex items-center gap-1">
-              <button type="button" aria-label="Notifications" className="relative grid size-[37px] place-items-center rounded-[10px]">
+              <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
                 <Bell size={20} />
                 <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
               </button>
