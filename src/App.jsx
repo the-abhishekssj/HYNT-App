@@ -880,17 +880,17 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-2">
-                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
-                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
+                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
                   </div>
-                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
-                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
+                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
                   </div>
-                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
-                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
+                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
+                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
+                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
                   </div>
                 </div>
               </section>
