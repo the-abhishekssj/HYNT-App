@@ -8,6 +8,7 @@ import {
   BookmarkSimple,
   Camera,
   CalendarDots,
+  CaretLeft,
   CaretDown,
   CaretRight,
   CaretUp,
@@ -117,6 +118,80 @@ const proTools = [
   { title: 'BOQs', subtitle: 'Autogenerate', icon: Scroll },
   { title: 'Finance', subtitle: 'Invoice and Track', icon: MoneyWavy },
   { title: 'Contracts', subtitle: 'Legal Templates', icon: ReadCvLogo },
+]
+
+const proProjects = [
+  {
+    id: 'p-1',
+    client: 'Aarav Mehta',
+    avatar: '/hynt-home/pro-1.png',
+    phone: '+91 98765 43210',
+    email: 'aarav.mehta@example.com',
+    location: 'Bengaluru',
+    scope: '3BHK renovation',
+    status: 'Active',
+    progress: 72,
+    budgetL: 28,
+    spentL: 19.8,
+    receivedL: 21.2,
+    dueDate: '30 Sep 2026',
+  },
+  {
+    id: 'p-2',
+    client: 'Nisha Reddy',
+    avatar: '/hynt-home/pro-2.png',
+    phone: '+91 98220 44556',
+    email: 'nisha.reddy@example.com',
+    location: 'Hyderabad',
+    scope: '2BHK new interior',
+    status: 'Active',
+    progress: 48,
+    budgetL: 16,
+    spentL: 7.3,
+    receivedL: 9.8,
+    dueDate: '12 Nov 2026',
+  },
+  {
+    id: 'p-3',
+    client: 'Vikram Sethi',
+    avatar: '/hynt-home/pro-2.png',
+    phone: '+91 98110 99887',
+    email: 'vikram.sethi@example.com',
+    location: 'Mumbai',
+    scope: '4BHK renovation',
+    status: 'Pending',
+    progress: 36,
+    budgetL: 42,
+    spentL: 15.6,
+    receivedL: 12.3,
+    dueDate: '05 Jan 2027',
+  },
+  {
+    id: 'p-4',
+    client: 'Meera Khanna',
+    avatar: '/hynt-home/pro-1.png',
+    phone: '+91 98870 11223',
+    email: 'meera.khanna@example.com',
+    location: 'Pune',
+    scope: '2BHK renovation',
+    status: 'Done',
+    progress: 100,
+    budgetL: 14,
+    spentL: 13.4,
+    receivedL: 14,
+    dueDate: '18 Aug 2026',
+  },
+]
+
+const projectDetailTools = [
+  { label: 'Mood board', icon: ImagesSquare },
+  { label: 'BOQ', icon: Scroll },
+  { label: 'Tasks', icon: CheckSquareOffset },
+  { label: 'Site diary', icon: PencilSimpleLine },
+  { label: 'Finance', icon: CurrencyInr },
+  { label: 'Contract', icon: Handshake },
+  { label: 'Team', icon: User },
+  { label: 'Floor plan', icon: House },
 ]
 const styleOptions = [
   {
@@ -299,9 +374,200 @@ function FlowSelection({ onSelectFlow }) {
 }
 
 function ProfessionalHome({ onOpenFlowSwitcher }) {
+  const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
+  const [projectStatusFilter, setProjectStatusFilter] = useState('All')
+  const [selectedProjectId, setSelectedProjectId] = useState(null)
+
+  const projectFilterChips = ['All', 'Active', 'Pending', 'Done']
+  const filteredProjects = projectStatusFilter === 'All'
+    ? proProjects
+    : proProjects.filter((project) => project.status === projectStatusFilter)
+  const selectedProject = proProjects.find((project) => project.id === selectedProjectId) || null
+  const getProjectCount = (status) => (
+    status === 'All'
+      ? proProjects.length
+      : proProjects.filter((project) => project.status === status).length
+  )
+
+  if (isProjectsViewOpen) {
+    if (selectedProject) {
+      const pendingL = Math.max(0, selectedProject.budgetL - selectedProject.receivedL)
+      const formatLakhs = (value) => `${value.toFixed(1)}L`
+
+      return (
+        <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+          <section className="mx-auto w-full max-w-[390px] pt-[56px]">
+            <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+              <div className="px-4 py-3">
+                <div className="flex items-center justify-between py-1">
+                  <button type="button" onClick={() => setSelectedProjectId(null)} className="flex items-center gap-4">
+                    <span className="grid size-6 place-items-center rounded">
+                      <CaretLeft size={24} />
+                    </span>
+                    <span className="text-left">
+                      <span className="block text-[16px] font-bold leading-6 text-black">{selectedProject.scope}</span>
+                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to projects</span>
+                    </span>
+                  </button>
+                  <span className="grid size-10 place-items-center opacity-0">
+                    <ChatsCircle size={24} />
+                  </span>
+                </div>
+              </div>
+            </header>
+
+            <div className="px-4 py-5">
+              <section className="py-5">
+                <div className="flex items-start gap-3">
+                  <img src={selectedProject.avatar} alt={selectedProject.client} className="size-14 rounded-xl object-cover" />
+                  <div className="min-w-0">
+                    <p className="text-[16px] font-extrabold leading-6">{selectedProject.client}</p>
+                    <p className="mt-0.5 truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.phone}</p>
+                    <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.email}</p>
+                    <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#444]">{selectedProject.location}</p>
+                  </div>
+                </div>
+              </section>
+
+              <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+
+              <section className="py-5">
+                <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
+                  <span>Overall progress</span>
+                  <span>{selectedProject.progress}%</span>
+                </div>
+                <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
+                  <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${selectedProject.progress}%` }} />
+                </div>
+
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(selectedProject.receivedL)}</p>
+                  </div>
+                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(pendingL)}</p>
+                  </div>
+                  <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                    <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(selectedProject.spentL)}</p>
+                  </div>
+                </div>
+              </section>
+
+              <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+
+              <section className="py-5">
+                <div className="grid grid-cols-4 gap-2">
+                  {projectDetailTools.map((tool) => {
+                    const Icon = tool.icon
+                    return (
+                      <button key={tool.label} type="button" className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center">
+                        <div className="mx-auto grid size-6 place-items-center">
+                          <Icon size={16} weight="regular" />
+                        </div>
+                        <p className="mt-1 text-[11px] font-semibold leading-[14px] text-[#222]">{tool.label}</p>
+                      </button>
+                    )
+                  })}
+                </div>
+              </section>
+            </div>
+          </section>
+
+        </main>
+      )
+    }
+
+    return (
+      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+        <section className="mx-auto w-full max-w-[390px] pt-[106px]">
+          <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#ececec] bg-white/95 backdrop-blur">
+            <div className="px-4 py-3">
+              <div className="flex items-center justify-between py-1">
+                <button type="button" onClick={() => setIsProjectsViewOpen(false)} className="flex items-center gap-4">
+                  <span className="grid size-6 place-items-center rounded">
+                    <CaretLeft size={24} />
+                  </span>
+                  <span className="text-left">
+                    <span className="block text-[16px] font-bold leading-6 text-black">Projects</span>
+                    <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to home</span>
+                  </span>
+                </button>
+                <button type="button" onClick={onOpenFlowSwitcher} aria-label="Switch flow" className="opacity-0">
+                  <ChatsCircle size={24} />
+                </button>
+              </div>
+            </div>
+
+            <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2">
+              {projectFilterChips.map((chip) => {
+                const selected = projectStatusFilter === chip
+                return (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => setProjectStatusFilter(chip)}
+                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${selected ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
+                  >
+                    <span className={`text-[14px] leading-[1.5] ${selected ? 'font-semibold text-white' : 'font-medium text-black'}`}>{chip}</span>
+                    <span className="grid size-6 place-items-center rounded-xl bg-black text-[12px] font-semibold leading-[1.5] text-white">{String(getProjectCount(chip)).padStart(2, '0')}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </header>
+
+          <div className="px-4 py-5">
+            <div className="space-y-3">
+              {filteredProjects.map((project) => (
+                <article key={project.id} className="cursor-pointer rounded-2xl border border-[#d8d8d8] bg-[#fbfbfb] p-4" onClick={() => setSelectedProjectId(project.id)}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[16px] font-extrabold leading-6">{project.client}</p>
+                      <p className="mt-0.5 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">{project.location}</p>
+                    </div>
+                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#2a9a64]' : project.status === 'Pending' ? 'bg-[#f2f2f2] text-[#777]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
+                  </div>
+
+                  <p className="mt-3 text-[14px] font-semibold leading-[21px]">{project.scope}</p>
+
+                  <div className="mt-3">
+                    <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
+                      <span>Progress</span>
+                      <span>{project.progress}%</span>
+                    </div>
+                    <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
+                      <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${project.progress}%` }} />
+                    </div>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                      <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Budget</p>
+                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{project.budgetL}L</p>
+                    </div>
+                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                      <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Current spend</p>
+                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{project.spentL}L</p>
+                    </div>
+                  </div>
+
+                  <p className="mt-3 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">Due date: <span className="font-bold text-black">{project.dueDate}</span></p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+      </main>
+    )
+  }
+
   return (
-    <main className="min-h-dvh w-full bg-white font-['Urbanist'] text-black">
-      <section className="mx-auto w-full max-w-[390px] pb-[108px]">
+    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <section className="mx-auto w-full max-w-[390px] overflow-x-hidden pb-[108px]">
         <header className="sticky top-0 z-20 bg-white/95 backdrop-blur">
           <div className="flex h-14 items-center justify-between px-4">
             <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
@@ -318,21 +584,22 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </div>
         </header>
 
-        <div className="px-4 pb-4 pt-5">
-          <div className="no-scrollbar flex gap-3 overflow-x-auto">
-            {quickActions.map((action, index) => {
-              const Icon = action.icon
-              return (
-                <div key={action.label} className="flex w-[68px] shrink-0 flex-col items-center gap-3">
-                  <div className={`grid size-14 place-items-center rounded-full border ${index === 0 ? 'border-[#e0e0e0] bg-[#fbfbfb]' : 'border-[#a3a3a3] bg-white'}`}>
-                    {index === 0 ? (
-                      <img src="/hynt-home/brand.png" alt="" className="size-full rounded-full object-cover" />
-                    ) : <Icon size={21} />}
-                  </div>
-                  <p className="text-center text-[11px] font-bold leading-[1.5]">{action.label}</p>
-                </div>
-              )
-            })}
+        <div className="px-4 pb-5 pt-5">
+          <div className="flex h-20 items-center justify-between rounded-2xl border border-[#888888] bg-white">
+            <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
+              <p className="text-[20px] font-extrabold leading-[1.5] text-black">05</p>
+              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">Active projects</p>
+            </button>
+            <div className="h-full w-px bg-[#888888]" />
+            <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
+              <p className="text-[20px] font-extrabold leading-[1.5] text-black">12</p>
+              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">New Leads</p>
+            </article>
+            <div className="h-full w-px bg-[#888888]" />
+            <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
+              <p className="flex items-center gap-1 text-[20px] font-extrabold leading-[1.5] text-black"><CurrencyInr size={16} weight="fill" />4.2L</p>
+              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">This Month</p>
+            </article>
           </div>
         </div>
 
@@ -379,7 +646,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             <h2 className="text-[16px] font-extrabold leading-[1.5]">Browse By Room</h2>
             <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">See all <ArrowRight size={16} /></div>
           </div>
-          <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
+          <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto overflow-y-visible pb-1">
             {roomTags.map((tag) => (
               <div key={tag} className="flex h-10 shrink-0 items-center rounded-[20px] border border-[#9e9e9e] px-4 text-[14px] font-medium leading-[21px]">{tag}</div>
             ))}
@@ -435,7 +702,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             <h2 className="text-[16px] font-extrabold leading-[1.5]">Professionals</h2>
             <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">View all <ArrowRight size={16} /></div>
           </div>
-          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-1">
+          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
             {homepagePros.map((pro) => (
               <article key={pro.name} className="h-[222px] w-[138px] shrink-0 rounded-2xl border border-[#e6e6e6] bg-white p-2">
                 <img src={pro.image} alt={pro.name} className="h-[110px] w-[122px] rounded-xl object-cover" />
@@ -456,7 +723,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             <h2 className="text-[16px] font-extrabold leading-[1.5]">Upcoming Events</h2>
             <div className="flex items-center gap-1 text-[12px] font-semibold leading-[18px]">View all <ArrowRight size={16} /></div>
           </div>
-          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-1">
+          <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
             {homepageEvents.map((event) => (
               <article key={event.title} className="h-[252px] w-[175px] shrink-0 rounded-3xl border border-[#e0e0e0] bg-[#fbfbfb] p-2">
                 <div className="relative h-36 overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
