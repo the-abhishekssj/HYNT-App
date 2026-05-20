@@ -386,6 +386,12 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
   const [boqItems, setBoqItems] = useState(initialBoqItems)
+  const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
+    <span className={`inline-flex items-center gap-0.5 ${className}`}>
+      <CurrencyInr size={14} weight="bold" />
+      {value}
+    </span>
+  )
 
   const projectFilterChips = ['All', 'Active', 'Pending', 'Done']
   const filteredProjects = projectStatusFilter === 'All'
@@ -402,12 +408,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (selectedProject) {
       const pendingL = Math.max(0, selectedProject.budgetL - selectedProject.receivedL)
       const formatLakhs = (value) => `${value.toFixed(1)}L`
-      const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
-        <span className={`inline-flex items-center gap-0.5 ${className}`}>
-          <CurrencyInr size={14} weight="bold" />
-          {value}
-        </span>
-      )
       const parseAreaValue = (area) => {
         if (typeof area === 'number') return area
         const numeric = Number.parseFloat(String(area).replace(/[^0-9.]/g, ''))
