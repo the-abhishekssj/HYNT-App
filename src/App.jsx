@@ -828,18 +828,29 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                             <p className="rounded-xl border border-dashed border-[#d9d9d9] bg-white px-3 py-4 text-[12px] font-medium text-[#8a8a8a]">No tasks</p>
                           ) : tasksInColumn.map((task) => (
                             <article key={task.id} className="rounded-xl border border-[#e1e1e1] bg-white p-3">
-                              <div className="mb-1 flex justify-end">
-                                <button
-                                  type="button"
-                                  onClick={() => setTaskActionTargetId(task.id)}
-                                  className="grid size-6 place-items-center rounded-md"
-                                  aria-label="Task actions"
-                                >
-                                  <DotsThreeVertical size={14} weight="bold" />
-                                </button>
-                              </div>
                               <button type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full text-left">
-                                <p className="text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className="min-w-0 flex-1 text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
+                                  <span
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={(event) => {
+                                      event.preventDefault()
+                                      event.stopPropagation()
+                                      setTaskActionTargetId(task.id)
+                                    }}
+                                    onKeyDown={(event) => {
+                                      if (event.key === 'Enter' || event.key === ' ') {
+                                        event.preventDefault()
+                                        setTaskActionTargetId(task.id)
+                                      }
+                                    }}
+                                    className="grid size-6 shrink-0 place-items-center rounded-md"
+                                    aria-label="Task actions"
+                                  >
+                                    <DotsThreeVertical size={14} weight="bold" />
+                                  </span>
+                                </div>
                                 <div className="mt-2 flex items-center justify-between">
                                   <span className="text-[11px] font-semibold leading-4 text-[#666]">{task.assignee}</span>
                                   <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : task.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{task.due}</span>
