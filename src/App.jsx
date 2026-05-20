@@ -475,13 +475,16 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 py-5">
+              <div className="fixed left-1/2 top-[72px] z-[88] w-full max-w-[390px] -translate-x-1/2 bg-white px-4">
+                <div className="grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
+                  {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
+                    <p key={head} className={`text-[11px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
+                  ))}
+                </div>
+              </div>
+
+              <div className="px-4 pb-5 pt-[102px]">
                 <section>
-                  <div className="sticky top-[56px] z-[70] grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white/98 py-2 shadow-[0_1px_0_0_#ececec] backdrop-blur">
-                    {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
-                      <p key={head} className={`text-[11px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
-                    ))}
-                  </div>
                   <div>
                     {boqItems.map((row) => (
                       <div key={row.id} className="grid grid-cols-[2fr_0.8fr_1fr_1fr] items-center border-b border-[#f1f1f1] py-3 last:border-b-0">
