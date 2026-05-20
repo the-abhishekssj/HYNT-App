@@ -29,6 +29,7 @@ import {
   PencilSimpleLine,
   Plus,
   Crosshair,
+  DotsThreeVertical,
   Palette,
   Scroll,
   MoneyWavy,
@@ -486,10 +487,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
+  const [taskActionTargetId, setTaskActionTargetId] = useState(null)
   const [taskStepCompletion, setTaskStepCompletion] = useState({})
-  const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
+  const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]', iconSize = 17) => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
-      <CurrencyInr size={14} weight="bold" />
+      <CurrencyInr size={iconSize} weight="bold" />
       {value}
     </span>
   )
@@ -825,12 +827,24 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           {tasksInColumn.length === 0 ? (
                             <p className="rounded-xl border border-dashed border-[#d9d9d9] bg-white px-3 py-4 text-[12px] font-medium text-[#8a8a8a]">No tasks</p>
                           ) : tasksInColumn.map((task) => (
-                            <article key={task.id} onClick={() => setSelectedTaskId(task.id)} className="cursor-pointer rounded-xl border border-[#e1e1e1] bg-white p-3">
-                              <p className="text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
-                              <div className="mt-2 flex items-center justify-between">
-                                <span className="text-[11px] font-semibold leading-4 text-[#666]">{task.assignee}</span>
-                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : task.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{task.due}</span>
+                            <article key={task.id} className="rounded-xl border border-[#e1e1e1] bg-white p-3">
+                              <div className="mb-1 flex justify-end">
+                                <button
+                                  type="button"
+                                  onClick={() => setTaskActionTargetId(task.id)}
+                                  className="grid size-6 place-items-center rounded-md"
+                                  aria-label="Task actions"
+                                >
+                                  <DotsThreeVertical size={14} weight="bold" />
+                                </button>
                               </div>
+                              <button type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full text-left">
+                                <p className="text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
+                                <div className="mt-2 flex items-center justify-between">
+                                  <span className="text-[11px] font-semibold leading-4 text-[#666]">{task.assignee}</span>
+                                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : task.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{task.due}</span>
+                                </div>
+                              </button>
                             </article>
                           ))}
                         </div>
@@ -840,6 +854,19 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </section>
             </section>
+            {taskActionTargetId ? (
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#7b7b7b]">Task actions</p>
+                <div className="no-scrollbar flex items-center gap-[8px] overflow-x-auto">
+                  <TaskStatusChip label="To do" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'todo' } : task))); setTaskActionTargetId(null) }} />
+                  <TaskStatusChip label="In progress" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'inprogress' } : task))); setTaskActionTargetId(null) }} />
+                  <TaskStatusChip label="Done" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'done'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'done' } : task))); setTaskActionTargetId(null) }} />
+                </div>
+                <button type="button" onClick={() => { setProjectTasks((prev) => prev.filter((task) => task.id !== taskActionTargetId)); setTaskActionTargetId(null) }} className="mt-3 h-11 w-full rounded-full border border-[#e1b8b8] bg-white text-[14px] font-bold text-[#c34545]">
+                  Delete task
+                </button>
+              </div>
+            ) : null}
           </main>
         )
       }
@@ -878,7 +905,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               <div className="px-4 py-5">
                 <section className="py-5">
                   <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7d7d7d]">Project total</p>
-                  <p className="mt-1 text-[24px] font-extrabold leading-[30px]">{renderInrValue(formatLakhs(selectedProject.spentL), 'text-[24px] font-extrabold leading-[30px]')}</p>
+                  <p className="mt-1 text-[24px] font-extrabold leading-[30px]">{renderInrValue(formatLakhs(selectedProject.spentL), 'text-[24px] font-extrabold leading-[30px]', 27)}</p>
                   <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#777]">Total money spent over this project</p>
                 </section>
 
@@ -941,19 +968,17 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   {invoiceStatuses.map((status) => {
                     const active = selectedInvoice.status === status
                     return (
-                      <button
+                      <TaskStatusChip
                         key={status}
-                        type="button"
+                        label={status}
+                        selected={active}
                         onClick={() => {
                           setProjectInvoices((prev) => prev.map((invoice) => (
                             invoice.id === selectedInvoice.id ? { ...invoice, status } : invoice
                           )))
                           setSelectedInvoiceId(null)
                         }}
-                        className={`h-9 shrink-0 rounded-full px-3 text-[12px] font-semibold ${active ? 'bg-[#5fc18a] text-white' : 'border border-[#d7d7d7] bg-white text-[#1d1d1d]'}`}
-                      >
-                        {status}
-                      </button>
+                      />
                     )
                   })}
                 </div>
@@ -1028,6 +1053,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
 
               <section className="py-5">
+                <h2 className="pb-4 text-[16px] font-extrabold leading-[1.5]">Quick actions</h2>
                 <div className="grid grid-cols-4 gap-2">
                   {projectDetailTools.map((tool) => {
                     const Icon = tool.icon
@@ -1170,17 +1196,17 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         </header>
 
         <div className="px-4 pb-5 pt-5">
-          <div className="flex h-20 items-center justify-between rounded-2xl border border-[#888888] bg-white">
+          <div className="flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
             <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="text-[20px] font-extrabold leading-[1.5] text-black">05</p>
               <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">Active projects</p>
             </button>
-            <div className="h-full w-px bg-[#888888]" />
+            <div className="h-full w-px bg-[#d2d2d2]" />
             <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="text-[20px] font-extrabold leading-[1.5] text-black">12</p>
               <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">New Leads</p>
             </article>
-            <div className="h-full w-px bg-[#888888]" />
+            <div className="h-full w-px bg-[#d2d2d2]" />
             <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="flex items-center gap-1 text-[20px] font-extrabold leading-[1.5] text-black"><CurrencyInr size={16} weight="fill" />4.2L</p>
               <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">This Month</p>
@@ -1212,7 +1238,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             {proTools.map((tool) => {
               const Icon = tool.icon
               return (
-                <article key={tool.title} className="rounded-2xl border border-[#9e9e9e] p-3">
+                <article key={tool.title} className="rounded-2xl border border-[#d2d2d2] p-3">
                   <Icon size={16} weight="fill" />
                   <div className="mt-3 flex flex-col gap-0.5">
                     <p className="font-['Urbanist'] text-[14px] font-semibold leading-[21px] text-[#121815]">{tool.title}</p>
