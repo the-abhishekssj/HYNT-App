@@ -13,7 +13,9 @@ import {
   CaretRight,
   CaretUp,
   Check,
+  CheckCircle,
   CheckSquareOffset,
+  Circle,
   CurrencyInr,
   HandDeposit,
   Handshake,
@@ -194,6 +196,75 @@ const projectDetailTools = [
   { label: 'Floor plan', icon: House },
 ]
 
+const initialProjectTasks = [
+  {
+    id: 't-1',
+    title: 'Finalize living room flooring sample',
+    assignee: 'Rohan',
+    assignedBy: 'Aarav Mehta',
+    due: 'Today',
+    dueDate: '20 May 2026',
+    dueTime: '06:00 PM',
+    status: 'todo',
+    steps: ['Get final sample board from vendor', 'Confirm finish with client', 'Lock SKU in BOQ'],
+  },
+  {
+    id: 't-2',
+    title: 'Site measurement re-check for kitchen wall',
+    assignee: 'Aarav',
+    assignedBy: 'Nisha Reddy',
+    due: 'Overdue',
+    dueDate: '18 May 2026',
+    dueTime: '11:30 AM',
+    status: 'todo',
+    steps: ['Re-measure wall width and plumbing offset', 'Update drawing markups', 'Send revised dims to carpentry team'],
+  },
+  {
+    id: 't-3',
+    title: 'Share BOQ revision v2 with client',
+    assignee: 'Nisha',
+    assignedBy: 'Rohan',
+    due: 'Today',
+    dueDate: '20 May 2026',
+    dueTime: '04:00 PM',
+    status: 'inprogress',
+    steps: ['Review line-item changes', 'Export PDF', 'Send to client on WhatsApp + email'],
+  },
+  {
+    id: 't-4',
+    title: 'Electrical conduit layout approval',
+    assignee: 'Vikram',
+    assignedBy: 'Aarav Mehta',
+    due: 'Overdue',
+    dueDate: '17 May 2026',
+    dueTime: '02:00 PM',
+    status: 'inprogress',
+    steps: ['Collect electrician markup', 'Cross-check with lighting plan', 'Approve revised layout'],
+  },
+  {
+    id: 't-5',
+    title: 'Bedroom false ceiling work complete',
+    assignee: 'Meera',
+    assignedBy: 'Vikram',
+    due: 'Done',
+    dueDate: '16 May 2026',
+    dueTime: '05:00 PM',
+    status: 'done',
+    steps: ['Level check complete', 'Edge profile finished', 'QC sign-off uploaded'],
+  },
+  {
+    id: 't-6',
+    title: 'Finalize vanity lighting selection',
+    assignee: 'Arjun',
+    assignedBy: 'Nisha Reddy',
+    due: 'Done',
+    dueDate: '15 May 2026',
+    dueTime: '03:30 PM',
+    status: 'done',
+    steps: ['Compare shortlisted fixtures', 'Confirm power load', 'Place purchase request'],
+  },
+]
+
 const initialBoqItems = [
   { id: 'boq-1', item: 'Living Room Flooring', area: '320 sqft', rate: 180, unit: 'sqft' },
   { id: 'boq-2', item: 'Wall putty + primer', area: 860, rate: 42, unit: 'sqft' },
@@ -346,6 +417,23 @@ function makeId(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
+function TaskStatusChip({ label, selected, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`shrink-0 inline-flex items-center rounded-full border ${selected
+        ? 'border-[#5FC18A] bg-[#E8F7EF] pb-[6px] pl-[6px] pr-[12px] pt-[6px]'
+        : 'border-[#D9D9D9] bg-white px-[12px] py-[6px]'}`}
+    >
+      <span className={`inline-flex items-center justify-center ${selected ? 'gap-[4px]' : ''}`}>
+        {selected ? <CheckCircle size={16} weight="fill" className="block text-[#5FC18A]" /> : null}
+        <span className={`block font-['Urbanist'] text-[12px] leading-[18px] ${selected ? 'font-bold text-[#5FC18A]' : 'font-semibold text-[#1D1D1D]'}`}>{label}</span>
+      </span>
+    </button>
+  )
+}
+
 function FlowSelection({ onSelectFlow }) {
   return (
     <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
@@ -386,6 +474,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
   const [boqItems, setBoqItems] = useState(initialBoqItems)
+  const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
+  const [taskFilter, setTaskFilter] = useState('All')
+  const [selectedTaskId, setSelectedTaskId] = useState(null)
+  const [taskStepCompletion, setTaskStepCompletion] = useState({})
   const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
       <CurrencyInr size={14} weight="bold" />
@@ -461,8 +553,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         onClick={() => {
                           const next = boqItems.length + 1
                           setBoqItems((prev) => [
-                            ...prev,
                             { id: `boq-${Date.now()}`, item: `New line item ${next}`, area: 1, rate: 1000, unit: 'unit' },
+                            ...prev,
                           ])
                         }}
                         className="grid size-9 place-items-center"
@@ -510,6 +602,232 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   Create invoice from BOQ
                 </button>
               </div>
+            </section>
+          </main>
+        )
+      }
+
+      if (selectedProjectPage === 'tasks') {
+        const selectedTask = projectTasks.find((task) => task.id === selectedTaskId) || null
+        if (selectedTask) {
+          const completedByIndex = taskStepCompletion[selectedTask.id] || {}
+          const moveTaskTo = (nextStatus) => {
+            setProjectTasks((prev) => prev.map((task) => (
+              task.id === selectedTask.id ? { ...task, status: nextStatus } : task
+            )))
+          }
+          const toggleStep = (stepIndex) => {
+            setTaskStepCompletion((prev) => {
+              const currentTaskMap = prev[selectedTask.id] || {}
+              const nextTaskMap = { ...currentTaskMap }
+              if (nextTaskMap[stepIndex]) {
+                delete nextTaskMap[stepIndex]
+              } else {
+                const now = new Date()
+                const hh = String(now.getHours()).padStart(2, '0')
+                const mm = String(now.getMinutes()).padStart(2, '0')
+                nextTaskMap[stepIndex] = `${hh}:${mm}`
+              }
+              return { ...prev, [selectedTask.id]: nextTaskMap }
+            })
+          }
+
+          return (
+            <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+              <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+                <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                  <div className="px-4 py-3">
+                    <div className="flex items-center justify-between py-1">
+                      <button type="button" onClick={() => setSelectedTaskId(null)} className="flex items-center gap-4">
+                        <span className="grid size-6 place-items-center rounded">
+                          <CaretLeft size={24} />
+                        </span>
+                        <span className="text-left">
+                          <span className="block text-[16px] font-bold leading-6 text-black">Task details</span>
+                          <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                        </span>
+                      </button>
+                      <span className="grid size-10 place-items-center opacity-0"><ChatsCircle size={24} /></span>
+                    </div>
+                  </div>
+                </header>
+
+                <div className="px-4 pb-5 pt-9">
+                  <section>
+                    <p className="text-[17px] font-extrabold leading-6">{selectedTask.title}</p>
+                    <div className="-mx-4 mt-3 grid grid-cols-2 gap-2">
+                      <div className="px-4 py-2">
+                        <p className="text-[10px] font-bold text-[#7b7b7b]">Assigned to</p>
+                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.assignee}</p>
+                      </div>
+                      <div className="px-4 py-2">
+                        <p className="text-[10px] font-bold text-[#7b7b7b]">Assigned by</p>
+                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.assignedBy}</p>
+                      </div>
+                      <div className="px-4 py-2">
+                        <p className="text-[10px] font-bold text-[#7b7b7b]">Due date</p>
+                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.dueDate}</p>
+                      </div>
+                      <div className="px-4 py-2">
+                        <p className="text-[10px] font-bold text-[#7b7b7b]">Due time</p>
+                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.dueTime}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-[12px] font-bold uppercase tracking-[0.05em] text-[#7b7b7b]">Task status</p>
+                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${selectedTask.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : selectedTask.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{selectedTask.due}</span>
+                    </div>
+                    <p className="mt-1 text-[11px] font-medium leading-[16px] text-[#8a8a8a]">
+                      Due on {selectedTask.dueDate} at {selectedTask.dueTime}. Assigned by {selectedTask.assignedBy}.
+                    </p>
+                  </section>
+
+                  <div className="-mx-4 mt-5 h-[6px] w-[calc(100%+32px)] bg-[#e0e0e0]" />
+
+                  <section className="py-5">
+                    <p className="mb-3 text-[14px] font-extrabold leading-[21px]">Remaining steps</p>
+                    <div>
+                      {selectedTask.steps.map((step, index) => (
+                        <article key={step} className="border-b border-[#d2d2d2] py-3 last:border-b-0">
+                          <button type="button" onClick={() => toggleStep(index)} className="flex w-full items-start gap-2 text-left">
+                            <span className="mt-0.5 text-[#5f5f5f]">
+                              {completedByIndex[index] ? <CheckCircle size={16} weight="fill" className="text-[#26c485]" /> : <Circle size={16} weight="regular" />}
+                            </span>
+                            <span className="min-w-0">
+                              <p className={`text-[12px] font-semibold leading-[18px] ${completedByIndex[index] ? 'text-[#9a9a9a] line-through' : 'text-[#202020]'}`}>{index + 1}. {step}</p>
+                              {completedByIndex[index] ? <p className="mt-0.5 text-[10px] font-medium leading-[14px] text-[#8d8d8d]">Completed at {completedByIndex[index]}</p> : null}
+                            </span>
+                          </button>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </section>
+
+              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#7b7b7b]">Move task to</p>
+                <div className="no-scrollbar flex items-center gap-[8px] overflow-x-auto">
+                  <TaskStatusChip label="To do" selected={selectedTask.status === 'todo'} onClick={() => moveTaskTo('todo')} />
+                  <TaskStatusChip label="In progress" selected={selectedTask.status === 'inprogress'} onClick={() => moveTaskTo('inprogress')} />
+                  <TaskStatusChip label="Done" selected={selectedTask.status === 'done'} onClick={() => moveTaskTo('done')} />
+                </div>
+                <button
+                  type="button"
+                  className="mt-3 h-11 w-full rounded-full bg-black text-[14px] font-bold text-white"
+                >
+                  Save
+                </button>
+              </div>
+            </main>
+          )
+        }
+
+        const taskFilterChips = ['All', 'Today', 'Overdue', 'Done']
+        const filteredTasks = taskFilter === 'All'
+          ? projectTasks
+          : projectTasks.filter((task) => task.due === taskFilter)
+        const getTaskCount = (chip) => (
+          chip === 'All'
+            ? projectTasks.length
+            : projectTasks.filter((task) => task.due === chip).length
+        )
+        const columns = [
+          { key: 'todo', title: 'To do' },
+          { key: 'inprogress', title: 'In progress' },
+          { key: 'done', title: 'Done' },
+        ]
+
+        return (
+          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[64px]">
+              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between py-1">
+                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                      <span className="grid size-6 place-items-center rounded">
+                        <CaretLeft size={24} />
+                      </span>
+                      <span className="text-left">
+                        <span className="block text-[16px] font-bold leading-6 text-black">Tasks</span>
+                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Add task"
+                      onClick={() => {
+                        const next = projectTasks.length + 1
+                        setProjectTasks((prev) => [
+                          {
+                            id: `t-${Date.now()}`,
+                            title: `New task ${next}`,
+                            assignee: selectedProject.client.split(' ')[0],
+                            assignedBy: 'You',
+                            due: 'Today',
+                            dueDate: '20 May 2026',
+                            dueTime: '06:30 PM',
+                            status: 'todo',
+                            steps: ['Define task scope', 'Assign owner', 'Track completion'],
+                          },
+                          ...prev,
+                        ])
+                      }}
+                      className="grid size-9 place-items-center"
+                    >
+                      <Plus size={22} />
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3 pt-4">
+                {taskFilterChips.map((chip) => {
+                  const selected = taskFilter === chip
+                  return (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => setTaskFilter(chip)}
+                      className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${selected ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
+                    >
+                      <span className={`text-[14px] leading-[1.5] ${selected ? 'font-semibold text-white' : 'font-medium text-black'}`}>{chip}</span>
+                      <span className="grid size-6 place-items-center rounded-xl bg-black text-[12px] font-semibold leading-[1.5] text-white">{String(getTaskCount(chip)).padStart(2, '0')}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <div className="-mx-0 h-[6px] bg-[#e0e0e0]" />
+
+              <section className="px-4 py-5">
+                <div className="no-scrollbar flex gap-3 overflow-x-auto">
+                  {columns.map((column) => {
+                    const tasksInColumn = filteredTasks.filter((task) => task.status === column.key)
+                    return (
+                      <section key={column.key} className="w-[252px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-3">
+                        <div className="mb-3 flex items-center justify-between">
+                          <p className="text-[13px] font-extrabold leading-[19px] text-black">{column.title}</p>
+                          <span className="rounded-full bg-[#ececec] px-2 py-0.5 text-[11px] font-bold text-[#555]">{tasksInColumn.length}</span>
+                        </div>
+                        <div className="space-y-2">
+                          {tasksInColumn.length === 0 ? (
+                            <p className="rounded-xl border border-dashed border-[#d9d9d9] bg-white px-3 py-4 text-[12px] font-medium text-[#8a8a8a]">No tasks</p>
+                          ) : tasksInColumn.map((task) => (
+                            <article key={task.id} onClick={() => setSelectedTaskId(task.id)} className="cursor-pointer rounded-xl border border-[#e1e1e1] bg-white p-3">
+                              <p className="text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
+                              <div className="mt-2 flex items-center justify-between">
+                                <span className="text-[11px] font-semibold leading-4 text-[#666]">{task.assignee}</span>
+                                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : task.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{task.due}</span>
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      </section>
+                    )
+                  })}
+                </div>
+              </section>
             </section>
           </main>
         )
@@ -589,6 +907,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         type="button"
                         onClick={() => {
                           if (tool.label === 'BOQ') setSelectedProjectPage('boq')
+                          if (tool.label === 'Tasks') setSelectedProjectPage('tasks')
                         }}
                         className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
                       >
