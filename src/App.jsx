@@ -300,8 +300,8 @@ function FlowSelection({ onSelectFlow }) {
 
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   return (
-    <main className="h-dvh w-full overflow-hidden bg-white font-['Urbanist'] text-black">
-      <section className="mx-auto h-dvh w-full max-w-[390px] overflow-y-auto pb-[108px]">
+    <main className="min-h-dvh w-full bg-white font-['Urbanist'] text-black">
+      <section className="mx-auto w-full max-w-[390px] pb-[108px]">
         <header className="sticky top-0 z-20 bg-white/95 backdrop-blur">
           <div className="flex h-14 items-center justify-between px-4">
             <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
