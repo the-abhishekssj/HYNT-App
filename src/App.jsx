@@ -271,6 +271,13 @@ const initialBoqItems = [
   { id: 'boq-3', item: 'Modular kitchen carcass', area: 72, rate: 950, unit: 'sqft' },
   { id: 'boq-4', item: 'Electrical rewiring', area: 1, rate: 38000, unit: 'unit' },
 ]
+
+const initialProjectInvoices = [
+  { id: 'inv-1', projectId: 'p-1', number: 'INV-2401', title: 'Advance - civil package', date: '12 Apr 2026', amountL: 4.5, status: 'Paid' },
+  { id: 'inv-2', projectId: 'p-1', number: 'INV-2407', title: 'Kitchen modular milestone', date: '03 May 2026', amountL: 3.2, status: 'In transit' },
+  { id: 'inv-3', projectId: 'p-1', number: 'INV-2413', title: 'False ceiling stage 2', date: '16 May 2026', amountL: 2.1, status: 'Unpaid' },
+  { id: 'inv-4', projectId: 'p-2', number: 'INV-2511', title: 'Design + planning retainer', date: '05 Apr 2026', amountL: 2.4, status: 'Paid' },
+]
 const styleOptions = [
   {
     id: 'warm-tones',
@@ -475,8 +482,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
   const [boqItems, setBoqItems] = useState(initialBoqItems)
   const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
+  const [projectInvoices, setProjectInvoices] = useState(initialProjectInvoices)
   const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
   const [taskStepCompletion, setTaskStepCompletion] = useState({})
   const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
@@ -508,6 +517,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       const rowAmount = (row) => parseAreaValue(row.area) * row.rate
       const formatRupees = (value) => `${Math.round(value).toLocaleString('en-IN')}`
       const totalEstimate = boqItems.reduce((acc, row) => acc + rowAmount(row), 0)
+      const projectInvoicesList = projectInvoices.filter((invoice) => invoice.projectId === selectedProject.id)
+      const selectedInvoice = projectInvoicesList.find((invoice) => invoice.id === selectedInvoiceId) || null
 
       const shareBoq = async () => {
         const shareText = boqItems
@@ -833,6 +844,125 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         )
       }
 
+      if (selectedProjectPage === 'finance') {
+        const invoiceStatuses = ['Paid', 'Unpaid', 'In transit', 'In progress']
+        const statusTone = (status) => {
+          if (status === 'Paid') return 'bg-[#eaf9f1] text-[#2a9a64]'
+          if (status === 'Unpaid') return 'bg-[#fff0f0] text-[#c34545]'
+          if (status === 'In transit') return 'bg-[#eef3ff] text-[#3d68b8]'
+          return 'bg-[#f2f2f2] text-[#6a6a6a]'
+        }
+
+        return (
+          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[56px]">
+              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between py-1">
+                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                      <span className="grid size-6 place-items-center rounded">
+                        <CaretLeft size={24} />
+                      </span>
+                      <span className="text-left">
+                        <span className="block text-[16px] font-bold leading-6 text-black">Finance</span>
+                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      </span>
+                    </button>
+                    <span className="grid size-10 place-items-center opacity-0">
+                      <ChatsCircle size={24} />
+                    </span>
+                  </div>
+                </div>
+              </header>
+
+              <div className="px-4 py-5">
+                <section className="py-5">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7d7d7d]">Project total</p>
+                  <p className="mt-1 text-[24px] font-extrabold leading-[30px]">{renderInrValue(formatLakhs(selectedProject.spentL), 'text-[24px] font-extrabold leading-[30px]')}</p>
+                  <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#777]">Total money spent over this project</p>
+                </section>
+
+                <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+
+                <section className="py-5">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                    </div>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                    </div>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Upcoming expense</p>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+
+                <section className="py-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-[16px] font-extrabold leading-6">Invoices</p>
+                    <p className="text-[12px] font-semibold leading-[18px] text-[#7b7b7b]">{projectInvoicesList.length} total</p>
+                  </div>
+                  <div className="space-y-2">
+                    {projectInvoicesList.map((invoice) => (
+                      <article
+                        key={invoice.id}
+                        onClick={() => setSelectedInvoiceId(invoice.id)}
+                        className="cursor-pointer rounded-xl border border-[#e1e1e1] bg-white px-3 py-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-[11px] font-bold leading-4 text-[#7b7b7b]">{invoice.number}</p>
+                            <p className="mt-0.5 truncate text-[13px] font-semibold leading-[19px] text-black">{invoice.title}</p>
+                            <p className="mt-1 text-[11px] font-medium leading-4 text-[#777]">{invoice.date}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(invoice.amountL))}</p>
+                            <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${statusTone(invoice.status)}`}>{invoice.status}</span>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            {selectedInvoice ? (
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Update invoice status</p>
+                <p className="mt-1 truncate text-[13px] font-semibold leading-[19px]">{selectedInvoice.number} - {selectedInvoice.title}</p>
+                <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
+                  {invoiceStatuses.map((status) => {
+                    const active = selectedInvoice.status === status
+                    return (
+                      <button
+                        key={status}
+                        type="button"
+                        onClick={() => {
+                          setProjectInvoices((prev) => prev.map((invoice) => (
+                            invoice.id === selectedInvoice.id ? { ...invoice, status } : invoice
+                          )))
+                          setSelectedInvoiceId(null)
+                        }}
+                        className={`h-9 shrink-0 rounded-full px-3 text-[12px] font-semibold ${active ? 'bg-[#5fc18a] text-white' : 'border border-[#d7d7d7] bg-white text-[#1d1d1d]'}`}
+                      >
+                        {status}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </main>
+        )
+      }
+
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
           <section className="mx-auto w-full max-w-[390px] pt-[56px]">
@@ -908,6 +1038,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         onClick={() => {
                           if (tool.label === 'BOQ') setSelectedProjectPage('boq')
                           if (tool.label === 'Tasks') setSelectedProjectPage('tasks')
+                          if (tool.label === 'Finance') setSelectedProjectPage('finance')
                         }}
                         className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
                       >
