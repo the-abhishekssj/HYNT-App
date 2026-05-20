@@ -477,7 +477,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
               <div className="px-4 py-5">
                 <section>
-                  <div className="sticky top-[56px] z-20 grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
+                  <div className="sticky top-[56px] z-[70] grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white/98 py-2 shadow-[0_1px_0_0_#ececec] backdrop-blur">
                     {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
                       <p key={head} className={`text-[11px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
                     ))}
