@@ -193,6 +193,13 @@ const projectDetailTools = [
   { label: 'Team', icon: User },
   { label: 'Floor plan', icon: House },
 ]
+
+const initialBoqItems = [
+  { id: 'boq-1', item: 'Living Room Flooring', area: '320 sqft', rate: 180, unit: 'sqft' },
+  { id: 'boq-2', item: 'Wall putty + primer', area: 860, rate: 42, unit: 'sqft' },
+  { id: 'boq-3', item: 'Modular kitchen carcass', area: 72, rate: 950, unit: 'sqft' },
+  { id: 'boq-4', item: 'Electrical rewiring', area: 1, rate: 38000, unit: 'unit' },
+]
 const styleOptions = [
   {
     id: 'warm-tones',
@@ -377,6 +384,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
+  const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
+  const [boqItems, setBoqItems] = useState(initialBoqItems)
 
   const projectFilterChips = ['All', 'Active', 'Pending', 'Done']
   const filteredProjects = projectStatusFilter === 'All'
@@ -393,6 +402,115 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (selectedProject) {
       const pendingL = Math.max(0, selectedProject.budgetL - selectedProject.receivedL)
       const formatLakhs = (value) => `${value.toFixed(1)}L`
+      const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]') => (
+        <span className={`inline-flex items-center gap-0.5 ${className}`}>
+          <CurrencyInr size={14} weight="bold" />
+          {value}
+        </span>
+      )
+      const parseAreaValue = (area) => {
+        if (typeof area === 'number') return area
+        const numeric = Number.parseFloat(String(area).replace(/[^0-9.]/g, ''))
+        return Number.isFinite(numeric) ? numeric : 0
+      }
+      const rowAmount = (row) => parseAreaValue(row.area) * row.rate
+      const formatRupees = (value) => `${Math.round(value).toLocaleString('en-IN')}`
+      const totalEstimate = boqItems.reduce((acc, row) => acc + rowAmount(row), 0)
+
+      const shareBoq = async () => {
+        const shareText = boqItems
+          .map((row) => `${row.item} | Area: ${row.area} | Rate: ${INR}${formatRupees(row.rate)} | Amount: ${INR}${formatRupees(rowAmount(row))}`)
+          .join('\n')
+        const payload = {
+          title: `${selectedProject.scope} - BOQ`,
+          text: `BOQ for ${selectedProject.client}\n\n${shareText}\n\nTotal: ${INR}${Math.round(totalEstimate).toLocaleString('en-IN')}`,
+        }
+        try {
+          if (navigator.share) {
+            await navigator.share(payload)
+            return
+          }
+          await navigator.clipboard.writeText(payload.text)
+        } catch {
+          // Intentionally no-op to keep flow smooth if share is dismissed.
+        }
+      }
+
+      if (selectedProjectPage === 'boq') {
+        return (
+          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+            <section className="mx-auto w-full max-w-[390px] pb-[156px] pt-[56px]">
+              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between py-1">
+                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                      <span className="grid size-6 place-items-center rounded">
+                        <CaretLeft size={24} />
+                      </span>
+                      <span className="text-left">
+                        <span className="block text-[16px] font-bold leading-6 text-black">Create BOQ</span>
+                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      </span>
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <button type="button" onClick={shareBoq} className="grid size-9 place-items-center" aria-label="Share BOQ">
+                        <PaperPlaneTilt size={18} weight="regular" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = boqItems.length + 1
+                          setBoqItems((prev) => [
+                            ...prev,
+                            { id: `boq-${Date.now()}`, item: `New line item ${next}`, area: 1, rate: 1000, unit: 'unit' },
+                          ])
+                        }}
+                        className="grid size-9 place-items-center"
+                        aria-label="Add line item"
+                      >
+                        <Plus size={18} weight="regular" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              <div className="px-4 py-5">
+                <section>
+                  <div className="sticky top-[56px] z-20 grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
+                    {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
+                      <p key={head} className={`text-[11px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
+                    ))}
+                  </div>
+                  <div>
+                    {boqItems.map((row) => (
+                      <div key={row.id} className="grid grid-cols-[2fr_0.8fr_1fr_1fr] items-center border-b border-[#f1f1f1] py-3 last:border-b-0">
+                        <p className="pl-2 pr-2 text-[12px] font-semibold leading-[18px] text-black">{row.item}</p>
+                        <p className="pl-2 text-[12px] font-semibold leading-[18px] text-[#444]">{row.area}</p>
+                        <p className="pl-2 text-[12px] font-semibold leading-[18px] text-[#444]">{renderInrValue(`${formatRupees(row.rate)} /${row.unit || 'unit'}`, 'inline-flex items-start text-[12px] font-semibold leading-[18px] text-[#444]')}</p>
+                        <p className="self-center pr-2 text-right text-[12px] font-extrabold leading-[18px] text-black">{renderInrValue(formatRupees(rowAmount(row)), 'inline-flex items-center justify-end text-[12px] font-extrabold leading-[18px] text-black')}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+
+              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+                <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#d9e9df] bg-[linear-gradient(145deg,#f7fff9,#eef7f1)] px-4 py-3 shadow-[0_8px_20px_rgba(22,35,29,0.08)]">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.08em] leading-[16px] text-[#5b7768]">Total estimate</p>
+                    <p className="mt-0.5 text-[10px] font-medium leading-[14px] text-[#7e9187]">Inclusive of all listed BOQ line items</p>
+                  </div>
+                  <p className="text-[22px] font-extrabold leading-[1] text-black">{renderInrValue(formatRupees(totalEstimate), 'text-[22px] font-extrabold leading-[1] text-black')}</p>
+                </div>
+                <button type="button" className="w-full rounded-2xl bg-black px-4 py-3 text-[14px] font-bold leading-[21px] text-white">
+                  Create invoice from BOQ
+                </button>
+              </div>
+            </section>
+          </main>
+        )
+      }
 
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
@@ -443,15 +561,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
                     <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(selectedProject.receivedL)}</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
                   </div>
                   <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
                     <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(pendingL)}</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
                   </div>
                   <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
                     <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
-                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{formatLakhs(selectedProject.spentL)}</p>
+                    <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
                   </div>
                 </div>
               </section>
@@ -463,7 +581,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   {projectDetailTools.map((tool) => {
                     const Icon = tool.icon
                     return (
-                      <button key={tool.label} type="button" className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center">
+                      <button
+                        key={tool.label}
+                        type="button"
+                        onClick={() => {
+                          if (tool.label === 'BOQ') setSelectedProjectPage('boq')
+                        }}
+                        className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
+                      >
                         <div className="mx-auto grid size-6 place-items-center">
                           <Icon size={16} weight="regular" />
                         </div>
@@ -522,7 +647,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <div className="px-4 py-5">
             <div className="space-y-3">
               {filteredProjects.map((project) => (
-                <article key={project.id} className="cursor-pointer rounded-2xl border border-[#d8d8d8] bg-[#fbfbfb] p-4" onClick={() => setSelectedProjectId(project.id)}>
+                <article
+                  key={project.id}
+                  className="cursor-pointer rounded-2xl border border-[#d8d8d8] bg-[#fbfbfb] p-4"
+                  onClick={() => {
+                    setSelectedProjectId(project.id)
+                    setSelectedProjectPage('overview')
+                  }}
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[16px] font-extrabold leading-6">{project.client}</p>
@@ -546,11 +678,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   <div className="mt-3 grid grid-cols-2 gap-2">
                     <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
                       <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Budget</p>
-                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{project.budgetL}L</p>
+                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(`${project.budgetL}L`)}</p>
                     </div>
                     <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
                       <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Current spend</p>
-                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{INR}{project.spentL}L</p>
+                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(`${project.spentL}L`)}</p>
                     </div>
                   </div>
 
