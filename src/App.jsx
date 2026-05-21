@@ -307,6 +307,13 @@ const initialProjectDiaryEntries = [
     photos: [],
   },
 ]
+
+const initialProjectTeamMembers = [
+  { id: 'tm-1', projectId: 'p-1', name: 'Aarav Mehta', role: 'Lead designer', avatar: '/hynt-home/pro-1.png', isYou: true, phone: '+91 98765 43210' },
+  { id: 'tm-2', projectId: 'p-1', name: 'Nisha Reddy', role: 'Site supervisor', avatar: '/hynt-home/pro-2.png', isYou: false, phone: '+91 98220 44556' },
+  { id: 'tm-3', projectId: 'p-1', name: 'Arjun Murthy', role: '3D visualizer', avatar: '/hynt-home/pro-2.png', isYou: false, phone: '+91 98123 44567' },
+  { id: 'tm-4', projectId: 'p-2', name: 'Meera Khanna', role: 'Procurement lead', avatar: '/hynt-home/pro-1.png', isYou: true, phone: '+91 98870 11223' },
+]
 const styleOptions = [
   {
     id: 'warm-tones',
@@ -513,6 +520,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
   const [projectInvoices, setProjectInvoices] = useState(initialProjectInvoices)
   const [projectDiaryEntries, setProjectDiaryEntries] = useState(initialProjectDiaryEntries)
+  const [projectTeamMembers, setProjectTeamMembers] = useState(initialProjectTeamMembers)
   const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
@@ -523,6 +531,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [diaryDraftPhotos, setDiaryDraftPhotos] = useState([])
   const [diaryActionEntryId, setDiaryActionEntryId] = useState(null)
   const [editingDiaryEntryId, setEditingDiaryEntryId] = useState(null)
+  const [teamInvitePhone, setTeamInvitePhone] = useState('')
   const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]', iconSize = 17) => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
       <CurrencyInr size={iconSize} weight="bold" />
@@ -1216,6 +1225,100 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         )
       }
 
+      if (selectedProjectPage === 'team') {
+        const teamMembers = projectTeamMembers.filter((member) => member.projectId === selectedProject.id)
+
+        return (
+          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+            <section className="mx-auto w-full max-w-[390px] pb-[154px] pt-[56px]">
+              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between py-1">
+                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                      <span className="grid size-6 place-items-center rounded">
+                        <CaretLeft size={24} />
+                      </span>
+                      <span className="text-left">
+                        <span className="block text-[16px] font-bold leading-6 text-black">Team</span>
+                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      </span>
+                    </button>
+                    <button type="button" onClick={() => document.getElementById('team-invite-phone')?.focus()} className="grid size-9 place-items-center" aria-label="Add team member">
+                      <Plus size={22} />
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              <div className="px-4 pb-5 pt-7">
+                <section className="rounded-xl border border-[#e1e1e1] bg-[#fafafa] p-3">
+                  <p className="text-[12px] font-semibold leading-[18px] text-[#4c4c4c]">
+                    Add team members by mobile number. They receive a HYNT invite to approve.
+                  </p>
+                </section>
+
+                <section className="mt-6">
+                  <p className="mb-3 text-[16px] font-extrabold leading-6">Current team</p>
+                  <div>
+                    {teamMembers.map((member) => (
+                      <article key={member.id} className="flex items-center justify-between border-b border-[#d9d9d9] py-3 last:border-b-0">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <img src={member.avatar} alt={member.name} className="size-11 rounded-full border border-[#e0e0e0] object-cover" />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className="truncate text-[14px] font-bold leading-[21px] text-black">{member.name}</p>
+                              {member.isYou ? <span className="rounded-full bg-[#eaf9f1] px-2 py-0.5 text-[10px] font-bold text-[#2a9a64]">You</span> : null}
+                            </div>
+                            <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{member.role}</p>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </section>
+
+            <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+              <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Add by mobile number</p>
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  id="team-invite-phone"
+                  value={teamInvitePhone}
+                  onChange={(event) => setTeamInvitePhone(event.target.value)}
+                  placeholder="+91 98765 43210"
+                  className="h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 text-[13px] font-medium outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const cleanPhone = teamInvitePhone.trim()
+                    if (!cleanPhone) return
+                    setProjectTeamMembers((prev) => [
+                      {
+                        id: `tm-${Date.now()}`,
+                        projectId: selectedProject.id,
+                        name: `Invited member ${prev.filter((member) => member.projectId === selectedProject.id).length + 1}`,
+                        role: 'Team member',
+                        avatar: '/hynt-home/pro-2.png',
+                        isYou: false,
+                        phone: cleanPhone,
+                      },
+                      ...prev,
+                    ])
+                    setTeamInvitePhone('')
+                  }}
+                  className="h-10 shrink-0 rounded-xl bg-black px-4 text-[13px] font-bold text-white"
+                >
+                  Invite
+                </button>
+              </div>
+              <p className="mt-2 text-[11px] font-medium leading-[16px] text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
+            </div>
+          </main>
+        )
+      }
+
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
           <section className="mx-auto w-full max-w-[390px] pt-[56px]">
@@ -1294,6 +1397,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           if (tool.label === 'Tasks') setSelectedProjectPage('tasks')
                           if (tool.label === 'Finance') setSelectedProjectPage('finance')
                           if (tool.label === 'Site diary') setSelectedProjectPage('site-diary')
+                          if (tool.label === 'Team') setSelectedProjectPage('team')
                         }}
                         className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
                       >
