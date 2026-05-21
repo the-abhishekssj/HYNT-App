@@ -134,6 +134,7 @@ const proProjects = [
     scope: '3BHK renovation',
     status: 'Active',
     progress: 72,
+    kickoffDate: '2026-04-01',
     budgetL: 28,
     spentL: 19.8,
     receivedL: 21.2,
@@ -149,6 +150,7 @@ const proProjects = [
     scope: '2BHK new interior',
     status: 'Active',
     progress: 48,
+    kickoffDate: '2026-04-08',
     budgetL: 16,
     spentL: 7.3,
     receivedL: 9.8,
@@ -164,6 +166,7 @@ const proProjects = [
     scope: '4BHK renovation',
     status: 'Pending',
     progress: 36,
+    kickoffDate: '2026-03-21',
     budgetL: 42,
     spentL: 15.6,
     receivedL: 12.3,
@@ -179,6 +182,7 @@ const proProjects = [
     scope: '2BHK renovation',
     status: 'Done',
     progress: 100,
+    kickoffDate: '2026-02-14',
     budgetL: 14,
     spentL: 13.4,
     receivedL: 14,
@@ -278,6 +282,30 @@ const initialProjectInvoices = [
   { id: 'inv-2', projectId: 'p-1', number: 'INV-2407', title: 'Kitchen modular milestone', date: '03 May 2026', amountL: 3.2, status: 'In transit' },
   { id: 'inv-3', projectId: 'p-1', number: 'INV-2413', title: 'False ceiling stage 2', date: '16 May 2026', amountL: 2.1, status: 'Unpaid' },
   { id: 'inv-4', projectId: 'p-2', number: 'INV-2511', title: 'Design + planning retainer', date: '05 Apr 2026', amountL: 2.4, status: 'Paid' },
+]
+
+const initialProjectDiaryEntries = [
+  {
+    id: 'diary-1',
+    projectId: 'p-1',
+    createdAt: '2026-05-21T14:45:00+05:30',
+    note: 'Ceiling channels installed in master bedroom. Need one correction near AC duct.',
+    photos: ['/hynt-home/idea-1.png'],
+  },
+  {
+    id: 'diary-2',
+    projectId: 'p-1',
+    createdAt: '2026-05-21T11:10:00+05:30',
+    note: '',
+    photos: ['/hynt-home/idea-2.png', '/hynt-home/product.png'],
+  },
+  {
+    id: 'diary-3',
+    projectId: 'p-1',
+    createdAt: '2026-05-20T18:20:00+05:30',
+    note: 'Client approved revised kitchen handle profile. Proceeding with procurement.',
+    photos: [],
+  },
 ]
 const styleOptions = [
   {
@@ -459,7 +487,7 @@ function FlowSelection({ onSelectFlow }) {
           >
             <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 1</p>
             <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Homeowner</p>
-            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">Browse inspiration, products, professionals, and events.</p>
+            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">navigate homeowner user flow</p>
           </button>
           <button
             type="button"
@@ -468,7 +496,7 @@ function FlowSelection({ onSelectFlow }) {
           >
             <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 2</p>
             <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Professional</p>
-            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">Open the dedicated pro journey (Figma-aligned screen next).</p>
+            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">preview professional user flow</p>
           </button>
         </div>
       </section>
@@ -484,11 +512,17 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [boqItems, setBoqItems] = useState(initialBoqItems)
   const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
   const [projectInvoices, setProjectInvoices] = useState(initialProjectInvoices)
+  const [projectDiaryEntries, setProjectDiaryEntries] = useState(initialProjectDiaryEntries)
   const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
   const [taskActionTargetId, setTaskActionTargetId] = useState(null)
   const [taskStepCompletion, setTaskStepCompletion] = useState({})
+  const [isDiaryComposerOpen, setIsDiaryComposerOpen] = useState(false)
+  const [diaryDraftNote, setDiaryDraftNote] = useState('')
+  const [diaryDraftPhotos, setDiaryDraftPhotos] = useState([])
+  const [diaryActionEntryId, setDiaryActionEntryId] = useState(null)
+  const [editingDiaryEntryId, setEditingDiaryEntryId] = useState(null)
   const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]', iconSize = 17) => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
       <CurrencyInr size={iconSize} weight="bold" />
@@ -999,6 +1033,189 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         )
       }
 
+      if (selectedProjectPage === 'site-diary') {
+        const diaryEntries = projectDiaryEntries
+          .filter((entry) => entry.projectId === selectedProject.id)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        const selectedDiaryEntry = diaryEntries.find((entry) => entry.id === diaryActionEntryId) || null
+
+        const groupedEntries = diaryEntries.reduce((acc, entry) => {
+          const key = new Date(entry.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+          if (!acc[key]) acc[key] = []
+          acc[key].push(entry)
+          return acc
+        }, {})
+
+        const groupedDates = Object.keys(groupedEntries)
+
+        return (
+          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[56px]">
+              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+                <div className="px-4 py-3">
+                  <div className="flex items-center justify-between py-1">
+                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                      <span className="grid size-6 place-items-center rounded">
+                        <CaretLeft size={24} />
+                      </span>
+                      <span className="text-left">
+                        <span className="block text-[16px] font-bold leading-6 text-black">Site diary</span>
+                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      </span>
+                    </button>
+                    <button type="button" onClick={() => setIsDiaryComposerOpen(true)} className="grid size-9 place-items-center" aria-label="Create diary entry">
+                      <Plus size={22} />
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              <div className="px-4 pb-5 pt-10">
+                {groupedDates.length === 0 ? (
+                  <p className="rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[13px] font-medium text-[#7a7a7a]">
+                    No entries yet. Tap + to create your first site diary update.
+                  </p>
+                ) : (
+                  <div className="space-y-8">
+                    {groupedDates.map((dateLabel) => (
+                      <section key={dateLabel}>
+                        <div className="mb-4 flex items-center justify-between">
+                          <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{dateLabel}</p>
+                          <p className="text-[12px] font-semibold text-[#7b7b7b]">
+                            Day {Math.max(1, Math.floor((new Date(groupedEntries[dateLabel][0].createdAt).setHours(0, 0, 0, 0) - new Date(selectedProject.kickoffDate).setHours(0, 0, 0, 0)) / 86400000) + 1)}
+                          </p>
+                        </div>
+                        <div className="space-y-3">
+                          {groupedEntries[dateLabel].map((entry) => {
+                            const timeLabel = new Date(entry.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+                            return (
+                              <article key={entry.id} className="rounded-xl border border-[#e2e2e2] bg-white p-3">
+                                <div className="mb-2 flex items-center justify-between">
+                                  <p className="text-[12px] font-bold leading-[18px] text-[#7b7b7b]">{timeLabel}</p>
+                                  <button type="button" onClick={() => setDiaryActionEntryId(entry.id)} className="grid size-6 place-items-center rounded-md" aria-label="Entry actions">
+                                    <DotsThreeVertical size={14} weight="bold" />
+                                  </button>
+                                </div>
+                                {entry.note ? <p className="text-[13px] font-medium leading-[19px] text-[#212121]">{entry.note}</p> : null}
+                                {entry.photos.length > 0 ? (
+                                  <div className={`${entry.note ? 'mt-3' : ''} grid grid-cols-2 gap-2`}>
+                                    {entry.photos.map((photo) => (
+                                      <img key={`${entry.id}-${photo}`} src={photo} alt="Site diary" className="h-28 w-full rounded-lg border border-[#e0e0e0] object-cover" />
+                                    ))}
+                                  </div>
+                                ) : null}
+                              </article>
+                            )
+                          })}
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {isDiaryComposerOpen ? (
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
+                <textarea
+                  value={diaryDraftNote}
+                  onChange={(event) => setDiaryDraftNote(event.target.value)}
+                  placeholder="Add note (optional)"
+                  className="mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 text-[13px] font-medium leading-[19px] outline-none"
+                />
+                <label className="mt-2 flex h-10 w-full cursor-pointer items-center justify-center rounded-xl border border-[#d7d7d7] text-[12px] font-semibold text-[#1d1d1d]">
+                  Attach photos
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    onChange={(event) => {
+                      const files = Array.from(event.target.files || [])
+                      const nextPhotos = files.map((file) => URL.createObjectURL(file))
+                      setDiaryDraftPhotos(nextPhotos)
+                    }}
+                  />
+                </label>
+                {diaryDraftPhotos.length > 0 ? (
+                  <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
+                    {diaryDraftPhotos.map((photo, index) => (
+                      <img key={`${photo}-${index}`} src={photo} alt="Attached" className="h-14 w-20 shrink-0 rounded-lg border border-[#dedede] object-cover" />
+                    ))}
+                  </div>
+                ) : null}
+                {diaryDraftPhotos.length > 0 ? <p className="mt-1 text-[11px] font-medium text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="h-10 rounded-xl border border-[#d7d7d7] text-[13px] font-semibold">Cancel</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cleanNote = diaryDraftNote.trim()
+                      if (!cleanNote && diaryDraftPhotos.length === 0) return
+                      if (editingDiaryEntryId) {
+                        setProjectDiaryEntries((prev) => prev.map((entry) => (
+                          entry.id === editingDiaryEntryId ? { ...entry, note: cleanNote, photos: diaryDraftPhotos } : entry
+                        )))
+                      } else {
+                        setProjectDiaryEntries((prev) => [
+                          {
+                            id: `diary-${Date.now()}`,
+                            projectId: selectedProject.id,
+                            createdAt: new Date().toISOString(),
+                            note: cleanNote,
+                            photos: diaryDraftPhotos,
+                          },
+                          ...prev,
+                        ])
+                      }
+                      setIsDiaryComposerOpen(false)
+                      setEditingDiaryEntryId(null)
+                      setDiaryDraftNote('')
+                      setDiaryDraftPhotos([])
+                    }}
+                    className="h-10 rounded-xl bg-black text-[13px] font-bold text-white disabled:opacity-40"
+                    disabled={!diaryDraftNote.trim() && diaryDraftPhotos.length === 0}
+                  >
+                    {editingDiaryEntryId ? 'Save changes' : 'Save entry'}
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            {selectedDiaryEntry ? (
+              <div className="fixed bottom-0 left-1/2 z-[96] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Entry actions</p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingDiaryEntryId(selectedDiaryEntry.id)
+                      setDiaryDraftNote(selectedDiaryEntry.note || '')
+                      setDiaryDraftPhotos(selectedDiaryEntry.photos || [])
+                      setDiaryActionEntryId(null)
+                      setIsDiaryComposerOpen(true)
+                    }}
+                    className="h-10 rounded-xl border border-[#d7d7d7] text-[13px] font-semibold"
+                  >
+                    Edit entry
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProjectDiaryEntries((prev) => prev.filter((entry) => entry.id !== selectedDiaryEntry.id))
+                      setDiaryActionEntryId(null)
+                    }}
+                    className="h-10 rounded-xl border border-[#e1b8b8] bg-white text-[13px] font-bold text-[#c34545]"
+                  >
+                    Delete entry
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </main>
+        )
+      }
+
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
           <section className="mx-auto w-full max-w-[390px] pt-[56px]">
@@ -1076,6 +1293,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           if (tool.label === 'BOQ') setSelectedProjectPage('boq')
                           if (tool.label === 'Tasks') setSelectedProjectPage('tasks')
                           if (tool.label === 'Finance') setSelectedProjectPage('finance')
+                          if (tool.label === 'Site diary') setSelectedProjectPage('site-diary')
                         }}
                         className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
                       >
