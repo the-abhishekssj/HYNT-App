@@ -521,6 +521,8 @@ function FlowSelection({ onSelectFlow }) {
 
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
+  const [proHomeTab, setProHomeTab] = useState('home')
+  const [proPrompt, setProPrompt] = useState('')
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
@@ -1732,38 +1734,58 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
-        <section className="px-4 py-5">
-          <div className="rounded-[20px] border border-[rgba(95,193,138,0.24)] bg-black p-4">
-            <div className="flex items-center gap-3">
-              <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-extrabold leading-[1.5] text-white">See all my leads</p>
-                <p className="text-[12px] font-bold leading-[1.5] tracking-[0.12px] text-[#949494]">You have 12 leads waiting for you...</p>
+        {proHomeTab === 'protools' ? (
+          <>
+            <div className="h-[6px] w-full bg-[#e0e0e0]" />
+            <section className="px-4 py-5">
+              <h2 className="pb-5 text-[16px] font-extrabold leading-[1.5]">Your tools</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {proTools.map((tool) => {
+                  const Icon = tool.icon
+                  return (
+                    <article key={tool.title} className="rounded-2xl border border-[#d2d2d2] p-3">
+                      <Icon size={16} weight="fill" />
+                      <div className="mt-3 flex flex-col gap-0.5">
+                        <p className="font-['Urbanist'] text-[14px] font-semibold leading-[21px] text-[#121815]">{tool.title}</p>
+                        <p className={`font-['Urbanist'] text-[12px] font-medium leading-[18px] ${tool.subtitle.includes('AI') || tool.subtitle.includes('Auto') ? 'text-[#26c485]' : 'text-[#888888]'}`}>{tool.subtitle}</p>
+                      </div>
+                    </article>
+                  )
+                })}
               </div>
-              <button type="button" className="grid h-10 w-[42px] place-items-center rounded-xl bg-white">
-                <ArrowRight size={16} weight="bold" />
-              </button>
-            </div>
-          </div>
-        </section>
+            </section>
+          </>
+        ) : null}
 
+        {proHomeTab === 'home' ? (
+          <>
         <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
         <section className="px-4 py-5">
-          <h2 className="pb-5 text-[16px] font-extrabold leading-[1.5]">Your tools</h2>
-          <div className="grid grid-cols-2 gap-2">
-            {proTools.map((tool) => {
-              const Icon = tool.icon
-              return (
-                <article key={tool.title} className="rounded-2xl border border-[#d2d2d2] p-3">
-                  <Icon size={16} weight="fill" />
-                  <div className="mt-3 flex flex-col gap-0.5">
-                    <p className="font-['Urbanist'] text-[14px] font-semibold leading-[21px] text-[#121815]">{tool.title}</p>
-                    <p className={`font-['Urbanist'] text-[12px] font-medium leading-[18px] ${tool.subtitle.includes('AI') || tool.subtitle.includes('Auto') ? 'text-[#26c485]' : 'text-[#888888]'}`}>{tool.subtitle}</p>
-                  </div>
-                </article>
-              )
-            })}
-          </div>
+          <form
+            onSubmit={(event) => event.preventDefault()}
+            className="h-28 overflow-hidden rounded-3xl border border-[rgba(95,193,138,0.24)] bg-black p-4"
+          >
+            <div className="flex h-6 items-center gap-2">
+              <span className="grid size-6 place-items-center overflow-hidden">
+                <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
+              </span>
+              <p className="whitespace-nowrap text-[14px] font-medium leading-[1.5] text-white">
+                Home planning with <span className="font-black">HYNT</span> <span className="text-[10.32px] font-medium text-[#5fc18a]">AI</span>
+              </p>
+            </div>
+            <div className="mt-2 flex h-12 items-center overflow-hidden rounded-2xl border border-[#5fc18a] bg-[#fbfbfb] py-[5px] pl-4 pr-1.5">
+              <input
+                value={proPrompt}
+                onChange={(event) => setProPrompt(event.target.value)}
+                placeholder="Ask anything"
+                className="h-[24px] min-w-0 flex-1 bg-transparent text-[16px] font-medium leading-6 text-black outline-none placeholder:text-[#808080]"
+              />
+              <button type="submit" aria-label="Send" className="grid h-9 w-6 shrink-0 place-items-center rounded-[10px] bg-[#26c485] text-black">
+                <ArrowUp size={12} weight="bold" />
+              </button>
+            </div>
+          </form>
         </section>
 
         <div className="h-[6px] w-full bg-[#e0e0e0]" />
@@ -1870,19 +1892,36 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         <div className="flex h-24 items-center justify-center py-5 opacity-30">
           <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-[58px] w-24 object-contain grayscale" />
         </div>
+          </>
+        ) : null}
       </section>
 
       <nav className="fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
         {[
-          ['Home', House],
-          ['Explore', Kanban],
-          ['Upload', Plus],
-          ['Leads', Crosshair],
-          ['Profile', User],
-        ].map(([label, Icon], index) => (
-          <button key={label} type="button" onClick={label === 'Profile' ? onOpenFlowSwitcher : undefined} className="flex w-16 flex-col items-center justify-center gap-1.5 rounded-[20px] px-2.5 py-2 text-center text-[12px] leading-[1.5] text-black">
-            <Icon size={20} weight={index === 0 ? 'fill' : 'regular'} />
-            <span className={index === 0 ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
+          ['Home', House, 'icon'],
+          ['Explore', Kanban, 'icon'],
+          ['HYNT AI', null, 'hynt-ai'],
+          ['Leads', Crosshair, 'icon'],
+          ['Pro tools', SlidersHorizontal, 'icon'],
+        ].map(([label, Icon, kind], index) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => setProHomeTab(label === 'Pro tools' ? 'protools' : 'home')}
+            className="flex w-[70px] flex-col items-center justify-center gap-1.5 rounded-[20px] px-2 py-2 text-center text-[12px] leading-[1.5] text-black"
+          >
+            {kind === 'hynt-ai' ? (
+              <img src="/hynt-home/door-and-star.svg" alt="" className="size-5" />
+            ) : (
+              <Icon size={20} weight={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'fill' : 'regular'} />
+            )}
+            {label === 'HYNT AI' ? (
+              <span className="font-semibold hynt-nav-item">
+                HYNT <sup className="align-super text-[9px] font-bold leading-none">AI</sup>
+              </span>
+            ) : (
+              <span className={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
+            )}
           </button>
         ))}
       </nav>
