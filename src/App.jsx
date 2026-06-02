@@ -523,6 +523,21 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
   const [proPrompt, setProPrompt] = useState('')
+  const [projects, setProjects] = useState(proProjects)
+  const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
+  const [newProjectForm, setNewProjectForm] = useState({
+    client: '',
+    phone: '',
+    email: '',
+    location: '',
+    scope: '',
+    status: 'Active',
+    budgetL: '',
+    dueDate: '',
+  })
+  const [proAiMessages, setProAiMessages] = useState([
+    { id: 'pro-ai-1', role: 'ai', text: 'What would you like to do?' },
+  ])
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
@@ -555,16 +570,128 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
   const projectFilterChips = ['All', 'Active', 'Pending', 'Done']
   const filteredProjects = projectStatusFilter === 'All'
-    ? proProjects
-    : proProjects.filter((project) => project.status === projectStatusFilter)
-  const selectedProject = proProjects.find((project) => project.id === selectedProjectId) || null
+    ? projects
+    : projects.filter((project) => project.status === projectStatusFilter)
+  const selectedProject = projects.find((project) => project.id === selectedProjectId) || null
   const getProjectCount = (status) => (
     status === 'All'
-      ? proProjects.length
-      : proProjects.filter((project) => project.status === status).length
+      ? projects.length
+      : projects.filter((project) => project.status === status).length
   )
+  const proAiOptions = [
+    'Create BOQ from room measurements',
+    'Generate site-visit checklist',
+    'Draft client update summary',
+    'Plan weekly execution timeline',
+    'Review material procurement status',
+    'Estimate lighting load by room',
+  ]
 
   if (isProjectsViewOpen) {
+    if (!selectedProject && isCreateProjectOpen) {
+      return (
+        <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+          <section className="mx-auto w-full max-w-[390px] pb-[110px] pt-[56px]">
+            <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#ececec] bg-white/95 backdrop-blur">
+              <div className="px-4 py-3">
+                <div className="flex items-center justify-between py-1">
+                  <button type="button" onClick={() => setIsCreateProjectOpen(false)} className="flex items-center gap-4">
+                    <span className="grid size-6 place-items-center rounded">
+                      <CaretLeft size={24} />
+                    </span>
+                    <span className="text-left">
+                      <span className="block text-[16px] font-bold leading-6 text-black">New project</span>
+                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Enter project details</span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            <div className="px-4 py-5">
+              <div className="space-y-3">
+                {[
+                  ['client', 'Client name', 'text', 'Aarav Mehta'],
+                  ['phone', 'Mobile number', 'tel', '+91 98765 43210'],
+                  ['email', 'Email', 'email', 'aarav@example.com'],
+                  ['location', 'Location', 'text', 'Bengaluru'],
+                  ['scope', 'Project scope', 'text', '3BHK renovation'],
+                  ['budgetL', 'Budget (L)', 'number', '28'],
+                  ['dueDate', 'Due date', 'date', ''],
+                ].map(([key, label, type, placeholder]) => (
+                  <label key={key} className="block">
+                    <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{label}</p>
+                    <input
+                      type={type}
+                      value={newProjectForm[key]}
+                      placeholder={placeholder}
+                      onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
+                      className="h-11 w-full rounded-xl border border-[#d7d7d7] px-3 text-[13px] font-medium outline-none"
+                    />
+                  </label>
+                ))}
+                <label className="block">
+                  <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Status</p>
+                  <select
+                    value={newProjectForm.status}
+                    onChange={(event) => setNewProjectForm((prev) => ({ ...prev, status: event.target.value }))}
+                    className="h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 text-[13px] font-medium outline-none"
+                  >
+                    <option>Active</option>
+                    <option>Pending</option>
+                    <option>Done</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+            <button
+              type="button"
+              onClick={() => {
+                if (!newProjectForm.client.trim() || !newProjectForm.scope.trim()) return
+                const budget = Number(newProjectForm.budgetL || 0)
+                setProjects((prev) => [
+                  {
+                    id: `p-${Date.now()}`,
+                    client: newProjectForm.client.trim(),
+                    avatar: '/hynt-home/pro-1.png',
+                    phone: newProjectForm.phone.trim() || '+91 90000 00000',
+                    email: newProjectForm.email.trim() || 'client@example.com',
+                    location: newProjectForm.location.trim() || 'Mumbai',
+                    scope: newProjectForm.scope.trim(),
+                    status: newProjectForm.status,
+                    progress: newProjectForm.status === 'Done' ? 100 : newProjectForm.status === 'Pending' ? 20 : 10,
+                    kickoffDate: new Date().toISOString().slice(0, 10),
+                    budgetL: Number.isFinite(budget) ? budget : 0,
+                    spentL: 0,
+                    receivedL: 0,
+                    dueDate: newProjectForm.dueDate ? new Date(newProjectForm.dueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'TBD',
+                  },
+                  ...prev,
+                ])
+                setNewProjectForm({
+                  client: '',
+                  phone: '',
+                  email: '',
+                  location: '',
+                  scope: '',
+                  status: 'Active',
+                  budgetL: '',
+                  dueDate: '',
+                })
+                setIsCreateProjectOpen(false)
+              }}
+              className="h-11 w-full rounded-full bg-black text-[14px] font-bold text-white"
+            >
+              Create project
+            </button>
+          </div>
+        </main>
+      )
+    }
+
     if (selectedProject) {
       const pendingL = Math.max(0, selectedProject.budgetL - selectedProject.receivedL)
       const formatLakhs = (value) => `${value.toFixed(1)}L`
@@ -1617,8 +1744,16 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to home</span>
                   </span>
                 </button>
-                <button type="button" onClick={onOpenFlowSwitcher} aria-label="Switch flow" className="opacity-0">
-                  <ChatsCircle size={24} />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCreateProjectOpen(true)
+                    setSelectedProjectId(null)
+                  }}
+                  aria-label="Create project"
+                  className="grid size-9 place-items-center"
+                >
+                  <Plus size={22} />
                 </button>
               </div>
             </div>
@@ -1894,6 +2029,51 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         </div>
           </>
         ) : null}
+
+        {proHomeTab === 'ai' ? (
+          <>
+            <div className="h-[6px] w-full bg-[#e0e0e0]" />
+            <section className="px-4 py-5">
+              <div className="rounded-2xl border border-[#e1e1e1] bg-white p-4">
+                <p className="text-[16px] font-extrabold leading-6 text-black">HYNT AI</p>
+                <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#6f6f6f]">Professional assistant</p>
+                <div className="mt-4 space-y-3">
+                  {proAiMessages.map((message) => (
+                    <div key={message.id} className={message.role === 'ai' ? '' : 'flex justify-end'}>
+                      <div className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] font-medium leading-[19px] ${message.role === 'ai' ? 'bg-[#f4f4f4] text-black' : 'bg-[#e8f7ef] text-[#175c3e]'}`}>
+                        {message.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+            <section className="px-4 py-5">
+              <p className="mb-3 text-[14px] font-extrabold leading-[21px]">Quick options</p>
+              <div className="grid gap-2">
+                {proAiOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      setProAiMessages((prev) => [
+                        ...prev,
+                        { id: `pro-ai-user-${Date.now()}-${option}`, role: 'user', text: option },
+                        { id: `pro-ai-bot-${Date.now()}-${option}`, role: 'ai', text: `Sure. I'll help you with: ${option}.` },
+                      ])
+                    }}
+                    className="rounded-xl border border-[#d7d7d7] bg-white px-3 py-2 text-left text-[13px] font-semibold leading-[19px]"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </section>
+          </>
+        ) : null}
       </section>
 
       <nav className="fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
@@ -1907,18 +2087,16 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <button
             key={label}
             type="button"
-            onClick={() => setProHomeTab(label === 'Pro tools' ? 'protools' : 'home')}
+            onClick={() => setProHomeTab(label === 'Pro tools' ? 'protools' : label === 'HYNT AI' ? 'ai' : 'home')}
             className="flex w-[70px] flex-col items-center justify-center gap-1.5 rounded-[20px] px-2 py-2 text-center text-[12px] leading-[1.5] text-black"
           >
             {kind === 'hynt-ai' ? (
-              <img src="/hynt-home/door-and-star.svg" alt="" className="size-5" />
+              <img src="/hynt-home/door-and-star.svg" alt="" className="size-5 saturate-0 brightness-0" />
             ) : (
               <Icon size={20} weight={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'fill' : 'regular'} />
             )}
             {label === 'HYNT AI' ? (
-              <span className="font-semibold hynt-nav-item">
-                HYNT <sup className="align-super text-[9px] font-bold leading-none">AI</sup>
-              </span>
+              <span className={proHomeTab === 'ai' ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>HYNT AI</span>
             ) : (
               <span className={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
             )}
