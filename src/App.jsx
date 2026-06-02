@@ -270,6 +270,20 @@ const initialProjectTasks = [
   },
 ]
 
+const exploreTabs = ['Ideas', 'Professionals', 'Products']
+const exploreFilters = ['Show all', 'Bedroom', 'Kitchen', 'Living room', 'Bathroom']
+const exploreIdeaCards = [
+  { id: 'idea-a', image: '/hynt-home/idea-1.png', height: 'h-[174px]', badge: '1/5', type: 'image' },
+  { id: 'idea-b', image: '/hynt-home/idea-2.png', height: 'h-[250px]', type: 'image' },
+  { id: 'idea-c', image: '/hynt-home/pro-2.png', height: 'h-[173px]', type: 'image' },
+  { id: 'idea-d', image: '/hynt-home/product.png', height: 'h-[249px]', type: 'video' },
+  { id: 'idea-e', image: '/hynt-home/event-1.png', height: 'h-[171px]', type: 'video' },
+  { id: 'idea-f', image: '/hynt-home/event-2.png', height: 'h-[173px]', type: 'image' },
+  { id: 'idea-g', image: '/hynt-home/product.png', height: 'h-[179px]', badge: '1/5', type: 'image' },
+  { id: 'idea-h', image: '/hynt-home/brand.png', height: 'h-[108px]', type: 'image' },
+]
+const desktopExploreIdeaCards = [...exploreIdeaCards, ...exploreIdeaCards.slice(0, 6)]
+
 const initialBoqItems = [
   { id: 'boq-1', item: 'Living Room Flooring', area: '320 sqft', rate: 180, unit: 'sqft' },
   { id: 'boq-2', item: 'Wall putty + primer', area: 860, rate: 42, unit: 'sqft' },
@@ -522,6 +536,7 @@ function FlowSelection({ onSelectFlow }) {
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
+  const [isProHomeDense, setIsProHomeDense] = useState(false)
   const [proPrompt, setProPrompt] = useState('')
   const [projects, setProjects] = useState(proProjects)
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
@@ -586,6 +601,91 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     'Review material procurement status',
     'Estimate lighting load by room',
   ]
+  const proSidebarItems = [
+    ['home', 'Home', House, 'icon'],
+    ['explore', 'Explore', Kanban, 'icon'],
+    ['ai', 'HYNT AI', null, 'hynt-ai'],
+    ['leads', 'Leads', Crosshair, 'icon'],
+    ['protools', 'Pro tools', SlidersHorizontal, 'icon'],
+  ]
+  const handleProNavSelect = (key) => {
+    if (key === 'protools') {
+      setProHomeTab('protools')
+      return
+    }
+    if (key === 'ai') {
+      setProHomeTab('ai')
+      return
+    }
+    setProHomeTab('home')
+  }
+  const isProNavSelected = (key) => {
+    if (key === 'ai') return proHomeTab === 'ai'
+    if (key === 'protools') return proHomeTab === 'protools'
+    return proHomeTab === 'home' && key === 'home'
+  }
+  useEffect(() => {
+    const updateDenseState = () => {
+      if (typeof window === 'undefined') return
+      const isDesktop = window.innerWidth >= 1024
+      setIsProHomeDense(isDesktop && !isProjectsViewOpen && proHomeTab === 'home' && window.scrollY > 180)
+    }
+
+    updateDenseState()
+    window.addEventListener('scroll', updateDenseState, { passive: true })
+    window.addEventListener('resize', updateDenseState)
+
+    return () => {
+      window.removeEventListener('scroll', updateDenseState)
+      window.removeEventListener('resize', updateDenseState)
+    }
+  }, [isProjectsViewOpen, proHomeTab])
+  const renderProDesktopNav = () => (
+    <aside className="hynt-home-shell__sidebar">
+      <div className="hynt-home-shell__sidebar-rail">
+        <div className="flex flex-col items-center gap-4">
+          <button type="button" aria-label="Open profile switcher" onClick={onOpenFlowSwitcher} className="hynt-home-shell__utility-button">
+            <img src="/hynt-home/pro-1.png" alt="" className="size-7 rounded-full object-cover" />
+          </button>
+          <button type="button" aria-label="Notifications" className="hynt-home-shell__utility-button relative">
+            <Bell size={20} />
+            <span className="absolute right-[7px] top-[7px] size-2 rounded-full bg-[#26c485]" />
+          </button>
+          <button type="button" aria-label="Messages" className="hynt-home-shell__utility-button relative">
+            <ChatsCircle size={20} />
+            <span className="absolute right-[5px] top-[4px] grid min-h-4 min-w-4 place-items-center rounded-full bg-[#26c485] px-1 text-[10px] font-bold leading-none text-white">3</span>
+          </button>
+        </div>
+
+        <div className="hynt-home-shell__sidebar-stack">
+          {proSidebarItems.map(([key, label, Icon, kind]) => {
+            const selected = isProNavSelected(key)
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-label={label}
+                onClick={() => handleProNavSelect(key)}
+                className={`hynt-home-shell__sidebar-button ${selected ? 'hynt-home-shell__sidebar-button--active' : ''}`}
+              >
+                {kind === 'hynt-ai' ? (
+                  <img src="/hynt-home/door-and-star.svg" alt="" className={`size-5 ${selected ? 'brightness-0 saturate-0' : 'brightness-0 saturate-0 opacity-55'}`} />
+                ) : (
+                  <Icon size={22} weight={selected ? 'fill' : 'regular'} />
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="flex flex-col items-center gap-4">
+          <button type="button" aria-label="More" className="hynt-home-shell__utility-button">
+            <DotsThreeVertical size={22} weight="bold" />
+          </button>
+        </div>
+      </div>
+    </aside>
+  )
 
   if (isProjectsViewOpen) {
     if (!selectedProject && isCreateProjectOpen) {
@@ -1830,12 +1930,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-      <section className="mx-auto w-full max-w-[390px] overflow-x-hidden pb-[108px]">
-        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur">
+    <main className="hynt-home hynt-home-shell min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <div className="hynt-home-shell__layout">
+        {renderProDesktopNav()}
+        <div className="hynt-home-shell__main">
+      <section className="hynt-pro-home-canvas mx-auto w-full max-w-[390px] overflow-x-hidden pb-[108px]">
+        <header className={`hynt-pro-topdock sticky top-0 z-20 bg-white/95 backdrop-blur ${isProHomeDense ? 'hynt-pro-topdock--dense' : ''}`}>
           <div className="flex h-14 items-center justify-between px-4">
             <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 lg:hidden">
               <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
                 <Bell size={20} />
                 <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
@@ -1848,8 +1951,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </div>
         </header>
 
-        <div className="px-4 pb-5 pt-5">
-          <div className="flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
+        <div className={`hynt-pro-summary px-4 pb-5 pt-5 ${isProHomeDense ? 'hynt-pro-summary--dense' : ''}`}>
+          <div className="hynt-pro-summary-card flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
             <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="text-[20px] font-extrabold leading-[1.5] text-black">05</p>
               <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">Active projects</p>
@@ -2076,39 +2179,40 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         ) : null}
       </section>
 
-      <nav className="fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
-        {[
-          ['Home', House, 'icon'],
-          ['Explore', Kanban, 'icon'],
-          ['HYNT AI', null, 'hynt-ai'],
-          ['Leads', Crosshair, 'icon'],
-          ['Pro tools', SlidersHorizontal, 'icon'],
-        ].map(([label, Icon, kind], index) => (
+      <nav className="hynt-home-shell__nav fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
+        {proSidebarItems.map(([key, label, Icon, kind], index) => (
           <button
-            key={label}
+            key={key}
             type="button"
-            onClick={() => setProHomeTab(label === 'Pro tools' ? 'protools' : label === 'HYNT AI' ? 'ai' : 'home')}
+            onClick={() => handleProNavSelect(key)}
             className="flex w-[70px] flex-col items-center justify-center gap-1.5 rounded-[20px] px-2 py-2 text-center text-[12px] leading-[1.5] text-black"
           >
             {kind === 'hynt-ai' ? (
               <img src="/hynt-home/door-and-star.svg" alt="" className="size-5 saturate-0 brightness-0" />
             ) : (
-              <Icon size={20} weight={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'fill' : 'regular'} />
+              <Icon size={20} weight={isProNavSelected(key) ? 'fill' : 'regular'} />
             )}
             {label === 'HYNT AI' ? (
               <span className={proHomeTab === 'ai' ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>HYNT AI</span>
             ) : (
-              <span className={(proHomeTab === 'home' && index === 0) || (proHomeTab === 'protools' && label === 'Pro tools') ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
+              <span className={isProNavSelected(key) ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
             )}
           </button>
         ))}
       </nav>
+        </div>
+      </div>
     </main>
   )
 }
 
 function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [prompt, setPrompt] = useState('')
+  const [homeTab, setHomeTab] = useState('home')
+  const [exploreTab, setExploreTab] = useState('Ideas')
+  const [exploreFilter, setExploreFilter] = useState('Show all')
+  const [isExploreSearchOpen, setIsExploreSearchOpen] = useState(false)
+  const [isHomeDockDense, setIsHomeDockDense] = useState(false)
   const [chatDraft, setChatDraft] = useState('')
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isBriefCollapsed, setIsBriefCollapsed] = useState(false)
@@ -2305,6 +2409,23 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       behavior: 'smooth',
     })
   }, [messages, isChatOpen])
+
+  useEffect(() => {
+    const updateDenseState = () => {
+      if (typeof window === 'undefined') return
+      const isDesktop = window.innerWidth >= 1024
+      setIsHomeDockDense(isDesktop && homeTab === 'home' && window.scrollY > 220)
+    }
+
+    updateDenseState()
+    window.addEventListener('scroll', updateDenseState, { passive: true })
+    window.addEventListener('resize', updateDenseState)
+
+    return () => {
+      window.removeEventListener('scroll', updateDenseState)
+      window.removeEventListener('resize', updateDenseState)
+    }
+  }, [homeTab])
 
   useEffect(() => {
     let mounted = true
@@ -2652,17 +2773,359 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
     )
   }
 
+  const homeownerNavItems = [
+    ['home', 'Home', House],
+    ['explore', 'Explore', Kanban],
+    ['post', 'Post', Plus],
+    ['events', 'Events', CalendarDots],
+    ['profile', 'Profile', User],
+  ]
+
+  const desktopSidebarItems = [
+    ['home', 'Home', House],
+    ['explore', 'Explore', Kanban],
+    ['post', 'Post', Plus],
+    ['events', 'Events', CalendarDots],
+  ]
+
+  const renderHomeNav = () => (
+    <>
+      <aside className="hynt-home-shell__sidebar">
+        <div className="hynt-home-shell__sidebar-rail">
+          <div className="flex flex-col items-center gap-4">
+            <button type="button" aria-label="Open profile switcher" onClick={() => setIsFlowSwitcherOpen(true)} className="hynt-home-shell__utility-button">
+              <img src="/hynt-home/pro-1.png" alt="" className="size-7 rounded-full object-cover" />
+            </button>
+            <button type="button" aria-label="Notifications" className="hynt-home-shell__utility-button relative">
+              <Bell size={20} />
+              <span className="absolute right-[7px] top-[7px] size-2 rounded-full bg-[#26c485]" />
+            </button>
+            <button type="button" aria-label="Messages" className="hynt-home-shell__utility-button relative">
+              <ChatsCircle size={20} />
+              <span className="absolute right-[5px] top-[4px] grid min-h-4 min-w-4 place-items-center rounded-full bg-[#26c485] px-1 text-[10px] font-bold leading-none text-white">3</span>
+            </button>
+          </div>
+
+          <div className="hynt-home-shell__sidebar-stack">
+            {desktopSidebarItems.map(([key, label, Icon]) => {
+              const selected = homeTab === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setHomeTab(key)}
+                  aria-label={label}
+                  className={`hynt-home-shell__sidebar-button ${selected ? 'hynt-home-shell__sidebar-button--active' : ''}`}
+                >
+                  <Icon size={22} weight={selected ? 'fill' : 'regular'} />
+                </button>
+              )
+            })}
+          </div>
+
+          <div className="flex flex-col items-center gap-4">
+            <button type="button" aria-label="More" className="hynt-home-shell__utility-button">
+              <DotsThreeVertical size={22} weight="bold" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <nav className="hynt-home-shell__nav fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
+        {homeownerNavItems.map(([key, label, Icon]) => {
+          const selected = homeTab === key
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setHomeTab(key)}
+              className="flex w-16 flex-col items-center justify-center gap-1.5 rounded-[20px] px-2.5 py-2 text-center text-[12px] leading-[1.5] text-black"
+            >
+              <Icon size={20} weight={selected ? 'fill' : 'regular'} />
+              <span className={selected ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
+            </button>
+          )
+        })}
+      </nav>
+    </>
+  )
+
+  const renderExplorePage = () => (
+    <section className="hynt-explore-canvas mx-auto w-full max-w-[1240px] overflow-visible bg-white">
+      <div className="hynt-explore-sticky">
+        <div className="mx-auto w-full px-4 pb-4 pt-4 md:px-6 lg:px-8 lg:pb-6 lg:pt-6">
+          <div className="mx-auto w-full max-w-[760px]">
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="text-[20px] font-bold leading-[1.5] text-black lg:text-[24px]">Explore</h1>
+              <button
+                type="button"
+                aria-label={isExploreSearchOpen ? 'Close search' : 'Open search'}
+                onClick={() => setIsExploreSearchOpen((current) => !current)}
+                className="grid size-10 shrink-0 place-items-center rounded-full border border-[#d8d8d8] bg-white text-black transition hover:bg-[#f7f7f7]"
+              >
+                <MagnifyingGlass size={18} weight="bold" />
+              </button>
+            </div>
+            <div className={`overflow-hidden transition-[max-height,opacity,margin] duration-200 ${isExploreSearchOpen ? 'mt-4 max-h-20 opacity-100' : 'mt-0 max-h-0 opacity-0'}`}>
+              <div className="overflow-hidden rounded-2xl border border-[#9e9e9e] bg-[#fbfbfb] px-4 py-[14.5px]">
+                <p className="text-[14px] font-normal leading-[1.5] text-[#808080]">Search inspiration, professionals and products</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b border-[rgba(0,0,0,0.08)]">
+          <div className="mx-auto w-full max-w-[1240px] px-4 md:px-6 lg:px-8">
+            <div className="grid grid-cols-3 border-b border-[rgba(0,0,0,0.08)] lg:mx-auto lg:max-w-[760px]">
+              {exploreTabs.map((tab) => {
+                const selected = exploreTab === tab
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setExploreTab(tab)}
+                    className={`px-2 pb-[10px] pt-2 text-center text-[14px] capitalize ${selected ? 'border-b-2 border-[#26c485] font-bold text-[#26c485]' : 'font-medium text-black'}`}
+                  >
+                    {tab}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="no-scrollbar flex gap-2 overflow-x-auto py-2 lg:justify-center">
+              {exploreFilters.map((filter) => {
+                const selected = exploreFilter === filter
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setExploreFilter(filter)}
+                    className={`shrink-0 rounded-[20px] px-4 py-2 text-[14px] leading-[1.5] ${selected ? 'bg-[#26c485] font-semibold text-white' : 'border border-[#ececec] bg-white font-medium text-black'}`}
+                  >
+                    {filter}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {exploreTab === 'Ideas' ? (
+        <div className="hynt-explore-masonry px-2 pb-8 pt-4 md:px-6 lg:px-8">
+          {desktopExploreIdeaCards.map((card, index) => (
+            card.id === 'idea-g' || card.id === 'idea-h' ? (
+              <article key={`${card.id}-${index}`} className="hynt-explore-masonry-item overflow-hidden rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb]">
+                <div className={`relative overflow-hidden ${card.id === 'idea-g' ? 'h-[222px]' : 'h-[127px]'}`}>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_18%,#7738ff_0_13%,transparent_34%),radial-gradient(circle_at_25%_75%,#006dff_0_18%,transparent_44%),linear-gradient(135deg,#06091d_0%,#111b70_45%,#7a26ff_100%)]" />
+                  <p className="absolute left-4 top-4 w-[110px] text-[14px] font-medium uppercase leading-[normal] text-white">Showcase your brand here</p>
+                </div>
+                <div className="flex items-center justify-between px-3 pb-2 pt-1">
+                  <p className="text-[12px] font-semibold text-black">Visit</p>
+                  <ArrowRight size={14} className="rotate-[-45deg]" />
+                </div>
+              </article>
+            ) : (
+              <article key={`${card.id}-${index}`} className={`hynt-explore-masonry-item relative overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white ${card.height}`}>
+                <img src={card.image} alt={`Explore idea ${index + 1}`} className="size-full object-cover" />
+                {card.badge ? <span className="absolute right-2 top-2 rounded-lg bg-black/25 px-[10px] py-1 text-[12px] font-bold leading-[1.5] text-white backdrop-blur-[8px]">{card.badge}</span> : null}
+                {card.type === 'video' ? (
+                  <span className="absolute right-2 top-2 grid size-[28px] place-items-center rounded-full bg-black/25 text-white backdrop-blur-[8px]">
+                    <CaretRight size={16} weight="fill" />
+                  </span>
+                ) : null}
+                <button type="button" aria-label="Save idea" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white">
+                  <BookmarkSimple size={16} />
+                </button>
+              </article>
+            )
+          ))}
+        </div>
+      ) : null}
+
+      {exploreTab === 'Professionals' ? (
+        <div className="grid gap-3 px-4 pb-8 pt-4 md:grid-cols-2 md:px-6 lg:grid-cols-3 lg:px-8">
+          {professionalOptions.map((pro) => (
+            <article key={pro.id} className="flex items-start gap-4 rounded-3xl border border-[#d8e0ea] bg-white p-4 shadow-sm">
+              <img src={pro.image} alt={pro.name} className="size-16 shrink-0 rounded-2xl object-cover" />
+              <span className="min-w-0 flex-1">
+                <span className="block text-[14px] font-bold leading-[21px] text-slate-950">{pro.name}</span>
+                <span className="mt-0.5 block text-[13px] font-semibold leading-5 text-slate-500">{pro.role}</span>
+                <span className="mt-2 block text-[12px] font-semibold text-slate-400">{pro.meta}</span>
+                <span className="mt-2 block text-[12px] font-bold text-[#267449]">{pro.tone}</span>
+              </span>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      {exploreTab === 'Products' ? (
+        <div className="grid grid-cols-2 gap-3 px-4 pb-8 pt-4 md:grid-cols-3 md:px-6 lg:grid-cols-4 lg:px-8">
+          {homepageProducts.concat(homepageProducts).map((product, index) => (
+            <article key={`${product.title}-${index}`} className="rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-1">
+              <div className="relative h-[139px] overflow-hidden rounded-[15px] border border-[#e0e0e0] bg-white">
+                <img src={product.image} alt={product.title} className="size-full object-cover" />
+                <span className="absolute right-2 top-2 rounded-lg bg-white px-2 py-1 text-[12px] font-semibold leading-[1.5]">1/5</span>
+                <button type="button" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white"><BookmarkSimple size={16} /></button>
+              </div>
+              <div className="px-2 pb-2 pt-3">
+                <p className="line-clamp-2 text-[14px] font-bold leading-[1.35]">{product.title}</p>
+                <p className="mt-1 text-[12px] font-semibold leading-[1.5] text-[#808080]">{product.category}</p>
+                <button type="button" className="mt-2 text-[12px] font-semibold leading-[1.5] text-[#808080] underline decoration-dotted">Get a quote</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  )
+
+  const renderPostPage = () => (
+    <section className="hynt-desktop-page mx-auto w-full max-w-[1120px] px-4 pb-12 pt-6">
+      <header className="mb-6">
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Post</p>
+        <h1 className="mt-2 text-[32px] font-black tracking-[-0.04em] text-[#102418]">Draft a requirement in one place.</h1>
+        <p className="mt-2 max-w-[640px] text-[15px] font-medium leading-6 text-[#5f6a63]">This desktop page keeps the same language as mobile, but spreads the form and selections into a more readable planning workspace.</p>
+      </header>
+
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+          <h2 className="text-[20px] font-black text-[#102418]">Project brief</h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            {[
+              ['Style direction', 'Warm tones, Japandi, Modern Indian'],
+              ['Budget range', `${INR}8L ${RANGE_DASH} ${INR}15L`],
+              ['Rooms', 'Living room, Bedroom, Kitchen'],
+              ['Timeline', 'Looking to start this month'],
+            ].map(([label, value]) => (
+              <article key={label} className="rounded-[22px] border border-[#d9e3dd] bg-[#f7faf8] p-4">
+                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#7a8b83]">{label}</p>
+                <p className="mt-2 text-[15px] font-bold leading-6 text-[#102418]">{value}</p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-5 rounded-[22px] border border-[#d9e3dd] bg-[#102418] p-5 text-white">
+            <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-[#8fd5ae]">Your note</p>
+            <p className="mt-3 text-[15px] leading-7 text-white/84">Looking for a clean, family-friendly renovation with better storage and warmer materials. Open to turnkey professionals and curated vendors.</p>
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <article className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+            <h2 className="text-[20px] font-black text-[#102418]">Suggested scope</h2>
+            <div className="hynt-desktop-chip-wrap mt-4">
+              {scopeOptions.map((option) => (
+                <span key={option} className="rounded-full border border-[#cbd5cf] bg-[#f7faf8] px-4 py-2 text-[14px] font-semibold text-[#173324]">{option}</span>
+              ))}
+            </div>
+          </article>
+
+          <article className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+            <h2 className="text-[20px] font-black text-[#102418]">Best-fit professionals</h2>
+            <div className="mt-4 space-y-3">
+              {professionalOptions.slice(0, 3).map((pro) => (
+                <div key={pro.id} className="flex items-start gap-3 rounded-[22px] border border-[#e3e8e4] bg-[#fbfbfb] p-3">
+                  <img src={pro.image} alt={pro.name} className="size-14 rounded-[18px] object-cover" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[15px] font-bold text-[#102418]">{pro.name}</p>
+                    <p className="mt-1 text-[13px] font-medium text-[#647169]">{pro.role}</p>
+                    <p className="mt-2 text-[12px] font-semibold text-[#267449]">{pro.tone}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button type="button" className="mt-5 w-full rounded-[20px] bg-[#26c485] px-5 py-4 text-[15px] font-black text-[#07140e]">Send requirement</button>
+          </article>
+        </section>
+      </div>
+    </section>
+  )
+
+  const renderEventsPage = () => (
+    <section className="hynt-desktop-page mx-auto w-full max-w-[1120px] px-4 pb-12 pt-6">
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Events</p>
+          <h1 className="mt-2 text-[32px] font-black tracking-[-0.04em] text-[#102418]">What’s coming up near you.</h1>
+        </div>
+        <button type="button" className="rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">Filter by city</button>
+      </header>
+      <div className="hynt-desktop-card-grid hynt-desktop-card-grid--events">
+        {homepageEvents.concat(homepageEvents).map((event, index) => (
+          <article key={`${event.title}-${index}`} className="rounded-[28px] border border-[#e0e0e0] bg-white p-3 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+            <div className="relative overflow-hidden rounded-[22px] border border-[#e0e0e0] bg-[#f7faf8]">
+              <img src={event.image} alt={event.title} className="h-[220px] w-full object-cover" />
+              <span className="absolute right-3 top-3 rounded-lg border border-[#333] bg-black/70 px-3 py-1 text-[12px] font-medium text-white backdrop-blur">{event.interested}</span>
+            </div>
+            <div className="px-1 pb-1 pt-4">
+              <p className="text-[18px] font-bold text-[#102418]">{event.title}</p>
+              <p className="mt-2 flex items-center gap-2 text-[13px] font-semibold text-[#808080]"><CalendarDots size={16} />{event.date}</p>
+              <p className="mt-1 flex items-center gap-2 text-[13px] font-semibold text-[#808080]"><MapPinSimpleArea size={16} />{event.city}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+
+  const renderProfilePage = () => (
+    <section className="hynt-desktop-page mx-auto w-full max-w-[1120px] px-4 pb-12 pt-6">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <img src="/hynt-home/pro-1.png" alt="Profile" className="size-20 rounded-[28px] object-cover" />
+          <div>
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Profile</p>
+            <h1 className="mt-2 text-[30px] font-black tracking-[-0.04em] text-[#102418]">Aarav’s workspace</h1>
+            <p className="mt-2 text-[15px] font-medium text-[#5f6a63]">Saved ideas, preferences, and live requirement shortcuts.</p>
+          </div>
+        </div>
+        <button type="button" className="rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">Edit profile</button>
+      </header>
+
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+          <h2 className="text-[20px] font-black text-[#102418]">Saved shortcuts</h2>
+          <div className="mt-5 grid gap-3">
+            {quickActions.map(({ label, icon: Icon }, index) => (
+              <article key={label} className="flex items-center gap-3 rounded-[22px] border border-[#e3e8e4] bg-[#fbfbfb] p-3">
+                <span className={`grid size-12 place-items-center rounded-[18px] ${index === 0 ? 'bg-white' : 'bg-[#e8f7ef] text-[#26c485]'}`}>
+                  {index === 0 ? <img src="/hynt-home/brand.png" alt="" className="size-full rounded-[18px] object-cover" /> : <Icon size={18} weight="fill" />}
+                </span>
+                <span className="text-[14px] font-bold text-[#102418]">{label}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+          <h2 className="text-[20px] font-black text-[#102418]">Saved inspirations</h2>
+          <div className="hynt-desktop-card-grid hynt-desktop-card-grid--ideas mt-5">
+            {homepageIdeas.concat(homepageIdeas).map((idea, index) => (
+              <article key={`${idea.image}-${index}`} className="overflow-hidden rounded-[24px] border border-[#e0e0e0] bg-white">
+                <img src={idea.image} alt={`Saved idea ${index + 1}`} className="h-[220px] w-full object-cover" />
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
+  )
+
   const renderHome = () => (
-    <main className="hynt-home min-h-dvh w-full bg-white pb-[92px] font-['Urbanist'] text-black">
-      <section className="relative mx-auto w-full max-w-[390px] overflow-x-hidden bg-white">
-        <header className="sticky top-0 z-30 h-[57px] overflow-hidden bg-gradient-to-b from-white to-white/0 backdrop-blur-[12px]">
+    <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
+      <div className="hynt-home-shell__layout">
+        {renderHomeNav()}
+        <div className="hynt-home-shell__main">
+          {homeTab === 'home' ? (
+            <section className="hynt-home-mobile-canvas relative mx-auto w-full max-w-[390px] overflow-visible bg-white">
+        <div className={`hynt-home-topdock ${isHomeDockDense ? 'hynt-home-topdock--dense' : ''}`}>
+        <header className="h-[57px] overflow-hidden bg-gradient-to-b from-white to-white/0 backdrop-blur-[12px]">
           <div className="flex h-[57px] items-center justify-between pl-6 pr-4">
             <button type="button" className="flex w-[119px] items-center text-[14px] font-bold leading-none text-[#26c485]">
               <span>Mumbai</span>
               <CaretDown className="ml-1" size={12} weight="bold" />
             </button>
             <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-8 w-[53.152px] opacity-0" />
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 lg:hidden">
               <button type="button" aria-label="Search" className="grid size-[37px] place-items-center rounded-[10px] opacity-0"><MagnifyingGlass size={20} /></button>
               <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px]"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" /></button>
               <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]"><ChatsCircle size={24} /><span className="absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-center text-[10px] font-normal leading-none tracking-[-0.041px] text-white">3</span></button>
@@ -2670,20 +3133,23 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           </div>
         </header>
 
-        <div className="pt-2">
-          <section className="flex h-[102px] items-start justify-between px-4">
+        <div className="bg-white pt-2">
+          <section className={`hynt-home-quick-actions flex items-start justify-between px-4 ${isHomeDockDense ? 'hynt-home-quick-actions--dense' : ''}`}>
             {quickActions.map(({ label, icon: Icon }, index) => (
-              <button key={label} type="button" className="flex w-[68px] shrink-0 flex-col items-center gap-3 overflow-hidden text-center">
-                <span className={`grid size-14 place-items-center overflow-hidden rounded-[28px] ${index === 0 ? 'border-[0.438px] border-[#e0e0e0] bg-[#fbfbfb]' : 'border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]'}`}>
+              <button key={label} type="button" className="hynt-home-quick-action-item flex w-[68px] shrink-0 flex-col items-center gap-3 overflow-hidden text-center">
+                <span className={`hynt-home-quick-action-icon grid size-14 place-items-center overflow-hidden rounded-[28px] ${index === 0 ? 'border-[0.438px] border-[#e0e0e0] bg-[#fbfbfb]' : 'border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]'}`}>
                   {index === 0 ? <img src="/hynt-home/brand.png" alt="" className="size-full rounded-[28px] object-cover" /> : <Icon size={21} weight="fill" />}
                 </span>
-                <span className="w-[68px] whitespace-normal text-center text-[11px] font-bold leading-[1.5] text-black">{label}</span>
+                <span className="hynt-home-quick-action-label w-[68px] whitespace-normal text-center text-[11px] font-bold leading-[1.5] text-black">{label}</span>
               </button>
             ))}
           </section>
 
           <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
+        </div>
+        </div>
 
+        <div>
           <section className="mt-5 h-28 px-4">
             <form onSubmit={openChatFromHome} className="h-28 w-[358px] overflow-hidden rounded-3xl border border-[rgba(95,193,138,0.24)] bg-black p-4">
               <div className="flex h-6 items-center gap-2">
@@ -2830,27 +3296,19 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
             <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-[58px] w-24 object-contain grayscale" />
           </div>
         </div>
-      </section>
+            </section>
+          ) : null}
+          {homeTab === 'explore' ? renderExplorePage() : null}
+          {homeTab === 'post' ? renderPostPage() : null}
+          {homeTab === 'events' ? renderEventsPage() : null}
+          {homeTab === 'profile' ? renderProfilePage() : null}
+        </div>
+      </div>
 
-      <div className="fixed bottom-[-44px] left-1/2 z-40 flex h-10 w-[358px] max-w-[calc(100vw-32px)] -translate-x-1/2 items-center justify-between rounded-xl border border-[rgba(95,193,138,0.64)] bg-black/25 px-3 text-white backdrop-blur">
+      <div className="hynt-home-shell__toast fixed bottom-[-44px] left-1/2 z-40 flex h-10 w-[358px] max-w-[calc(100vw-32px)] -translate-x-1/2 items-center justify-between rounded-xl border border-[rgba(95,193,138,0.64)] bg-black/25 px-3 text-white backdrop-blur">
         <span className="flex items-center gap-2 text-[12px] font-normal leading-[1.5]"><PaperPlaneTilt size={16} />Requirement sent to all relevant professionals</span>
         <XCircle size={16} />
       </div>
-
-      <nav className="fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
-        {[
-          ['Home', House],
-          ['Explore', Kanban],
-          ['Post', Plus],
-          ['Events', CalendarDots],
-          ['Profile', User],
-        ].map(([label, Icon], index) => (
-          <button key={label} type="button" className="flex w-16 flex-col items-center justify-center gap-1.5 rounded-[20px] px-2.5 py-2 text-center text-[12px] leading-[1.5] text-black">
-            <Icon size={20} weight={index === 0 ? 'fill' : 'regular'} />
-            <span className={index === 0 ? 'font-bold hynt-nav-home' : 'font-semibold hynt-nav-item'}>{label}</span>
-          </button>
-        ))}
-      </nav>
 
       <div className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-950/52 backdrop-blur-sm transition-opacity duration-300 ${isFlowSwitcherOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
         <section className={`w-full max-w-[390px] rounded-t-[2rem] bg-white p-5 transition-transform duration-300 ${isFlowSwitcherOpen ? 'translate-y-0' : 'translate-y-full'}`}>

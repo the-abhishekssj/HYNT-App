@@ -101,3 +101,246 @@
 .thinking-breathe {
   animation: thinkingBreathe 1.4s ease-in-out infinite;
 }
+
+.hynt-home-shell__sidebar {
+  display: none;
+}
+
+.hynt-home-shell__sidebar-rail {
+  display: flex;
+  height: 100dvh;
+  width: 72px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 24px 0;
+  color: #111111;
+}
+
+.hynt-home-shell__sidebar-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.hynt-home-shell__sidebar-button,
+.hynt-home-shell__utility-button {
+  display: grid;
+  height: 44px;
+  width: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(17, 17, 17, 0.52);
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.hynt-home-shell__sidebar-button:hover,
+.hynt-home-shell__utility-button:hover {
+  background: rgba(15, 23, 42, 0.05);
+  color: #111111;
+  transform: translateY(-1px);
+}
+
+.hynt-home-shell__sidebar-button--active {
+  background: transparent;
+  color: #111111;
+}
+
+.hynt-home-shell__main {
+  min-width: 0;
+  background: #ffffff;
+}
+
+.hynt-home-topdock {
+  background: #ffffff;
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  transition: box-shadow 180ms ease;
+}
+
+.hynt-home-mobile-canvas {
+  transform-origin: top center;
+}
+
+.hynt-home-quick-actions {
+  height: 102px;
+  transition: height 180ms ease, padding 180ms ease;
+}
+
+.hynt-home-quick-action-item {
+  transition: width 180ms ease, gap 180ms ease;
+}
+
+.hynt-home-quick-action-icon {
+  transition: width 180ms ease, height 180ms ease, border-radius 180ms ease;
+}
+
+.hynt-home-quick-action-label {
+  transition: opacity 140ms ease, max-height 180ms ease, transform 180ms ease;
+}
+
+.hynt-pro-topdock {
+  transition: box-shadow 180ms ease;
+}
+
+.hynt-pro-summary {
+  transition: padding 180ms ease, transform 180ms ease;
+}
+
+.hynt-pro-summary-card {
+  transition: transform 180ms ease, border-radius 180ms ease, height 180ms ease;
+}
+
+.hynt-explore-sticky {
+  background: rgba(255, 255, 255, 0.96);
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  backdrop-filter: blur(14px);
+}
+
+.hynt-explore-masonry {
+  column-count: 2;
+  column-gap: 0.5rem;
+}
+
+.hynt-explore-masonry-item {
+  break-inside: avoid;
+  margin-bottom: 0.5rem;
+}
+
+.hynt-desktop-chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hynt-desktop-card-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.hynt-desktop-card-grid--ideas,
+.hynt-desktop-card-grid--products,
+.hynt-desktop-card-grid--events {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.hynt-desktop-card-grid--pros {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .hynt-home-shell {
+    padding: 0;
+    padding-bottom: 1.5rem;
+    background: #ffffff;
+  }
+
+  .hynt-home-shell__layout {
+    position: relative;
+    min-height: 100dvh;
+  }
+
+  .hynt-home-shell__sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 40;
+    display: block;
+  }
+
+  .hynt-home-shell__main {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    padding-top: 1.5rem;
+    min-height: calc(100dvh - 3rem);
+  }
+
+  .hynt-home-shell__main > * {
+    width: 100%;
+  }
+
+  .hynt-explore-canvas {
+    box-shadow: none;
+  }
+
+  .hynt-home-mobile-canvas {
+    zoom: 1.12;
+  }
+
+  .hynt-home-topdock--dense {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .hynt-home-quick-actions--dense {
+    height: 56px;
+    align-items: center;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .hynt-home-quick-actions--dense .hynt-home-quick-action-item {
+    width: 48px;
+    gap: 0;
+  }
+
+  .hynt-home-quick-actions--dense .hynt-home-quick-action-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+  }
+
+  .hynt-home-quick-actions--dense .hynt-home-quick-action-label {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  .hynt-pro-topdock--dense {
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .hynt-pro-summary--dense {
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .hynt-pro-summary--dense .hynt-pro-summary-card {
+    height: 56px;
+    border-radius: 18px;
+    transform: scale(0.92);
+    transform-origin: top center;
+  }
+
+  .hynt-explore-masonry {
+    column-count: 4;
+    column-gap: 1rem;
+  }
+
+  .hynt-explore-masonry-item {
+    margin-bottom: 1rem;
+  }
+
+  .hynt-home-shell__nav {
+    display: none;
+  }
+
+  .hynt-home-shell__toast {
+    left: auto;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    transform: none;
+  }
+
+  .hynt-home-shell .hynt-desktop-page {
+    animation: bubbleIn 220ms ease-out both;
+  }
+}
