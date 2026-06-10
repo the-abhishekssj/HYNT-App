@@ -270,20 +270,6 @@ const initialProjectTasks = [
   },
 ]
 
-const exploreTabs = ['Ideas', 'Professionals', 'Products']
-const exploreFilters = ['Show all', 'Bedroom', 'Kitchen', 'Living room', 'Bathroom']
-const exploreIdeaCards = [
-  { id: 'idea-a', image: '/hynt-home/idea-1.png', height: 'h-[174px]', badge: '1/5', type: 'image' },
-  { id: 'idea-b', image: '/hynt-home/idea-2.png', height: 'h-[250px]', type: 'image' },
-  { id: 'idea-c', image: '/hynt-home/pro-2.png', height: 'h-[173px]', type: 'image' },
-  { id: 'idea-d', image: '/hynt-home/product.png', height: 'h-[249px]', type: 'video' },
-  { id: 'idea-e', image: '/hynt-home/event-1.png', height: 'h-[171px]', type: 'video' },
-  { id: 'idea-f', image: '/hynt-home/event-2.png', height: 'h-[173px]', type: 'image' },
-  { id: 'idea-g', image: '/hynt-home/product.png', height: 'h-[179px]', badge: '1/5', type: 'image' },
-  { id: 'idea-h', image: '/hynt-home/brand.png', height: 'h-[108px]', type: 'image' },
-]
-const desktopExploreIdeaCards = [...exploreIdeaCards, ...exploreIdeaCards.slice(0, 6)]
-
 const initialBoqItems = [
   { id: 'boq-1', item: 'Living Room Flooring', area: '320 sqft', rate: 180, unit: 'sqft' },
   { id: 'boq-2', item: 'Wall putty + primer', area: 860, rate: 42, unit: 'sqft' },
@@ -438,6 +424,39 @@ const styleAssistImages = [
     tags: ['Rustic', 'Japandi'],
   },
 ]
+
+const exploreTabs = ['Ideas', 'Professionals', 'Products']
+const exploreFilters = ['Show all', 'Bedroom', 'Kitchen', 'Living room', 'Bathroom']
+const fallbackExploreIdeaCards = [
+  { id: 'idea-a', image: '/hynt-home/idea-1.png', height: 'h-[174px]', badge: '1/5', type: 'image' },
+  { id: 'idea-b', image: '/hynt-home/idea-2.png', height: 'h-[250px]', type: 'image' },
+  { id: 'idea-c', image: '/hynt-home/pro-2.png', height: 'h-[173px]', type: 'image' },
+  { id: 'idea-d', image: '/hynt-home/product.png', height: 'h-[249px]', type: 'video' },
+  { id: 'idea-e', image: '/hynt-home/event-1.png', height: 'h-[171px]', type: 'video' },
+  { id: 'idea-f', image: '/hynt-home/event-2.png', height: 'h-[173px]', type: 'image' },
+  { id: 'idea-g', image: '/hynt-home/product.png', height: 'h-[179px]', badge: '1/5', type: 'image' },
+  { id: 'idea-h', image: '/hynt-home/brand.png', height: 'h-[108px]', type: 'image' },
+  { id: 'idea-i', image: styleAssistImages[0].image, height: 'h-[228px]', type: 'image' },
+  { id: 'idea-j', image: styleAssistImages[1].image, height: 'h-[196px]', type: 'image' },
+  { id: 'idea-k', image: styleAssistImages[2].image, height: 'h-[214px]', type: 'video' },
+  { id: 'idea-l', image: styleAssistImages[3].image, height: 'h-[188px]', type: 'image' },
+  { id: 'idea-m', image: styleAssistImages[4].image, height: 'h-[242px]', badge: '1/5', type: 'image' },
+  { id: 'idea-n', image: styleAssistImages[5].image, height: 'h-[205px]', type: 'image' },
+]
+const fallbackDesktopExploreIdeaCards = [...fallbackExploreIdeaCards, ...fallbackExploreIdeaCards.slice(0, 14)]
+const unsplashExploreHeights = ['h-[174px]', 'h-[250px]', 'h-[173px]', 'h-[249px]', 'h-[171px]', 'h-[173px]', 'h-[179px]', 'h-[228px]', 'h-[196px]', 'h-[214px]', 'h-[188px]', 'h-[242px]', 'h-[205px]']
+const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY
+
+const mapUnsplashPhotoToIdeaCard = (photo, index) => ({
+  id: `unsplash-${photo.id}-${index}`,
+  image: photo.urls?.regular ?? photo.urls?.small ?? photo.urls?.thumb ?? '',
+  height: unsplashExploreHeights[index % unsplashExploreHeights.length],
+  badge: index % 7 === 0 ? '1/5' : null,
+  type: index % 6 === 0 ? 'video' : 'image',
+  photographer: photo.user?.name ?? 'Unsplash',
+  photographerUrl: photo.user?.links?.html ? `${photo.user.links.html}${photo.user.links.html.includes('?') ? '&' : '?'}utm_source=hynt_app&utm_medium=referral` : 'https://unsplash.com/?utm_source=hynt_app&utm_medium=referral',
+  sourceLabel: 'Unsplash',
+})
 
 const initialIntent = {
   style: [],
@@ -1934,11 +1953,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       <div className="hynt-home-shell__layout">
         {renderProDesktopNav()}
         <div className="hynt-home-shell__main">
-      <section className="hynt-pro-home-canvas mx-auto w-full max-w-[390px] overflow-x-hidden pb-[108px]">
-        <header className={`hynt-pro-topdock sticky top-0 z-20 bg-white/95 backdrop-blur ${isProHomeDense ? 'hynt-pro-topdock--dense' : ''}`}>
+      <section className="hynt-pro-home-canvas mx-auto w-full max-w-[390px] overflow-visible pb-[108px]">
+        <header className="sticky top-0 z-20 bg-white/95 backdrop-blur lg:hidden">
           <div className="flex h-14 items-center justify-between px-4">
             <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 rounded-full border border-[#e0e0e0] object-cover" />
-            <div className="flex items-center gap-1 lg:hidden">
+            <div className="flex items-center gap-1">
               <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
                 <Bell size={20} />
                 <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
@@ -1951,6 +1970,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </div>
         </header>
 
+        <div className={`hynt-pro-topdock ${isProHomeDense ? 'hynt-pro-topdock--dense' : ''}`}>
         <div className={`hynt-pro-summary px-4 pb-5 pt-5 ${isProHomeDense ? 'hynt-pro-summary--dense' : ''}`}>
           <div className="hynt-pro-summary-card flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
             <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
@@ -1968,6 +1988,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">This Month</p>
             </article>
           </div>
+        </div>
         </div>
 
         <div className="h-[6px] w-full bg-[#e0e0e0]" />
@@ -2211,6 +2232,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [homeTab, setHomeTab] = useState('home')
   const [exploreTab, setExploreTab] = useState('Ideas')
   const [exploreFilter, setExploreFilter] = useState('Show all')
+  const [exploreIdeaFeed, setExploreIdeaFeed] = useState(fallbackDesktopExploreIdeaCards)
   const [isExploreSearchOpen, setIsExploreSearchOpen] = useState(false)
   const [isHomeDockDense, setIsHomeDockDense] = useState(false)
   const [chatDraft, setChatDraft] = useState('')
@@ -2426,6 +2448,56 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       window.removeEventListener('resize', updateDenseState)
     }
   }, [homeTab])
+
+  useEffect(() => {
+    if (!UNSPLASH_ACCESS_KEY) {
+      setExploreIdeaFeed(fallbackDesktopExploreIdeaCards)
+      return
+    }
+
+    const controller = new AbortController()
+    const roomQuery = exploreFilter === 'Show all' ? 'interior design architecture home decor' : `${exploreFilter} interior design architecture home decor`
+
+    const loadExploreImages = async () => {
+      try {
+        const response = await fetch(
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(roomQuery)}&per_page=18&content_filter=high`,
+          {
+            headers: {
+              Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+              'Accept-Version': 'v1',
+            },
+            signal: controller.signal,
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error(`Unsplash request failed: ${response.status}`)
+        }
+
+        const payload = await response.json()
+        const cards = (payload.results ?? [])
+          .filter((photo) => photo?.urls?.regular || photo?.urls?.small || photo?.urls?.thumb)
+          .map(mapUnsplashPhotoToIdeaCard)
+
+        if (cards.length > 0) {
+          setExploreIdeaFeed(cards)
+        } else {
+          setExploreIdeaFeed(fallbackDesktopExploreIdeaCards)
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setExploreIdeaFeed(fallbackDesktopExploreIdeaCards)
+        }
+      }
+    }
+
+    loadExploreImages()
+
+    return () => {
+      controller.abort()
+    }
+  }, [exploreFilter])
 
   useEffect(() => {
     let mounted = true
@@ -2912,7 +2984,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
       {exploreTab === 'Ideas' ? (
         <div className="hynt-explore-masonry px-2 pb-8 pt-4 md:px-6 lg:px-8">
-          {desktopExploreIdeaCards.map((card, index) => (
+          {exploreIdeaFeed.map((card, index) => (
             card.id === 'idea-g' || card.id === 'idea-h' ? (
               <article key={`${card.id}-${index}`} className="hynt-explore-masonry-item overflow-hidden rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb]">
                 <div className={`relative overflow-hidden ${card.id === 'idea-g' ? 'h-[222px]' : 'h-[127px]'}`}>
@@ -2926,12 +2998,22 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               </article>
             ) : (
               <article key={`${card.id}-${index}`} className={`hynt-explore-masonry-item relative overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white ${card.height}`}>
-                <img src={card.image} alt={`Explore idea ${index + 1}`} className="size-full object-cover" />
+                <img src={card.image} alt={card.photographer ? `Explore idea by ${card.photographer}` : `Explore idea ${index + 1}`} className="size-full object-cover" />
                 {card.badge ? <span className="absolute right-2 top-2 rounded-lg bg-black/25 px-[10px] py-1 text-[12px] font-bold leading-[1.5] text-white backdrop-blur-[8px]">{card.badge}</span> : null}
                 {card.type === 'video' ? (
                   <span className="absolute right-2 top-2 grid size-[28px] place-items-center rounded-full bg-black/25 text-white backdrop-blur-[8px]">
                     <CaretRight size={16} weight="fill" />
                   </span>
+                ) : null}
+                {card.sourceLabel === 'Unsplash' ? (
+                  <a
+                    href={card.photographerUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="absolute bottom-2 left-2 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold leading-none text-white backdrop-blur-[8px]"
+                  >
+                    {card.photographer}
+                  </a>
                 ) : null}
                 <button type="button" aria-label="Save idea" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white">
                   <BookmarkSimple size={16} />

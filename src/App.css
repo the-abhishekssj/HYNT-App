@@ -186,6 +186,12 @@
 }
 
 .hynt-pro-topdock {
+  background: rgba(255, 255, 255, 0.96);
+  position: sticky;
+  top: 0;
+  z-index: 34;
+  backdrop-filter: blur(14px);
+  width: 100%;
   transition: box-shadow 180ms ease;
 }
 
@@ -262,6 +268,7 @@
     justify-content: center;
     padding-top: 1.5rem;
     min-height: calc(100dvh - 3rem);
+    overflow: visible;
   }
 
   .hynt-home-shell__main > * {
@@ -309,14 +316,14 @@
   }
 
   .hynt-pro-summary--dense {
-    padding-top: 0.5rem;
-    padding-bottom: 0.75rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.5rem;
   }
 
   .hynt-pro-summary--dense .hynt-pro-summary-card {
-    height: 56px;
-    border-radius: 18px;
-    transform: scale(0.92);
+    height: 50px;
+    border-radius: 16px;
+    transform: scale(0.88);
     transform-origin: top center;
   }
 
@@ -342,5 +349,9 @@
 
   .hynt-home-shell .hynt-desktop-page {
     animation: bubbleIn 220ms ease-out both;
+  }
+
+  .hynt-pro-home-canvas {
+    overflow: visible;
   }
 }
