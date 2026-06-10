@@ -33,6 +33,7 @@ import {
   Palette,
   Scroll,
   MoneyWavy,
+  NotePencil,
   ReadCvLogo,
   SlidersHorizontal,
   User,
@@ -42,6 +43,10 @@ import {
   XCircle,
 } from '@phosphor-icons/react'
 import './App.css'
+import FlowSelection from './features/flow/FlowSelection'
+import ProToolsHome from './features/pro/tools/ProToolsHome'
+import ProSowWorkspace from './features/sow/ProSowWorkspace'
+import HomeownerSowReview from './features/sow/HomeownerSowReview'
 
 const INR = '\u20b9'
 const EMPTY = '\u2014'
@@ -139,6 +144,25 @@ const proProjects = [
     spentL: 19.8,
     receivedL: 21.2,
     dueDate: '30 Sep 2026',
+    alerts: [
+      {
+        id: 'a-1',
+        label: 'New remark',
+        title: 'Aarav asked for an update on the kitchen scope',
+        detail: 'Client wants to confirm whether chimney provision is already included before approving the next step.',
+        time: '12m ago',
+        target: 'sow',
+        sowView: 'remarks',
+      },
+      {
+        id: 'a-2',
+        label: 'Payment',
+        title: 'Advance payment screenshot shared',
+        detail: 'Aarav uploaded a receipt for the latest transfer. Review and mark received if it matches.',
+        time: '1h ago',
+        target: 'finance',
+      },
+    ],
   },
   {
     id: 'p-2',
@@ -155,6 +179,16 @@ const proProjects = [
     spentL: 7.3,
     receivedL: 9.8,
     dueDate: '12 Nov 2026',
+    alerts: [
+      {
+        id: 'a-3',
+        label: 'Site update',
+        title: 'Nisha sent updated site measurements',
+        detail: 'Kitchen wall dimension was revised after plumbing check.',
+        time: '45m ago',
+        target: 'boq',
+      },
+    ],
   },
   {
     id: 'p-3',
@@ -171,6 +205,7 @@ const proProjects = [
     spentL: 15.6,
     receivedL: 12.3,
     dueDate: '05 Jan 2027',
+    alerts: [],
   },
   {
     id: 'p-4',
@@ -187,10 +222,21 @@ const proProjects = [
     spentL: 13.4,
     receivedL: 14,
     dueDate: '18 Aug 2026',
+    alerts: [
+      {
+        id: 'a-4',
+        label: 'Closed',
+        title: 'Final handover note acknowledged',
+        detail: 'Client marked the last completion note as received.',
+        time: 'Yesterday',
+        target: 'site-diary',
+      },
+    ],
   },
 ]
 
 const projectDetailTools = [
+  { label: 'SOW', icon: NotePencil },
   { label: 'Mood board', icon: ImagesSquare },
   { label: 'BOQ', icon: Scroll },
   { label: 'Tasks', icon: CheckSquareOffset },
@@ -518,40 +564,6 @@ function TaskStatusChip({ label, selected, onClick }) {
   )
 }
 
-function FlowSelection({ onSelectFlow }) {
-  return (
-    <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
-      <section className="mx-auto flex h-dvh w-full max-w-[480px] flex-col px-5 pb-8 pt-10">
-        <header className="mb-8">
-          <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-12 w-auto object-contain" />
-          <h1 className="mt-5 text-[30px] font-black leading-[1.12] tracking-[-0.03em]">Choose your flow</h1>
-          <p className="mt-2 text-[15px] font-medium leading-6 text-[#4a4a4a]">Pick how you want to continue in HYNT.</p>
-        </header>
-        <div className="grid gap-4">
-          <button
-            type="button"
-            onClick={() => onSelectFlow('homeowner')}
-            className="rounded-3xl border border-[#d6e5dd] bg-white p-5 text-left shadow-[0_12px_28px_rgba(22,35,29,0.08)]"
-          >
-            <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 1</p>
-            <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Homeowner</p>
-            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">navigate homeowner user flow</p>
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelectFlow('professional')}
-            className="rounded-3xl border border-[#d6e5dd] bg-white p-5 text-left shadow-[0_12px_28px_rgba(22,35,29,0.08)]"
-          >
-            <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 2</p>
-            <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Professional</p>
-            <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">preview professional user flow</p>
-          </button>
-        </div>
-      </section>
-    </main>
-  )
-}
-
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
@@ -584,6 +596,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
+  const [isProSowOpen, setIsProSowOpen] = useState(false)
+  const [proSowInitialView, setProSowInitialView] = useState('draft')
   const [taskActionTargetId, setTaskActionTargetId] = useState(null)
   const [taskStepCompletion, setTaskStepCompletion] = useState({})
   const [isDiaryComposerOpen, setIsDiaryComposerOpen] = useState(false)
@@ -642,6 +656,43 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (key === 'ai') return proHomeTab === 'ai'
     if (key === 'protools') return proHomeTab === 'protools'
     return proHomeTab === 'home' && key === 'home'
+  }
+  const openProjectAlert = (alert) => {
+    setSelectedProjectPage('overview')
+    if (alert.target === 'sow') {
+      setProSowInitialView(alert.sowView || 'draft')
+      setIsProSowOpen(true)
+      return
+    }
+    if (alert.target === 'boq' || alert.target === 'tasks' || alert.target === 'finance' || alert.target === 'site-diary' || alert.target === 'team') {
+      setSelectedProjectPage(alert.target)
+    }
+  }
+  const openProjectTool = (toolLabel) => {
+    if (toolLabel === 'SOW') {
+      setProSowInitialView('draft')
+      setIsProSowOpen(true)
+      return
+    }
+    if (toolLabel === 'BOQ') {
+      setSelectedProjectPage('boq')
+      return
+    }
+    if (toolLabel === 'Tasks') {
+      setSelectedProjectPage('tasks')
+      return
+    }
+    if (toolLabel === 'Finance') {
+      setSelectedProjectPage('finance')
+      return
+    }
+    if (toolLabel === 'Site diary') {
+      setSelectedProjectPage('site-diary')
+      return
+    }
+    if (toolLabel === 'Team') {
+      setSelectedProjectPage('team')
+    }
   }
   useEffect(() => {
     const updateDenseState = () => {
@@ -707,6 +758,55 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   )
 
   if (isProjectsViewOpen) {
+    if (isProSowOpen && selectedProject) {
+      return <ProSowWorkspace project={selectedProject} onBack={() => setIsProSowOpen(false)} entry="existing" initialView={proSowInitialView} />
+    }
+    if (selectedProject && selectedProjectPage === 'updates') {
+      return (
+        <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+          <section className="mx-auto w-full max-w-[390px] pb-[110px] pt-[56px]">
+            <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
+              <div className="px-4 py-3">
+                <div className="flex items-center justify-between py-1">
+                  <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
+                    <span className="grid size-6 place-items-center rounded">
+                      <CaretLeft size={24} />
+                    </span>
+                    <span className="text-left">
+                      <span className="block text-[16px] font-bold leading-6 text-black">All updates</span>
+                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                    </span>
+                  </button>
+                  <span className="rounded-full border border-[#e1e1e1] bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
+                    {selectedProject.alerts.length}
+                  </span>
+                </div>
+              </div>
+            </header>
+
+            <div className="px-4 py-5">
+              <div className="space-y-2">
+                {selectedProject.alerts.length ? selectedProject.alerts.map((alert) => (
+                  <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="flex w-full items-start justify-between gap-3 rounded-[22px] border border-[#e1e1e1] bg-white px-4 py-3 text-left">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-[#f5f5f5] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">{alert.label}</span>
+                      </div>
+                      <p className="mt-2 text-[13px] font-semibold leading-5 text-black">{alert.title}</p>
+                    </div>
+                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
+                  </button>
+                )) : (
+                  <article className="rounded-2xl border border-[#e1e1e1] bg-white p-3">
+                    <p className="text-[13px] font-bold leading-5 text-black">No updates yet</p>
+                  </article>
+                )}
+              </div>
+            </div>
+          </section>
+        </main>
+      )
+    }
     if (!selectedProject && isCreateProjectOpen) {
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
@@ -1765,81 +1865,153 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to projects</span>
                     </span>
                   </button>
-                  <span className="grid size-10 place-items-center opacity-0">
-                    <ChatsCircle size={24} />
-                  </span>
+                  <button type="button" onClick={() => setSelectedProjectPage('updates')} className="relative flex min-h-10 min-w-[64px] items-center justify-center gap-1.5 rounded-full border border-[#e1e1e1] bg-white px-3">
+                    <Bell size={16} />
+                    <span className="text-[11px] font-bold leading-none">{selectedProject.alerts.length}</span>
+                    {selectedProject.alerts.length ? <span className="absolute right-2.5 top-2 size-1.5 rounded-full bg-[#26c485]" /> : null}
+                  </button>
                 </div>
               </div>
             </header>
 
-            <div className="px-4 py-5">
-              <section className="py-5">
-                <div className="flex items-start gap-3">
-                  <img src={selectedProject.avatar} alt={selectedProject.client} className="size-14 rounded-xl object-cover" />
-                  <div className="min-w-0">
-                    <p className="text-[16px] font-extrabold leading-6">{selectedProject.client}</p>
-                    <p className="mt-0.5 truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.phone}</p>
-                    <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.email}</p>
-                    <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#444]">{selectedProject.location}</p>
+            <div className="px-4 py-6">
+              <section className="space-y-6 pb-6">
+                <article className="rounded-[28px] border border-[#e1e1e1] bg-white px-4 py-4">
+                  <div className="flex items-start gap-3">
+                    <img src={selectedProject.avatar} alt={selectedProject.client} className="size-14 rounded-2xl object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <div className="min-w-0">
+                        <p className="truncate text-[18px] font-extrabold leading-6 text-black">{selectedProject.client}</p>
+                        <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#4c4c4c]">{selectedProject.location}</p>
+                      </div>
+                      <p className="mt-2 truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.phone}</p>
+                      <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.email}</p>
+                    </div>
                   </div>
-                </div>
-              </section>
 
-              <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
-
-              <section className="py-5">
-                <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
-                  <span>Overall progress</span>
-                  <span>{selectedProject.progress}%</span>
-                </div>
-                <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
-                  <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${selectedProject.progress}%` }} />
-                </div>
-
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
-                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Progress</p>
+                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-black">{selectedProject.progress}%</p>
+                    </div>
+                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Budget</p>
+                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-black">{renderInrValue(formatLakhs(selectedProject.budgetL))}</p>
+                    </div>
+                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Due</p>
+                      <p className="mt-1 text-[13px] font-extrabold leading-5 text-black">{selectedProject.dueDate}</p>
+                    </div>
                   </div>
-                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
-                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
-                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
-                  </div>
-                  <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2 text-center">
-                    <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
-                    <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
-                  </div>
-                </div>
-              </section>
+                </article>
 
-              <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
-
-              <section className="py-5">
-                <h2 className="pb-4 text-[16px] font-extrabold leading-[1.5]">Quick actions</h2>
-                <div className="grid grid-cols-4 gap-2">
-                  {projectDetailTools.map((tool) => {
+                <section>
+                  <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-[16px] font-extrabold leading-6 text-black">Quick actions</h2>
+                    <span className="rounded-full border border-[#e5e5e5] bg-[#fbfbfb] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
+                      {projectDetailTools.length} tools
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                  {projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool, index) => {
                     const Icon = tool.icon
+                    const pillLabel = tool.label === 'SOW' ? 'Open SOW' : tool.label
+
                     return (
                       <button
                         key={tool.label}
                         type="button"
-                        onClick={() => {
-                          if (tool.label === 'BOQ') setSelectedProjectPage('boq')
-                          if (tool.label === 'Tasks') setSelectedProjectPage('tasks')
-                          if (tool.label === 'Finance') setSelectedProjectPage('finance')
-                          if (tool.label === 'Site diary') setSelectedProjectPage('site-diary')
-                          if (tool.label === 'Team') setSelectedProjectPage('team')
-                        }}
-                        className="rounded-xl border border-[#e1e1e1] bg-white p-2 text-center"
+                        onClick={() => openProjectTool(tool.label)}
+                        className={`flex min-h-[72px] flex-col items-start justify-center rounded-[20px] border px-4 py-4 text-left ${
+                          index === 0 ? 'border-black bg-black text-white' : 'border-[#e1e1e1] bg-white text-black'
+                        }`}
                       >
-                        <div className="mx-auto grid size-6 place-items-center">
-                          <Icon size={16} weight="regular" />
-                        </div>
-                        <p className="mt-1 text-[11px] font-semibold leading-[14px] text-[#222]">{tool.label}</p>
+                        <span className={`grid size-8 place-items-center rounded-full ${
+                          index === 0 ? 'bg-white/12' : 'bg-[#f6f6f6]'
+                        }`}>
+                          <Icon size={16} weight={index === 0 ? 'fill' : 'regular'} />
+                        </span>
+                        <span className="mt-3 text-[12px] font-bold leading-[16px]">{pillLabel}</span>
                       </button>
                     )
                   })}
-                </div>
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                  {projectDetailTools.filter((tool) => !['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool) => {
+                    const Icon = tool.icon
+
+                    return (
+                      <button
+                        key={tool.label}
+                        type="button"
+                        onClick={() => openProjectTool(tool.label)}
+                        className="flex w-full items-center justify-between gap-4 rounded-[20px] border border-[#e1e1e1] bg-white px-4 py-4 text-left"
+                      >
+                        <div className="flex min-w-0 items-center gap-4">
+                          <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#f6f6f6]">
+                            <Icon size={17} weight="regular" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-[13px] font-bold leading-[18px] text-black">{tool.label}</p>
+                          </div>
+                        </div>
+                        <ArrowRight size={16} className="shrink-0 text-[#9a9a9a]" />
+                      </button>
+                    )
+                  })}
+                  </div>
+                </section>
+
+                <section id="project-updates">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h2 className="text-[16px] font-extrabold leading-6 text-black">Latest updates</h2>
+                    <button type="button" onClick={() => setSelectedProjectPage('updates')} className="inline-flex items-center gap-1 text-[12px] font-medium leading-[18px] text-[#7a7a7a]">
+                      <span>View all</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                  <div className="rounded-[24px] border border-[#e1e1e1] bg-white px-4 py-3">
+                    {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 3).map((alert) => (
+                      <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[#ececec] py-3 text-left last:border-b-0">
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">{alert.label}</p>
+                          <div className="mt-1 flex items-start justify-between gap-3">
+                            <p className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-5 text-black">{alert.title}</p>
+                            <span className="shrink-0 pt-[2px] text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
+                          </div>
+                        </div>
+                      </button>
+                    )) : (
+                      <p className="py-3 text-[12px] font-medium leading-[18px] text-[#6f6f6f]">No new project updates.</p>
+                    )}
+                  </div>
+                </section>
+
+                <section className="rounded-[28px] border border-[#e1e1e1] bg-white p-4">
+                  <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
+                    <span>Overall progress</span>
+                    <span>{selectedProject.progress}%</span>
+                  </div>
+                  <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
+                    <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${selectedProject.progress}%` }} />
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                    </div>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                    </div>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
+                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
+                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
+                    </div>
+                  </div>
+                </section>
               </section>
             </div>
           </section>
@@ -1996,23 +2168,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         {proHomeTab === 'protools' ? (
           <>
             <div className="h-[6px] w-full bg-[#e0e0e0]" />
-            <section className="px-4 py-5">
-              <h2 className="pb-5 text-[16px] font-extrabold leading-[1.5]">Your tools</h2>
-              <div className="grid grid-cols-2 gap-2">
-                {proTools.map((tool) => {
-                  const Icon = tool.icon
-                  return (
-                    <article key={tool.title} className="rounded-2xl border border-[#d2d2d2] p-3">
-                      <Icon size={16} weight="fill" />
-                      <div className="mt-3 flex flex-col gap-0.5">
-                        <p className="font-['Urbanist'] text-[14px] font-semibold leading-[21px] text-[#121815]">{tool.title}</p>
-                        <p className={`font-['Urbanist'] text-[12px] font-medium leading-[18px] ${tool.subtitle.includes('AI') || tool.subtitle.includes('Auto') ? 'text-[#26c485]' : 'text-[#888888]'}`}>{tool.subtitle}</p>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
+            <ProToolsHome tools={proTools} />
           </>
         ) : null}
 
@@ -2201,7 +2357,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       </section>
 
       <nav className="hynt-home-shell__nav fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
-        {proSidebarItems.map(([key, label, Icon, kind], index) => (
+        {proSidebarItems.map(([key, label, Icon, kind]) => (
           <button
             key={key}
             type="button"
@@ -2239,6 +2395,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isBriefCollapsed, setIsBriefCollapsed] = useState(false)
   const [isFlowSwitcherOpen, setIsFlowSwitcherOpen] = useState(false)
+  const [isHomeownerSowOpen, setIsHomeownerSowOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [intent, setIntent] = useState(initialIntent)
   const [activeModal, setActiveModal] = useState(null)
@@ -2451,7 +2608,6 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
   useEffect(() => {
     if (!UNSPLASH_ACCESS_KEY) {
-      setExploreIdeaFeed(fallbackDesktopExploreIdeaCards)
       return
     }
 
@@ -3188,11 +3344,27 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
             ))}
           </div>
         </section>
+
+        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Client-side preview</p>
+              <h2 className="mt-2 text-[22px] font-black tracking-[-0.03em] text-[#102418]">Scope of Work review</h2>
+              <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Use the homeowner profile to inspect the client review, remarks, revised approval, OTP, and executed SOW states.</p>
+            </div>
+            <button type="button" onClick={() => setIsHomeownerSowOpen(true)} className="shrink-0 rounded-full bg-[#173324] px-5 py-3 text-[14px] font-bold text-white shadow-sm">
+              Open SOW
+            </button>
+          </div>
+        </section>
       </div>
     </section>
   )
 
-  const renderHome = () => (
+  const renderHome = () => {
+    if (isHomeownerSowOpen) return <HomeownerSowReview onBack={() => setIsHomeownerSowOpen(false)} />
+
+    return (
     <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
       <div className="hynt-home-shell__layout">
         {renderHomeNav()}
@@ -3426,6 +3598,8 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       </div>
     </main>
   )
+  }
+
   if (!isChatOpen) return renderHome()
 
   return (
@@ -3573,7 +3747,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
         </section>
       </div>
     </main>
-  )
+    )
 }
 
 function App() {
