@@ -102,6 +102,66 @@
   animation: thinkingBreathe 1.4s ease-in-out infinite;
 }
 
+@keyframes hyntQuickInfoValueIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hyntToolPreviewFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(var(--preview-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-4px) rotate(var(--preview-rotate, 0deg));
+  }
+}
+
+@keyframes hyntSiteDiaryPreview {
+  0%, 42% {
+    transform: translateY(0);
+  }
+  50%, 92% {
+    transform: translateY(-48px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.hynt-quick-info-value {
+  animation: hyntQuickInfoValueIn 260ms ease-out both;
+}
+
+.hynt-tool-preview-image {
+  width: 40px;
+  height: 40px;
+  margin-right: -24px;
+  border: 2px solid #ebebeb;
+  border-radius: 16px;
+  object-fit: cover;
+  animation: hyntToolPreviewFloat 2200ms ease-in-out infinite;
+}
+
+.hynt-tool-preview-image--tilt-left {
+  --preview-rotate: -8deg;
+  animation-delay: 160ms;
+}
+
+.hynt-tool-preview-image--tilt-right {
+  --preview-rotate: 12deg;
+  animation-delay: 320ms;
+}
+
+.hynt-site-diary-preview > div {
+  animation: hyntSiteDiaryPreview 3600ms ease-in-out infinite;
+}
+
 .hynt-home-shell__sidebar {
   display: none;
 }

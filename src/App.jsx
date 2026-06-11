@@ -587,6 +587,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
+  const [projectQuickInfoTab, setProjectQuickInfoTab] = useState('progress')
+  const [projectTodayMs] = useState(() => Date.now())
   const [boqItems, setBoqItems] = useState(initialBoqItems)
   const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
   const [projectInvoices, setProjectInvoices] = useState(initialProjectInvoices)
@@ -922,6 +924,43 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       const totalEstimate = boqItems.reduce((acc, row) => acc + rowAmount(row), 0)
       const projectInvoicesList = projectInvoices.filter((invoice) => invoice.projectId === selectedProject.id)
       const selectedInvoice = projectInvoicesList.find((invoice) => invoice.id === selectedInvoiceId) || null
+      const dueTimestamp = Date.parse(selectedProject.dueDate)
+      const daysLeft = Number.isNaN(dueTimestamp)
+        ? null
+        : Math.max(0, Math.ceil((dueTimestamp - projectTodayMs) / 86400000))
+      const projectQuickInfoItems = [
+        {
+          key: 'progress',
+          label: 'Progress',
+          color: '#28805d',
+          tint: 'rgba(40,128,93,0.16)',
+          border: '#28805d',
+          value: `${selectedProject.progress}%`,
+          progress: selectedProject.progress,
+        },
+        {
+          key: 'budget',
+          label: 'Budget',
+          color: '#74829e',
+          tint: 'rgba(116,130,158,0.14)',
+          border: 'rgba(116,130,158,0.44)',
+          value: `${selectedProject.spentL.toFixed(1)} / ${selectedProject.budgetL.toFixed(0)}L`,
+          progress: Math.min(100, Math.round((selectedProject.spentL / selectedProject.budgetL) * 100)),
+        },
+        {
+          key: 'due',
+          label: 'Due',
+          color: '#bf935a',
+          tint: 'rgba(191,147,90,0.16)',
+          border: 'rgba(191,147,90,0.48)',
+          value: daysLeft === null ? selectedProject.dueDate : `${daysLeft} days left`,
+          progress: daysLeft === null ? 50 : Math.max(6, Math.min(100, 100 - Math.round((daysLeft / 120) * 100))),
+        },
+      ]
+      const selectedQuickInfo = projectQuickInfoItems.find((item) => item.key === projectQuickInfoTab) || projectQuickInfoItems[0]
+      const dailyActionTools = projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label))
+      const primaryToolCards = projectDetailTools.filter((tool) => ['Mood board', 'BOQ', 'Site diary'].includes(tool.label))
+      const manageProjectTools = projectDetailTools.filter((tool) => ['Contract', 'Team'].includes(tool.label))
 
       const shareBoq = async () => {
         const shareText = boqItems
@@ -1612,160 +1651,202 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <CaretLeft size={24} />
                     </span>
                     <span className="text-left">
-                      <span className="block text-[16px] font-bold leading-6 text-black">{selectedProject.scope}</span>
+                      <span className="block text-[16px] font-bold leading-6 text-black">Project details</span>
                       <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to projects</span>
                     </span>
                   </button>
-                  <button type="button" onClick={() => setSelectedProjectPage('updates')} className="relative flex min-h-10 min-w-[64px] items-center justify-center gap-2 rounded-full border border-[#e1e1e1] bg-white px-3">
-                    <Bell size={16} />
-                    <span className="text-[12px] font-bold leading-none">{selectedProject.alerts.length}</span>
-                    {selectedProject.alerts.length ? <span className="absolute right-2.5 top-2 size-1.5 rounded-full bg-[#26c485]" /> : null}
+                  <button type="button" className="grid size-10 place-items-center" aria-label="Search project">
+                    <MagnifyingGlass size={24} />
                   </button>
                 </div>
               </div>
             </header>
 
-            <div className="px-4 py-6">
-              <section className="space-y-8 pb-8">
-                <section className="-mx-4 px-4 py-2">
-                  <div className="min-w-0">
-                    <div className="min-w-0">
-                      <span className="inline-flex rounded-full bg-[#e1f4e7] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#267449]">
-                        {selectedProject.status}
-                      </span>
-                      <p className="mt-4 text-[24px] font-black leading-7 tracking-[-0.03em] text-[#102418]">{selectedProject.scope}</p>
-                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] font-semibold leading-5 text-[#4f6257]">
-                        <span>{selectedProject.client}</span>
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#9ec6b0]" />
-                        <span>{selectedProject.location}</span>
-                      </div>
-                      <p className="mt-4 text-[12px] font-medium leading-[18px] text-[#66776d]">{selectedProject.phone}</p>
-                      <p className="mt-1 truncate text-[12px] font-medium leading-[18px] text-[#66776d]">{selectedProject.email}</p>
-                    </div>
-                  </div>
+            <div className="pb-20">
+              <section className="px-4 py-5">
+                <div className="flex flex-col gap-2">
+                  <span className="inline-flex h-[26px] w-fit items-center rounded-xl bg-black px-2 py-1 text-[12px] font-semibold leading-[18px] text-[#26c485]">
+                    {selectedProject.status}
+                  </span>
+                  <h1 className="text-[24px] font-bold leading-[36px] text-black">{selectedProject.scope}</h1>
+                </div>
 
-                  <div className="mt-8 grid grid-cols-3 gap-3">
-                    <div className="rounded-2xl border border-[#dceade] bg-[#f4fbf7] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#73907f]">Progress</p>
-                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-[#102418]">{selectedProject.progress}%</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#dce7f3] bg-[#f4f8ff] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#7183a1]">Budget</p>
-                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-[#102418]">{renderInrValue(formatLakhs(selectedProject.budgetL))}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#efe2c8] bg-[#fff9ef] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#9f8350]">Due</p>
-                      <p className="mt-1 text-[14px] font-extrabold leading-5 text-[#102418]">{selectedProject.dueDate}</p>
-                    </div>
-                  </div>
-                </section>
-
-                <section>
-                  <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-[16px] font-extrabold leading-6 text-black">Quick actions</h2>
-                    <span className="rounded-full border border-[#d8e6dd] bg-[#f4fbf7] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#597465]">
-                      {projectDetailTools.length} tools
+                <div className="mt-4 flex flex-col gap-3">
+                  <div className="flex items-center gap-1 text-[14px] font-bold leading-[21px] text-black">
+                    <span>{selectedProject.client}</span>
+                    <span className="grid size-4 place-items-center">
+                      <span className="size-1 rounded-full bg-[#26c485]" />
                     </span>
+                    <span>{selectedProject.location}</span>
                   </div>
-                  <div className="grid grid-cols-3 overflow-hidden rounded-[24px] border border-[#e1e1e1] bg-white">
-                  {projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool, index) => {
+                  <div className="flex flex-col gap-1 text-[12px] font-bold leading-[18px] text-[#525252]">
+                    <span>{selectedProject.phone}</span>
+                    <span className="truncate">{selectedProject.email}</span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="border-b border-[#e0e0e0] px-4 py-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-start gap-2">
+                    {projectQuickInfoItems.map((item) => {
+                      const selected = item.key === selectedQuickInfo.key
+                      return (
+                        <button
+                          key={item.key}
+                          type="button"
+                          onClick={() => setProjectQuickInfoTab(item.key)}
+                          className={`flex h-8 items-center justify-center rounded-full text-[14px] leading-[21px] transition-all duration-300 ${
+                            selected ? 'gap-2 border px-3 font-bold' : 'px-2 font-semibold'
+                          }`}
+                          style={{
+                            color: item.color,
+                            backgroundColor: selected ? item.tint : 'transparent',
+                            borderColor: selected ? item.border : 'transparent',
+                          }}
+                        >
+                          {selected ? <span className="size-1.5 rounded-full" style={{ backgroundColor: item.color }} /> : null}
+                          <span>{item.label}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <div key={selectedQuickInfo.key} className="h-6 overflow-hidden text-right">
+                    <p className="hynt-quick-info-value text-[16px] font-bold leading-6 text-black">{selectedQuickInfo.value}</p>
+                  </div>
+                </div>
+                <div className="mt-4 h-4 w-full overflow-hidden rounded-lg bg-[rgba(198,198,198,0.32)]">
+                  <div
+                    className="h-full rounded-lg transition-[width,background-color] duration-500 ease-out"
+                    style={{ width: `${selectedQuickInfo.progress}%`, backgroundColor: selectedQuickInfo.color }}
+                  />
+                </div>
+              </section>
+
+              <section className="border-b border-[#e0e0e0] px-4 py-6">
+                <h2 className="text-[16px] font-bold leading-6 text-black">Daily actions</h2>
+                <div className="mt-3 flex items-start justify-between gap-2 overflow-hidden rounded-[24px]">
+                  {dailyActionTools.map((tool) => {
                     const Icon = tool.icon
-                    const pillLabel = tool.label === 'SOW' ? 'Open SOW' : tool.label
+                    const label = tool.label === 'SOW' ? 'SOW' : tool.label
 
                     return (
                       <button
                         key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className={`flex min-h-[88px] flex-1 flex-col items-start justify-center px-4 py-4 text-left ${
-                          index === 0 ? 'bg-black text-white' : 'bg-white text-black'
-                        } ${index < 2 ? 'border-r border-[#e1e1e1]' : ''} ${
-                          index === 0 ? 'border-r-white/10' : ''
-                        }`}
+                        className="flex min-w-0 items-center gap-2 py-2 text-left"
                       >
-                        <span className={`grid size-8 place-items-center rounded-full ${
-                          index === 0 ? 'bg-white/12' : 'bg-[#f6f6f6]'
-                        }`}>
-                          <Icon size={16} weight={index === 0 ? 'fill' : 'regular'} />
+                        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[rgba(217,217,217,0.24)]">
+                          <Icon size={20} weight="regular" />
                         </span>
-                        <span className="mt-3 text-[12px] font-bold leading-[16px]">{pillLabel}</span>
+                        <span className="truncate text-[14px] font-semibold leading-[21px] text-black">{label}</span>
                       </button>
                     )
                   })}
-                  </div>
+                </div>
+              </section>
 
-                  <div className="mt-6 grid grid-cols-3 gap-3">
-                  {projectDetailTools.filter((tool) => !['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool) => {
+              <section className="border-b border-[#e0e0e0] px-4 py-6">
+                <h2 className="text-[16px] font-bold leading-6 text-black">Tools</h2>
+                <div className="mt-3 flex gap-2 overflow-hidden">
+                  {primaryToolCards.map((tool) => {
                     const Icon = tool.icon
+                    const isMoodboard = tool.label === 'Mood board'
+                    const isBoq = tool.label === 'BOQ'
+                    const isSiteDiary = tool.label === 'Site diary'
 
                     return (
                       <button
                         key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className="flex min-h-[108px] w-full flex-col items-start justify-between rounded-[20px] border border-[#e7e7e7] bg-[#fcfcfc] px-4 py-4 text-left"
+                        className="flex min-h-[132px] min-w-0 flex-1 flex-col justify-between rounded-[20px] border border-[rgba(95,193,138,0.24)] p-3 text-left"
                       >
-                        <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-white">
-                          <Icon size={17} weight="regular" />
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center justify-between">
+                            <span className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#5fc18a] text-white">
+                              <Icon size={24} weight="regular" />
+                            </span>
+                            <CaretRight size={16} className="text-[#8fa098]" />
+                          </div>
+                          <p className="truncate text-[14px] font-semibold leading-[21px] text-black">{isMoodboard ? 'Moodboard' : isSiteDiary ? 'Site Diary' : tool.label}</p>
                         </div>
-                        <div className="min-w-0">
-                          <p className="line-clamp-2 text-[14px] font-bold leading-[18px] text-black">{tool.label}</p>
-                        </div>
+
+                        {isMoodboard ? (
+                          <div className="hynt-tool-preview-stack mt-2 flex h-12 items-center">
+                            <img src="/hynt-home/idea-1.png" alt="" className="hynt-tool-preview-image z-[3]" />
+                            <img src="/hynt-home/idea-2.png" alt="" className="hynt-tool-preview-image hynt-tool-preview-image--tilt-left z-[2]" />
+                            <img src="/hynt-home/product.png" alt="" className="hynt-tool-preview-image hynt-tool-preview-image--tilt-right z-[1]" />
+                          </div>
+                        ) : null}
+
+                        {isBoq ? (
+                          <div className="mt-2 flex h-12 items-center gap-2 py-2">
+                            <span className="grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-[#fc5f5f] px-1 text-[12px] font-medium leading-[18px] text-white">2</span>
+                            <span className="text-[12px] font-medium leading-[18px] text-black">Pending</span>
+                          </div>
+                        ) : null}
+
+                        {isSiteDiary ? (
+                          <div className="hynt-site-diary-preview mt-2 h-12 overflow-hidden">
+                            <div className="flex h-12 flex-col gap-1 py-1">
+                              <img src="/hynt-home/idea-2.png" alt="" className="size-10 rounded-2xl border-2 border-[#ebebeb] object-cover" />
+                              <p className="w-[90px] text-[10px] font-bold leading-[15px] text-[#b9b9b9]">Kitchen ceiling update...</p>
+                            </div>
+                            <div className="flex h-12 flex-col gap-1 py-1">
+                              <img src="/hynt-home/idea-1.png" alt="" className="size-10 rounded-2xl border-2 border-[#ebebeb] object-cover" />
+                              <p className="w-[90px] text-[10px] font-bold leading-[15px] text-[#b9b9b9]">Living room wall...</p>
+                            </div>
+                          </div>
+                        ) : null}
                       </button>
                     )
                   })}
-                  </div>
-                </section>
+                </div>
+              </section>
 
-                <section id="project-updates">
-                  <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-[16px] font-extrabold leading-6 text-black">Latest updates</h2>
-                    <button type="button" onClick={() => setSelectedProjectPage('updates')} className="inline-flex items-center gap-1 text-[12px] font-medium leading-[18px] text-[#7a7a7a]">
-                      <span>View all</span>
-                      <ArrowRight size={14} />
-                    </button>
-                  </div>
-                  <div>
-                    {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 3).map((alert) => (
-                      <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[#ececec] py-4 text-left last:border-b-0">
-                        <div className="min-w-0">
-                          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">{alert.label}</p>
-                          <div className="mt-1 flex items-start justify-between gap-3">
-                            <p className="min-w-0 flex-1 truncate text-[14px] font-semibold leading-5 text-black">{alert.title}</p>
-                            <span className="shrink-0 pt-[2px] text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
-                          </div>
+              <section id="project-updates" className="border-b border-[#e0e0e0] px-4 py-6">
+                <h2 className="text-[16px] font-bold leading-6 text-black">Updates</h2>
+                <div className="mt-3 flex flex-col overflow-hidden">
+                  {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 2).map((alert, index) => (
+                    <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[rgba(0,0,0,0.24)] p-2 text-left last:border-b-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <p className="text-[14px] font-semibold leading-[21px] text-black">{index === 0 ? 'Kitchen' : 'Living Room'}</p>
+                          {index === 0 ? <span className="size-1 rounded-full bg-[#26c485]" /> : null}
                         </div>
+                        <DotsThreeVertical size={16} className="text-[#8a8a8a]" />
+                      </div>
+                      <div className="mt-1 flex items-center gap-4">
+                        <p className="min-w-0 flex-1 truncate text-[14px] font-medium leading-[21px] text-[#525252]">{alert.detail || alert.title}</p>
+                        <span className="shrink-0 text-[12px] font-medium leading-[18px] text-[#828282]">{alert.time}</span>
+                      </div>
+                    </button>
+                  )) : (
+                    <p className="p-2 text-[14px] font-medium leading-[21px] text-[#525252]">No new project updates.</p>
+                  )}
+                </div>
+              </section>
+
+              <section className="border-b border-[#e0e0e0] px-4 py-6">
+                <h2 className="text-[16px] font-bold leading-6 text-black">Manage project</h2>
+                <div className="mt-3 flex gap-2">
+                  {manageProjectTools.map((tool) => {
+                    const Icon = tool.icon
+                    return (
+                      <button
+                        key={tool.label}
+                        type="button"
+                        onClick={() => openProjectTool(tool.label)}
+                        className="flex h-14 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d9d9d9] bg-[rgba(217,217,217,0.24)] px-4 text-[14px] font-semibold leading-[21px] text-black"
+                      >
+                        <Icon size={24} weight="regular" />
+                        <span>{tool.label}</span>
                       </button>
-                    )) : (
-                      <p className="py-3 text-[12px] font-medium leading-[18px] text-[#6f6f6f]">No new project updates.</p>
-                    )}
-                  </div>
-                </section>
-
-                <section className="rounded-[28px] border border-[#e1e1e1] bg-white p-4">
-                  <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
-                    <span>Overall progress</span>
-                    <span>{selectedProject.progress}%</span>
-                  </div>
-                  <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
-                    <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${selectedProject.progress}%` }} />
-                  </div>
-
-                  <div className="mt-6 grid grid-cols-3 gap-3">
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
-                    </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
-                    </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
-                    </div>
-                  </div>
-                </section>
+                    )
+                  })}
+                </div>
               </section>
             </div>
           </section>
