@@ -15,7 +15,6 @@ import {
   Check,
   CheckCircle,
   CheckSquareOffset,
-  Circle,
   CurrencyInr,
   HandDeposit,
   Handshake,
@@ -47,6 +46,7 @@ import FlowSelection from './features/flow/FlowSelection'
 import ProToolsHome from './features/pro/tools/ProToolsHome'
 import ProSowWorkspace from './features/sow/ProSowWorkspace'
 import HomeownerSowReview from './features/sow/HomeownerSowReview'
+import ProjectTasksWorkspace from './features/tasks/ProjectTasksWorkspace'
 
 const INR = '\u20b9'
 const EMPTY = '\u2014'
@@ -593,12 +593,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [projectDiaryEntries, setProjectDiaryEntries] = useState(initialProjectDiaryEntries)
   const [projectTeamMembers, setProjectTeamMembers] = useState(initialProjectTeamMembers)
   const [firmMembers] = useState(initialFirmMembers)
-  const [taskFilter, setTaskFilter] = useState('All')
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null)
   const [isProSowOpen, setIsProSowOpen] = useState(false)
   const [proSowInitialView, setProSowInitialView] = useState('draft')
-  const [taskActionTargetId, setTaskActionTargetId] = useState(null)
   const [taskStepCompletion, setTaskStepCompletion] = useState({})
   const [isDiaryComposerOpen, setIsDiaryComposerOpen] = useState(false)
   const [diaryDraftNote, setDiaryDraftNote] = useState('')
@@ -609,7 +607,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [selectedFirmMemberId, setSelectedFirmMemberId] = useState(null)
   const [selectedFirmMemberIds, setSelectedFirmMemberIds] = useState([])
   const [selectedMemberProjectIds, setSelectedMemberProjectIds] = useState([])
-  const renderInrValue = (value, className = 'text-[13px] font-extrabold leading-[19px]', iconSize = 17) => (
+  const renderInrValue = (value, className = 'text-[14px] font-extrabold leading-[19px]', iconSize = 17) => (
     <span className={`inline-flex items-center gap-0.5 ${className}`}>
       <CurrencyInr size={iconSize} weight="bold" />
       {value}
@@ -764,7 +762,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (selectedProject && selectedProjectPage === 'updates') {
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-          <section className="mx-auto w-full max-w-[390px] pb-[110px] pt-[56px]">
+          <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
             <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
               <div className="px-4 py-3">
                 <div className="flex items-center justify-between py-1">
@@ -777,14 +775,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
                     </span>
                   </button>
-                  <span className="rounded-full border border-[#e1e1e1] bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
+                  <span className="rounded-full border border-[#e1e1e1] bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
                     {selectedProject.alerts.length}
                   </span>
                 </div>
               </div>
             </header>
 
-            <div className="px-4 py-5">
+            <div className="px-4 py-6">
               <div className="space-y-2">
                 {selectedProject.alerts.length ? selectedProject.alerts.map((alert) => (
                   <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="flex w-full items-start justify-between gap-3 rounded-[22px] border border-[#e1e1e1] bg-white px-4 py-3 text-left">
@@ -792,13 +790,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <div className="flex items-center gap-2">
                         <span className="rounded-full bg-[#f5f5f5] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">{alert.label}</span>
                       </div>
-                      <p className="mt-2 text-[13px] font-semibold leading-5 text-black">{alert.title}</p>
+                      <p className="mt-2 text-[14px] font-semibold leading-5 text-black">{alert.title}</p>
                     </div>
                     <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
                   </button>
                 )) : (
                   <article className="rounded-2xl border border-[#e1e1e1] bg-white p-3">
-                    <p className="text-[13px] font-bold leading-5 text-black">No updates yet</p>
+                    <p className="text-[14px] font-bold leading-5 text-black">No updates yet</p>
                   </article>
                 )}
               </div>
@@ -810,7 +808,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (!selectedProject && isCreateProjectOpen) {
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-          <section className="mx-auto w-full max-w-[390px] pb-[110px] pt-[56px]">
+          <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
             <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#ececec] bg-white/95 backdrop-blur">
               <div className="px-4 py-3">
                 <div className="flex items-center justify-between py-1">
@@ -827,7 +825,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </header>
 
-            <div className="px-4 py-5">
+            <div className="px-4 py-6">
               <div className="space-y-3">
                 {[
                   ['client', 'Client name', 'text', 'Aarav Mehta'],
@@ -839,22 +837,22 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   ['dueDate', 'Due date', 'date', ''],
                 ].map(([key, label, type, placeholder]) => (
                   <label key={key} className="block">
-                    <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{label}</p>
+                    <p className="mb-1 text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{label}</p>
                     <input
                       type={type}
                       value={newProjectForm[key]}
                       placeholder={placeholder}
                       onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
-                      className="h-11 w-full rounded-xl border border-[#d7d7d7] px-3 text-[13px] font-medium outline-none"
+                      className="h-11 w-full rounded-xl border border-[#d7d7d7] px-3 text-[14px] font-medium outline-none"
                     />
                   </label>
                 ))}
                 <label className="block">
-                  <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Status</p>
+                  <p className="mb-1 text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Status</p>
                   <select
                     value={newProjectForm.status}
                     onChange={(event) => setNewProjectForm((prev) => ({ ...prev, status: event.target.value }))}
-                    className="h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 text-[13px] font-medium outline-none"
+                    className="h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 text-[14px] font-medium outline-none"
                   >
                     <option>Active</option>
                     <option>Pending</option>
@@ -865,7 +863,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </div>
           </section>
 
-          <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+          <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
             <button
               type="button"
               onClick={() => {
@@ -947,7 +945,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       if (selectedProjectPage === 'boq') {
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-[156px] pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -983,15 +981,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="fixed left-1/2 top-[72px] z-[88] w-full max-w-[390px] -translate-x-1/2 bg-white px-4">
+              <div className="fixed left-1/2 top-16 z-[88] w-full max-w-[390px] -translate-x-1/2 bg-white px-4">
                 <div className="grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
                   {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
-                    <p key={head} className={`text-[11px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
+                    <p key={head} className={`text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
                   ))}
                 </div>
               </div>
 
-              <div className="px-4 pb-5 pt-[102px]">
+              <div className="px-4 pb-6 pt-24">
                 <section>
                   <div>
                     {boqItems.map((row) => (
@@ -1006,13 +1004,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </section>
               </div>
 
-              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4">
                 <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#d9e9df] bg-[linear-gradient(145deg,#f7fff9,#eef7f1)] px-4 py-3 shadow-[0_8px_20px_rgba(22,35,29,0.08)]">
                   <div>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.08em] leading-[16px] text-[#5b7768]">Total estimate</p>
+                    <p className="text-[12px] font-bold uppercase tracking-[0.08em] leading-[16px] text-[#5b7768]">Total estimate</p>
                     <p className="mt-0.5 text-[10px] font-medium leading-[14px] text-[#7e9187]">Inclusive of all listed BOQ line items</p>
                   </div>
-                  <p className="text-[22px] font-extrabold leading-[1] text-black">{renderInrValue(formatRupees(totalEstimate), 'text-[22px] font-extrabold leading-[1] text-black')}</p>
+                  <p className="text-[24px] font-extrabold leading-[1] text-black">{renderInrValue(formatRupees(totalEstimate), 'text-[24px] font-extrabold leading-[1] text-black')}</p>
                 </div>
                 <button type="button" className="w-full rounded-2xl bg-black px-4 py-3 text-[14px] font-bold leading-[21px] text-white">
                   Create invoice from BOQ
@@ -1024,267 +1022,20 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       }
 
       if (selectedProjectPage === 'tasks') {
-        const selectedTask = projectTasks.find((task) => task.id === selectedTaskId) || null
-        if (selectedTask) {
-          const completedByIndex = taskStepCompletion[selectedTask.id] || {}
-          const moveTaskTo = (nextStatus) => {
-            setProjectTasks((prev) => prev.map((task) => (
-              task.id === selectedTask.id ? { ...task, status: nextStatus } : task
-            )))
-          }
-          const toggleStep = (stepIndex) => {
-            setTaskStepCompletion((prev) => {
-              const currentTaskMap = prev[selectedTask.id] || {}
-              const nextTaskMap = { ...currentTaskMap }
-              if (nextTaskMap[stepIndex]) {
-                delete nextTaskMap[stepIndex]
-              } else {
-                const now = new Date()
-                const hh = String(now.getHours()).padStart(2, '0')
-                const mm = String(now.getMinutes()).padStart(2, '0')
-                nextTaskMap[stepIndex] = `${hh}:${mm}`
-              }
-              return { ...prev, [selectedTask.id]: nextTaskMap }
-            })
-          }
-
-          return (
-            <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-              <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
-                <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                  <div className="px-4 py-3">
-                    <div className="flex items-center justify-between py-1">
-                      <button type="button" onClick={() => setSelectedTaskId(null)} className="flex items-center gap-4">
-                        <span className="grid size-6 place-items-center rounded">
-                          <CaretLeft size={24} />
-                        </span>
-                        <span className="text-left">
-                          <span className="block text-[16px] font-bold leading-6 text-black">Task details</span>
-                          <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
-                        </span>
-                      </button>
-                      <span className="grid size-10 place-items-center opacity-0"><ChatsCircle size={24} /></span>
-                    </div>
-                  </div>
-                </header>
-
-                <div className="px-4 pb-5 pt-9">
-                  <section>
-                    <p className="text-[17px] font-extrabold leading-6">{selectedTask.title}</p>
-                    <div className="-mx-4 mt-3 grid grid-cols-2 gap-2">
-                      <div className="px-4 py-2">
-                        <p className="text-[10px] font-bold text-[#7b7b7b]">Assigned to</p>
-                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.assignee}</p>
-                      </div>
-                      <div className="px-4 py-2">
-                        <p className="text-[10px] font-bold text-[#7b7b7b]">Assigned by</p>
-                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.assignedBy}</p>
-                      </div>
-                      <div className="px-4 py-2">
-                        <p className="text-[10px] font-bold text-[#7b7b7b]">Due date</p>
-                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.dueDate}</p>
-                      </div>
-                      <div className="px-4 py-2">
-                        <p className="text-[10px] font-bold text-[#7b7b7b]">Due time</p>
-                        <p className="mt-1 text-[13px] font-semibold">{selectedTask.dueTime}</p>
-                      </div>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <p className="text-[12px] font-bold uppercase tracking-[0.05em] text-[#7b7b7b]">Task status</p>
-                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${selectedTask.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : selectedTask.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{selectedTask.due}</span>
-                    </div>
-                    <p className="mt-1 text-[11px] font-medium leading-[16px] text-[#8a8a8a]">
-                      Due on {selectedTask.dueDate} at {selectedTask.dueTime}. Assigned by {selectedTask.assignedBy}.
-                    </p>
-                  </section>
-
-                  <div className="-mx-4 mt-5 h-[6px] w-[calc(100%+32px)] bg-[#e0e0e0]" />
-
-                  <section className="py-5">
-                    <p className="mb-3 text-[14px] font-extrabold leading-[21px]">Remaining steps</p>
-                    <div>
-                      {selectedTask.steps.map((step, index) => (
-                        <article key={step} className="border-b border-[#d2d2d2] py-3 last:border-b-0">
-                          <button type="button" onClick={() => toggleStep(index)} className="flex w-full items-start gap-2 text-left">
-                            <span className="mt-0.5 text-[#5f5f5f]">
-                              {completedByIndex[index] ? <CheckCircle size={16} weight="fill" className="text-[#26c485]" /> : <Circle size={16} weight="regular" />}
-                            </span>
-                            <span className="min-w-0">
-                              <p className={`text-[12px] font-semibold leading-[18px] ${completedByIndex[index] ? 'text-[#9a9a9a] line-through' : 'text-[#202020]'}`}>{index + 1}. {step}</p>
-                              {completedByIndex[index] ? <p className="mt-0.5 text-[10px] font-medium leading-[14px] text-[#8d8d8d]">Completed at {completedByIndex[index]}</p> : null}
-                            </span>
-                          </button>
-                        </article>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-              </section>
-
-              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#7b7b7b]">Move task to</p>
-                <div className="no-scrollbar flex items-center gap-[8px] overflow-x-auto">
-                  <TaskStatusChip label="To do" selected={selectedTask.status === 'todo'} onClick={() => moveTaskTo('todo')} />
-                  <TaskStatusChip label="In progress" selected={selectedTask.status === 'inprogress'} onClick={() => moveTaskTo('inprogress')} />
-                  <TaskStatusChip label="Done" selected={selectedTask.status === 'done'} onClick={() => moveTaskTo('done')} />
-                </div>
-                <button
-                  type="button"
-                  className="mt-3 h-11 w-full rounded-full bg-black text-[14px] font-bold text-white"
-                >
-                  Save
-                </button>
-              </div>
-            </main>
-          )
-        }
-
-        const taskFilterChips = ['All', 'Today', 'Overdue', 'Done']
-        const filteredTasks = taskFilter === 'All'
-          ? projectTasks
-          : projectTasks.filter((task) => task.due === taskFilter)
-        const getTaskCount = (chip) => (
-          chip === 'All'
-            ? projectTasks.length
-            : projectTasks.filter((task) => task.due === chip).length
-        )
-        const columns = [
-          { key: 'todo', title: 'To do' },
-          { key: 'inprogress', title: 'In progress' },
-          { key: 'done', title: 'Done' },
-        ]
-
         return (
-          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[64px]">
-              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                <div className="px-4 py-3">
-                  <div className="flex items-center justify-between py-1">
-                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
-                      <span className="grid size-6 place-items-center rounded">
-                        <CaretLeft size={24} />
-                      </span>
-                      <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Tasks</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
-                      </span>
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Add task"
-                      onClick={() => {
-                        const next = projectTasks.length + 1
-                        setProjectTasks((prev) => [
-                          {
-                            id: `t-${Date.now()}`,
-                            title: `New task ${next}`,
-                            assignee: selectedProject.client.split(' ')[0],
-                            assignedBy: 'You',
-                            due: 'Today',
-                            dueDate: '20 May 2026',
-                            dueTime: '06:30 PM',
-                            status: 'todo',
-                            steps: ['Define task scope', 'Assign owner', 'Track completion'],
-                          },
-                          ...prev,
-                        ])
-                      }}
-                      className="grid size-9 place-items-center"
-                    >
-                      <Plus size={22} />
-                    </button>
-                  </div>
-                </div>
-              </header>
-
-              <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3 pt-4">
-                {taskFilterChips.map((chip) => {
-                  const selected = taskFilter === chip
-                  return (
-                    <button
-                      key={chip}
-                      type="button"
-                      onClick={() => setTaskFilter(chip)}
-                      className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${selected ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
-                    >
-                      <span className={`text-[14px] leading-[1.5] ${selected ? 'font-semibold text-white' : 'font-medium text-black'}`}>{chip}</span>
-                      <span className="grid size-6 place-items-center rounded-xl bg-black text-[12px] font-semibold leading-[1.5] text-white">{String(getTaskCount(chip)).padStart(2, '0')}</span>
-                    </button>
-                  )
-                })}
-              </div>
-
-              <div className="-mx-0 h-[6px] bg-[#e0e0e0]" />
-
-              <section className="px-4 py-5">
-                <div className="no-scrollbar flex gap-3 overflow-x-auto">
-                  {columns.map((column) => {
-                    const tasksInColumn = filteredTasks.filter((task) => task.status === column.key)
-                    return (
-                      <section key={column.key} className="w-[252px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-3">
-                        <div className="mb-3 flex items-center justify-between">
-                          <p className="text-[13px] font-extrabold leading-[19px] text-black">{column.title}</p>
-                          <span className="rounded-full bg-[#ececec] px-2 py-0.5 text-[11px] font-bold text-[#555]">{tasksInColumn.length}</span>
-                        </div>
-                        <div className="space-y-2">
-                          {tasksInColumn.length === 0 ? (
-                            <p className="rounded-xl border border-dashed border-[#d9d9d9] bg-white px-3 py-4 text-[12px] font-medium text-[#8a8a8a]">No tasks</p>
-                          ) : tasksInColumn.map((task) => (
-                            <article key={task.id} className="rounded-xl border border-[#e1e1e1] bg-white p-3">
-                              <button type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full text-left">
-                                <div className="flex items-start justify-between gap-2">
-                                  <p className="min-w-0 flex-1 text-[13px] font-semibold leading-[19px] text-black">{task.title}</p>
-                                  <span
-                                    role="button"
-                                    tabIndex={0}
-                                    onClick={(event) => {
-                                      event.preventDefault()
-                                      event.stopPropagation()
-                                      setTaskActionTargetId(task.id)
-                                    }}
-                                    onKeyDown={(event) => {
-                                      if (event.key === 'Enter' || event.key === ' ') {
-                                        event.preventDefault()
-                                        setTaskActionTargetId(task.id)
-                                      }
-                                    }}
-                                    className="grid size-6 shrink-0 place-items-center rounded-md"
-                                    aria-label="Task actions"
-                                  >
-                                    <DotsThreeVertical size={14} weight="bold" />
-                                  </span>
-                                </div>
-                                <div className="mt-2 flex items-center justify-between">
-                                  <span className="text-[11px] font-semibold leading-4 text-[#666]">{task.assignee}</span>
-                                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${task.due === 'Overdue' ? 'bg-[#ffeaea] text-[#c34545]' : task.due === 'Today' ? 'bg-[#eaf9f1] text-[#289765]' : 'bg-[#eef3ff] text-[#3d68b8]'}`}>{task.due}</span>
-                                </div>
-                              </button>
-                            </article>
-                          ))}
-                        </div>
-                      </section>
-                    )
-                  })}
-                </div>
-              </section>
-            </section>
-            {taskActionTargetId ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#7b7b7b]">Task actions</p>
-                <div className="no-scrollbar flex items-center gap-[8px] overflow-x-auto">
-                  <TaskStatusChip label="To do" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'todo' } : task))); setTaskActionTargetId(null) }} />
-                  <TaskStatusChip label="In progress" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'inprogress' } : task))); setTaskActionTargetId(null) }} />
-                  <TaskStatusChip label="Done" selected={projectTasks.find((task) => task.id === taskActionTargetId)?.status === 'done'} onClick={() => { setProjectTasks((prev) => prev.map((task) => (task.id === taskActionTargetId ? { ...task, status: 'done' } : task))); setTaskActionTargetId(null) }} />
-                </div>
-                <button type="button" onClick={() => { setProjectTasks((prev) => prev.filter((task) => task.id !== taskActionTargetId)); setTaskActionTargetId(null) }} className="mt-3 h-11 w-full rounded-full border border-[#e1b8b8] bg-white text-[14px] font-bold text-[#c34545]">
-                  Delete task
-                </button>
-              </div>
-            ) : null}
-          </main>
+          <ProjectTasksWorkspace
+            mode="pro"
+            selectedProject={selectedProject}
+            tasks={projectTasks}
+            setTasks={setProjectTasks}
+            selectedTaskId={selectedTaskId}
+            setSelectedTaskId={setSelectedTaskId}
+            taskStepCompletion={taskStepCompletion}
+            setTaskStepCompletion={setTaskStepCompletion}
+            onBack={() => setSelectedProjectPage('overview')}
+          />
         )
       }
-
       if (selectedProjectPage === 'finance') {
         const invoiceStatuses = ['Paid', 'Unpaid', 'In transit', 'In progress']
         const statusTone = (status) => {
@@ -1296,7 +1047,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-6 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -1316,35 +1067,35 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 py-5">
-                <section className="py-5">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7d7d7d]">Project total</p>
+              <div className="px-4 py-6">
+                <section className="py-6">
+                  <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7d7d7d]">Project total</p>
                   <p className="mt-1 text-[24px] font-extrabold leading-[30px]">{renderInrValue(formatLakhs(selectedProject.spentL), 'text-[24px] font-extrabold leading-[30px]', 27)}</p>
                   <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#777]">Total money spent over this project</p>
                 </section>
 
-                <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+                <div className="-mx-4 h-2 bg-[#e0e0e0]" />
 
-                <section className="py-5">
+                <section className="py-6">
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
                     </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
                     </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-2 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Upcoming expense</p>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Upcoming expense</p>
                     </div>
                   </div>
                 </section>
 
-                <div className="-mx-4 h-[6px] bg-[#e0e0e0]" />
+                <div className="-mx-4 h-2 bg-[#e0e0e0]" />
 
-                <section className="py-5">
+                <section className="py-6">
                   <div className="mb-3 flex items-center justify-between">
                     <p className="text-[16px] font-extrabold leading-6">Invoices</p>
                     <p className="text-[12px] font-semibold leading-[18px] text-[#7b7b7b]">{projectInvoicesList.length} total</p>
@@ -1358,13 +1109,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-[11px] font-bold leading-4 text-[#7b7b7b]">{invoice.number}</p>
-                            <p className="mt-0.5 truncate text-[13px] font-semibold leading-[19px] text-black">{invoice.title}</p>
-                            <p className="mt-1 text-[11px] font-medium leading-4 text-[#777]">{invoice.date}</p>
+                            <p className="text-[12px] font-bold leading-4 text-[#7b7b7b]">{invoice.number}</p>
+                            <p className="mt-1 truncate text-[14px] font-semibold leading-[19px] text-black">{invoice.title}</p>
+                            <p className="mt-1 text-[12px] font-medium leading-4 text-[#777]">{invoice.date}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(invoice.amountL))}</p>
-                            <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${statusTone(invoice.status)}`}>{invoice.status}</span>
+                            <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(invoice.amountL))}</p>
+                            <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-[10px] font-bold ${statusTone(invoice.status)}`}>{invoice.status}</span>
                           </div>
                         </div>
                       </article>
@@ -1375,9 +1126,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </section>
 
             {selectedInvoice ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Update invoice status</p>
-                <p className="mt-1 truncate text-[13px] font-semibold leading-[19px]">{selectedInvoice.number} - {selectedInvoice.title}</p>
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Update invoice status</p>
+                <p className="mt-1 truncate text-[14px] font-semibold leading-[19px]">{selectedInvoice.number} - {selectedInvoice.title}</p>
                 <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
                   {invoiceStatuses.map((status) => {
                     const active = selectedInvoice.status === status
@@ -1419,7 +1170,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-6 pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-6 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -1439,9 +1190,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 pb-5 pt-10">
+              <div className="px-4 pb-6 pt-8">
                 {groupedDates.length === 0 ? (
-                  <p className="rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[13px] font-medium text-[#7a7a7a]">
+                  <p className="rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[14px] font-medium text-[#7a7a7a]">
                     No entries yet. Tap + to create your first site diary update.
                   </p>
                 ) : (
@@ -1465,7 +1216,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                                     <DotsThreeVertical size={14} weight="bold" />
                                   </button>
                                 </div>
-                                {entry.note ? <p className="text-[13px] font-medium leading-[19px] text-[#212121]">{entry.note}</p> : null}
+                                {entry.note ? <p className="text-[14px] font-medium leading-[19px] text-[#212121]">{entry.note}</p> : null}
                                 {entry.photos.length > 0 ? (
                                   <div className={`${entry.note ? 'mt-3' : ''} grid grid-cols-2 gap-2`}>
                                     {entry.photos.map((photo) => (
@@ -1485,13 +1236,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </section>
 
             {isDiaryComposerOpen ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
                 <textarea
                   value={diaryDraftNote}
                   onChange={(event) => setDiaryDraftNote(event.target.value)}
                   placeholder="Add note (optional)"
-                  className="mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 text-[13px] font-medium leading-[19px] outline-none"
+                  className="mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 text-[14px] font-medium leading-[19px] outline-none"
                 />
                 <label className="mt-2 flex h-10 w-full cursor-pointer items-center justify-center rounded-xl border border-[#d7d7d7] text-[12px] font-semibold text-[#1d1d1d]">
                   Attach photos
@@ -1514,9 +1265,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     ))}
                   </div>
                 ) : null}
-                {diaryDraftPhotos.length > 0 ? <p className="mt-1 text-[11px] font-medium text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
+                {diaryDraftPhotos.length > 0 ? <p className="mt-1 text-[12px] font-medium text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="h-10 rounded-xl border border-[#d7d7d7] text-[13px] font-semibold">Cancel</button>
+                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="h-10 rounded-xl border border-[#d7d7d7] text-[14px] font-semibold">Cancel</button>
                   <button
                     type="button"
                     onClick={() => {
@@ -1543,7 +1294,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setDiaryDraftNote('')
                       setDiaryDraftPhotos([])
                     }}
-                    className="h-10 rounded-xl bg-black text-[13px] font-bold text-white disabled:opacity-40"
+                    className="h-10 rounded-xl bg-black text-[14px] font-bold text-white disabled:opacity-40"
                     disabled={!diaryDraftNote.trim() && diaryDraftPhotos.length === 0}
                   >
                     {editingDiaryEntryId ? 'Save changes' : 'Save entry'}
@@ -1552,8 +1303,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             ) : null}
             {selectedDiaryEntry ? (
-              <div className="fixed bottom-0 left-1/2 z-[96] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Entry actions</p>
+              <div className="fixed bottom-0 left-1/2 z-[96] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Entry actions</p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -1564,7 +1315,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setDiaryActionEntryId(null)
                       setIsDiaryComposerOpen(true)
                     }}
-                    className="h-10 rounded-xl border border-[#d7d7d7] text-[13px] font-semibold"
+                    className="h-10 rounded-xl border border-[#d7d7d7] text-[14px] font-semibold"
                   >
                     Edit entry
                   </button>
@@ -1574,7 +1325,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setProjectDiaryEntries((prev) => prev.filter((entry) => entry.id !== selectedDiaryEntry.id))
                       setDiaryActionEntryId(null)
                     }}
-                    className="h-10 rounded-xl border border-[#e1b8b8] bg-white text-[13px] font-bold text-[#c34545]"
+                    className="h-10 rounded-xl border border-[#e1b8b8] bg-white text-[14px] font-bold text-[#c34545]"
                   >
                     Delete entry
                   </button>
@@ -1591,7 +1342,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-[92px] pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -1609,7 +1360,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 pb-5 pt-8">
+              <div className="px-4 pb-6 pt-8">
                 <div>
                   {availableFirmMembers.map((member) => (
                     <button
@@ -1627,7 +1378,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <div className="min-w-0">
                           <p className="truncate text-[14px] font-bold leading-[21px]">{member.name}</p>
                           <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{member.role}</p>
-                          <p className="truncate text-[11px] font-medium leading-[16px] text-[#7b7b7b]">
+                          <p className="truncate text-[12px] font-medium leading-[16px] text-[#7b7b7b]">
                             {member.occupancy.status === 'occupied' ? `Currently working on ${member.occupancy.project} - Day ${member.occupancy.day}` : 'Idle'}
                           </p>
                         </div>
@@ -1639,7 +1390,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </section>
             {selectedFirmMemberIds.length > 0 ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
                 <button
                   type="button"
                   onClick={() => {
@@ -1683,7 +1434,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-[110px] pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -1700,7 +1451,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 py-5">
+              <div className="px-4 py-6">
                 <div className="space-y-3">
                   {proProjects.map((project) => {
                     const selected = selectedMemberProjectIds.includes(project.id)
@@ -1724,7 +1475,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </section>
 
-            <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
               <button
                 type="button"
                 onClick={() => {
@@ -1761,7 +1512,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
         return (
           <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-[154px] pt-[56px]">
+            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
               <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
                 <div className="px-4 py-3">
                   <div className="flex items-center justify-between py-1">
@@ -1781,7 +1532,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </header>
 
-              <div className="px-4 pb-5 pt-7">
+              <div className="px-4 pb-6 pt-8">
                 <section className="rounded-xl border border-[#e1e1e1] bg-[#fafafa] p-3">
                   <p className="text-[12px] font-semibold leading-[18px] text-[#4c4c4c]">
                     Add team members by mobile number. They receive a HYNT invite to approve.
@@ -1810,15 +1561,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </section>
 
-            <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-              <p className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Add by mobile number</p>
+              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+              <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Add by mobile number</p>
               <div className="mt-2 flex items-center gap-2">
                 <input
                   id="team-invite-phone"
                   value={teamInvitePhone}
                   onChange={(event) => setTeamInvitePhone(event.target.value)}
                   placeholder="+91 98765 43210"
-                  className="h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 text-[13px] font-medium outline-none"
+                  className="h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 text-[14px] font-medium outline-none"
                 />
                 <button
                   type="button"
@@ -1839,12 +1590,12 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     ])
                     setTeamInvitePhone('')
                   }}
-                  className="h-10 shrink-0 rounded-xl bg-black px-4 text-[13px] font-bold text-white"
+                  className="h-10 shrink-0 rounded-xl bg-black px-4 text-[14px] font-bold text-white"
                 >
                   Invite
                 </button>
               </div>
-              <p className="mt-2 text-[11px] font-medium leading-[16px] text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
+              <p className="mt-2 text-[12px] font-medium leading-[16px] text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
             </div>
           </main>
         )
@@ -1852,7 +1603,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-          <section className="mx-auto w-full max-w-[390px] pt-[56px]">
+          <section className="mx-auto w-full max-w-[390px] pt-16">
             <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
               <div className="px-4 py-3">
                 <div className="flex items-center justify-between py-1">
@@ -1865,9 +1616,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to projects</span>
                     </span>
                   </button>
-                  <button type="button" onClick={() => setSelectedProjectPage('updates')} className="relative flex min-h-10 min-w-[64px] items-center justify-center gap-1.5 rounded-full border border-[#e1e1e1] bg-white px-3">
+                  <button type="button" onClick={() => setSelectedProjectPage('updates')} className="relative flex min-h-10 min-w-[64px] items-center justify-center gap-2 rounded-full border border-[#e1e1e1] bg-white px-3">
                     <Bell size={16} />
-                    <span className="text-[11px] font-bold leading-none">{selectedProject.alerts.length}</span>
+                    <span className="text-[12px] font-bold leading-none">{selectedProject.alerts.length}</span>
                     {selectedProject.alerts.length ? <span className="absolute right-2.5 top-2 size-1.5 rounded-full bg-[#26c485]" /> : null}
                   </button>
                 </div>
@@ -1875,44 +1626,48 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </header>
 
             <div className="px-4 py-6">
-              <section className="space-y-6 pb-6">
-                <article className="rounded-[28px] border border-[#e1e1e1] bg-white px-4 py-4">
-                  <div className="flex items-start gap-3">
-                    <img src={selectedProject.avatar} alt={selectedProject.client} className="size-14 rounded-2xl object-cover" />
-                    <div className="min-w-0 flex-1">
-                      <div className="min-w-0">
-                        <p className="truncate text-[18px] font-extrabold leading-6 text-black">{selectedProject.client}</p>
-                        <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#4c4c4c]">{selectedProject.location}</p>
+              <section className="space-y-8 pb-8">
+                <section className="-mx-4 px-4 py-2">
+                  <div className="min-w-0">
+                    <div className="min-w-0">
+                      <span className="inline-flex rounded-full bg-[#e1f4e7] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#267449]">
+                        {selectedProject.status}
+                      </span>
+                      <p className="mt-4 text-[24px] font-black leading-7 tracking-[-0.03em] text-[#102418]">{selectedProject.scope}</p>
+                      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] font-semibold leading-5 text-[#4f6257]">
+                        <span>{selectedProject.client}</span>
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#9ec6b0]" />
+                        <span>{selectedProject.location}</span>
                       </div>
-                      <p className="mt-2 truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.phone}</p>
-                      <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{selectedProject.email}</p>
+                      <p className="mt-4 text-[12px] font-medium leading-[18px] text-[#66776d]">{selectedProject.phone}</p>
+                      <p className="mt-1 truncate text-[12px] font-medium leading-[18px] text-[#66776d]">{selectedProject.email}</p>
                     </div>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Progress</p>
-                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-black">{selectedProject.progress}%</p>
+                  <div className="mt-8 grid grid-cols-3 gap-3">
+                    <div className="rounded-2xl border border-[#dceade] bg-[#f4fbf7] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#73907f]">Progress</p>
+                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-[#102418]">{selectedProject.progress}%</p>
                     </div>
-                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Budget</p>
-                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-black">{renderInrValue(formatLakhs(selectedProject.budgetL))}</p>
+                    <div className="rounded-2xl border border-[#dce7f3] bg-[#f4f8ff] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#7183a1]">Budget</p>
+                      <p className="mt-1 text-[16px] font-extrabold leading-5 text-[#102418]">{renderInrValue(formatLakhs(selectedProject.budgetL))}</p>
                     </div>
-                    <div className="rounded-2xl border border-[#ebebeb] bg-[#fcfcfc] px-3 py-3">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">Due</p>
-                      <p className="mt-1 text-[13px] font-extrabold leading-5 text-black">{selectedProject.dueDate}</p>
+                    <div className="rounded-2xl border border-[#efe2c8] bg-[#fff9ef] px-3 py-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#9f8350]">Due</p>
+                      <p className="mt-1 text-[14px] font-extrabold leading-5 text-[#102418]">{selectedProject.dueDate}</p>
                     </div>
                   </div>
-                </article>
+                </section>
 
                 <section>
-                  <div className="mb-4 flex items-center justify-between">
+                  <div className="mb-6 flex items-center justify-between">
                     <h2 className="text-[16px] font-extrabold leading-6 text-black">Quick actions</h2>
-                    <span className="rounded-full border border-[#e5e5e5] bg-[#fbfbfb] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
+                    <span className="rounded-full border border-[#d8e6dd] bg-[#f4fbf7] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#597465]">
                       {projectDetailTools.length} tools
                     </span>
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 overflow-hidden rounded-[24px] border border-[#e1e1e1] bg-white">
                   {projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool, index) => {
                     const Icon = tool.icon
                     const pillLabel = tool.label === 'SOW' ? 'Open SOW' : tool.label
@@ -1922,8 +1677,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className={`flex min-h-[72px] flex-col items-start justify-center rounded-[20px] border px-4 py-4 text-left ${
-                          index === 0 ? 'border-black bg-black text-white' : 'border-[#e1e1e1] bg-white text-black'
+                        className={`flex min-h-[88px] flex-1 flex-col items-start justify-center px-4 py-4 text-left ${
+                          index === 0 ? 'bg-black text-white' : 'bg-white text-black'
+                        } ${index < 2 ? 'border-r border-[#e1e1e1]' : ''} ${
+                          index === 0 ? 'border-r-white/10' : ''
                         }`}
                       >
                         <span className={`grid size-8 place-items-center rounded-full ${
@@ -1937,7 +1694,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   })}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-3">
+                  <div className="mt-6 grid grid-cols-3 gap-3">
                   {projectDetailTools.filter((tool) => !['SOW', 'Tasks', 'Finance'].includes(tool.label)).map((tool) => {
                     const Icon = tool.icon
 
@@ -1946,17 +1703,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className="flex w-full items-center justify-between gap-4 rounded-[20px] border border-[#e1e1e1] bg-white px-4 py-4 text-left"
+                        className="flex min-h-[108px] w-full flex-col items-start justify-between rounded-[20px] border border-[#e7e7e7] bg-[#fcfcfc] px-4 py-4 text-left"
                       >
-                        <div className="flex min-w-0 items-center gap-4">
-                          <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-[#f6f6f6]">
-                            <Icon size={17} weight="regular" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="truncate text-[13px] font-bold leading-[18px] text-black">{tool.label}</p>
-                          </div>
+                        <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-white">
+                          <Icon size={17} weight="regular" />
                         </div>
-                        <ArrowRight size={16} className="shrink-0 text-[#9a9a9a]" />
+                        <div className="min-w-0">
+                          <p className="line-clamp-2 text-[14px] font-bold leading-[18px] text-black">{tool.label}</p>
+                        </div>
                       </button>
                     )
                   })}
@@ -1964,20 +1718,20 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </section>
 
                 <section id="project-updates">
-                  <div className="mb-4 flex items-center justify-between">
+                  <div className="mb-6 flex items-center justify-between">
                     <h2 className="text-[16px] font-extrabold leading-6 text-black">Latest updates</h2>
                     <button type="button" onClick={() => setSelectedProjectPage('updates')} className="inline-flex items-center gap-1 text-[12px] font-medium leading-[18px] text-[#7a7a7a]">
                       <span>View all</span>
                       <ArrowRight size={14} />
                     </button>
                   </div>
-                  <div className="rounded-[24px] border border-[#e1e1e1] bg-white px-4 py-3">
+                  <div>
                     {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 3).map((alert) => (
-                      <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[#ececec] py-3 text-left last:border-b-0">
+                      <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[#ececec] py-4 text-left last:border-b-0">
                         <div className="min-w-0">
-                          <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">{alert.label}</p>
+                          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#8a8a8a]">{alert.label}</p>
                           <div className="mt-1 flex items-start justify-between gap-3">
-                            <p className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-5 text-black">{alert.title}</p>
+                            <p className="min-w-0 flex-1 truncate text-[14px] font-semibold leading-5 text-black">{alert.title}</p>
                             <span className="shrink-0 pt-[2px] text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
                           </div>
                         </div>
@@ -1997,18 +1751,18 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${selectedProject.progress}%` }} />
                   </div>
 
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                  <div className="mt-6 grid grid-cols-3 gap-3">
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
                     </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
                     </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-2.5 py-2 text-center">
-                      <p className="text-[13px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
-                      <p className="mt-0.5 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
+                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-2xl border border-[#ececec] bg-[#fcfcfc] px-3 py-2 text-center">
+                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.spentL))}</p>
+                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Spent</p>
                     </div>
                   </div>
                 </section>
@@ -2022,7 +1776,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
     return (
       <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-        <section className="mx-auto w-full max-w-[390px] pt-[106px]">
+        <section className="mx-auto w-full max-w-[390px] pt-24">
           <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#ececec] bg-white/95 backdrop-blur">
             <div className="px-4 py-3">
               <div className="flex items-center justify-between py-1">
@@ -2049,7 +1803,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </div>
 
-            <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-2">
+            <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3">
               {projectFilterChips.map((chip) => {
                 const selected = projectStatusFilter === chip
                 return (
@@ -2067,7 +1821,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </div>
           </header>
 
-          <div className="px-4 py-5">
+          <div className="px-4 py-6">
             <div className="space-y-3">
               {filteredProjects.map((project) => (
                 <article
@@ -2081,9 +1835,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[16px] font-extrabold leading-6">{project.client}</p>
-                      <p className="mt-0.5 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">{project.location}</p>
+                      <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">{project.location}</p>
                     </div>
-                    <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#2a9a64]' : project.status === 'Pending' ? 'bg-[#f2f2f2] text-[#777]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
+                    <span className={`rounded-full px-3 py-1 text-[12px] font-bold ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#2a9a64]' : project.status === 'Pending' ? 'bg-[#f2f2f2] text-[#777]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
                   </div>
 
                   <p className="mt-3 text-[14px] font-semibold leading-[21px]">{project.scope}</p>
@@ -2099,13 +1853,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-2">
-                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-3 py-2">
                       <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Budget</p>
-                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(`${project.budgetL}L`)}</p>
+                      <p className="mt-1 text-[14px] font-extrabold leading-[19px]">{renderInrValue(`${project.budgetL}L`)}</p>
                     </div>
-                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-2.5 py-2">
+                    <div className="rounded-xl border border-[#e2e2e2] bg-white px-3 py-2">
                       <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Current spend</p>
-                      <p className="mt-0.5 text-[13px] font-extrabold leading-[19px]">{renderInrValue(`${project.spentL}L`)}</p>
+                      <p className="mt-1 text-[14px] font-extrabold leading-[19px]">{renderInrValue(`${project.spentL}L`)}</p>
                     </div>
                   </div>
 
@@ -2147,17 +1901,17 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <div className="hynt-pro-summary-card flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
             <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="text-[20px] font-extrabold leading-[1.5] text-black">05</p>
-              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">Active projects</p>
+              <p className="text-center text-[12px] font-bold leading-[1.5] text-[#888888]">Active projects</p>
             </button>
             <div className="h-full w-px bg-[#d2d2d2]" />
             <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="text-[20px] font-extrabold leading-[1.5] text-black">12</p>
-              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">New Leads</p>
+              <p className="text-center text-[12px] font-bold leading-[1.5] text-[#888888]">New Leads</p>
             </article>
             <div className="h-full w-px bg-[#d2d2d2]" />
             <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
               <p className="flex items-center gap-1 text-[20px] font-extrabold leading-[1.5] text-black"><CurrencyInr size={16} weight="fill" />4.2L</p>
-              <p className="text-center text-[11px] font-bold leading-[1.5] text-[#888888]">This Month</p>
+              <p className="text-center text-[12px] font-bold leading-[1.5] text-[#888888]">This Month</p>
             </article>
           </div>
         </div>
@@ -2186,7 +1940,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
               </span>
               <p className="whitespace-nowrap text-[14px] font-medium leading-[1.5] text-white">
-                Home planning with <span className="font-black">HYNT</span> <span className="text-[10.32px] font-medium text-[#5fc18a]">AI</span>
+                Home planning with <span className="font-black">HYNT</span> <span className="text-[10px] font-medium text-[#5fc18a]">AI</span>
               </p>
             </div>
             <div className="mt-2 flex h-12 items-center overflow-hidden rounded-2xl border border-[#5fc18a] bg-[#fbfbfb] py-[5px] pl-4 pr-1.5">
@@ -2320,7 +2074,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 <div className="mt-4 space-y-3">
                   {proAiMessages.map((message) => (
                     <div key={message.id} className={message.role === 'ai' ? '' : 'flex justify-end'}>
-                      <div className={`max-w-[88%] rounded-2xl px-3 py-2 text-[13px] font-medium leading-[19px] ${message.role === 'ai' ? 'bg-[#f4f4f4] text-black' : 'bg-[#e8f7ef] text-[#175c3e]'}`}>
+                      <div className={`max-w-[88%] rounded-2xl px-3 py-2 text-[14px] font-medium leading-[19px] ${message.role === 'ai' ? 'bg-[#f4f4f4] text-black' : 'bg-[#e8f7ef] text-[#175c3e]'}`}>
                         {message.text}
                       </div>
                     </div>
@@ -2345,7 +2099,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         { id: `pro-ai-bot-${Date.now()}-${option}`, role: 'ai', text: `Sure. I'll help you with: ${option}.` },
                       ])
                     }}
-                    className="rounded-xl border border-[#d7d7d7] bg-white px-3 py-2 text-left text-[13px] font-semibold leading-[19px]"
+                    className="rounded-xl border border-[#d7d7d7] bg-white px-3 py-2 text-left text-[14px] font-semibold leading-[19px]"
                   >
                     {option}
                   </button>
@@ -2396,6 +2150,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [isBriefCollapsed, setIsBriefCollapsed] = useState(false)
   const [isFlowSwitcherOpen, setIsFlowSwitcherOpen] = useState(false)
   const [isHomeownerSowOpen, setIsHomeownerSowOpen] = useState(false)
+  const [isHomeownerTasksOpen, setIsHomeownerTasksOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [intent, setIntent] = useState(initialIntent)
   const [activeModal, setActiveModal] = useState(null)
@@ -2859,7 +2614,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
                 <img src={pro.image} alt={pro.name} className="size-16 shrink-0 rounded-2xl object-cover" />
                 <span className="min-w-0 flex-1">
                   <span className="block text-[14px] font-bold leading-[21px] text-slate-950">{pro.name}</span>
-                  <span className="mt-0.5 block text-[13px] font-semibold leading-5 text-slate-500">{pro.role}</span>
+                  <span className="mt-0.5 block text-[14px] font-semibold leading-5 text-slate-500">{pro.role}</span>
                   <span className="mt-2 block text-[12px] font-semibold text-slate-400">{pro.meta}</span>
                   <span className="mt-2 block text-[12px] font-bold text-[#267449]">{pro.tone}</span>
                 </span>
@@ -2985,7 +2740,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               <span>{RANGE_DASH}</span>
               <span className="inline-flex items-center gap-0.5"><CurrencyInr size={16} weight="bold" />{max}L</span>
             </p>
-            <span className="rounded-full bg-[#e8f6ee] px-2.5 py-1 text-[11px] font-bold text-[#267449]">{message.value.mode === 'fixed' ? 'Fixed' : 'Flexible'}</span>
+            <span className="rounded-full bg-[#e8f6ee] px-2.5 py-1 text-[12px] font-bold text-[#267449]">{message.value.mode === 'fixed' ? 'Fixed' : 'Flexible'}</span>
           </div>
         </div>
       )
@@ -3187,7 +2942,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               <img src={pro.image} alt={pro.name} className="size-16 shrink-0 rounded-2xl object-cover" />
               <span className="min-w-0 flex-1">
                 <span className="block text-[14px] font-bold leading-[21px] text-slate-950">{pro.name}</span>
-                <span className="mt-0.5 block text-[13px] font-semibold leading-5 text-slate-500">{pro.role}</span>
+                <span className="mt-0.5 block text-[14px] font-semibold leading-5 text-slate-500">{pro.role}</span>
                 <span className="mt-2 block text-[12px] font-semibold text-slate-400">{pro.meta}</span>
                 <span className="mt-2 block text-[12px] font-bold text-[#267449]">{pro.tone}</span>
               </span>
@@ -3221,8 +2976,8 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
     <section className="hynt-desktop-page mx-auto w-full max-w-[1120px] px-4 pb-12 pt-6">
       <header className="mb-6">
         <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Post</p>
-        <h1 className="mt-2 text-[32px] font-black tracking-[-0.04em] text-[#102418]">Draft a requirement in one place.</h1>
-        <p className="mt-2 max-w-[640px] text-[15px] font-medium leading-6 text-[#5f6a63]">This desktop page keeps the same language as mobile, but spreads the form and selections into a more readable planning workspace.</p>
+        <h1 className="mt-2 text-[24px] font-black tracking-[-0.04em] text-[#102418]">Draft a requirement in one place.</h1>
+        <p className="mt-2 max-w-[640px] text-[16px] font-medium leading-6 text-[#5f6a63]">This desktop page keeps the same language as mobile, but spreads the form and selections into a more readable planning workspace.</p>
       </header>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -3236,14 +2991,14 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               ['Timeline', 'Looking to start this month'],
             ].map(([label, value]) => (
               <article key={label} className="rounded-[22px] border border-[#d9e3dd] bg-[#f7faf8] p-4">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#7a8b83]">{label}</p>
-                <p className="mt-2 text-[15px] font-bold leading-6 text-[#102418]">{value}</p>
+                <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#7a8b83]">{label}</p>
+                <p className="mt-2 text-[16px] font-bold leading-6 text-[#102418]">{value}</p>
               </article>
             ))}
           </div>
           <div className="mt-5 rounded-[22px] border border-[#d9e3dd] bg-[#102418] p-5 text-white">
-            <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-[#8fd5ae]">Your note</p>
-            <p className="mt-3 text-[15px] leading-7 text-white/84">Looking for a clean, family-friendly renovation with better storage and warmer materials. Open to turnkey professionals and curated vendors.</p>
+            <p className="text-[14px] font-bold uppercase tracking-[0.16em] text-[#8fd5ae]">Your note</p>
+            <p className="mt-3 text-[16px] leading-7 text-white/84">Looking for a clean, family-friendly renovation with better storage and warmer materials. Open to turnkey professionals and curated vendors.</p>
           </div>
         </section>
 
@@ -3264,14 +3019,14 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
                 <div key={pro.id} className="flex items-start gap-3 rounded-[22px] border border-[#e3e8e4] bg-[#fbfbfb] p-3">
                   <img src={pro.image} alt={pro.name} className="size-14 rounded-[18px] object-cover" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-[15px] font-bold text-[#102418]">{pro.name}</p>
-                    <p className="mt-1 text-[13px] font-medium text-[#647169]">{pro.role}</p>
+                    <p className="text-[16px] font-bold text-[#102418]">{pro.name}</p>
+                    <p className="mt-1 text-[14px] font-medium text-[#647169]">{pro.role}</p>
                     <p className="mt-2 text-[12px] font-semibold text-[#267449]">{pro.tone}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <button type="button" className="mt-5 w-full rounded-[20px] bg-[#26c485] px-5 py-4 text-[15px] font-black text-[#07140e]">Send requirement</button>
+            <button type="button" className="mt-5 w-full rounded-[20px] bg-[#26c485] px-5 py-4 text-[16px] font-black text-[#07140e]">Send requirement</button>
           </article>
         </section>
       </div>
@@ -3283,7 +3038,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Events</p>
-          <h1 className="mt-2 text-[32px] font-black tracking-[-0.04em] text-[#102418]">What’s coming up near you.</h1>
+          <h1 className="mt-2 text-[24px] font-black tracking-[-0.04em] text-[#102418]">What’s coming up near you.</h1>
         </div>
         <button type="button" className="rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">Filter by city</button>
       </header>
@@ -3295,9 +3050,9 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               <span className="absolute right-3 top-3 rounded-lg border border-[#333] bg-black/70 px-3 py-1 text-[12px] font-medium text-white backdrop-blur">{event.interested}</span>
             </div>
             <div className="px-1 pb-1 pt-4">
-              <p className="text-[18px] font-bold text-[#102418]">{event.title}</p>
-              <p className="mt-2 flex items-center gap-2 text-[13px] font-semibold text-[#808080]"><CalendarDots size={16} />{event.date}</p>
-              <p className="mt-1 flex items-center gap-2 text-[13px] font-semibold text-[#808080]"><MapPinSimpleArea size={16} />{event.city}</p>
+              <p className="text-[20px] font-bold text-[#102418]">{event.title}</p>
+              <p className="mt-2 flex items-center gap-2 text-[14px] font-semibold text-[#808080]"><CalendarDots size={16} />{event.date}</p>
+              <p className="mt-1 flex items-center gap-2 text-[14px] font-semibold text-[#808080]"><MapPinSimpleArea size={16} />{event.city}</p>
             </div>
           </article>
         ))}
@@ -3312,8 +3067,8 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           <img src="/hynt-home/pro-1.png" alt="Profile" className="size-20 rounded-[28px] object-cover" />
           <div>
             <p className="text-[12px] font-black uppercase tracking-[0.2em] text-[#267449]">Profile</p>
-            <h1 className="mt-2 text-[30px] font-black tracking-[-0.04em] text-[#102418]">Aarav’s workspace</h1>
-            <p className="mt-2 text-[15px] font-medium text-[#5f6a63]">Saved ideas, preferences, and live requirement shortcuts.</p>
+            <h1 className="mt-2 text-[24px] font-black tracking-[-0.04em] text-[#102418]">Aarav’s workspace</h1>
+            <p className="mt-2 text-[16px] font-medium text-[#5f6a63]">Saved ideas, preferences, and live requirement shortcuts.</p>
           </div>
         </div>
         <button type="button" className="rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">Edit profile</button>
@@ -3349,11 +3104,24 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Client-side preview</p>
-              <h2 className="mt-2 text-[22px] font-black tracking-[-0.03em] text-[#102418]">Scope of Work review</h2>
+              <h2 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-[#102418]">Scope of Work review</h2>
               <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Use the homeowner profile to inspect the client review, remarks, revised approval, OTP, and executed SOW states.</p>
             </div>
             <button type="button" onClick={() => setIsHomeownerSowOpen(true)} className="shrink-0 rounded-full bg-[#173324] px-5 py-3 text-[14px] font-bold text-white shadow-sm">
               Open SOW
+            </button>
+          </div>
+        </section>
+
+        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Client-side preview</p>
+              <h2 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-[#102418]">Task approvals</h2>
+              <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Review the homeowner approvals/tasks surface with pending items, resolved decisions, and detailed response states.</p>
+            </div>
+            <button type="button" onClick={() => setIsHomeownerTasksOpen(true)} className="shrink-0 rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">
+              Open tasks
             </button>
           </div>
         </section>
@@ -3363,6 +3131,17 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
   const renderHome = () => {
     if (isHomeownerSowOpen) return <HomeownerSowReview onBack={() => setIsHomeownerSowOpen(false)} />
+    if (isHomeownerTasksOpen) {
+      return (
+        <ProjectTasksWorkspace
+          mode="homeowner"
+          onBack={() => setIsHomeownerTasksOpen(false)}
+          homeownerClientName="Priya Sharma"
+          homeownerProjectName="Sharma 3BHK"
+          homeownerDesignerName="Riya Desai"
+        />
+      )
+    }
 
     return (
     <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
@@ -3394,7 +3173,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
                 <span className={`hynt-home-quick-action-icon grid size-14 place-items-center overflow-hidden rounded-[28px] ${index === 0 ? 'border-[0.438px] border-[#e0e0e0] bg-[#fbfbfb]' : 'border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]'}`}>
                   {index === 0 ? <img src="/hynt-home/brand.png" alt="" className="size-full rounded-[28px] object-cover" /> : <Icon size={21} weight="fill" />}
                 </span>
-                <span className="hynt-home-quick-action-label w-[68px] whitespace-normal text-center text-[11px] font-bold leading-[1.5] text-black">{label}</span>
+                <span className="hynt-home-quick-action-label w-[68px] whitespace-normal text-center text-[12px] font-bold leading-[1.5] text-black">{label}</span>
               </button>
             ))}
           </section>
@@ -3414,7 +3193,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
                     <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
                   )}
                 </span>
-                <p className="whitespace-nowrap text-[14px] font-medium leading-[1.5] text-white">Home planning with <span className="font-black">HYNT</span> <span className="text-[10.32px] font-medium text-[#5fc18a]">AI</span></p>
+                <p className="whitespace-nowrap text-[14px] font-medium leading-[1.5] text-white">Home planning with <span className="font-black">HYNT</span> <span className="text-[10px] font-medium text-[#5fc18a]">AI</span></p>
               </div>
               <div className="mt-2 flex h-12 items-center overflow-hidden rounded-2xl border border-[#5fc18a] bg-[#fbfbfb] py-[5px] pl-4 pr-1.5">
                 <input
@@ -3580,7 +3359,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               className={`rounded-2xl border p-4 text-left ${activeFlow === 'homeowner' ? 'border-[#5FC18A] bg-[#effaf3]' : 'border-[#e4e4e4] bg-white'}`}
             >
               <p className="text-[16px] font-bold leading-6 text-black">Homeowner</p>
-              <p className="mt-1 text-[13px] font-medium leading-5 text-[#6d6d6d]">Current homeowner journey</p>
+              <p className="mt-1 text-[14px] font-medium leading-5 text-[#6d6d6d]">Current homeowner journey</p>
             </button>
             <button
               type="button"
@@ -3591,7 +3370,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               className={`rounded-2xl border p-4 text-left ${activeFlow === 'professional' ? 'border-[#5FC18A] bg-[#effaf3]' : 'border-[#e4e4e4] bg-white'}`}
             >
               <p className="text-[16px] font-bold leading-6 text-black">Professional</p>
-              <p className="mt-1 text-[13px] font-medium leading-5 text-[#6d6d6d]">Dedicated pro journey</p>
+              <p className="mt-1 text-[14px] font-medium leading-5 text-[#6d6d6d]">Dedicated pro journey</p>
             </button>
           </div>
         </section>
@@ -3621,7 +3400,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               <button
                 type="button"
                 onClick={() => setIsBriefCollapsed((previous) => !previous)}
-                className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-3 py-1 text-[13px] font-bold leading-[1.2] text-slate-700"
+                className="inline-flex items-center gap-1 rounded-full border border-slate-300 px-3 py-1 text-[14px] font-bold leading-[1.2] text-slate-700"
               >
                 {isBriefCollapsed ? <><CaretDown size={12} weight="bold" />Show brief</> : <><CaretUp size={12} weight="bold" />Hide brief</>}
               </button>
@@ -3668,7 +3447,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
                   >
                     <div className="flex items-center justify-between">
                       <p className="font-black">Project brief</p>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-bold">
                         <Eye size={13} />
                         View
                       </span>
@@ -3769,3 +3548,5 @@ function App() {
 }
 
 export default App
+
+
