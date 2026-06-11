@@ -35,7 +35,7 @@ const approvalSeed = [
     description: 'Please select your preferred countertop material. Granite is more durable, marble feels more premium.',
     dueDate: '28 Oct',
     sentAt: '22 Oct',
-    emoji: 'K',
+    image: '/hynt-home/product.png',
     clientQuestion: '',
   },
   {
@@ -46,7 +46,7 @@ const approvalSeed = [
     description: 'This room can go calmer or warmer depending on the finish you want for the sofa wall.',
     dueDate: '30 Oct',
     sentAt: '20 Oct',
-    emoji: 'W',
+    image: '/hynt-home/idea-1.png',
     clientQuestion: 'Can I see the sage green with the existing sofa colour first?',
   },
   {
@@ -57,7 +57,7 @@ const approvalSeed = [
     description: 'Cove layout aligned with the lighting and AC coordination plan.',
     dueDate: '21 Oct',
     sentAt: '18 Oct',
-    emoji: 'F',
+    image: '/hynt-home/idea-2.png',
     clientQuestion: '',
   },
   {
@@ -68,7 +68,7 @@ const approvalSeed = [
     description: 'Two directions for the kids room accent palette and graphic wall.',
     dueDate: '20 Oct',
     sentAt: '17 Oct',
-    emoji: 'K',
+    image: '/hynt-home/brand.png',
     clientQuestion: 'Neither. Please explore an ocean theme instead.',
   },
 ]
@@ -110,7 +110,7 @@ function TaskStatusChip({ label, selected, onClick }) {
 function SectionHeader({ title, meta, tone = 'text-[#6f7d74]' }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <p className={`text-[12px] font-bold uppercase tracking-[0.08em] ${tone}`}>{title}</p>
+      <p className={`text-[12px] font-bold uppercase ${tone}`}>{title}</p>
       {meta ? <span className="text-[12px] font-medium text-[#8a948f]">{meta}</span> : null}
     </div>
   )
@@ -181,13 +181,13 @@ function ApprovalCard({ item, onOpen, compact = false }) {
             <p className="text-[16px] font-bold leading-[22px] text-[#121212]">{item.title}</p>
             <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#7b8780]">{item.type}</p>
           </div>
-          <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${tone}`}>
+          <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold uppercase ${tone}`}>
             {approvalLabel[item.status]}
           </span>
         </div>
         <div className="mt-4 rounded-2xl bg-[#f3f7f4] px-4 py-5">
-          <div className="grid size-12 place-items-center rounded-2xl bg-white text-[20px] font-bold text-[#355244]">
-            {item.emoji}
+          <div className="h-16 w-16 overflow-hidden rounded-2xl bg-white">
+            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
           </div>
           <p className="mt-3 text-[14px] leading-[20px] text-[#355244]">{item.description}</p>
         </div>
@@ -217,12 +217,12 @@ function ProTaskDetail({
                 <p className="text-[12px] font-medium leading-[18px] text-[#7f8a84]">{selectedProject.scope}</p>
               </div>
             </button>
-            <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+            <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
           </div>
         </header>
 
         <div className="px-4 pt-6">
-          <section className="rounded-[24px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
+          <section className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
             <p className="text-[20px] font-bold leading-[26px] text-[#102418]">{task.title}</p>
             <div className="mt-5 grid grid-cols-2 gap-4">
               {[
@@ -232,14 +232,14 @@ function ProTaskDetail({
                 ['Due time', task.dueTime],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#91a097]">{label}</p>
+                  <p className="text-[10px] font-bold uppercase text-[#91a097]">{label}</p>
                   <p className="mt-1 text-[14px] font-medium leading-[20px] text-[#1d1d1d]">{value}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="mt-6 rounded-[24px] border border-[#e3ebe5] bg-white p-5">
+          <section className="mt-6 rounded-[20px] border border-[#e3ebe5] bg-white p-5">
             <SectionHeader title="Remaining steps" meta={`${task.steps.length} steps`} />
             <div>
               {task.steps.map((step, index) => (
@@ -264,7 +264,7 @@ function ProTaskDetail({
       </section>
 
       <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-        <p className="mb-3 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Move task to</p>
+        <p className="mb-3 text-[12px] font-bold uppercase text-[#7a8780]">Move task to</p>
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           <TaskStatusChip label="To do" selected={task.status === 'todo'} onClick={() => onMoveTask('todo')} />
           <TaskStatusChip label="In progress" selected={task.status === 'inprogress'} onClick={() => onMoveTask('inprogress')} />
@@ -422,9 +422,9 @@ export default function ProjectTasksWorkspace({
             </header>
 
             <div className="px-4 pt-5">
-              <article className="rounded-[24px] border border-[#e2e9e4] bg-white p-5 shadow-[0_12px_32px_rgba(17,24,20,0.06)]">
+              <article className="rounded-[20px] border border-[#e2e9e4] bg-white p-5 shadow-[0_12px_32px_rgba(17,24,20,0.06)]">
                 <div className="flex items-center justify-between gap-3">
-                  <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${approvalTone[selectedApproval.status]}`}>
+                  <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${approvalTone[selectedApproval.status]}`}>
                     {approvalLabel[selectedApproval.status]}
                   </span>
                   <span className="text-[12px] font-medium leading-[18px] text-[#7b8780]">Due {selectedApproval.dueDate}</span>
@@ -433,15 +433,15 @@ export default function ProjectTasksWorkspace({
                 <p className="mt-1 text-[14px] font-medium leading-[20px] text-[#708078]">{selectedApproval.type}</p>
 
                 <div className="mt-5 rounded-[20px] bg-[#f2f7f4] px-4 py-5">
-                  <div className="grid size-14 place-items-center rounded-[18px] bg-white text-[20px] font-bold text-[#355244]">
-                    {selectedApproval.emoji}
+                  <div className="h-20 w-20 overflow-hidden rounded-2xl bg-white">
+                    <img src={selectedApproval.image} alt={selectedApproval.title} className="h-full w-full object-cover" />
                   </div>
                   <p className="mt-4 text-[14px] leading-[22px] text-[#24362d]">{selectedApproval.description}</p>
                 </div>
 
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-5 rounded-[20px] px-4 py-4 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`text-[12px] font-bold uppercase tracking-[0.08em] ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`text-[12px] font-bold uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Reason shared' : 'Question raised'}
                     </p>
                     <p className="mt-2 text-[14px] leading-[20px] text-[#24362d]">{selectedApproval.clientQuestion}</p>
@@ -487,7 +487,7 @@ export default function ProjectTasksWorkspace({
           </header>
 
           <div className="px-4 pt-5">
-            <div className="rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[14px] leading-[20px] text-[#267449]">
+            <div className="rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#267449]">
               {homeownerDesignerName} needs your decisions on these items. Open each card to review and respond.
             </div>
 
@@ -587,11 +587,11 @@ export default function ProjectTasksWorkspace({
           </div>
 
           {isComposerOpen ? (
-            <section className="mt-6 rounded-[24px] border border-[#e3ebe5] bg-[#f7faf8] p-5">
+            <section className="mt-6 rounded-[20px] border border-[#e3ebe5] bg-[#f7faf8] p-5">
               <SectionHeader title="New task" />
               <div className="space-y-4">
                 <label className="block">
-                  <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Task title</p>
+                  <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Task title</p>
                   <input
                     value={newTaskTitle}
                     onChange={(event) => setNewTaskTitle(event.target.value)}
@@ -601,13 +601,13 @@ export default function ProjectTasksWorkspace({
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Assign to</p>
+                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Assign to</p>
                     <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
                       {['Me', 'Rohan', 'Aarav', 'Nisha', 'Vikram', 'Meera', 'Arjun'].map((name) => <option key={name}>{name}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Priority</p>
+                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Priority</p>
                     <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
                       {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
                     </select>
@@ -615,7 +615,7 @@ export default function ProjectTasksWorkspace({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Due bucket</p>
+                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Due bucket</p>
                     <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
                       {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
                     </select>
@@ -658,10 +658,10 @@ export default function ProjectTasksWorkspace({
                     key={filter}
                     type="button"
                     onClick={() => setTaskFilter(filter)}
-                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 text-[14px] leading-[20px] ${taskFilter === filter ? 'bg-[#5fc18a] font-semibold text-white' : 'border border-[#d1d1d1] bg-white font-medium text-black'}`}
+                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 text-[14px] font-bold leading-[20px] ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
                   >
                     {filter}
-                    <span className={`grid size-6 place-items-center rounded-xl text-[12px] leading-[18px] ${taskFilter === filter ? 'bg-black font-semibold text-white' : 'bg-[#f2f4f3] font-medium text-[#5f6f66]'}`}>
+                    <span className={`grid size-6 place-items-center rounded-xl text-[12px] font-bold leading-[18px] ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
                       {String(getTaskCount(filter)).padStart(2, '0')}
                     </span>
                   </button>
@@ -689,7 +689,7 @@ export default function ProjectTasksWorkspace({
                     return (
                       <section key={label}>
                         <SectionHeader title={label} meta={String(visibleTasks.length)} tone={tone} />
-                        <div className={`overflow-hidden rounded-[24px] border ${label === 'Done' ? 'border-[#e7ece9] bg-[#fbfcfb]' : 'border-[#e3ebe5] bg-white'} px-4`}>
+                        <div className={`overflow-hidden rounded-[20px] border ${label === 'Done' ? 'border-[#e7ece9] bg-[#fbfcfb]' : 'border-[#e3ebe5] bg-white'} px-4`}>
                           {visibleTasks.map((task) => (
                             <TaskRow
                               key={task.id}
@@ -710,7 +710,7 @@ export default function ProjectTasksWorkspace({
                   {columns.map((column) => {
                     const columnTasks = filteredTasks.filter((task) => task.status === column.key)
                     return (
-                      <section key={column.key} className="w-[264px] shrink-0 rounded-[24px] border border-[#e3ebe5] bg-[#f8faf9] p-4">
+                      <section key={column.key} className="w-[264px] shrink-0 rounded-[20px] border border-[#e3ebe5] bg-[#f8faf9] p-4">
                         <div className="mb-4 flex items-center justify-between">
                           <p className="text-[14px] font-bold leading-[20px] text-[#173324]">{column.title}</p>
                           <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${column.tone}`}>{columnTasks.length}</span>
@@ -743,7 +743,7 @@ export default function ProjectTasksWorkspace({
               {teamGroups.map(([assignee, assigneeTasks]) => (
                 <section key={assignee}>
                   <SectionHeader title={assignee} meta={`${assigneeTasks.length} tasks`} tone="text-[#102418]" />
-                  <div className="overflow-hidden rounded-[24px] border border-[#e3ebe5] bg-white px-4">
+                  <div className="overflow-hidden rounded-[20px] border border-[#e3ebe5] bg-white px-4">
                     {assigneeTasks.map((task) => (
                       <TaskRow
                         key={task.id}
@@ -762,7 +762,7 @@ export default function ProjectTasksWorkspace({
 
           {activeTab === 'approvals' ? (
             <section className="mt-6 space-y-6">
-              <div className="rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[14px] leading-[20px] text-[#5f6f66]">
+              <div className="rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#355244]">
                 Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
               </div>
 
@@ -790,7 +790,7 @@ export default function ProjectTasksWorkspace({
 
       {taskActionTargetId ? (
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <p className="mb-3 text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Task actions</p>
+          <p className="mb-3 text-[12px] font-bold uppercase text-[#7a8780]">Task actions</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
             <TaskStatusChip label="To do" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { moveTaskStatus(taskActionTargetId, 'todo'); setTaskActionTargetId(null) }} />
             <TaskStatusChip label="In progress" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { moveTaskStatus(taskActionTargetId, 'inprogress'); setTaskActionTargetId(null) }} />
@@ -816,7 +816,7 @@ export default function ProjectTasksWorkspace({
             <section className="w-full rounded-t-[32px] bg-white p-5 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#7a8780]">Approval item</p>
+                  <p className="text-[12px] font-bold uppercase text-[#7a8780]">Approval item</p>
                   <p className="mt-2 text-[20px] font-bold leading-[26px] text-[#102418]">{selectedApproval.title}</p>
                 </div>
                 <button type="button" onClick={() => setSelectedApprovalId(null)} className="grid size-10 place-items-center rounded-full bg-[#f4f6f5] text-[#607169]">
@@ -828,7 +828,7 @@ export default function ProjectTasksWorkspace({
                 <p className="text-[14px] leading-[20px] text-[#2a3b32]">{selectedApproval.description}</p>
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-4 rounded-2xl px-4 py-3 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`text-[12px] font-bold uppercase tracking-[0.08em] ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`text-[12px] font-bold uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Client feedback' : 'Client question'}
                     </p>
                     <p className="mt-2 text-[14px] leading-[20px] text-[#24362d]">{selectedApproval.clientQuestion}</p>

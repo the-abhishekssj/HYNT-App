@@ -1718,7 +1718,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </section>
 
                 <section id="project-updates">
-                  <div className="mb-6 flex items-center justify-between">
+                  <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-[16px] font-extrabold leading-6 text-black">Latest updates</h2>
                     <button type="button" onClick={() => setSelectedProjectPage('updates')} className="inline-flex items-center gap-1 text-[12px] font-medium leading-[18px] text-[#7a7a7a]">
                       <span>View all</span>
