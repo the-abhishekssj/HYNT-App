@@ -1991,7 +1991,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </article>
             <div className="h-full w-px bg-[#d2d2d2]" />
             <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
-              <p className="flex items-center gap-1 text-[20px] font-extrabold leading-[1.5] text-black"><CurrencyInr size={16} weight="fill" />4.2L</p>
+              <p className="flex items-center gap-1 text-[20px] font-extrabold leading-[1.5] text-black"><CurrencyInr size={22} weight="regular" />4.2L</p>
               <p className="text-center text-[12px] font-bold leading-[1.5] text-[#888888]">This Month</p>
             </article>
           </div>
