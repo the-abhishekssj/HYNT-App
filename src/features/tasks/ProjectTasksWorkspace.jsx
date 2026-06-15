@@ -478,16 +478,16 @@ export default function ProjectTasksWorkspace({
       <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
         <section className="mx-auto w-full max-w-[390px] pb-8">
           <header className="bg-[#173324] px-4 pb-5 pt-5 text-white">
-            <button type="button" onClick={onBack} className="mb-4 flex items-center gap-2 text-[14px] font-medium">
+            <button type="button" onClick={onBack} className="type-body mb-4 flex items-center gap-2">
               <CaretLeft size={18} />
               Back
             </button>
-            <p className="text-[24px] font-bold leading-[30px]">Approvals needed</p>
-            <p className="mt-2 text-[14px] leading-[20px] text-white/72">From {homeownerDesignerName} · {homeownerProjectName}</p>
+            <p className="type-page-title">Approvals needed</p>
+            <p className="type-body mt-2 text-white/72">From {homeownerDesignerName} · {homeownerProjectName}</p>
           </header>
 
           <div className="px-4 pt-5">
-            <div className="rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#267449]">
+            <div className="type-body-strong rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[#267449]">
               {homeownerDesignerName} needs your decisions on these items. Open each card to review and respond.
             </div>
 
@@ -725,7 +725,7 @@ export default function ProjectTasksWorkspace({
                       <section key={column.key} className="w-[264px] shrink-0 rounded-[20px] border border-[#e3ebe5] bg-[#f8faf9] p-4">
                         <div className="mb-4 flex items-center justify-between">
                           <p className="type-card-title text-[#173324]">{column.title}</p>
-                          <span className={`type-caption rounded-full px-3 py-1 uppercase tracking-[0.08em] ${column.tone}`}>{columnTasks.length}</span>
+                          <span className={`type-caption rounded-full px-3 py-1 uppercase ${column.tone}`}>{columnTasks.length}</span>
                         </div>
                         <div className="space-y-3">
                           {columnTasks.map((task) => (
@@ -774,7 +774,7 @@ export default function ProjectTasksWorkspace({
 
           {activeTab === 'approvals' ? (
             <section className="mt-6 space-y-6">
-              <div className="rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#355244]">
+              <div className="type-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
                 Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
               </div>
 
