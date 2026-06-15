@@ -773,11 +773,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <CaretLeft size={24} />
                     </span>
                     <span className="text-left">
-                      <span className="block text-[16px] font-bold leading-6 text-black">All updates</span>
-                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                      <span className="type-section-title block text-black">All updates</span>
+                      <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
                     </span>
                   </button>
-                  <span className="rounded-full border border-[#e1e1e1] bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">
+                  <span className="type-caption rounded-full border border-[#e1e1e1] bg-white px-3 py-1 uppercase text-[#6f6f6f]">
                     {selectedProject.alerts.length}
                   </span>
                 </div>
@@ -790,15 +790,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="flex w-full items-start justify-between gap-3 rounded-[22px] border border-[#e1e1e1] bg-white px-4 py-3 text-left">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="rounded-full bg-[#f5f5f5] px-2 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[#6f6f6f]">{alert.label}</span>
+                        <span className="type-caption rounded-full bg-[#f5f5f5] px-2 py-1 uppercase text-[#6f6f6f]">{alert.label}</span>
                       </div>
-                      <p className="mt-2 text-[14px] font-semibold leading-5 text-black">{alert.title}</p>
+                      <p className="type-body-strong mt-2 text-black">{alert.title}</p>
                     </div>
-                    <span className="shrink-0 text-[10px] font-bold uppercase tracking-[0.08em] text-[#999999]">{alert.time}</span>
+                    <span className="type-caption shrink-0 uppercase text-[#999999]">{alert.time}</span>
                   </button>
                 )) : (
                   <article className="rounded-2xl border border-[#e1e1e1] bg-white p-3">
-                    <p className="text-[14px] font-bold leading-5 text-black">No updates yet</p>
+                    <p className="type-card-title text-black">No updates yet</p>
                   </article>
                 )}
               </div>
@@ -819,8 +819,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <CaretLeft size={24} />
                     </span>
                     <span className="text-left">
-                      <span className="block text-[16px] font-bold leading-6 text-black">New project</span>
-                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Enter project details</span>
+                      <span className="type-section-title block text-black">New project</span>
+                      <span className="type-caption block text-[#999999]">Enter project details</span>
                     </span>
                   </button>
                 </div>
@@ -839,22 +839,22 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   ['dueDate', 'Due date', 'date', ''],
                 ].map(([key, label, type, placeholder]) => (
                   <label key={key} className="block">
-                    <p className="mb-1 text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{label}</p>
+                    <p className="type-label mb-1 uppercase text-[#7b7b7b]">{label}</p>
                     <input
                       type={type}
                       value={newProjectForm[key]}
                       placeholder={placeholder}
                       onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
-                      className="h-11 w-full rounded-xl border border-[#d7d7d7] px-3 text-[14px] font-medium outline-none"
+                      className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
                     />
                   </label>
                 ))}
                 <label className="block">
-                  <p className="mb-1 text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Status</p>
+                  <p className="type-label mb-1 uppercase text-[#7b7b7b]">Status</p>
                   <select
                     value={newProjectForm.status}
                     onChange={(event) => setNewProjectForm((prev) => ({ ...prev, status: event.target.value }))}
-                    className="h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 text-[14px] font-medium outline-none"
+                    className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 outline-none"
                   >
                     <option>Active</option>
                     <option>Pending</option>
@@ -902,7 +902,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 })
                 setIsCreateProjectOpen(false)
               }}
-              className="h-11 w-full rounded-full bg-black text-[14px] font-bold text-white"
+              className="type-body-strong h-11 w-full rounded-full bg-black text-white"
             >
               Create project
             </button>
@@ -993,8 +993,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Create BOQ</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                        <span className="type-section-title block text-black">Create BOQ</span>
+                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
                       </span>
                     </button>
                     <div className="flex items-center gap-1">
@@ -1023,7 +1023,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               <div className="fixed left-1/2 top-16 z-[88] w-full max-w-[390px] -translate-x-1/2 bg-white px-4">
                 <div className="grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
                   {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
-                    <p key={head} className={`text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
+                    <p key={head} className={`type-label uppercase text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
                   ))}
                 </div>
               </div>
@@ -1033,10 +1033,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   <div>
                     {boqItems.map((row) => (
                       <div key={row.id} className="grid grid-cols-[2fr_0.8fr_1fr_1fr] items-center border-b border-[#f1f1f1] py-3 last:border-b-0">
-                        <p className="pl-2 pr-2 text-[12px] font-semibold leading-[18px] text-black">{row.item}</p>
-                        <p className="pl-2 text-[12px] font-semibold leading-[18px] text-[#444]">{row.area}</p>
-                        <p className="pl-2 text-[12px] font-semibold leading-[18px] text-[#444]">{renderInrValue(`${formatRupees(row.rate)} /${row.unit || 'unit'}`, 'inline-flex items-start text-[12px] font-semibold leading-[18px] text-[#444]')}</p>
-                        <p className="self-center pr-2 text-right text-[12px] font-extrabold leading-[18px] text-black">{renderInrValue(formatRupees(rowAmount(row)), 'inline-flex items-center justify-end text-[12px] font-extrabold leading-[18px] text-black')}</p>
+                        <p className="type-label pl-2 pr-2 text-black">{row.item}</p>
+                        <p className="type-meta pl-2 text-[#444]">{row.area}</p>
+                        <p className="type-meta pl-2 text-[#444]">{renderInrValue(`${formatRupees(row.rate)} /${row.unit || 'unit'}`, 'type-meta inline-flex items-start text-[#444]')}</p>
+                        <p className="type-label self-center pr-2 text-right text-black">{renderInrValue(formatRupees(rowAmount(row)), 'type-label inline-flex items-center justify-end text-black')}</p>
                       </div>
                     ))}
                   </div>
@@ -1046,12 +1046,12 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4">
                 <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#d9e9df] bg-[linear-gradient(145deg,#f7fff9,#eef7f1)] px-4 py-3 shadow-[0_8px_20px_rgba(22,35,29,0.08)]">
                   <div>
-                    <p className="text-[12px] font-bold uppercase tracking-[0.08em] leading-[16px] text-[#5b7768]">Total estimate</p>
-                    <p className="mt-0.5 text-[10px] font-medium leading-[14px] text-[#7e9187]">Inclusive of all listed BOQ line items</p>
+                    <p className="type-label uppercase text-[#5b7768]">Total estimate</p>
+                    <p className="type-caption mt-0.5 text-[#7e9187]">Inclusive of all listed BOQ line items</p>
                   </div>
-                  <p className="text-[24px] font-extrabold leading-[1] text-black">{renderInrValue(formatRupees(totalEstimate), 'text-[24px] font-extrabold leading-[1] text-black')}</p>
+                  <p className="type-page-title text-black">{renderInrValue(formatRupees(totalEstimate), 'type-page-title text-black')}</p>
                 </div>
-                <button type="button" className="w-full rounded-2xl bg-black px-4 py-3 text-[14px] font-bold leading-[21px] text-white">
+                <button type="button" className="type-body-strong w-full rounded-2xl bg-black px-4 py-3 text-white">
                   Create invoice from BOQ
                 </button>
               </div>
@@ -1095,8 +1095,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Finance</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                        <span className="type-section-title block text-black">Finance</span>
+                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
                       </span>
                     </button>
                     <span className="grid size-10 place-items-center opacity-0">
@@ -1108,9 +1108,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
               <div className="px-4 py-6">
                 <section className="py-6">
-                  <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7d7d7d]">Project total</p>
-                  <p className="mt-1 text-[24px] font-extrabold leading-[30px]">{renderInrValue(formatLakhs(selectedProject.spentL), 'text-[24px] font-extrabold leading-[30px]', 27)}</p>
-                  <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#777]">Total money spent over this project</p>
+                  <p className="type-label uppercase text-[#7d7d7d]">Project total</p>
+                  <p className="type-page-title mt-1">{renderInrValue(formatLakhs(selectedProject.spentL), 'type-page-title', 27)}</p>
+                  <p className="type-meta mt-1 text-[#777]">Total money spent over this project</p>
                 </section>
 
                 <div className="-mx-4 h-2 bg-[#e0e0e0]" />
@@ -1118,16 +1118,16 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 <section className="py-6">
                   <div className="grid grid-cols-3 gap-2">
                     <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Received</p>
+                      <p className="type-card-title">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
+                      <p className="type-utility mt-1 text-[#7b7b7b]">Received</p>
                     </div>
                     <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(pendingL))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Pending</p>
+                      <p className="type-card-title">{renderInrValue(formatLakhs(pendingL))}</p>
+                      <p className="type-utility mt-1 text-[#7b7b7b]">Pending</p>
                     </div>
                     <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
-                      <p className="mt-1 text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Upcoming expense</p>
+                      <p className="type-card-title">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
+                      <p className="type-utility mt-1 text-[#7b7b7b]">Upcoming expense</p>
                     </div>
                   </div>
                 </section>
@@ -1136,8 +1136,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
                 <section className="py-6">
                   <div className="mb-3 flex items-center justify-between">
-                    <p className="text-[16px] font-extrabold leading-6">Invoices</p>
-                    <p className="text-[12px] font-semibold leading-[18px] text-[#7b7b7b]">{projectInvoicesList.length} total</p>
+                    <p className="type-section-title">Invoices</p>
+                    <p className="type-meta text-[#7b7b7b]">{projectInvoicesList.length} total</p>
                   </div>
                   <div className="space-y-2">
                     {projectInvoicesList.map((invoice) => (
@@ -1148,13 +1148,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="text-[12px] font-bold leading-4 text-[#7b7b7b]">{invoice.number}</p>
-                            <p className="mt-1 truncate text-[14px] font-semibold leading-[19px] text-black">{invoice.title}</p>
-                            <p className="mt-1 text-[12px] font-medium leading-4 text-[#777]">{invoice.date}</p>
+                            <p className="type-label text-[#7b7b7b]">{invoice.number}</p>
+                            <p className="type-body-strong mt-1 truncate text-black">{invoice.title}</p>
+                            <p className="type-meta mt-1 text-[#777]">{invoice.date}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-[14px] font-extrabold leading-[19px]">{renderInrValue(formatLakhs(invoice.amountL))}</p>
-                            <span className={`mt-1 inline-flex rounded-full px-2 py-1 text-[10px] font-bold ${statusTone(invoice.status)}`}>{invoice.status}</span>
+                            <p className="type-card-title">{renderInrValue(formatLakhs(invoice.amountL))}</p>
+                            <span className={`type-caption mt-1 inline-flex rounded-full px-2 py-1 ${statusTone(invoice.status)}`}>{invoice.status}</span>
                           </div>
                         </div>
                       </article>
@@ -1166,8 +1166,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
             {selectedInvoice ? (
               <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Update invoice status</p>
-                <p className="mt-1 truncate text-[14px] font-semibold leading-[19px]">{selectedInvoice.number} - {selectedInvoice.title}</p>
+                <p className="type-label uppercase text-[#7b7b7b]">Update invoice status</p>
+                <p className="type-body-strong mt-1 truncate">{selectedInvoice.number} - {selectedInvoice.title}</p>
                 <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
                   {invoiceStatuses.map((status) => {
                     const active = selectedInvoice.status === status
@@ -1218,8 +1218,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Site diary</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                        <span className="type-section-title block text-black">Site diary</span>
+                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
                       </span>
                     </button>
                     <button type="button" onClick={() => setIsDiaryComposerOpen(true)} className="grid size-9 place-items-center" aria-label="Create diary entry">
@@ -1231,7 +1231,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
               <div className="px-4 pb-6 pt-8">
                 {groupedDates.length === 0 ? (
-                  <p className="rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[14px] font-medium text-[#7a7a7a]">
+                  <p className="type-body rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[#7a7a7a]">
                     No entries yet. Tap + to create your first site diary update.
                   </p>
                 ) : (
@@ -1239,8 +1239,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     {groupedDates.map((dateLabel) => (
                       <section key={dateLabel}>
                         <div className="mb-4 flex items-center justify-between">
-                          <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{dateLabel}</p>
-                          <p className="text-[12px] font-semibold text-[#7b7b7b]">
+                          <p className="type-label uppercase text-[#7b7b7b]">{dateLabel}</p>
+                          <p className="type-meta text-[#7b7b7b]">
                             Day {Math.max(1, Math.floor((new Date(groupedEntries[dateLabel][0].createdAt).setHours(0, 0, 0, 0) - new Date(selectedProject.kickoffDate).setHours(0, 0, 0, 0)) / 86400000) + 1)}
                           </p>
                         </div>
@@ -1250,12 +1250,12 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                             return (
                               <article key={entry.id} className="rounded-xl border border-[#e2e2e2] bg-white p-3">
                                 <div className="mb-2 flex items-center justify-between">
-                                  <p className="text-[12px] font-bold leading-[18px] text-[#7b7b7b]">{timeLabel}</p>
+                                  <p className="type-label text-[#7b7b7b]">{timeLabel}</p>
                                   <button type="button" onClick={() => setDiaryActionEntryId(entry.id)} className="grid size-6 place-items-center rounded-md" aria-label="Entry actions">
                                     <DotsThreeVertical size={14} weight="bold" />
                                   </button>
                                 </div>
-                                {entry.note ? <p className="text-[14px] font-medium leading-[19px] text-[#212121]">{entry.note}</p> : null}
+                                {entry.note ? <p className="type-body text-[#212121]">{entry.note}</p> : null}
                                 {entry.photos.length > 0 ? (
                                   <div className={`${entry.note ? 'mt-3' : ''} grid grid-cols-2 gap-2`}>
                                     {entry.photos.map((photo) => (
@@ -1276,14 +1276,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
             {isDiaryComposerOpen ? (
               <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
+                <p className="type-label uppercase text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
                 <textarea
                   value={diaryDraftNote}
                   onChange={(event) => setDiaryDraftNote(event.target.value)}
                   placeholder="Add note (optional)"
-                  className="mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 text-[14px] font-medium leading-[19px] outline-none"
+                  className="type-body mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 outline-none"
                 />
-                <label className="mt-2 flex h-10 w-full cursor-pointer items-center justify-center rounded-xl border border-[#d7d7d7] text-[12px] font-semibold text-[#1d1d1d]">
+                <label className="type-label mt-2 flex h-10 w-full cursor-pointer items-center justify-center rounded-xl border border-[#d7d7d7] text-[#1d1d1d]">
                   Attach photos
                   <input
                     type="file"
@@ -1304,9 +1304,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     ))}
                   </div>
                 ) : null}
-                {diaryDraftPhotos.length > 0 ? <p className="mt-1 text-[12px] font-medium text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
+                {diaryDraftPhotos.length > 0 ? <p className="type-meta mt-1 text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="h-10 rounded-xl border border-[#d7d7d7] text-[14px] font-semibold">Cancel</button>
+                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="type-body-strong h-10 rounded-xl border border-[#d7d7d7]">Cancel</button>
                   <button
                     type="button"
                     onClick={() => {
@@ -1333,7 +1333,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setDiaryDraftNote('')
                       setDiaryDraftPhotos([])
                     }}
-                    className="h-10 rounded-xl bg-black text-[14px] font-bold text-white disabled:opacity-40"
+                    className="type-body-strong h-10 rounded-xl bg-black text-white disabled:opacity-40"
                     disabled={!diaryDraftNote.trim() && diaryDraftPhotos.length === 0}
                   >
                     {editingDiaryEntryId ? 'Save changes' : 'Save entry'}
@@ -1343,7 +1343,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             ) : null}
             {selectedDiaryEntry ? (
               <div className="fixed bottom-0 left-1/2 z-[96] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Entry actions</p>
+                <p className="type-label uppercase text-[#7b7b7b]">Entry actions</p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -1354,7 +1354,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setDiaryActionEntryId(null)
                       setIsDiaryComposerOpen(true)
                     }}
-                    className="h-10 rounded-xl border border-[#d7d7d7] text-[14px] font-semibold"
+                    className="type-body-strong h-10 rounded-xl border border-[#d7d7d7]"
                   >
                     Edit entry
                   </button>
@@ -1364,7 +1364,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       setProjectDiaryEntries((prev) => prev.filter((entry) => entry.id !== selectedDiaryEntry.id))
                       setDiaryActionEntryId(null)
                     }}
-                    className="h-10 rounded-xl border border-[#e1b8b8] bg-white text-[14px] font-bold text-[#c34545]"
+                    className="type-body-strong h-10 rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]"
                   >
                     Delete entry
                   </button>
@@ -1390,11 +1390,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Firm members</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Add existing members to projects</span>
+                        <span className="type-section-title block text-black">Firm members</span>
+                        <span className="type-caption block text-[#999999]">Add existing members to projects</span>
                       </span>
                     </button>
-                    <span className="text-[12px] font-semibold text-[#6f6f6f]">{availableFirmMembers.length} available</span>
+                    <span className="type-meta text-[#6f6f6f]">{availableFirmMembers.length} available</span>
                   </div>
                 </div>
               </header>
@@ -1415,9 +1415,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <div className="flex min-w-0 items-center gap-3">
                         <img src={member.avatar} alt={member.name} className="size-11 rounded-full border border-[#e0e0e0] object-cover" />
                         <div className="min-w-0">
-                          <p className="truncate text-[14px] font-bold leading-[21px]">{member.name}</p>
-                          <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{member.role}</p>
-                          <p className="truncate text-[12px] font-medium leading-[16px] text-[#7b7b7b]">
+                          <p className="type-body-strong truncate">{member.name}</p>
+                          <p className="type-meta truncate text-[#6f6f6f]">{member.role}</p>
+                          <p className="type-meta truncate text-[#7b7b7b]">
                             {member.occupancy.status === 'occupied' ? `Currently working on ${member.occupancy.project} - Day ${member.occupancy.day}` : 'Idle'}
                           </p>
                         </div>
@@ -1457,7 +1457,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     setSelectedFirmMemberIds([])
                     setSelectedProjectPage('team')
                   }}
-                  className="h-11 w-full rounded-full bg-black text-[14px] font-bold text-white"
+                  className="type-body-strong h-11 w-full rounded-full bg-black text-white"
                 >
                   {selectedFirmMemberIds.length === 1 ? 'Assign projects' : 'Add to project'}
                 </button>
@@ -1482,8 +1482,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Add to projects</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{firmMember.name}</span>
+                        <span className="type-section-title block text-black">Add to projects</span>
+                        <span className="type-caption block text-[#999999]">{firmMember.name}</span>
                       </span>
                     </button>
                   </div>
@@ -1505,8 +1505,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         }}
                         className={`w-full rounded-xl border p-3 text-left ${selected ? 'border-[#5FC18A] bg-[#E8F7EF]' : 'border-[#e1e1e1] bg-white'}`}
                       >
-                        <p className="text-[14px] font-bold leading-[21px]">{project.scope}</p>
-                        <p className="text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{project.client} - {project.location}</p>
+                        <p className="type-body-strong">{project.scope}</p>
+                        <p className="type-meta text-[#6f6f6f]">{project.client} - {project.location}</p>
                       </button>
                     )
                   })}
@@ -1536,7 +1536,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   setSelectedFirmMemberId(null)
                   setSelectedMemberProjectIds([])
                 }}
-                className="h-11 w-full rounded-full bg-black text-[14px] font-bold text-white disabled:opacity-40"
+                className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:opacity-40"
                 disabled={selectedMemberProjectIds.length === 0}
               >
                 Add to selected projects
@@ -1560,8 +1560,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <CaretLeft size={24} />
                       </span>
                       <span className="text-left">
-                        <span className="block text-[16px] font-bold leading-6 text-black">Team</span>
-                        <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">{selectedProject.scope}</span>
+                        <span className="type-section-title block text-black">Team</span>
+                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
                       </span>
                     </button>
                     <button type="button" onClick={() => setSelectedProjectPage('team-directory')} className="grid size-9 place-items-center" aria-label="Add team member">
@@ -1573,13 +1573,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
               <div className="px-4 pb-6 pt-8">
                 <section className="rounded-xl border border-[#e1e1e1] bg-[#fafafa] p-3">
-                  <p className="text-[12px] font-semibold leading-[18px] text-[#4c4c4c]">
+                  <p className="type-meta text-[#4c4c4c]">
                     Add team members by mobile number. They receive a HYNT invite to approve.
                   </p>
                 </section>
 
                 <section className="mt-6">
-                  <p className="mb-3 text-[16px] font-extrabold leading-6">Current team</p>
+                  <p className="type-section-title mb-3">Current team</p>
                   <div>
                     {teamMembers.map((member) => (
                       <article key={member.id} className="flex items-center justify-between border-b border-[#d9d9d9] py-3 last:border-b-0">
@@ -1587,10 +1587,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           <img src={member.avatar} alt={member.name} className="size-11 rounded-full border border-[#e0e0e0] object-cover" />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <p className="truncate text-[14px] font-bold leading-[21px] text-black">{member.name}</p>
-                              {member.isYou ? <span className="rounded-full bg-[#eaf9f1] px-2 py-0.5 text-[10px] font-bold text-[#2a9a64]">You</span> : null}
+                              <p className="type-body-strong truncate text-black">{member.name}</p>
+                              {member.isYou ? <span className="type-caption rounded-full bg-[#eaf9f1] px-2 py-0.5 text-[#2a9a64]">You</span> : null}
                             </div>
-                            <p className="truncate text-[12px] font-medium leading-[18px] text-[#6f6f6f]">{member.role}</p>
+                            <p className="type-meta truncate text-[#6f6f6f]">{member.role}</p>
                           </div>
                         </div>
                       </article>
@@ -1601,14 +1601,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             </section>
 
               <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-              <p className="text-[12px] font-bold uppercase tracking-[0.06em] text-[#7b7b7b]">Add by mobile number</p>
+              <p className="type-label uppercase text-[#7b7b7b]">Add by mobile number</p>
               <div className="mt-2 flex items-center gap-2">
                 <input
                   id="team-invite-phone"
                   value={teamInvitePhone}
                   onChange={(event) => setTeamInvitePhone(event.target.value)}
                   placeholder="+91 98765 43210"
-                  className="h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 text-[14px] font-medium outline-none"
+                  className="type-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none"
                 />
                 <button
                   type="button"
@@ -1629,12 +1629,12 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     ])
                     setTeamInvitePhone('')
                   }}
-                  className="h-10 shrink-0 rounded-xl bg-black px-4 text-[14px] font-bold text-white"
+                  className="type-body-strong h-10 shrink-0 rounded-xl bg-black px-4 text-white"
                 >
                   Invite
                 </button>
               </div>
-              <p className="mt-2 text-[12px] font-medium leading-[16px] text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
+              <p className="type-meta mt-2 text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
             </div>
           </main>
         )

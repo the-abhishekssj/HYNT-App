@@ -308,26 +308,26 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <SOWSection index="8" title="Signatures" open={openSections.signatures} onToggle={() => toggleSection('signatures')}>
             <div className="grid grid-cols-2 gap-3">
               <article className="flex min-h-[160px] flex-col justify-between rounded-2xl border border-[#e2e2e2] bg-white p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                <div>
+                  <div className="flex items-start justify-between gap-3">
                     <p className="type-caption uppercase text-[#7b7b7b]">Designer</p>
-                    <p className="type-card-title mt-2 truncate text-black">Riya Desai</p>
+                    <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${designerSigned ? 'bg-[#eaf9f1] text-[#2a9a64]' : 'bg-[#f2f2f2] text-[#777777]'}`}>
+                      {designerSigned ? 'Signed' : 'Pending'}
+                    </span>
                   </div>
-                  <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${designerSigned ? 'bg-[#eaf9f1] text-[#2a9a64]' : 'bg-[#f2f2f2] text-[#777777]'}`}>
-                    {designerSigned ? 'Signed' : 'Pending'}
-                  </span>
+                  <p className="type-card-title mt-2 text-black">Riya Desai</p>
                 </div>
                 <p className="type-meta mt-4 text-[#5f7467]">{designerSigned ? 'Verified and signed from designer side.' : 'Awaiting OTP verification from the designer.'}</p>
               </article>
               <article className="flex min-h-[160px] flex-col justify-between rounded-2xl border border-[#e2e2e2] bg-white p-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                <div>
+                  <div className="flex items-start justify-between gap-3">
                     <p className="type-caption uppercase text-[#7b7b7b]">Client</p>
-                    <p className="type-card-title mt-2 truncate text-black">{document.clientName}</p>
+                    <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${clientSigned ? 'bg-[#eaf9f1] text-[#2a9a64]' : 'bg-[#f2f2f2] text-[#777777]'}`}>
+                      {clientSigned ? 'Signed' : 'Waiting'}
+                    </span>
                   </div>
-                  <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${clientSigned ? 'bg-[#eaf9f1] text-[#2a9a64]' : 'bg-[#f2f2f2] text-[#777777]'}`}>
-                    {clientSigned ? 'Signed' : 'Waiting'}
-                  </span>
+                  <p className="type-card-title mt-2 text-black">{document.clientName}</p>
                 </div>
                 <p className="type-meta mt-4 text-[#5f7467]">{clientSigned ? 'Client has already approved this SOW.' : 'Client signature will appear after review and acceptance.'}</p>
               </article>

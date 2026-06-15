@@ -191,7 +191,7 @@ function ApprovalCard({ item, onOpen, compact = false }) {
           </div>
           <p className="type-body mt-3 text-[#355244]">{item.description}</p>
         </div>
-        <p className="mt-3 text-[12px] font-medium leading-[18px] text-[#8a948f]">Sent {item.sentAt} · Due {item.dueDate}</p>
+        <p className="type-meta mt-3 text-[#8a948f]">Sent {item.sentAt} / Due {item.dueDate}</p>
       </button>
     </article>
   )
@@ -217,13 +217,13 @@ function ProTaskDetail({
                 <p className="type-meta text-[#7f8a84]">{selectedProject.scope}</p>
               </div>
             </button>
-            <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+            <span className={`type-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
           </div>
         </header>
 
         <div className="px-4 pt-6">
           <section className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
-            <p className="text-[20px] font-bold leading-[26px] text-[#102418]">{task.title}</p>
+            <p className="type-page-title text-[#102418]">{task.title}</p>
             <div className="mt-5 grid grid-cols-2 gap-4">
               {[
                 ['Assigned to', task.assignee],
@@ -232,8 +232,8 @@ function ProTaskDetail({
                 ['Due time', task.dueTime],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <p className="text-[10px] font-bold uppercase text-[#91a097]">{label}</p>
-                  <p className="mt-1 text-[14px] font-medium leading-[20px] text-[#1d1d1d]">{value}</p>
+                  <p className="type-caption uppercase text-[#91a097]">{label}</p>
+                  <p className="type-body mt-1 text-[#1d1d1d]">{value}</p>
                 </div>
               ))}
             </div>
@@ -253,8 +253,8 @@ function ProTaskDetail({
                     {completedByIndex[index] ? <CheckCircle size={18} weight="fill" className="text-[#26c485]" /> : <Circle size={18} />}
                   </span>
                   <span className="min-w-0">
-                    <p className={`text-[14px] leading-[20px] ${completedByIndex[index] ? 'font-medium text-[#92a097 line-through]' : 'font-medium text-[#1d1d1d]'}`}>{index + 1}. {step}</p>
-                    {completedByIndex[index] ? <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#8a948f]">Completed at {completedByIndex[index]}</p> : null}
+                    <p className={`type-body ${completedByIndex[index] ? 'text-[#92a097] line-through' : 'text-[#1d1d1d]'}`}>{index + 1}. {step}</p>
+                    {completedByIndex[index] ? <p className="type-meta mt-1 text-[#8a948f]">Completed at {completedByIndex[index]}</p> : null}
                   </span>
                 </button>
               ))}
@@ -264,7 +264,7 @@ function ProTaskDetail({
       </section>
 
       <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-        <p className="mb-3 text-[12px] font-bold uppercase text-[#7a8780]">Move task to</p>
+        <p className="type-label mb-3 uppercase text-[#7a8780]">Move task to</p>
         <div className="no-scrollbar flex gap-2 overflow-x-auto">
           <TaskStatusChip label="To do" selected={task.status === 'todo'} onClick={() => onMoveTask('todo')} />
           <TaskStatusChip label="In progress" selected={task.status === 'inprogress'} onClick={() => onMoveTask('inprogress')} />
@@ -413,38 +413,38 @@ export default function ProjectTasksWorkspace({
         <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
           <section className="mx-auto w-full max-w-[390px] pb-8">
             <header className="bg-[#173324] px-4 pb-5 pt-5 text-white">
-              <button type="button" onClick={() => setSelectedApprovalId(null)} className="mb-4 flex items-center gap-2 text-[14px] font-medium">
+              <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body mb-4 flex items-center gap-2">
                 <CaretLeft size={18} />
                 Back
               </button>
-              <p className="text-[24px] font-bold leading-[30px]">Approvals needed</p>
-              <p className="mt-2 text-[14px] leading-[20px] text-white/72">From {homeownerDesignerName} · {homeownerProjectName}</p>
+              <p className="type-page-title">Approvals needed</p>
+              <p className="type-body mt-2 text-white/72">From {homeownerDesignerName} / {homeownerProjectName}</p>
             </header>
 
             <div className="px-4 pt-5">
               <article className="rounded-[20px] border border-[#e2e9e4] bg-white p-5 shadow-[0_12px_32px_rgba(17,24,20,0.06)]">
                 <div className="flex items-center justify-between gap-3">
-                  <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${approvalTone[selectedApproval.status]}`}>
+                  <span className={`type-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>
                     {approvalLabel[selectedApproval.status]}
                   </span>
-                  <span className="text-[12px] font-medium leading-[18px] text-[#7b8780]">Due {selectedApproval.dueDate}</span>
+                  <span className="type-meta text-[#7b8780]">Due {selectedApproval.dueDate}</span>
                 </div>
-                <p className="mt-4 text-[20px] font-bold leading-[26px] text-[#102418]">{selectedApproval.title}</p>
-                <p className="mt-1 text-[14px] font-medium leading-[20px] text-[#708078]">{selectedApproval.type}</p>
+                <p className="type-page-title mt-4 text-[#102418]">{selectedApproval.title}</p>
+                <p className="type-body mt-1 text-[#708078]">{selectedApproval.type}</p>
 
                 <div className="mt-5 rounded-[20px] bg-[#f2f7f4] px-4 py-5">
                   <div className="h-20 w-20 overflow-hidden rounded-2xl bg-white">
                     <img src={selectedApproval.image} alt={selectedApproval.title} className="h-full w-full object-cover" />
                   </div>
-                  <p className="mt-4 text-[14px] leading-[22px] text-[#24362d]">{selectedApproval.description}</p>
+                  <p className="type-body mt-4 text-[#24362d]">{selectedApproval.description}</p>
                 </div>
 
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-5 rounded-[20px] px-4 py-4 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`text-[12px] font-bold uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`type-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Reason shared' : 'Question raised'}
                     </p>
-                    <p className="mt-2 text-[14px] leading-[20px] text-[#24362d]">{selectedApproval.clientQuestion}</p>
+                    <p className="type-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
                   </div>
                 ) : null}
 
@@ -453,17 +453,17 @@ export default function ProjectTasksWorkspace({
                   onChange={(event) => setClientResponse(event.target.value)}
                   rows={3}
                   placeholder="Add a note if you want to ask a question or explain your choice"
-                  className="mt-5 w-full rounded-[20px] border border-[#d7e2db] px-4 py-3 text-[14px] font-medium leading-[20px] text-[#24362d] outline-none placeholder:text-[#98a39d]"
+                  className="type-body mt-5 w-full rounded-[20px] border border-[#d7e2db] px-4 py-3 text-[#24362d] outline-none placeholder:text-[#98a39d]"
                 />
 
                 <div className="mt-5 grid grid-cols-3 gap-3">
-                  <button type="button" onClick={() => handleApprovalResponse('approved')} className="rounded-2xl bg-[#173324] px-4 py-3 text-[14px] font-bold leading-[20px] text-white">
+                  <button type="button" onClick={() => handleApprovalResponse('approved')} className="type-body-strong rounded-2xl bg-[#173324] px-4 py-3 text-white">
                     Approve
                   </button>
-                  <button type="button" onClick={() => handleApprovalResponse('rejected')} className="rounded-2xl border border-[#efcaca] bg-[#fff4f4] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#c34545]">
+                  <button type="button" onClick={() => handleApprovalResponse('rejected')} className="type-body-strong rounded-2xl border border-[#efcaca] bg-[#fff4f4] px-4 py-3 text-[#c34545]">
                     Reject
                   </button>
-                  <button type="button" onClick={() => handleApprovalResponse('question')} className="rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 py-3 text-[14px] font-bold leading-[20px] text-[#6844d8]">
+                  <button type="button" onClick={() => handleApprovalResponse('question')} className="type-body-strong rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 py-3 text-[#6844d8]">
                     Ask
                   </button>
                 </div>
@@ -802,7 +802,7 @@ export default function ProjectTasksWorkspace({
 
       {taskActionTargetId ? (
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <p className="mb-3 text-[12px] font-bold uppercase text-[#7a8780]">Task actions</p>
+          <p className="type-label mb-3 uppercase text-[#7a8780]">Task actions</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
             <TaskStatusChip label="To do" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { moveTaskStatus(taskActionTargetId, 'todo'); setTaskActionTargetId(null) }} />
             <TaskStatusChip label="In progress" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { moveTaskStatus(taskActionTargetId, 'inprogress'); setTaskActionTargetId(null) }} />
@@ -814,7 +814,7 @@ export default function ProjectTasksWorkspace({
               setTasks((prev) => prev.filter((task) => task.id !== taskActionTargetId))
               setTaskActionTargetId(null)
             }}
-            className="mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#efcaca] bg-[#fff4f4] text-[14px] font-bold text-[#c34545]"
+            className="type-body-strong mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#efcaca] bg-[#fff4f4] text-[#c34545]"
           >
             <Trash size={16} />
             Delete task
@@ -828,8 +828,8 @@ export default function ProjectTasksWorkspace({
             <section className="w-full rounded-t-[32px] bg-white p-5 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[12px] font-bold uppercase text-[#7a8780]">Approval item</p>
-                  <p className="mt-2 text-[20px] font-bold leading-[26px] text-[#102418]">{selectedApproval.title}</p>
+                  <p className="type-label uppercase text-[#7a8780]">Approval item</p>
+                  <p className="type-page-title mt-2 text-[#102418]">{selectedApproval.title}</p>
                 </div>
                 <button type="button" onClick={() => setSelectedApprovalId(null)} className="grid size-10 place-items-center rounded-full bg-[#f4f6f5] text-[#607169]">
                   <XCircle size={20} weight="fill" />
@@ -837,27 +837,27 @@ export default function ProjectTasksWorkspace({
               </div>
 
               <div className="mt-5 rounded-[20px] bg-[#f3f7f4] px-4 py-4">
-                <p className="text-[14px] leading-[20px] text-[#2a3b32]">{selectedApproval.description}</p>
+                <p className="type-body text-[#2a3b32]">{selectedApproval.description}</p>
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-4 rounded-2xl px-4 py-3 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`text-[12px] font-bold uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`type-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Client feedback' : 'Client question'}
                     </p>
-                    <p className="mt-2 text-[14px] leading-[20px] text-[#24362d]">{selectedApproval.clientQuestion}</p>
+                    <p className="type-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
                   </div>
                 ) : null}
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="flex h-12 items-center justify-between rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-bold text-[#355244]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#355244]">
                   Edit item
                   <PencilSimple size={16} />
                 </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="flex h-12 items-center justify-between rounded-2xl border border-[#eadcb2] bg-[#fff9ee] px-4 text-[14px] font-bold text-[#a86a00]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#eadcb2] bg-[#fff9ee] px-4 text-[#a86a00]">
                   Send reminder
                   <PaperPlaneTilt size={16} />
                 </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="flex h-12 items-center justify-between rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 text-[14px] font-bold text-[#6844d8]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 text-[#6844d8]">
                   Reply to client
                   <ChatCircleDots size={16} />
                 </button>
