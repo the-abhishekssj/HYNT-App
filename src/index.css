@@ -22,6 +22,73 @@ body {
   background: #ffffff;
 }
 
+.type-display,
+.type-page-title,
+.type-section-title,
+.type-card-title,
+.type-body,
+.type-body-strong,
+.type-label,
+.type-meta,
+.type-caption {
+  font-family: 'Urbanist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0;
+}
+
+.type-display {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 42px;
+}
+
+.type-page-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 36px;
+}
+
+.type-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.type-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+.type-body {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.type-body-strong {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 21px;
+}
+
+.type-label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.type-meta {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+
+.type-caption {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 15px;
+}
+
 button,
 input {
   font: inherit;

@@ -1651,8 +1651,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <CaretLeft size={24} />
                     </span>
                     <span className="text-left">
-                      <span className="block text-[16px] font-bold leading-6 text-black">Project details</span>
-                      <span className="block text-[10px] font-medium leading-[15px] text-[#999999]">Back to projects</span>
+                      <span className="type-section-title block text-black">Project details</span>
+                      <span className="type-caption block text-[#999999]">Back to projects</span>
                     </span>
                   </button>
                   <button type="button" className="grid size-10 place-items-center" aria-label="Search project">
@@ -1665,21 +1665,21 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             <div className="pb-20">
               <section className="px-4 py-5">
                 <div className="flex flex-col gap-2">
-                  <span className="inline-flex h-[26px] w-fit items-center rounded-xl bg-black px-2 py-1 text-[12px] font-semibold leading-[18px] text-[#26c485]">
+                  <span className="type-meta inline-flex h-[26px] w-fit items-center rounded-xl bg-black px-2 py-1 text-[#26c485]">
                     {selectedProject.status}
                   </span>
-                  <h1 className="text-[24px] font-bold leading-[36px] text-black">{selectedProject.scope}</h1>
+                  <h1 className="type-page-title text-black">{selectedProject.scope}</h1>
                 </div>
 
                 <div className="mt-4 flex flex-col gap-3">
-                  <div className="flex items-center gap-1 text-[14px] font-bold leading-[21px] text-black">
+                  <div className="type-card-title flex items-center gap-1 text-black">
                     <span>{selectedProject.client}</span>
                     <span className="grid size-4 place-items-center">
                       <span className="size-1 rounded-full bg-[#26c485]" />
                     </span>
                     <span>{selectedProject.location}</span>
                   </div>
-                  <div className="flex flex-col gap-1 text-[12px] font-bold leading-[18px] text-[#525252]">
+                  <div className="type-label flex flex-col gap-1 text-[#525252]">
                     <span>{selectedProject.phone}</span>
                     <span className="truncate">{selectedProject.email}</span>
                   </div>
@@ -1696,8 +1696,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           key={item.key}
                           type="button"
                           onClick={() => setProjectQuickInfoTab(item.key)}
-                          className={`flex h-8 items-center justify-center rounded-full text-[14px] leading-[21px] transition-all duration-300 ${
-                            selected ? 'gap-2 border px-3 font-bold' : 'px-2 font-semibold'
+                          className={`type-body flex h-8 items-center justify-center rounded-full transition-all duration-300 ${
+                            selected ? 'gap-2 border px-3 font-semibold' : 'px-2'
                           }`}
                           style={{
                             color: item.color,
@@ -1712,7 +1712,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     })}
                   </div>
                   <div key={selectedQuickInfo.key} className="h-6 overflow-hidden text-right">
-                    <p className="hynt-quick-info-value text-[16px] font-bold leading-6 text-black">{selectedQuickInfo.value}</p>
+                    <p className="type-section-title hynt-quick-info-value text-black">{selectedQuickInfo.value}</p>
                   </div>
                 </div>
                 <div className="mt-4 h-4 w-full overflow-hidden rounded-lg bg-[rgba(198,198,198,0.32)]">
@@ -1724,7 +1724,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </section>
 
               <section className="border-b border-[#e0e0e0] px-4 py-6">
-                <h2 className="text-[16px] font-bold leading-6 text-black">Daily actions</h2>
+                <h2 className="type-section-title text-black">Daily actions</h2>
                 <div className="mt-3 flex items-start justify-between gap-2 overflow-hidden rounded-[24px]">
                   {dailyActionTools.map((tool) => {
                     const Icon = tool.icon
@@ -1740,7 +1740,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[rgba(217,217,217,0.24)]">
                           <Icon size={20} weight="regular" />
                         </span>
-                        <span className="truncate text-[14px] font-semibold leading-[21px] text-black">{label}</span>
+                        <span className="type-body-strong truncate text-black">{label}</span>
                       </button>
                     )
                   })}
@@ -1748,7 +1748,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </section>
 
               <section className="border-b border-[#e0e0e0] px-4 py-6">
-                <h2 className="text-[16px] font-bold leading-6 text-black">Tools</h2>
+                <h2 className="type-section-title text-black">Tools</h2>
                 <div className="mt-3 flex gap-2 overflow-hidden">
                   {primaryToolCards.map((tool) => {
                     const Icon = tool.icon
@@ -1770,7 +1770,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                             </span>
                             <CaretRight size={16} className="text-[#8fa098]" />
                           </div>
-                          <p className="truncate text-[14px] font-semibold leading-[21px] text-black">{isMoodboard ? 'Moodboard' : isSiteDiary ? 'Site Diary' : tool.label}</p>
+                          <p className="type-body-strong truncate text-black">{isMoodboard ? 'Moodboard' : isSiteDiary ? 'Site Diary' : tool.label}</p>
                         </div>
 
                         {isMoodboard ? (
@@ -1783,8 +1783,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
                         {isBoq ? (
                           <div className="mt-2 flex h-12 items-center gap-2 py-2">
-                            <span className="grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-[#fc5f5f] px-1 text-[12px] font-medium leading-[18px] text-white">2</span>
-                            <span className="text-[12px] font-medium leading-[18px] text-black">Pending</span>
+                            <span className="type-meta grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-[#fc5f5f] px-1 text-white">2</span>
+                            <span className="type-meta text-black">Pending</span>
                           </div>
                         ) : null}
 
@@ -1792,11 +1792,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           <div className="hynt-site-diary-preview mt-2 h-12 overflow-hidden">
                             <div className="flex h-12 flex-col gap-1 py-1">
                               <img src="/hynt-home/idea-2.png" alt="" className="size-10 rounded-2xl border-2 border-[#ebebeb] object-cover" />
-                              <p className="w-[90px] text-[10px] font-bold leading-[15px] text-[#b9b9b9]">Kitchen ceiling update...</p>
+                              <p className="type-caption w-[90px] text-[#b9b9b9]">Kitchen ceiling update...</p>
                             </div>
                             <div className="flex h-12 flex-col gap-1 py-1">
                               <img src="/hynt-home/idea-1.png" alt="" className="size-10 rounded-2xl border-2 border-[#ebebeb] object-cover" />
-                              <p className="w-[90px] text-[10px] font-bold leading-[15px] text-[#b9b9b9]">Living room wall...</p>
+                              <p className="type-caption w-[90px] text-[#b9b9b9]">Living room wall...</p>
                             </div>
                           </div>
                         ) : null}
@@ -1807,30 +1807,30 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </section>
 
               <section id="project-updates" className="border-b border-[#e0e0e0] px-4 py-6">
-                <h2 className="text-[16px] font-bold leading-6 text-black">Updates</h2>
+                <h2 className="type-section-title text-black">Updates</h2>
                 <div className="mt-3 flex flex-col overflow-hidden">
                   {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 2).map((alert, index) => (
                     <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[rgba(0,0,0,0.24)] p-2 text-left last:border-b-0">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <p className="text-[14px] font-semibold leading-[21px] text-black">{index === 0 ? 'Kitchen' : 'Living Room'}</p>
+                          <p className="type-body-strong text-black">{index === 0 ? 'Kitchen' : 'Living Room'}</p>
                           {index === 0 ? <span className="size-1 rounded-full bg-[#26c485]" /> : null}
                         </div>
                         <DotsThreeVertical size={16} className="text-[#8a8a8a]" />
                       </div>
                       <div className="mt-1 flex items-center gap-4">
-                        <p className="min-w-0 flex-1 truncate text-[14px] font-medium leading-[21px] text-[#525252]">{alert.detail || alert.title}</p>
-                        <span className="shrink-0 text-[12px] font-medium leading-[18px] text-[#828282]">{alert.time}</span>
+                        <p className="type-body min-w-0 flex-1 truncate text-[#525252]">{alert.detail || alert.title}</p>
+                        <span className="type-meta shrink-0 text-[#828282]">{alert.time}</span>
                       </div>
                     </button>
                   )) : (
-                    <p className="p-2 text-[14px] font-medium leading-[21px] text-[#525252]">No new project updates.</p>
+                    <p className="type-body p-2 text-[#525252]">No new project updates.</p>
                   )}
                 </div>
               </section>
 
               <section className="border-b border-[#e0e0e0] px-4 py-6">
-                <h2 className="text-[16px] font-bold leading-6 text-black">Manage project</h2>
+                <h2 className="type-section-title text-black">Manage project</h2>
                 <div className="mt-3 flex gap-2">
                   {manageProjectTools.map((tool) => {
                     const Icon = tool.icon
@@ -1839,7 +1839,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className="flex h-14 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d9d9d9] bg-[rgba(217,217,217,0.24)] px-4 text-[14px] font-semibold leading-[21px] text-black"
+                        className="type-body-strong flex h-14 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d9d9d9] bg-[rgba(217,217,217,0.24)] px-4 text-black"
                       >
                         <Icon size={24} weight="regular" />
                         <span>{tool.label}</span>

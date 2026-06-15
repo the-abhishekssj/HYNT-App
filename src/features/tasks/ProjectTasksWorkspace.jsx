@@ -98,8 +98,8 @@ function TaskStatusChip({ label, selected, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-10 items-center rounded-full border px-4 text-[14px] leading-[20px] transition ${
-        selected ? 'border-[#173324] bg-[#173324] font-bold text-white' : 'border-[#d8e0da] bg-white font-medium text-[#355244]'
+      className={`type-body inline-flex h-10 items-center rounded-full border px-4 transition ${
+        selected ? 'border-[#173324] bg-[#173324] font-semibold text-white' : 'border-[#d8e0da] bg-white text-[#355244]'
       }`}
     >
       {label}
@@ -110,8 +110,8 @@ function TaskStatusChip({ label, selected, onClick }) {
 function SectionHeader({ title, meta, tone = 'text-[#6f7d74]' }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <p className={`text-[12px] font-bold uppercase ${tone}`}>{title}</p>
-      {meta ? <span className="text-[12px] font-medium text-[#8a948f]">{meta}</span> : null}
+      <p className={`type-label uppercase ${tone}`}>{title}</p>
+      {meta ? <span className="type-meta text-[#8a948f]">{meta}</span> : null}
     </div>
   )
 }
@@ -136,11 +136,11 @@ function TaskRow({ task, onOpen, onToggleStatus, onOpenActions, assigneeLabel = 
         </button>
 
         <button type="button" onClick={() => onOpen(task.id)} className="min-w-0 flex-1 text-left">
-          <p className={`text-[14px] leading-[20px] ${task.status === 'done' ? 'font-medium text-[#8c9891 line-through]' : 'font-bold text-[#1c1c1c]'}`}>{task.title}</p>
+          <p className={`type-card-title ${task.status === 'done' ? 'text-[#8c9891] line-through' : 'text-[#1c1c1c]'}`}>{task.title}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-[#ecf5ef] px-2 py-1 text-[10px] font-bold leading-[14px] text-[#267449]">{assigneeLabel}</span>
-            <span className={`rounded-full px-2 py-1 text-[10px] font-bold leading-[14px] ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-            <span className={`rounded-md px-2 py-1 text-[10px] font-bold leading-[14px] ${
+            <span className="type-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{assigneeLabel}</span>
+            <span className={`type-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+            <span className={`type-caption rounded-md px-2 py-1 ${
               task.status === 'done'
                 ? 'bg-[#eaf8ef] text-[#267449]'
                 : task.status === 'inprogress'
@@ -178,10 +178,10 @@ function ApprovalCard({ item, onOpen, compact = false }) {
       <button type="button" onClick={() => onOpen(item.id)} className="w-full text-left">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[16px] font-bold leading-[22px] text-[#121212]">{item.title}</p>
-            <p className="mt-1 text-[12px] font-medium leading-[18px] text-[#7b8780]">{item.type}</p>
+            <p className="type-section-title text-[#121212]">{item.title}</p>
+            <p className="type-meta mt-1 text-[#7b8780]">{item.type}</p>
           </div>
-          <span className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold uppercase ${tone}`}>
+          <span className={`type-caption shrink-0 rounded-full px-3 py-1 uppercase ${tone}`}>
             {approvalLabel[item.status]}
           </span>
         </div>
@@ -189,7 +189,7 @@ function ApprovalCard({ item, onOpen, compact = false }) {
           <div className="h-16 w-16 overflow-hidden rounded-2xl bg-white">
             <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
           </div>
-          <p className="mt-3 text-[14px] leading-[20px] text-[#355244]">{item.description}</p>
+          <p className="type-body mt-3 text-[#355244]">{item.description}</p>
         </div>
         <p className="mt-3 text-[12px] font-medium leading-[18px] text-[#8a948f]">Sent {item.sentAt} · Due {item.dueDate}</p>
       </button>
@@ -213,8 +213,8 @@ function ProTaskDetail({
             <button type="button" onClick={onBack} className="flex items-center gap-3">
               <CaretLeft size={20} />
               <div className="text-left">
-                <p className="text-[16px] font-bold leading-[22px] text-black">Task details</p>
-                <p className="text-[12px] font-medium leading-[18px] text-[#7f8a84]">{selectedProject.scope}</p>
+                <p className="type-section-title text-black">Task details</p>
+                <p className="type-meta text-[#7f8a84]">{selectedProject.scope}</p>
               </div>
             </button>
             <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
@@ -552,15 +552,15 @@ export default function ProjectTasksWorkspace({
             <button type="button" onClick={onBack} className="flex items-center gap-3">
               <CaretLeft size={20} />
               <div className="text-left">
-                <p className="text-[16px] font-bold leading-[22px] text-black">Tasks</p>
-                <p className="text-[12px] font-medium leading-[18px] text-[#7f8a84]">{selectedProject?.scope || homeownerProjectName}</p>
+                <p className="type-section-title text-black">Tasks</p>
+                <p className="type-meta text-[#7f8a84]">{selectedProject?.scope || homeownerProjectName}</p>
               </div>
             </button>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setActiveTab('approvals')} className="grid size-9 place-items-center rounded-full bg-[#f4efff] text-[#6844d8]" aria-label="Open approvals">
                 <PaperPlaneTilt size={18} weight="bold" />
               </button>
-              <button type="button" onClick={() => setIsComposerOpen((prev) => !prev)} className="grid size-9 place-items-center rounded-full bg-[#173324] text-white" aria-label="Create task">
+              <button type="button" onClick={() => setIsComposerOpen((prev) => !prev)} className="grid size-9 place-items-center rounded-full bg-black text-white" aria-label="Create task">
                 <Plus size={18} weight="bold" />
               </button>
             </div>
@@ -580,7 +580,7 @@ export default function ProjectTasksWorkspace({
                   className={`rounded-2xl px-3 py-3 text-left transition ${active ? 'bg-[#173324] text-white shadow-[0_10px_24px_rgba(23,51,36,0.16)]' : 'text-[#6f7c74]'}`}
                 >
                   <Icon size={16} weight={active ? 'fill' : 'regular'} />
-                  <p className={`mt-2 text-[12px] leading-[16px] ${active ? 'font-bold' : 'font-medium'}`}>{tab.label}</p>
+                  <p className={`type-meta mt-2 ${active ? 'font-semibold' : ''}`}>{tab.label}</p>
                 </button>
               )
             })}
@@ -591,40 +591,52 @@ export default function ProjectTasksWorkspace({
               <SectionHeader title="New task" />
               <div className="space-y-4">
                 <label className="block">
-                  <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Task title</p>
+                  <p className="type-label mb-2 uppercase text-[#7a8780]">Task title</p>
                   <input
                     value={newTaskTitle}
                     onChange={(event) => setNewTaskTitle(event.target.value)}
                     placeholder="What needs to be done?"
-                    className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none placeholder:text-[#99a39d]"
+                    className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]"
                   />
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Assign to</p>
-                    <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Assign to</p>
+                    <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
                       {['Me', 'Rohan', 'Aarav', 'Nisha', 'Vikram', 'Meera', 'Arjun'].map((name) => <option key={name}>{name}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Priority</p>
-                    <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Priority</p>
+                    <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
                       {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
                     </select>
                   </label>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className="block">
-                    <p className="mb-2 text-[12px] font-bold uppercase text-[#7a8780]">Due bucket</p>
-                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-[14px] font-medium outline-none">
-                      {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
-                    </select>
-                  </label>
-                  <div className="flex items-end">
-                    <button type="button" onClick={createTask} className="h-12 w-full rounded-2xl bg-[#173324] px-4 text-[14px] font-bold text-white">
-                      Create task
-                    </button>
-                  </div>
+                <label className="block">
+                  <p className="type-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
+                  <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
+                    {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
+                  </select>
+                </label>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsComposerOpen(false)
+                      setNewTaskTitle('')
+                      setNewTaskAssignee('Me')
+                      setNewTaskPriority('High')
+                      setNewTaskDue('Today')
+                    }}
+                    className="type-body-strong h-12 rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#4f5d55]"
+                  >
+                    Cancel
+                  </button>
+                  <button type="button" onClick={createTask} className="type-body-strong h-12 rounded-2xl bg-black px-4 text-white">
+                    Create task
+                  </button>
                 </div>
               </div>
             </section>
@@ -643,7 +655,7 @@ export default function ProjectTasksWorkspace({
                       key={viewKey}
                       type="button"
                       onClick={() => setActiveView(viewKey)}
-                      className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-[14px] px-4 text-[14px] leading-[20px] ${active ? 'bg-white font-bold text-[#173324] shadow-sm' : 'font-medium text-[#6f7c74]'}`}
+                      className={`type-body flex h-10 flex-1 items-center justify-center gap-2 rounded-[14px] px-4 ${active ? 'bg-white font-semibold text-[#173324] shadow-sm' : 'text-[#6f7c74]'}`}
                     >
                       <Icon size={16} weight={active ? 'fill' : 'regular'} />
                       {label}
@@ -658,10 +670,10 @@ export default function ProjectTasksWorkspace({
                     key={filter}
                     type="button"
                     onClick={() => setTaskFilter(filter)}
-                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 text-[14px] font-bold leading-[20px] ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
+                    className={`type-body-strong flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
                   >
                     {filter}
-                    <span className={`grid size-6 place-items-center rounded-xl text-[12px] font-bold leading-[18px] ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
+                    <span className={`type-label grid size-6 place-items-center rounded-xl ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
                       {String(getTaskCount(filter)).padStart(2, '0')}
                     </span>
                   </button>
@@ -712,20 +724,20 @@ export default function ProjectTasksWorkspace({
                     return (
                       <section key={column.key} className="w-[264px] shrink-0 rounded-[20px] border border-[#e3ebe5] bg-[#f8faf9] p-4">
                         <div className="mb-4 flex items-center justify-between">
-                          <p className="text-[14px] font-bold leading-[20px] text-[#173324]">{column.title}</p>
-                          <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${column.tone}`}>{columnTasks.length}</span>
+                          <p className="type-card-title text-[#173324]">{column.title}</p>
+                          <span className={`type-caption rounded-full px-3 py-1 uppercase tracking-[0.08em] ${column.tone}`}>{columnTasks.length}</span>
                         </div>
                         <div className="space-y-3">
                           {columnTasks.map((task) => (
                             <button key={task.id} type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full rounded-[20px] border border-[#dde6e0] bg-white p-4 text-left">
-                              <p className="text-[14px] font-bold leading-[20px] text-[#1d1d1d]">{task.title}</p>
+                              <p className="type-card-title text-[#1d1d1d]">{task.title}</p>
                               <div className="mt-3 flex items-center justify-between">
-                                <span className="rounded-md bg-[#ecf5ef] px-2 py-1 text-[10px] font-bold leading-[14px] text-[#267449]">{task.assignee}</span>
-                                <span className={`rounded-full px-2 py-1 text-[10px] font-bold leading-[14px] ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+                                <span className="type-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{task.assignee}</span>
+                                <span className={`type-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
                               </div>
                             </button>
                           ))}
-                          <button type="button" onClick={() => setIsComposerOpen(true)} className="flex w-full items-center gap-2 rounded-[18px] border border-dashed border-[#d8e2db] px-4 py-3 text-[14px] font-medium text-[#6f7c74]">
+                          <button type="button" onClick={() => setIsComposerOpen(true)} className="type-body flex w-full items-center gap-2 rounded-[18px] border border-dashed border-[#d8e2db] px-4 py-3 text-[#6f7c74]">
                             <span className="grid size-6 place-items-center rounded-lg bg-[#ecf5ef] text-[#267449]"><Plus size={14} weight="bold" /></span>
                             Add task
                           </button>
