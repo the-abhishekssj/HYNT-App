@@ -1,0 +1,51 @@
+export const featureInteractionMap = [
+  {
+    feature: 'Scope of Work',
+    owner: 'Principal Pro',
+    client: 'Homeowner',
+    lifecycle: 'Draft -> Sent -> Remarked -> Revised -> Approved',
+    permissions: 'Team can view internal drafts; homeowner only sees sent revisions.',
+  },
+  {
+    feature: 'Tasks',
+    owner: 'Project Manager',
+    client: 'Homeowner',
+    lifecycle: 'Created -> Assigned -> Updated -> Proof uploaded -> Approved',
+    permissions: 'Junior and site roles can update assigned tasks; homeowner sees shared decision tasks.',
+  },
+  {
+    feature: 'Finances',
+    owner: 'Principal Pro / Accounts',
+    client: 'Homeowner',
+    lifecycle: 'Expense submitted -> Reviewed -> Approved -> Invoiced -> Paid',
+    permissions: 'Junior can add expenses when allowed, without seeing margins or full finance totals.',
+  },
+  {
+    feature: 'Archive',
+    owner: 'Principal Pro',
+    client: 'Selected collaborators',
+    lifecycle: 'Folder created -> Items added -> Shared -> Commented -> Linked',
+    permissions: 'Folders can be internal, selected-team, or homeowner-visible.',
+  },
+  {
+    feature: 'BOQ',
+    owner: 'Procurement / Principal Pro',
+    client: 'Homeowner optional',
+    lifecycle: 'Generated -> Priced -> Revised -> Approved -> Linked to finance',
+    permissions: 'Detailed rates can stay internal while summaries are shared with the homeowner.',
+  },
+  {
+    feature: 'Site Diary',
+    owner: 'Site Supervisor',
+    client: 'Homeowner optional',
+    lifecycle: 'Entry posted -> Photos attached -> Shared -> Task/expense created',
+    permissions: 'Raw diary can stay internal; polished updates can be shared.',
+  },
+  {
+    feature: 'Team',
+    owner: 'Principal Pro',
+    client: 'Project members',
+    lifecycle: 'Invite sent -> Accepted -> Role assigned -> Access adjusted',
+    permissions: 'Each role gets view/create/edit/approve grants per feature.',
+  },
+]

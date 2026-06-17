@@ -53,6 +53,13 @@ export const sowTemplates = [
     subtitle: 'For offices, retail, hospitality and commercial fit-outs.',
     tags: ['Office and retail', '40-30-20-10%', '+/-15% variation'],
   },
+  {
+    id: 'custom',
+    icon: 'Pencil',
+    name: 'Custom project',
+    subtitle: 'For mixed scopes, partial services, consult-only work and unusual project structures.',
+    tags: ['Blank structure', 'Designer managed', 'Flexible terms'],
+  },
 ]
 
 export const sowClientRemarks = [

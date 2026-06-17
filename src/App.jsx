@@ -47,6 +47,7 @@ import ProToolsHome from './features/pro/tools/ProToolsHome'
 import ProSowWorkspace from './features/sow/ProSowWorkspace'
 import HomeownerSowReview from './features/sow/HomeownerSowReview'
 import ProjectTasksWorkspace from './features/tasks/ProjectTasksWorkspace'
+import PeopleAccessWorkspace from './features/team/PeopleAccessWorkspace'
 
 const INR = '\u20b9'
 const EMPTY = '\u2014'
@@ -605,7 +606,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [diaryDraftPhotos, setDiaryDraftPhotos] = useState([])
   const [diaryActionEntryId, setDiaryActionEntryId] = useState(null)
   const [editingDiaryEntryId, setEditingDiaryEntryId] = useState(null)
-  const [teamInvitePhone, setTeamInvitePhone] = useState('')
   const [selectedFirmMemberId, setSelectedFirmMemberId] = useState(null)
   const [selectedFirmMemberIds, setSelectedFirmMemberIds] = useState([])
   const [selectedMemberProjectIds, setSelectedMemberProjectIds] = useState([])
@@ -1547,97 +1547,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       }
 
       if (selectedProjectPage === 'team') {
-        const teamMembers = projectTeamMembers.filter((member) => member.projectId === selectedProject.id)
-
-        return (
-          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
-              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                <div className="px-4 py-3">
-                  <div className="flex items-center justify-between py-1">
-                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
-                      <span className="grid size-6 place-items-center rounded">
-                        <CaretLeft size={24} />
-                      </span>
-                      <span className="text-left">
-                        <span className="type-section-title block text-black">Team</span>
-                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
-                      </span>
-                    </button>
-                    <button type="button" onClick={() => setSelectedProjectPage('team-directory')} className="grid size-9 place-items-center" aria-label="Add team member">
-                      <Plus size={22} />
-                    </button>
-                  </div>
-                </div>
-              </header>
-
-              <div className="px-4 pb-6 pt-8">
-                <section className="rounded-xl border border-[#e1e1e1] bg-[#fafafa] p-3">
-                  <p className="type-meta text-[#4c4c4c]">
-                    Add team members by mobile number. They receive a HYNT invite to approve.
-                  </p>
-                </section>
-
-                <section className="mt-6">
-                  <p className="type-section-title mb-3">Current team</p>
-                  <div>
-                    {teamMembers.map((member) => (
-                      <article key={member.id} className="flex items-center justify-between border-b border-[#d9d9d9] py-3 last:border-b-0">
-                        <div className="flex min-w-0 items-center gap-3">
-                          <img src={member.avatar} alt={member.name} className="size-11 rounded-full border border-[#e0e0e0] object-cover" />
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="type-body-strong truncate text-black">{member.name}</p>
-                              {member.isYou ? <span className="type-caption rounded-full bg-[#eaf9f1] px-2 py-0.5 text-[#2a9a64]">You</span> : null}
-                            </div>
-                            <p className="type-meta truncate text-[#6f6f6f]">{member.role}</p>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            </section>
-
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-              <p className="type-label uppercase text-[#7b7b7b]">Add by mobile number</p>
-              <div className="mt-2 flex items-center gap-2">
-                <input
-                  id="team-invite-phone"
-                  value={teamInvitePhone}
-                  onChange={(event) => setTeamInvitePhone(event.target.value)}
-                  placeholder="+91 98765 43210"
-                  className="type-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    const cleanPhone = teamInvitePhone.trim()
-                    if (!cleanPhone) return
-                    setProjectTeamMembers((prev) => [
-                      {
-                        id: `tm-${Date.now()}`,
-                        projectId: selectedProject.id,
-                        name: `Invited member ${prev.filter((member) => member.projectId === selectedProject.id).length + 1}`,
-                        role: 'Team member',
-                        avatar: '/hynt-home/pro-2.png',
-                        isYou: false,
-                        phone: cleanPhone,
-                      },
-                      ...prev,
-                    ])
-                    setTeamInvitePhone('')
-                  }}
-                  className="type-body-strong h-10 shrink-0 rounded-xl bg-black px-4 text-white"
-                >
-                  Invite
-                </button>
-              </div>
-              <p className="type-meta mt-2 text-[#7b7b7b]">Team members will receive a link to download HYNT and join this project.</p>
-            </div>
-          </main>
-        )
+        return <PeopleAccessWorkspace project={selectedProject} onBack={() => setSelectedProjectPage('overview')} />
       }
 
       return (
