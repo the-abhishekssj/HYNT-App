@@ -49,6 +49,13 @@ import HomeownerSowReview from './features/sow/HomeownerSowReview'
 import ProjectTasksWorkspace from './features/tasks/ProjectTasksWorkspace'
 import PeopleAccessWorkspace from './features/team/PeopleAccessWorkspace'
 import { useSharedProject } from './features/collaboration/mockProjectStore'
+import HomeownerProjectPortal from './features/homeowner/HomeownerProjectPortal'
+import HomeownerArchiveWorkspace from './features/archive/HomeownerArchiveWorkspace'
+import HomeownerFinanceWorkspace from './features/finance/HomeownerFinanceWorkspace'
+import HomeownerBoqWorkspace from './features/homeowner/HomeownerBoqWorkspace'
+import HomeownerTimelineWorkspace from './features/timeline/HomeownerTimelineWorkspace'
+import HomeownerSiteDiaryWorkspace from './features/homeowner/HomeownerSiteDiaryWorkspace'
+
 
 const INR = '\u20b9'
 const EMPTY = '\u2014'
