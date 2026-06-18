@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BOQ Tool — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#B0C8B0;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#4a6a4a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.tb{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-p:disabled{background:var(--lgt);box-shadow:none;cursor:default;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-w{background:var(--amberl);color:var(--amber);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:1px solid #F5D5B8;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:10px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pd{background:var(--orl);color:var(--or);}
+.pip{background:var(--bluel);color:var(--blue);}
+.pr{background:var(--amberl);color:var(--amber);}
+.psh{background:var(--bluel);color:var(--blue);}
+.pch{background:var(--amberl);color:var(--amber);}
+.pap{background:var(--gl);color:var(--g);}
+.plk{background:var(--gl);color:var(--g);}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.tabs{display:flex;background:var(--gp);border-radius:8px;padding:3px;margin-bottom:12px;}
+.tb2{flex:1;text-align:center;font-size:10px;font-weight:600;padding:7px 3px;border-radius:6px;color:var(--mut);cursor:pointer;transition:all .15s;}
+.tb2.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.pnl{display:none;}
+.pnl.active{display:block;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+
+/* BOQ Groups */
+.grp{border:1px solid var(--bor);border-radius:11px;margin-bottom:7px;overflow:hidden;}
+.grp.remark{border-color:var(--or);}
+.gh{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gp);cursor:pointer;user-select:none;}
+.ghl{display:flex;align-items:center;gap:7px;}
+.gn{font-size:11px;font-weight:700;color:var(--txt);}
+.gt{font-size:11px;font-weight:700;color:var(--g);}
+.chv{font-size:10px;color:var(--lgt);transition:transform .2s;}
+.chv.open{transform:rotate(180deg);}
+.gb{display:none;background:#fff;}
+.gb.open{display:block;}
+
+/* Line items — designer */
+.li{border-top:1px solid var(--borl);cursor:pointer;}
+.li-main{display:flex;align-items:flex-start;justify-content:space-between;padding:9px 12px;}
+.li-info{flex:1;}
+.li-name{font-size:11px;font-weight:600;color:var(--txt);}
+.li-meta{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
+.li-tag{font-size:9px;padding:1px 5px;border-radius:4px;background:var(--gp);}
+.li-tag.vdr{background:var(--gl);color:var(--g2);}
+.li-tag.mkp{background:var(--orl);color:var(--or);}
+.li-amt{font-size:11px;font-weight:700;color:var(--txt);text-align:right;flex-shrink:0;margin-left:8px;}
+
+/* Line item edit */
+.li-edit{padding:10px 12px;background:#FAFFF8;border-top:1px solid var(--borl);border-left:3px solid var(--g3);display:none;}
+.li-edit.open{display:block;}
+.er{display:flex;gap:5px;margin-bottom:5px;align-items:center;}
+.el{font-size:9px;color:var(--mut);width:60px;flex-shrink:0;}
+.ein{flex:1;border:1px solid var(--bor);border-radius:5px;padding:4px 7px;font-size:10px;font-family:'Poppins',sans-serif;color:var(--txt);outline:none;}
+.ein:focus{border-color:var(--g3);}
+.ea{display:flex;gap:5px;margin-top:6px;}
+.esv{flex:1;background:var(--g);color:#fff;border:none;border-radius:6px;padding:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;}
+.ecn{flex:1;background:var(--gp);color:var(--mut);border:1px solid var(--bor);border-radius:6px;padding:6px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+/* Add item row */
+.add-row{display:flex;align-items:center;gap:7px;padding:9px 12px;border-top:1px solid var(--borl);cursor:pointer;}
+.ai2{width:18px;height:18px;border-radius:5px;background:var(--gl);color:var(--g);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.at{font-size:10px;color:var(--lgt);}
+
+/* Totals footer */
+.tot-footer{background:var(--gp);border-radius:10px;padding:10px 12px;margin-top:4px;}
+.tf-row{display:flex;justify-content:space-between;padding:3px 0;}
+.tf-l{font-size:10px;color:var(--mut);}
+.tf-v{font-size:10px;font-weight:600;color:var(--txt);}
+.tf-dv{height:1px;background:var(--bor);margin:5px 0;}
+.gst-r{display:flex;align-items:center;justify-content:space-between;padding:3px 0;}
+.tgl{width:28px;height:16px;background:var(--g3);border-radius:8px;position:relative;cursor:pointer;flex-shrink:0;}
+.tgl-d{width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px;transition:right .15s,left .15s;}
+.tgl.off{background:var(--bor);}
+.tgl.off .tgl-d{right:auto;left:2px;}
+
+/* Import screen */
+.import-zone{border:2px dashed var(--bor);border-radius:12px;padding:28px 16px;text-align:center;margin-bottom:12px;cursor:pointer;transition:border-color .2s;}
+.import-zone:hover{border-color:var(--g3);}
+.import-zone.dragover{border-color:var(--g);background:var(--gp);}
+.iz-icon{font-size:36px;margin-bottom:8px;}
+.iz-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.iz-sub{font-size:10px;color:var(--lgt);line-height:1.5;}
+
+/* Import preview table */
+.prev-table{width:100%;border-collapse:collapse;font-size:9px;margin-bottom:10px;}
+.prev-table th{background:var(--gp);color:var(--mut);font-weight:700;padding:6px 7px;text-align:left;white-space:nowrap;}
+.prev-table td{padding:6px 7px;border-bottom:1px solid var(--borl);color:var(--txt);}
+.prev-table tr:last-child td{border-bottom:none;}
+.prev-wrap{overflow-x:auto;border:1px solid var(--bor);border-radius:9px;margin-bottom:10px;}
+.prev-wrap::-webkit-scrollbar{height:3px;}
+.prev-wrap::-webkit-scrollbar-thumb{background:var(--bor);border-radius:2px;}
+
+/* Summary view */
+.sum-row{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--borl);}
+.sum-row:last-child{border-bottom:none;}
+.sum-nm{font-size:11px;font-weight:600;color:var(--txt);}
+.sum-amt{font-size:11px;font-weight:700;color:var(--g);}
+.sum-bar{height:3px;background:var(--borl);border-radius:2px;margin-top:4px;}
+.sum-fill{height:100%;background:var(--g3);border-radius:2px;}
+
+/* Project header */
+.ph{background:var(--gl);border-radius:11px;padding:11px 13px;margin-bottom:12px;border:1px solid var(--bor);}
+.ph-t{font-size:13px;font-weight:700;color:#1a3d2b;margin-bottom:2px;}
+.ph-m{font-size:10px;color:var(--g2);}
+.ph-ref{font-size:10px;color:var(--mut);margin-top:5px;padding-top:5px;border-top:1px solid rgba(45,106,79,.15);}
+
+/* Client quotation */
+.clh{background:var(--g);padding:16px 16px 12px;flex-shrink:0;}
+.clh-t{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-b{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Client line items (clean) */
+.cli{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;border-top:1px solid var(--borl);}
+.cli-nm{font-size:10px;color:var(--txt);}
+.cli-amt{font-size:10px;font-weight:600;color:var(--txt);}
+
+/* Stat boxes */
+.stat-row{display:flex;gap:6px;margin-bottom:11px;}
+.stat-box{flex:1;border-radius:10px;padding:9px;border:1px solid var(--bor);}
+.sv{font-size:15px;font-weight:700;line-height:1;}
+.sl{font-size:9px;color:var(--lgt);margin-top:3px;}
+.sg{background:var(--gp);}.sg .sv{color:var(--g);}
+.so{background:var(--orl);}.so .sv{color:var(--or);}
+.sgr{background:#F7F7F7;}.sgr .sv{color:#555;}
+
+/* Request changes */
+.req-wrap{background:var(--amberl);border:1px solid #F5D5B8;border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.req-wrap.open{display:block;}
+.req-title{font-size:11px;font-weight:700;color:var(--amber);margin-bottom:7px;}
+.req-input{width:100%;border:1.5px solid #F5D5B8;border-radius:8px;padding:9px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);background:#fff;}
+.req-sub{background:var(--amber);color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;margin-top:7px;}
+
+/* Finance options */
+.fin-opt{border:1.5px solid var(--bor);border-radius:11px;padding:12px 13px;margin-bottom:8px;cursor:pointer;transition:border-color .2s;}
+.fin-opt:hover{border-color:var(--g3);}
+.fin-opt.sel{border-color:var(--g);background:var(--gp);}
+.fo-hd{display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+.fo-ic{font-size:20px;}
+.fo-t{font-size:12px;font-weight:700;color:var(--txt);}
+.fo-s{font-size:10px;color:var(--lgt);line-height:1.5;}
+.fo-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--bor);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-left:auto;}
+.fin-opt.sel .fo-radio{border-color:var(--g);background:var(--g);}
+.fin-opt.sel .fo-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+
+/* Invoice preview */
+.inv-prev{background:var(--gp);border-radius:9px;padding:10px 12px;margin-bottom:7px;}
+.ip-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--borl);}
+.ip-row:last-child{border-bottom:none;}
+.ip-l{font-size:10px;color:var(--mut);}
+.ip-v{font-size:10px;font-weight:700;color:var(--txt);}
+
+/* Bottom bar */
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: BOQ Home -->
+      <div class="scr active" id="d-home">
+        <div class="tb"><button class="bb">←</button><div class="tbt">BOQ / Quotation</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dSS('d-import')" title="Upload Excel" style="color:var(--g);">↑</button><button class="ib" onclick="dDownloadTemplate()" title="Download template" style="color:var(--mut);">↓</button><button class="ib" onclick="dToast('PDF ready!')">📄</button></div></div>
+        <div class="sc">
+          <!-- Status & stats -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;">
+            <div class="pill pip" id="d-boq-status">● In Progress</div>
+            <div style="font-size:9px;color:var(--lgt);">Residential · v1</div>
+          </div>
+          <div class="ph">
+            <div class="ph-t">Sharma 3BHK Renovation</div>
+            <div class="ph-m">Priya Sharma · Bandra, Mumbai</div>
+            <div class="ph-ref">SOW Budget (approx): <strong>₹18,00,000</strong> · BOQ Total: <strong style="color:var(--g);">₹9,01,756</strong></div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-box sg"><div class="sv">₹9.0L</div><div class="sl">BOQ total</div></div>
+            <div class="stat-box sgr"><div class="sv">24</div><div class="sl">Line items</div></div>
+            <div class="stat-box so"><div class="sv">₹1.4L</div><div class="sl">GST est.</div></div>
+          </div>
+          <!-- View tabs -->
+          <div class="tabs">
+            <div class="tb2 active" id="d-t-room" onclick="dSetView('room')">By Room</div>
+            <div class="tb2" id="d-t-act" onclick="dSetView('act')">By Activity</div>
+            <div class="tb2" id="d-t-sum" onclick="dSetView('sum')">Summary</div>
+          </div>
+
+          <!-- BY ROOM VIEW -->
+          <div class="pnl active" id="d-v-room">
+            <!-- Living Room -->
+            <div class="grp"><div class="gh" onclick="dTog('dg1','dgc1')"><div class="ghl"><div class="gn">🛋️ Living Room</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,24,000</div><div class="chv open" id="dgc1">▾</div></div></div>
+            <div class="gb open" id="dg1">
+              <div class="li" id="dli1" onclick="dTogEdit('dli1','dle1')"><div class="li-main"><div class="li-info"><div class="li-name">False Ceiling — Cove lighting</div><div class="li-meta"><span class="li-tag">320 sqft</span><span class="li-tag">₹90/sqft</span><span class="li-tag">Civil</span><span class="li-tag vdr">ABC Contractors</span><span class="li-tag mkp">10% mkp</span></div></div><div class="li-amt">₹28,800</div></div></div>
+              <div class="li-edit" id="dle1"><div class="er"><div class="el">Item</div><input class="ein" value="False Ceiling — Cove lighting"/></div><div class="er"><div class="el">Category</div><input class="ein" value="Civil"/></div><div class="er"><div class="el">Qty</div><input class="ein" value="320" style="width:50px;"/><div class="el" style="width:28px;">Unit</div><input class="ein" value="sqft"/></div><div class="er"><div class="el">Rate</div><input class="ein" value="₹90"/></div><div class="er"><div class="el">Vendor</div><input class="ein" value="ABC Contractors"/></div><div class="er"><div class="el">Vndr Rate</div><input class="ein" value="₹75"/></div><div class="er"><div class="el">Markup %</div><input class="ein" value="10"/></div><div class="er"><div class="el">Type</div><input class="ein" value="Custom"/></div><div class="ea"><button class="esv" onclick="dSaveEdit('dli1','dle1')">Save</button><button class="ecn" onclick="dSaveEdit('dli1','dle1')">Cancel</button></div></div>
+              <div class="li" id="dli2" onclick="dTogEdit('dli2','dle2')"><div class="li-main"><div class="li-info"><div class="li-name">TV Unit with storage</div><div class="li-meta"><span class="li-tag">1 unit</span><span class="li-tag">₹55,000</span><span class="li-tag">Carpentry</span><span class="li-tag vdr">Raj Furniture</span><span class="li-tag mkp">7% mkp</span></div></div><div class="li-amt">₹55,000</div></div></div>
+              <div class="li-edit" id="dle2"><div class="er"><div class="el">Item</div><input class="ein" value="TV Unit with storage"/></div><div class="er"><div class="el">Qty</div><input class="ein" value="1"/><div class="el" style="width:28px;">Unit</div><input class="ein" value="unit"/></div><div class="er"><div class="el">Rate</div><input class="ein" value="₹55,000"/></div><div class="er"><div class="el">Vendor</div><input class="ein" value="Raj Furniture"/></div><div class="er"><div class="el">Vndr Rate</div><input class="ein" value="₹47,000"/></div><div class="er"><div class="el">Markup %</div><input class="ein" value="7"/></div><div class="ea"><button class="esv" onclick="dSaveEdit('dli2','dle2')">Save</button><button class="ecn" onclick="dSaveEdit('dli2','dle2')">Cancel</button></div></div>
+              <div class="li"><div class="li-main"><div class="li-info"><div class="li-name">Feature wall — Fluted panels</div><div class="li-meta"><span class="li-tag">1 unit</span><span class="li-tag">₹40,000</span><span class="li-tag">Carpentry</span><span class="li-tag vdr">Raj Furniture</span><span class="li-tag mkp">7% mkp</span></div></div><div class="li-amt">₹40,000</div></div></div>
+              <div class="add-row" onclick="dAddItem('Living Room')"><div class="ai2">+</div><div class="at">Add line item</div></div>
+            </div></div>
+
+            <!-- Kitchen -->
+            <div class="grp"><div class="gh" onclick="dTog('dg2','dgc2')"><div class="ghl"><div class="gn">🍳 Kitchen</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹2,20,000</div><div class="chv" id="dgc2">▾</div></div></div>
+            <div class="gb" id="dg2">
+              <div class="li"><div class="li-main"><div class="li-info"><div class="li-name">Modular kitchen — L-shape</div><div class="li-meta"><span class="li-tag">1 unit</span><span class="li-tag">₹2,20,000</span><span class="li-tag">Modular</span><span class="li-tag vdr">Sleek Kitchens</span><span class="li-tag mkp">8% mkp</span></div></div><div class="li-amt">₹2,20,000</div></div></div>
+              <div class="add-row" onclick="dAddItem('Kitchen')"><div class="ai2">+</div><div class="at">Add line item</div></div>
+            </div></div>
+
+            <!-- Master Bedroom -->
+            <div class="grp"><div class="gh" onclick="dTog('dg3','dgc3')"><div class="ghl"><div class="gn">🛏️ Master Bedroom</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹95,000</div><div class="chv" id="dgc3">▾</div></div></div>
+            <div class="gb" id="dg3">
+              <div class="li"><div class="li-main"><div class="li-info"><div class="li-name">Wardrobe — 8ft sliding mirror</div><div class="li-meta"><span class="li-tag">1 unit</span><span class="li-tag">₹95,000</span><span class="li-tag">Carpentry</span><span class="li-tag vdr">Modi Interiors</span><span class="li-tag mkp">9% mkp</span></div></div><div class="li-amt">₹95,000</div></div></div>
+              <div class="li"><div class="li-main"><div class="li-info"><div class="li-name">Bed back panel — Upholstered</div><div class="li-meta"><span class="li-tag">1 unit</span><span class="li-tag">₹28,000</span><span class="li-tag">Soft furnishing</span></div></div><div class="li-amt">₹28,000</div></div></div>
+              <div class="add-row" onclick="dAddItem('Master Bedroom')"><div class="ai2">+</div><div class="at">Add line item</div></div>
+            </div></div>
+
+            <!-- Kids Room -->
+            <div class="grp"><div class="gh" onclick="dTog('dg4','dgc4')"><div class="ghl"><div class="gn">🪟 Kids Room ×2</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,20,000</div><div class="chv" id="dgc4">▾</div></div></div>
+            <div class="gb" id="dg4">
+              <div class="li"><div class="li-main"><div class="li-info"><div class="li-name">Wardrobe per room</div><div class="li-meta"><span class="li-tag">2 units</span><span class="li-tag">₹55,000 each</span><span class="li-tag">Carpentry</span><span class="li-tag vdr">Modi Interiors</span><span class="li-tag mkp">9% mkp</span></div></div><div class="li-amt">₹1,10,000</div></div></div>
+              <div class="add-row" onclick="dAddItem('Kids Room')"><div class="ai2">+</div><div class="at">Add line item</div></div>
+            </div></div>
+
+            <!-- Totals -->
+            <div class="tot-footer">
+              <div class="tf-row"><div class="tf-l">Subtotal</div><div class="tf-v">₹7,64,200</div></div>
+              <div class="gst-r"><div style="font-size:10px;color:var(--mut);">Include GST 18%</div><div class="tgl" id="d-gst" onclick="dTogGST()"><div class="tgl-d"></div></div></div>
+              <div class="tf-row" id="d-gst-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,37,556</div></div>
+              <div class="tf-dv"></div>
+              <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);" id="d-grand">₹9,01,756</div></div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- BY ACTIVITY VIEW -->
+          <div class="pnl" id="d-v-act">
+            <div class="grp"><div class="gh" onclick="dTog('dag1','dac1')"><div class="ghl"><div class="gn">🔨 Civil Work</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹85,000</div><div class="chv open" id="dac1">▾</div></div></div>
+            <div class="gb open" id="dag1">
+              <div class="cli" style="padding:9px 12px;"><div><div class="li-name">False ceiling — Living Room</div><div style="font-size:9px;color:var(--lgt);">320 sqft · ABC Contractors</div></div><div class="li-amt">₹28,800</div></div>
+              <div class="cli" style="padding:9px 12px;"><div><div class="li-name">False ceiling — Bedrooms</div><div style="font-size:9px;color:var(--lgt);">480 sqft · ABC Contractors</div></div><div class="li-amt">₹56,200</div></div>
+            </div></div>
+            <div class="grp"><div class="gh" onclick="dTog('dag2','dac2')"><div class="ghl"><div class="gn">🪵 Carpentry</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹3,85,000</div><div class="chv" id="dac2">▾</div></div></div>
+            <div class="gb" id="dag2">
+              <div class="cli" style="padding:9px 12px;"><div><div class="li-name">TV Unit · Living Room</div><div style="font-size:9px;color:var(--lgt);">1 unit · Raj Furniture</div></div><div class="li-amt">₹55,000</div></div>
+              <div class="cli" style="padding:9px 12px;"><div><div class="li-name">Modular Kitchen</div><div style="font-size:9px;color:var(--lgt);">1 unit · Sleek Kitchens</div></div><div class="li-amt">₹2,20,000</div></div>
+              <div class="cli" style="padding:9px 12px;"><div><div class="li-name">Wardrobes × 3 rooms</div><div style="font-size:9px;color:var(--lgt);">3 units · Modi Interiors</div></div><div class="li-amt">₹2,20,000</div></div>
+            </div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🎨 Painting</div></div><div class="gt">₹50,400</div></div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">💡 Electrical & Lighting</div></div><div class="gt">₹38,000</div></div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🪑 Soft Furnishing</div></div><div class="gt">₹28,000</div></div></div>
+            <div class="tot-footer" style="margin-top:8px;">
+              <div class="tf-row"><div class="tf-l">Subtotal</div><div class="tf-v">₹7,64,200</div></div>
+              <div class="tf-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,37,556</div></div>
+              <div class="tf-dv"></div>
+              <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);">₹9,01,756</div></div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- SUMMARY VIEW -->
+          <div class="pnl" id="d-v-sum">
+            <div class="grp">
+              <div class="gb open">
+                <div class="sh" style="padding:10px 12px 6px;margin-bottom:0;"><div class="sht">By Room</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🛋️ Living Room</div><div class="sum-bar"><div class="sum-fill" style="width:14%"></div></div></div><div class="sum-amt">₹1,24,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🍳 Kitchen</div><div class="sum-bar"><div class="sum-fill" style="width:29%"></div></div></div><div class="sum-amt">₹2,20,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🛏️ Master Bedroom</div><div class="sum-bar"><div class="sum-fill" style="width:16%"></div></div></div><div class="sum-amt">₹1,23,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🪟 Kids Rooms ×2</div><div class="sum-bar"><div class="sum-fill" style="width:16%"></div></div></div><div class="sum-amt">₹1,20,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🏠 Common / All rooms</div><div class="sum-bar"><div class="sum-fill" style="width:25%"></div></div></div><div class="sum-amt">₹1,77,200</div></div>
+              </div>
+            </div>
+            <div class="grp" style="margin-top:7px;">
+              <div class="gb open">
+                <div class="sh" style="padding:10px 12px 6px;margin-bottom:0;"><div class="sht">By Activity</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🪵 Carpentry</div><div class="sum-bar"><div class="sum-fill" style="width:50%"></div></div></div><div class="sum-amt">₹3,85,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🔨 Civil Work</div><div class="sum-bar"><div class="sum-fill" style="width:11%"></div></div></div><div class="sum-amt">₹85,000</div></div>
+                <div class="sum-row"><div><div class="sum-nm">🎨 Painting</div><div class="sum-bar"><div class="sum-fill" style="width:7%"></div></div></div><div class="sum-amt">₹50,400</div></div>
+                <div class="sum-row"><div><div class="sum-nm">💡 Electrical</div><div class="sum-bar"><div class="sum-fill" style="width:5%"></div></div></div><div class="sum-amt">₹38,000</div></div>
+              </div>
+            </div>
+            <div class="tot-footer" style="margin-top:8px;">
+              <div class="tf-row"><div class="tf-l">Subtotal (excl. GST)</div><div class="tf-v">₹7,64,200</div></div>
+              <div class="tf-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,37,556</div></div>
+              <div class="tf-dv"></div>
+              <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);">₹9,01,756</div></div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+        </div>
+        <div class="bot-bar">
+          <button class="btn-p" id="d-share-btn" onclick="dShareQuotation()">Share Quotation with client →</button>
+          <div class="br"><button class="btn-g" onclick="dSS('d-import')">↑ Upload Excel</button><button class="btn-g" onclick="dDownloadTemplate()">↓ Template</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Import Excel -->
+      <div class="scr" id="d-import">
+        <div class="tb"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Import BOQ</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">📥</div><div class="ict">Download the Hynt BOQ template. Fill it with your data using the same headers. Upload it back here.</div></div>
+          <button class="btn-o" style="margin-bottom:12px;" onclick="dDownloadTemplate()">↓ Download BOQ Template (.xlsx)</button>
+          <div class="import-zone" id="d-dropzone" onclick="dSimulateUpload()">
+            <div class="iz-icon">📂</div>
+            <div class="iz-title">Tap to upload your Excel</div>
+            <div class="iz-sub">Accepts .xlsx · .xls · .csv<br/>Max 10MB · Up to 2,000 rows</div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:7px;">Required columns</div>
+          <div style="overflow-x:auto;border:1px solid var(--bor);border-radius:8px;margin-bottom:12px;">
+            <table style="width:100%;border-collapse:collapse;font-size:9px;white-space:nowrap;">
+              <tr style="background:var(--gp);">
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Space</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Category</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Particulars</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Qty</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Unit</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Rate</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Vendor</th>
+                <th style="padding:5px 7px;text-align:left;color:var(--mut);font-weight:700;">Markup%</th>
+              </tr>
+              <tr>
+                <td style="padding:5px 7px;color:var(--lgt);">Living Room</td>
+                <td style="padding:5px 7px;color:var(--lgt);">Carpentry</td>
+                <td style="padding:5px 7px;color:var(--lgt);">TV Unit</td>
+                <td style="padding:5px 7px;color:var(--lgt);">1</td>
+                <td style="padding:5px 7px;color:var(--lgt);">unit</td>
+                <td style="padding:5px 7px;color:var(--lgt);">45000</td>
+                <td style="padding:5px 7px;color:var(--lgt);">Raj Furn.</td>
+                <td style="padding:5px 7px;color:var(--lgt);">10</td>
+              </tr>
+            </table>
+          </div>
+          <div id="d-import-preview" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:700;color:var(--g);">✓ File parsed — 24 rows</div>
+              <div style="font-size:10px;color:var(--lgt);">BOQ_Sharma_v2.xlsx</div>
+            </div>
+            <div class="prev-wrap">
+              <table class="prev-table">
+                <tr><th>Space</th><th>Category</th><th>Particulars</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Mkp%</th><th>Total</th></tr>
+                <tr><td>Living Rm</td><td>Carpentry</td><td>False Ceiling</td><td>320</td><td>sqft</td><td>90</td><td>10%</td><td style="color:var(--g);font-weight:600;">₹28,800</td></tr>
+                <tr><td>Living Rm</td><td>Carpentry</td><td>TV Unit</td><td>1</td><td>unit</td><td>55000</td><td>7%</td><td style="color:var(--g);font-weight:600;">₹55,000</td></tr>
+                <tr><td>Kitchen</td><td>Modular</td><td>Modular Kitchen</td><td>1</td><td>unit</td><td>220000</td><td>8%</td><td style="color:var(--g);font-weight:600;">₹2,20,000</td></tr>
+                <tr style="background:var(--orl);"><td colspan="8" style="color:var(--or);font-weight:600;padding:5px 7px;">⚠ Row 12: Missing vendor name — will import without</td></tr>
+              </table>
+            </div>
+            <div style="display:flex;gap:7px;"><button class="btn-p" onclick="dConfirmImport()" style="flex:2;">Confirm Import →</button><button class="btn-g" onclick="document.getElementById('d-import-preview').style.display='none';" style="flex:1;">Re-upload</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Changes requested by client -->
+      <div class="scr" id="d-changes">
+        <div class="tb"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Client Feedback</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="pill pch" style="margin-bottom:12px;">● Changes Requested</div>
+          <div class="ic"><div class="ici">💬</div><div class="ict">Priya has reviewed the quotation and requested a change. Update your BOQ and resubmit.</div></div>
+          <div style="background:var(--amberl);border:1px solid #F5D5B8;border-radius:11px;padding:12px 13px;margin-bottom:14px;">
+            <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:5px;">Priya's Comment</div>
+            <div style="font-size:11px;color:var(--txt);line-height:1.6;">"The kitchen budget of ₹2,20,000 seems high compared to what I've seen elsewhere. Can we explore a more budget-friendly modular kitchen option in the ₹1,50,000–₹1,70,000 range?"</div>
+          </div>
+          <div class="sh"><div class="sht">Update Kitchen BOQ</div></div>
+          <div class="grp"><div class="gh" onclick="dTog('dc-g1','dc-c1')"><div class="ghl"><div class="gn">🍳 Kitchen</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt" id="dc-kitchen-total" style="color:var(--or);">₹2,20,000</div><div class="chv open" id="dc-c1">▾</div></div></div>
+          <div class="gb open" id="dc-g1">
+            <div class="li-edit open" style="display:block;">
+              <div style="font-size:10px;font-weight:700;color:var(--txt);margin-bottom:8px;">Modular Kitchen</div>
+              <div class="er"><div class="el">Vendor</div><input class="ein" value="Sleek Kitchens" id="dc-vendor"/></div>
+              <div class="er"><div class="el">Rate</div><input class="ein" value="₹2,20,000" id="dc-rate"/></div>
+              <div class="er"><div class="el">Markup %</div><input class="ein" value="8" id="dc-mkp"/></div>
+              <div class="er"><div class="el">Notes</div><input class="ein" value="Propose Häfele range as alternative" id="dc-notes"/></div>
+              <div class="ea"><button class="esv" onclick="dcUpdateKitchen()">Update & recalculate</button></div>
+            </div>
+          </div></div>
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="dResubmitQuotation()">Resubmit Quotation →</button></div>
+      </div>
+
+      <!-- SCREEN: Quotation Approved -->
+      <div class="scr" id="d-approved">
+        <div class="tb"><button class="bb">←</button><div class="tbt">BOQ / Quotation</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="text-align:center;padding:18px 0 14px;">
+            <div style="font-size:44px;margin-bottom:9px;">✅</div>
+            <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px;">Quotation Approved!</div>
+            <div style="font-size:10px;color:var(--mut);">Priya approved the quotation on 24 May 2025.</div>
+          </div>
+          <div class="pill pap" style="margin:0 auto 14px;display:table;">● Approved · ₹9,01,756</div>
+          <div class="ph" style="margin-bottom:14px;"><div class="ph-t">Grand Total: ₹9,01,756</div><div class="ph-m">incl. GST 18% · Sharma 3BHK Renovation</div></div>
+          <div class="sh"><div class="sht">Create invoice schedule?</div></div>
+          <div style="font-size:10px;color:var(--lgt);margin-bottom:10px;">Choose how to handle invoices in Finance.</div>
+          <div class="fin-opt sel" id="fo-auto" onclick="dSelectFinOpt('auto')">
+            <div class="fo-hd"><div class="fo-ic">⚡</div><div class="fo-t">Auto-create from SOW structure</div><div class="fo-radio"></div></div>
+            <div class="fo-s">Uses 30-30-24-10% from SOW. Creates 4 invoices in Finance automatically.</div>
+          </div>
+          <div class="fin-opt" id="fo-manual" onclick="dSelectFinOpt('manual')">
+            <div class="fo-hd"><div class="fo-ic">✏️</div><div class="fo-t">Create invoices manually</div><div class="fo-radio"></div></div>
+            <div class="fo-s">Go to Finance and create invoices yourself. Quotation total available as reference.</div>
+          </div>
+          <!-- Auto preview -->
+          <div id="fo-auto-preview" style="margin-top:10px;">
+            <div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:7px;">Invoice schedule preview</div>
+            <div class="inv-prev">
+              <div class="ip-row"><div class="ip-l">Invoice #1 — Advance (30%)</div><div class="ip-v">₹2,70,527</div></div>
+              <div class="ip-row"><div class="ip-l">Invoice #2 — Milestone 1 (30%)</div><div class="ip-v">₹2,70,527</div></div>
+              <div class="ip-row"><div class="ip-l">Invoice #3 — Milestone 2 (24%)</div><div class="ip-v">₹2,16,421</div></div>
+              <div class="ip-row"><div class="ip-l">Invoice #4 — Final (10%)</div><div class="ip-v">₹90,176</div></div>
+            </div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="dToast('Invoice schedule created in Finance! ✓')">Create Invoice Schedule →</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client receives quotation -->
+      <div class="scr active" id="c-home">
+        <div class="clh">
+          <div class="clh-t">Your Quotation</div>
+          <div class="clh-s">From Riya Desai · Hynt Pro</div>
+          <div class="clh-b"><span class="clh-badge">Sharma 3BHK</span><span class="clh-badge">₹9,01,756</span><span class="clh-badge">For approval</span></div>
+        </div>
+        <div class="sc">
+          <div class="ic" style="margin-top:2px;"><div class="ici">👆</div><div class="ict">Review your quotation. Tap any room or activity to see breakdown. Approve or request changes at the bottom.</div></div>
+
+          <!-- Client view tabs -->
+          <div class="tabs">
+            <div class="tb2 active" id="c-t-room" onclick="cSetView('room')">By Room</div>
+            <div class="tb2" id="c-t-act" onclick="cSetView('act')">By Activity</div>
+          </div>
+
+          <!-- BY ROOM -->
+          <div class="pnl active" id="c-v-room">
+            <!-- Living Room -->
+            <div class="grp"><div class="gh" onclick="cTog('cg1','cc1')"><div class="ghl"><div class="gn">🛋️ Living Room</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,24,000</div><div class="chv" id="cc1">▾</div></div></div>
+            <div class="gb" id="cg1">
+              <div class="cli"><div class="cli-nm">False Ceiling — Cove lighting</div><div class="cli-amt">₹28,800</div></div>
+              <div class="cli"><div class="cli-nm">TV Unit with storage</div><div class="cli-amt">₹55,000</div></div>
+              <div class="cli"><div class="cli-nm">Feature wall — Fluted panels</div><div class="cli-amt">₹40,000</div></div>
+            </div></div>
+
+            <!-- Kitchen -->
+            <div class="grp"><div class="gh" onclick="cTog('cg2','cc2')"><div class="ghl"><div class="gn">🍳 Kitchen</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt" style="color:var(--or);">₹2,20,000</div><div class="chv open" id="cc2">▾</div></div></div>
+            <div class="gb open" id="cg2">
+              <div class="cli"><div class="cli-nm">Modular kitchen — L-shape, granite top</div><div class="cli-amt">₹2,20,000</div></div>
+            </div></div>
+
+            <!-- Master Bedroom -->
+            <div class="grp"><div class="gh" onclick="cTog('cg3','cc3')"><div class="ghl"><div class="gn">🛏️ Master Bedroom</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,23,000</div><div class="chv" id="cc3">▾</div></div></div>
+            <div class="gb" id="cg3">
+              <div class="cli"><div class="cli-nm">Wardrobe — 8ft sliding mirror</div><div class="cli-amt">₹95,000</div></div>
+              <div class="cli"><div class="cli-nm">Bed back panel — Upholstered</div><div class="cli-amt">₹28,000</div></div>
+            </div></div>
+
+            <!-- Kids -->
+            <div class="grp"><div class="gh" onclick="cTog('cg4','cc4')"><div class="ghl"><div class="gn">🪟 Kids Rooms ×2</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,20,000</div><div class="chv" id="cc4">▾</div></div></div>
+            <div class="gb" id="cg4">
+              <div class="cli"><div class="cli-nm">Wardrobe per room (×2)</div><div class="cli-amt">₹1,10,000</div></div>
+              <div class="cli"><div class="cli-nm">Study table + wall graphics</div><div class="cli-amt">₹10,000</div></div>
+            </div></div>
+
+            <!-- Totals -->
+            <div class="tot-footer" style="margin-top:6px;">
+              <div class="tf-row"><div class="tf-l">Subtotal</div><div class="tf-v">₹7,64,200</div></div>
+              <div class="tf-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,37,556</div></div>
+              <div class="tf-dv"></div>
+              <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);">₹9,01,756</div></div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- BY ACTIVITY -->
+          <div class="pnl" id="c-v-act">
+            <div class="grp"><div class="gh" onclick="cTog('cag1','cac1')"><div class="ghl"><div class="gn">🪵 Carpentry & Modular</div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹5,05,000</div><div class="chv" id="cac1">▾</div></div></div>
+            <div class="gb open" id="cag1">
+              <div class="cli"><div class="cli-nm">TV Unit — Living Room</div><div class="cli-amt">₹55,000</div></div>
+              <div class="cli"><div class="cli-nm">Feature wall</div><div class="cli-amt">₹40,000</div></div>
+              <div class="cli"><div class="cli-nm">Modular Kitchen</div><div class="cli-amt">₹2,20,000</div></div>
+              <div class="cli"><div class="cli-nm">Wardrobes × 3 rooms</div><div class="cli-amt">₹2,20,000</div></div>
+            </div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🔨 Civil & False Ceiling</div></div><div class="gt">₹85,000</div></div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🎨 Painting</div></div><div class="gt">₹50,400</div></div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">💡 Electrical & Lighting</div></div><div class="gt">₹38,000</div></div></div>
+            <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🪑 Soft Furnishing</div></div><div class="gt">₹28,000</div></div></div>
+            <div class="tot-footer" style="margin-top:6px;">
+              <div class="tf-row"><div class="tf-l">Subtotal</div><div class="tf-v">₹7,64,200</div></div>
+              <div class="tf-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,37,556</div></div>
+              <div class="tf-dv"></div>
+              <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);">₹9,01,756</div></div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- Request changes panel -->
+          <div class="req-wrap" id="c-req-wrap">
+            <div class="req-title">What would you like to change?</div>
+            <textarea class="req-input" id="c-req-text" rows="3" placeholder="e.g. Kitchen budget seems high, can we explore cheaper options?">The kitchen budget of ₹2,20,000 seems high. Can we explore a more budget-friendly option in the ₹1,50,000–₹1,70,000 range?</textarea>
+            <button class="req-sub" onclick="cSendChanges()">Send to Riya →</button>
+          </div>
+        </div>
+        <div class="bot-bar">
+          <button class="btn-p" onclick="cApprove()">✓ Approve Quotation</button>
+          <div class="br"><button class="btn-w" onclick="cToggleReq()">Request Changes</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client waiting -->
+      <div class="scr" id="c-waiting">
+        <div class="tb"><div class="tbt">Quotation</div></div>
+        <div class="sc" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;">
+          <div style="font-size:44px;margin-bottom:12px;">⏳</div>
+          <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:5px;">Changes requested!</div>
+          <div style="font-size:10px;color:var(--mut);line-height:1.6;max-width:260px;margin-bottom:18px;">Riya is reviewing your feedback and will send a revised quotation shortly.</div>
+          <div class="pill pch">● Changes Requested</div>
+          <div style="margin-top:20px;background:var(--gp);border-radius:11px;padding:12px 14px;width:100%;text-align:left;">
+            <div style="font-size:10px;font-weight:700;color:var(--txt);margin-bottom:5px;">Your comment</div>
+            <div style="font-size:10px;color:var(--mut);line-height:1.6;">Kitchen budget seems high. Exploring ₹1,50,000–₹1,70,000 range.</div>
+          </div>
+        </div>
+        <div class="bot-bar"><button class="btn-g" onclick="cSS('c-revised')">⚡ See revised quotation (simulate)</button></div>
+      </div>
+
+      <!-- SCREEN: Revised quotation -->
+      <div class="scr" id="c-revised">
+        <div class="clh">
+          <div class="clh-t">Revised Quotation</div>
+          <div class="clh-s">Updated by Riya Desai · v2</div>
+          <div class="clh-b"><span class="clh-badge">v2 · Revised</span><span class="clh-badge">₹8,31,756</span></div>
+        </div>
+        <div class="sc">
+          <div class="ic" style="margin-top:2px;"><div class="ici">🔄</div><div class="ict">Riya updated the kitchen option. Total reduced by ₹70,000. Review and approve.</div></div>
+          <!-- What changed highlight -->
+          <div style="background:var(--gl);border:1px solid var(--bor);border-radius:10px;padding:10px 12px;margin-bottom:12px;">
+            <div style="font-size:10px;font-weight:700;color:var(--g);margin-bottom:5px;">What changed</div>
+            <div style="font-size:11px;color:var(--txt);">🍳 Kitchen: ₹2,20,000 → <strong style="color:var(--g);">₹1,50,000</strong></div>
+            <div style="font-size:10px;color:var(--mut);margin-top:3px;">Switched to Häfele modular range · Same quality, better pricing</div>
+            <div style="font-size:11px;color:var(--g);margin-top:6px;font-weight:700;">Grand Total: ₹9,01,756 → ₹8,31,756</div>
+          </div>
+          <!-- Room summary -->
+          <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🛋️ Living Room</div></div><div class="gt">₹1,24,000</div></div></div>
+          <div class="grp"><div class="gh" onclick="cTog('crg2','crc2')"><div class="ghl"><div class="gn">🍳 Kitchen</div><span style="margin-left:5px;font-size:9px;background:var(--gl);color:var(--g);padding:1px 6px;border-radius:4px;font-weight:700;">Updated</span></div></div><div style="display:flex;align-items:center;gap:6px;"><div class="gt">₹1,50,000</div><div class="chv open" id="crc2">▾</div></div></div>
+          <div class="gb open" id="crg2" style="display:block;background:#fff;">
+            <div class="cli"><div><div class="cli-nm">Modular kitchen — Häfele range</div><div style="font-size:9px;color:var(--lgt);">L-shape · Granite top · Soft close</div></div><div class="cli-amt">₹1,50,000</div></div>
+          </div>
+          <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🛏️ Master Bedroom</div></div><div class="gt">₹1,23,000</div></div></div>
+          <div class="grp"><div class="gh"><div class="ghl"><div class="gn">🪟 Kids Rooms ×2</div></div><div class="gt">₹1,20,000</div></div></div>
+          <div class="tot-footer" style="margin-top:6px;">
+            <div class="tf-row"><div class="tf-l">Subtotal</div><div class="tf-v">₹6,94,200</div></div>
+            <div class="tf-row"><div class="tf-l">GST 18%</div><div class="tf-v">₹1,24,956</div></div>
+            <div class="tf-dv"></div>
+            <div class="tf-row"><div style="font-size:12px;font-weight:700;">Grand Total</div><div style="font-size:15px;font-weight:700;color:var(--g);">₹8,19,156</div></div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="cApproveRevised()">✓ Approve Revised Quotation</button></div>
+      </div>
+
+      <!-- SCREEN: Client approved -->
+      <div class="scr" id="c-approved">
+        <div class="tb"><div class="tbt">Quotation</div><button class="ib" onclick="cToast('PDF saving…')">↓</button></div>
+        <div class="sc">
+          <div style="text-align:center;padding:18px 0 14px;">
+            <div style="font-size:44px;margin-bottom:9px;">🎉</div>
+            <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px;">Quotation Approved!</div>
+            <div style="font-size:10px;color:var(--mut);">Riya has been notified. Your project is now costed and confirmed.</div>
+          </div>
+          <div class="pill pap" style="margin:0 auto 14px;display:table;">● Approved · 24 May 2025</div>
+          <div class="ph"><div class="ph-t">Sharma 3BHK Renovation</div><div class="ph-m">Total: ₹8,19,156 incl. GST</div></div>
+          <div style="background:var(--gp);border-radius:11px;padding:12px 13px;font-size:10px;color:var(--mut);line-height:2;">
+            <strong style="color:var(--txt);font-size:11px;">Payment schedule (30-30-24-10%)</strong><br/>
+            • Advance: ₹2,45,747 — on project start<br/>
+            • Milestone 1: ₹2,45,747<br/>
+            • Milestone 2: ₹1,96,597<br/>
+            • Final: ₹81,915 — on handover
+          </div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="cToast('PDF downloaded!')">↓ Download Approved Quotation</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Screen nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Toggles
+function dTog(id,chevId){const b=document.getElementById(id);const c=document.getElementById(chevId);const open=b.classList.toggle('open');c.classList.toggle('open',open);}
+function cTog(id,chevId){const b=document.getElementById(id);const c=document.getElementById(chevId);if(b){const open=b.classList.toggle('open');if(c)c.classList.toggle('open',open);}}
+
+// Views
+function dSetView(v){['room','act','sum'].forEach(x=>{document.getElementById('d-t-'+x).classList.toggle('active',x===v);document.getElementById('d-v-'+x).classList.toggle('active',x===v);});}
+function cSetView(v){['room','act'].forEach(x=>{document.getElementById('c-t-'+x).classList.toggle('active',x===v);document.getElementById('c-v-'+x).classList.toggle('active',x===v);});}
+
+// Edit
+function dTogEdit(liId,leId){
+  const li=document.getElementById(liId);const le=document.getElementById(leId);
+  const isOpen=le.classList.contains('open');
+  document.querySelectorAll('.li-edit').forEach(e=>e.classList.remove('open'));
+  if(!isOpen)le.classList.add('open');
+}
+function dSaveEdit(liId,leId){document.getElementById(leId).classList.remove('open');dToast('Item saved ✓');}
+
+// Add item
+function dAddItem(room){const name=prompt('Item name?');if(!name)return;dToast(name+' added to '+room);}
+
+// GST toggle
+function dTogGST(){const t=document.getElementById('d-gst');const r=document.getElementById('d-gst-row');const g=document.getElementById('d-grand');t.classList.toggle('off');if(t.classList.contains('off')){r.style.display='none';g.textContent='₹7,64,200';}else{r.style.display='flex';g.textContent='₹9,01,756';}}
+
+// Import
+function dDownloadTemplate(){dToast('BOQ_Template_Hynt.xlsx downloading…');}
+function dSimulateUpload(){
+  document.getElementById('d-import-preview').style.display='block';
+  dToast('BOQ_Sharma_v2.xlsx parsed — 24 rows');
+}
+function dConfirmImport(){dToast('24 items imported ✓');setTimeout(()=>dSS('d-home'),600);}
+
+// Share quotation
+function dShareQuotation(){
+  document.getElementById('d-boq-status').textContent='● Shared';
+  document.getElementById('d-boq-status').className='pill psh';
+  document.getElementById('d-share-btn').textContent='Quotation sent ✓';
+  document.getElementById('d-share-btn').disabled=true;
+  dToast('Quotation sent to Priya!');
+  setTimeout(()=>{dSS('d-changes');dToast('⚡ Priya requested changes!');},1500);
+}
+
+// Changes
+function dcUpdateKitchen(){
+  document.getElementById('dc-kitchen-total').textContent='₹1,50,000';
+  document.getElementById('dc-kitchen-total').style.color='var(--g)';
+  dToast('Kitchen updated ✓ — Grand total revised to ₹8,31,756');
+}
+function dResubmitQuotation(){dToast('Revised quotation sent!');setTimeout(()=>dSS('d-home'),600);}
+
+// Finance options
+function dSelectFinOpt(opt){
+  document.getElementById('fo-auto').classList.toggle('sel',opt==='auto');
+  document.getElementById('fo-manual').classList.toggle('sel',opt==='manual');
+  document.getElementById('fo-auto-preview').style.display=opt==='auto'?'block':'none';
+}
+
+// Client functions
+function cToggleReq(){const w=document.getElementById('c-req-wrap');w.classList.toggle('open');}
+function cSendChanges(){cToast('Changes sent to Riya!');setTimeout(()=>cSS('c-waiting'),700);}
+function cApprove(){cToast('Quotation approved! ✓');setTimeout(()=>{cSS('c-approved');dSS('d-approved');},700);}
+function cApproveRevised(){cToast('Revised quotation approved! ✓');setTimeout(()=>{cSS('c-approved');dSS('d-approved');},700);}
+
+// Toasts
+function dToast(msg){showToast(msg,0);}
+function cToast(msg){showToast(msg,1);}
+function showToast(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>

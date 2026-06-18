@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Site Diary — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#8FA88F;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#2a4a2a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--orl);color:var(--or);}
+.pr{background:var(--redl);color:var(--red);}
+.pb{background:var(--bluel);color:var(--blue);}
+.pgr{background:#F0F0F0;color:#666;}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.tabs{display:flex;background:var(--gp);border-radius:8px;padding:3px;margin-bottom:12px;}
+.tb2{flex:1;text-align:center;font-size:10px;font-weight:600;padding:7px 3px;border-radius:6px;color:var(--mut);cursor:pointer;}
+.tb2.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.pnl{display:none;}
+.pnl.active{display:block;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+textarea.fi{resize:none;}
+.fi-row{display:flex;gap:8px;}
+
+/* Folder navigation */
+.folder-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.folder-card{background:var(--sur);border:1px solid var(--bor);border-radius:12px;padding:13px 13px 11px;cursor:pointer;transition:border-color .15s;}
+.folder-card:hover{border-color:var(--g3);}
+.folder-card.has-new{border-color:var(--amber);}
+.fc-icon{font-size:26px;margin-bottom:7px;}
+.fc-name{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.fc-count{font-size:9px;color:var(--lgt);}
+.fc-new{font-size:8px;font-weight:700;background:var(--amberl);color:var(--amber);padding:2px 6px;border-radius:8px;display:inline-block;margin-top:4px;}
+
+/* View toggle */
+.vtog{display:flex;background:var(--gp);border-radius:8px;padding:3px;margin-bottom:12px;}
+.vt{flex:1;text-align:center;font-size:10px;font-weight:600;padding:7px 3px;border-radius:6px;color:var(--mut);cursor:pointer;}
+.vt.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+
+/* Daily log entries */
+.log-entry{border:1px solid var(--bor);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+.log-entry.has-issue{border-color:var(--or);}
+.le-head{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:var(--gp);cursor:pointer;}
+.le-date{font-size:11px;font-weight:700;color:var(--txt);}
+.le-meta{display:flex;align-items:center;gap:6px;}
+.le-weather{font-size:14px;}
+.le-by{font-size:9px;color:var(--lgt);background:var(--sur);padding:2px 6px;border-radius:5px;}
+.le-body{padding:11px 13px;background:#fff;display:none;}
+.le-body.open{display:block;}
+.le-photos{display:flex;gap:6px;margin-bottom:9px;overflow-x:auto;}
+.le-photos::-webkit-scrollbar{display:none;}
+.le-photo{width:60px;height:60px;border-radius:9px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:1px solid var(--bor);cursor:pointer;}
+.le-photo.add{border-style:dashed;color:var(--g);}
+.le-text{font-size:11px;color:var(--txt);line-height:1.65;margin-bottom:7px;}
+.le-stats{display:flex;gap:7px;margin-bottom:7px;}
+.le-stat{font-size:10px;color:var(--mut);background:var(--gp);padding:3px 8px;border-radius:6px;}
+.le-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+.le-tag{font-size:9px;font-weight:600;padding:2px 8px;border-radius:8px;}
+.tag-w{background:var(--gl);color:var(--g);}
+.tag-i{background:var(--redl);color:var(--red);}
+.issue-flag{background:var(--orl);border:1px solid #F5D5B8;border-radius:8px;padding:8px 10px;display:flex;align-items:center;gap:7px;}
+.if-text{font-size:10px;color:var(--or);flex:1;}
+.if-act{font-size:9px;font-weight:700;color:var(--g);background:var(--gl);padding:2px 7px;border-radius:5px;cursor:pointer;}
+
+/* New log form */
+.form-panel{background:var(--gp);border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.form-panel.open{display:block;}
+.photo-upload-row{display:flex;gap:7px;margin-bottom:10px;}
+.pu-add{width:60px;height:60px;border-radius:9px;border:1.5px dashed var(--g2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--g);cursor:pointer;flex-shrink:0;}
+.pu-thumb{width:60px;height:60px;border-radius:9px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid var(--bor);}
+.weather-row{display:flex;gap:6px;margin-bottom:10px;}
+.wx-opt{flex:1;border:1.5px solid var(--bor);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;font-size:18px;}
+.wx-opt.active{border-color:var(--g);background:var(--gp);}
+.issue-toggle{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--orl);border:1px solid #F5D5B8;border-radius:9px;margin-bottom:9px;cursor:pointer;}
+.it-text{font-size:10px;font-weight:700;color:var(--or);}
+.it-tog{width:26px;height:15px;background:var(--bor);border-radius:8px;position:relative;}
+.it-tog.on{background:var(--or);}
+.it-tog-d{width:11px;height:11px;background:#fff;border-radius:50%;position:absolute;left:2px;top:2px;transition:left .15s;}
+.it-tog.on .it-tog-d{left:13px;}
+.issue-fields{display:none;}
+.issue-fields.open{display:block;}
+
+/* Calendar view */
+.cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-month{font-size:12px;font-weight:700;color:var(--txt);}
+.cal-nav{font-size:16px;color:var(--mut);cursor:pointer;padding:0 6px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px;}
+.cal-dl{text-align:center;font-size:8px;font-weight:700;color:var(--lgt);padding:4px 0;}
+.cal-day{text-align:center;font-size:10px;padding:6px 2px;border-radius:7px;cursor:pointer;position:relative;}
+.cal-day.has{background:var(--gl);color:var(--g);font-weight:700;}
+.cal-day.has-issue{background:var(--orl);color:var(--or);font-weight:700;}
+.cal-day.today{background:var(--g);color:#fff;font-weight:700;}
+.cal-day.empty{color:var(--borl);}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--g3);margin:1px auto 0;}
+
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:10px;}
+.pg-item{aspect-ratio:1;border-radius:8px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--bor);cursor:pointer;position:relative;}
+.pg-item .pg-date{position:absolute;bottom:4px;left:4px;font-size:7px;font-weight:700;background:rgba(0,0,0,.5);color:#fff;padding:1px 4px;border-radius:4px;}
+.pg-item .pg-by{position:absolute;top:4px;right:4px;font-size:7px;font-weight:700;background:rgba(45,106,79,.8);color:#fff;padding:1px 4px;border-radius:4px;}
+
+/* Sourcing card */
+.src-card{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--borl);}
+.src-card:last-child{border-bottom:none;}
+.src-thumb{width:52px;height:52px;border-radius:9px;background:var(--amberl);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid var(--bor);}
+.src-info{flex:1;}
+.src-nm{font-size:11px;font-weight:600;color:var(--txt);}
+.src-meta{font-size:9px;color:var(--lgt);margin-top:2px;}
+.src-cat{font-size:9px;font-weight:600;padding:2px 6px;border-radius:5px;background:var(--amberl);color:var(--amber);display:inline-block;margin-top:3px;}
+
+/* Issue cards */
+.issue-card{border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:7px;}
+.issue-card.open-i{border-color:var(--red);}
+.issue-card.inprog{border-color:var(--or);}
+.issue-card.resolved{border-color:var(--g3);opacity:.7;}
+.ic-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;}
+.ic-title{font-size:11px;font-weight:700;color:var(--txt);}
+.ic-meta{font-size:9px;color:var(--lgt);margin-bottom:6px;}
+.ic-linked{font-size:9px;color:var(--g);background:var(--gl);padding:2px 7px;border-radius:5px;display:inline-block;margin-bottom:6px;}
+
+/* Client reference cards */
+.ref-card{border:1px solid var(--bor);border-radius:12px;overflow:hidden;margin-bottom:8px;}
+.ref-card.new-ref{border-color:var(--amber);}
+.ref-img{height:120px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:48px;}
+.ref-body{padding:10px 12px;}
+.ref-note{font-size:11px;color:var(--txt);line-height:1.5;margin-bottom:6px;}
+.ref-meta{font-size:9px;color:var(--lgt);margin-bottom:7px;}
+.ref-comment{background:var(--gp);border-radius:8px;padding:8px 10px;margin-bottom:7px;}
+.ref-comment-label{font-size:9px;font-weight:700;color:var(--g);margin-bottom:3px;}
+.ref-comment-text{font-size:10px;color:var(--txt);line-height:1.5;}
+.ref-reply-input{width:100%;border:1.5px solid var(--g3);border-radius:8px;padding:8px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);display:none;}
+.ref-acts{display:flex;gap:6px;}
+.ref-btn{flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;border:none;font-family:'Poppins',sans-serif;}
+.rb-mood{background:var(--gl);color:var(--g);}
+.rb-reply{background:var(--bluel);color:var(--blue);}
+
+/* Client side */
+.cl-header{background:var(--g);padding:16px 16px 12px;flex-shrink:0;}
+.clh-t{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-b{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Upload zone */
+.upload-zone{border:2px dashed var(--bor);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:12px;}
+.upload-zone:hover{border-color:var(--g3);}
+.uz-icon{font-size:36px;margin-bottom:8px;}
+.uz-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.uz-sub{font-size:10px;color:var(--lgt);}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER/TEAM PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer / Team Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Site Diary Home -->
+      <div class="scr active" id="d-home">
+        <div class="topbar"><button class="bb">←</button><div class="tbt">Site Diary</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dSS('d-new-log')" style="background:var(--g);color:#fff;">+ Log</button></div></div>
+        <div class="sc">
+          <!-- Quick stats -->
+          <div style="display:flex;gap:7px;margin-bottom:14px;">
+            <div style="flex:1;background:var(--gp);border-radius:10px;padding:9px;border:1px solid var(--bor);text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--g);">24</div><div style="font-size:9px;color:var(--lgt);">Log entries</div></div>
+            <div style="flex:1;background:var(--orl);border-radius:10px;padding:9px;border:1px solid var(--bor);text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--or);">3</div><div style="font-size:9px;color:var(--lgt);">Open issues</div></div>
+            <div style="flex:1;background:var(--amberl);border-radius:10px;padding:9px;border:1px solid var(--bor);text-align:center;cursor:pointer;" onclick="dSS('d-refs')"><div style="font-size:16px;font-weight:700;color:var(--amber);">2</div><div style="font-size:9px;color:var(--lgt);">New refs</div></div>
+          </div>
+
+          <!-- Folders -->
+          <div class="sh"><div class="sht">Folders</div></div>
+          <div class="folder-nav">
+            <div class="folder-card" onclick="dSS('d-logs')">
+              <div class="fc-icon">📓</div>
+              <div class="fc-name">Daily Logs</div>
+              <div class="fc-count">24 entries</div>
+            </div>
+            <div class="folder-card" onclick="dSS('d-photos')">
+              <div class="fc-icon">📸</div>
+              <div class="fc-name">Progress Photos</div>
+              <div class="fc-count">87 photos</div>
+            </div>
+            <div class="folder-card has-new" onclick="dSS('d-refs')">
+              <div class="fc-icon">🖼️</div>
+              <div class="fc-name">Client References</div>
+              <div class="fc-count">12 images</div>
+              <div class="fc-new">2 new from Priya</div>
+            </div>
+            <div class="folder-card" onclick="dSS('d-sourcing')">
+              <div class="fc-icon">🛒</div>
+              <div class="fc-name">Sourcing</div>
+              <div class="fc-count">18 photos</div>
+            </div>
+          </div>
+
+          <!-- Issues quick view -->
+          <div class="sh"><div class="sht">Open Issues</div><div class="sha" onclick="dSS('d-issues')">View all →</div></div>
+          <div class="issue-card open-i">
+            <div class="ic-top"><div class="ic-title">Kids room study table position change</div><span class="pill pr">Open</span></div>
+            <div class="ic-meta">Reported by Arjun · 22 Oct · From log entry</div>
+            <div class="ic-linked">→ Task created</div>
+            <div style="display:flex;gap:6px;"><button style="flex:1;background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:7px;padding:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Marked in progress!')">In Progress</button><button style="flex:1;background:var(--gl);color:var(--g);border:none;border-radius:7px;padding:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Issue resolved ✓')">Resolve</button></div>
+          </div>
+          <div class="issue-card inprog">
+            <div class="ic-top"><div class="ic-title">Paint bleed on ceiling — master bedroom</div><span class="pill po">In Progress</span></div>
+            <div class="ic-meta">Reported by Riya · 20 Oct</div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Daily Logs -->
+      <div class="scr" id="d-logs">
+        <div class="topbar"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Daily Logs</div><button class="ib" onclick="dSS('d-new-log')" style="background:var(--g);color:#fff;font-size:14px;">+</button></div>
+        <div class="sc">
+          <div class="vtog">
+            <div class="vt active" id="lv-feed" onclick="setLogView('feed')">📋 Feed</div>
+            <div class="vt" id="lv-cal" onclick="setLogView('cal')">📅 Calendar</div>
+          </div>
+          <div class="tabs">
+            <div class="tb2 active">All</div>
+            <div class="tb2">My entries</div>
+            <div class="tb2">Team</div>
+          </div>
+
+          <!-- FEED -->
+          <div id="d-log-feed">
+            <!-- Today's entry -->
+            <div class="log-entry">
+              <div class="le-head" onclick="toggleLog('dl1')">
+                <div class="le-date">Today, 24 Oct 2025</div>
+                <div class="le-meta"><span class="le-weather">☀️</span><span class="le-by">Riya Desai</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+              </div>
+              <div class="le-body open" id="dl1">
+                <div class="le-photos">
+                  <div class="le-photo">🏗️</div>
+                  <div class="le-photo">💡</div>
+                  <div class="le-photo">📸</div>
+                  <div class="le-photo add" onclick="dToast('Camera opened')">+</div>
+                </div>
+                <div class="le-text">False ceiling work completed in living room. Cove lights installed and tested. Light diffusion looks good. Kitchen cabinet delivery confirmed by vendor for 28 Oct.</div>
+                <div class="le-stats"><span class="le-stat">👷 4 workers</span><span class="le-stat">☀️ Sunny</span></div>
+                <div class="le-tags"><span class="le-tag tag-w">False ceiling</span><span class="le-tag tag-w">Lighting</span></div>
+              </div>
+            </div>
+
+            <!-- Entry with issue -->
+            <div class="log-entry has-issue">
+              <div class="le-head" onclick="toggleLog('dl2')">
+                <div class="le-date">22 Oct 2025</div>
+                <div class="le-meta"><span class="le-weather">🌥️</span><span class="le-by">Arjun Kumar</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+              </div>
+              <div class="le-body" id="dl2">
+                <div class="le-photos"><div class="le-photo">📸</div></div>
+                <div class="le-text">Client visited site. Approved master bedroom wardrobe layout. Requested kids room study table be shifted to opposite wall.</div>
+                <div class="le-stats"><span class="le-stat">👷 2 workers</span><span class="le-stat">🌥️ Cloudy</span></div>
+                <div class="le-tags"><span class="le-tag tag-w">Client visit</span><span class="le-tag tag-i">⚠️ Issue flagged</span></div>
+                <div class="issue-flag">
+                  <span style="font-size:14px;">⚠️</span>
+                  <div class="if-text">Kids room study table position change</div>
+                  <div class="if-act" onclick="dSS('d-issues')">→ Task created</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Earlier entry -->
+            <div class="log-entry">
+              <div class="le-head" onclick="toggleLog('dl3')">
+                <div class="le-date">20 Oct 2025</div>
+                <div class="le-meta"><span class="le-weather">☀️</span><span class="le-by">Arjun Kumar</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+              </div>
+              <div class="le-body" id="dl3">
+                <div class="le-text">Painter started work on all rooms. 2 coats planned. Electrical points marked for new layout in living room and kitchen.</div>
+                <div class="le-stats"><span class="le-stat">👷 5 workers</span><span class="le-stat">☀️ Sunny</span></div>
+                <div class="le-tags"><span class="le-tag tag-w">Painting</span><span class="le-tag tag-w">Electrical</span></div>
+              </div>
+            </div>
+
+            <div class="log-entry">
+              <div class="le-head" onclick="toggleLog('dl4')">
+                <div class="le-date">18 Oct 2025</div>
+                <div class="le-meta"><span class="le-weather">🌧️</span><span class="le-by">Sneha Malhotra</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+              </div>
+              <div class="le-body" id="dl4">
+                <div class="le-text">Rainy day. Indoor carpentry work continued. Kitchen cabinet frames installed. Wardrobe channels fitted in master bedroom.</div>
+                <div class="le-stats"><span class="le-stat">👷 3 workers</span><span class="le-stat">🌧️ Rainy</span></div>
+                <div class="le-tags"><span class="le-tag tag-w">Carpentry</span></div>
+              </div>
+            </div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- CALENDAR -->
+          <div id="d-log-cal" style="display:none;">
+            <div style="border:1px solid var(--bor);border-radius:12px;padding:13px;margin-bottom:12px;">
+              <div class="cal-hd"><span class="cal-nav">‹</span><div class="cal-month">October 2025</div><span class="cal-nav">›</span></div>
+              <div class="cal-grid">
+                <div class="cal-dl">M</div><div class="cal-dl">T</div><div class="cal-dl">W</div><div class="cal-dl">T</div><div class="cal-dl">F</div><div class="cal-dl">S</div><div class="cal-dl">S</div>
+                <div class="cal-day empty"></div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div>
+                <div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div>
+                <div class="cal-day has">14<div class="cal-dot"></div></div><div class="cal-day has">15<div class="cal-dot"></div></div><div class="cal-day">16</div><div class="cal-day has">17<div class="cal-dot"></div></div><div class="cal-day has">18<div class="cal-dot"></div></div><div class="cal-day">19</div><div class="cal-day has">20<div class="cal-dot"></div></div>
+                <div class="cal-day">21</div><div class="cal-day has-issue">22<div class="cal-dot" style="background:var(--or);"></div></div><div class="cal-day">23</div><div class="cal-day today">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div>
+                <div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div><div class="cal-day">31</div>
+              </div>
+              <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:2px;background:var(--gl);"></div><span style="font-size:9px;color:var(--mut);">Entry logged</span></div>
+                <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:2px;background:var(--orl);"></div><span style="font-size:9px;color:var(--mut);">Issue flagged</span></div>
+                <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:2px;background:var(--g);"></div><span style="font-size:9px;color:var(--mut);">Today</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN: New Log Entry -->
+      <div class="scr" id="d-new-log">
+        <div class="topbar"><button class="bb" onclick="dSS('d-logs')">←</button><div class="tbt">New Log Entry</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="nl-date"/></div>
+          <!-- Photos -->
+          <div class="fg">
+            <label class="fl">Photos</label>
+            <div class="photo-upload-row">
+              <div class="pu-add" onclick="dToast('Camera/gallery opened')">📷</div>
+              <div class="pu-thumb">🏗️</div>
+              <div class="pu-thumb">💡</div>
+            </div>
+          </div>
+          <!-- Work done -->
+          <div class="fg"><label class="fl">Work done today</label><textarea class="fi" rows="3" placeholder="Describe what happened on site today…"></textarea></div>
+          <!-- Workers + Weather -->
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Workers on site</label><input class="fi" type="number" placeholder="0"/></div>
+            <div class="fg" style="flex:1;"><label class="fl">Weather</label>
+              <div class="weather-row">
+                <div class="wx-opt active" onclick="setWx(this)">☀️</div>
+                <div class="wx-opt" onclick="setWx(this)">🌥️</div>
+                <div class="wx-opt" onclick="setWx(this)">🌧️</div>
+                <div class="wx-opt" onclick="setWx(this)">🌩️</div>
+              </div>
+            </div>
+          </div>
+          <!-- Notes -->
+          <div class="fg"><label class="fl">Notes / Observations</label><textarea class="fi" rows="2" placeholder="Any additional observations…"></textarea></div>
+          <!-- Issue toggle -->
+          <div class="issue-toggle" onclick="toggleIssueField()">
+            <div class="it-text">⚠️ Flag an issue?</div>
+            <div class="it-tog" id="it-tog"><div class="it-tog-d"></div></div>
+          </div>
+          <div class="issue-fields" id="issue-fields">
+            <div class="fg"><label class="fl">Issue title</label><input class="fi" placeholder="Describe the issue briefly"/></div>
+            <div class="fg"><label class="fl">Issue description</label><textarea class="fi" rows="2" placeholder="More details…"></textarea></div>
+            <div class="ic" style="margin-bottom:10px;"><div class="ici">✦</div><div class="ict">A Task will be auto-created in Tasks and added to Issues list.</div></div>
+          </div>
+          <button class="btn-p" onclick="dToast('Log entry saved ✓');dSS('d-logs')">Save Entry</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Progress Photos -->
+      <div class="scr" id="d-photos">
+        <div class="topbar"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Progress Photos</div><button class="ib" onclick="dToast('Upload photo')" style="background:var(--g);color:#fff;font-size:14px;">+</button></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">📸</div><div class="ict">Photos from daily logs auto-appear here. Team can also upload directly.</div></div>
+          <div class="sh"><div class="sht">October 2025</div><div class="sha">Filter</div></div>
+          <div class="photo-grid">
+            <div class="pg-item">🏗️<div class="pg-date">24 Oct</div><div class="pg-by">Riya</div></div>
+            <div class="pg-item">💡<div class="pg-date">24 Oct</div><div class="pg-by">Riya</div></div>
+            <div class="pg-item">📐<div class="pg-date">24 Oct</div><div class="pg-by">Riya</div></div>
+            <div class="pg-item">🪵<div class="pg-date">22 Oct</div><div class="pg-by">Arjun</div></div>
+            <div class="pg-item">🎨<div class="pg-date">20 Oct</div><div class="pg-by">Arjun</div></div>
+            <div class="pg-item">🔌<div class="pg-date">20 Oct</div><div class="pg-by">Sneha</div></div>
+            <div class="pg-item">🏠<div class="pg-date">18 Oct</div><div class="pg-by">Sneha</div></div>
+            <div class="pg-item">🚪<div class="pg-date">18 Oct</div><div class="pg-by">Arjun</div></div>
+            <div class="pg-item">🪟<div class="pg-date">15 Oct</div><div class="pg-by">Riya</div></div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client References -->
+      <div class="scr" id="d-refs">
+        <div class="topbar"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Client References</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">🖼️</div><div class="ict">Priya uploads reference images here. Comment to acknowledge or save to Moodboard.</div></div>
+
+          <!-- New references -->
+          <div class="sh"><div class="sht" style="color:var(--amber);">New (2)</div></div>
+
+          <div class="ref-card new-ref">
+            <div class="ref-img">🛋️</div>
+            <div class="ref-body">
+              <div class="ref-note">"I want this kind of clean minimal living room feel — white walls, natural wood, no clutter."</div>
+              <div class="ref-meta">Priya Sharma · 24 Oct 2025 · Living Room</div>
+              <div id="ref-1-reply" style="display:none;">
+                <textarea class="ref-reply-input" id="ref-1-input" style="display:block;" rows="2" placeholder="Reply to Priya…">Noted! This minimal aesthetic aligns with what we've planned. Will incorporate in moodboard.</textarea>
+                <button class="btn-p" style="margin-top:6px;" onclick="dSendRefReply(1)">Send Reply →</button>
+              </div>
+              <div class="ref-acts">
+                <button class="ref-btn rb-mood" onclick="dToast('Saved to Moodboard ✓')">🎨 Save to Moodboard</button>
+                <button class="ref-btn rb-reply" onclick="dShowRefReply(1)">💬 Comment</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ref-card new-ref">
+            <div class="ref-img">🍳</div>
+            <div class="ref-body">
+              <div class="ref-note">"Kitchen colour and handle style — I love this handleless look with the gold accents."</div>
+              <div class="ref-meta">Priya Sharma · 24 Oct 2025 · Kitchen</div>
+              <div id="ref-2-reply" style="display:none;">
+                <textarea class="ref-reply-input" id="ref-2-input" style="display:block;" rows="2" placeholder="Reply to Priya…"></textarea>
+                <button class="btn-p" style="margin-top:6px;" onclick="dSendRefReply(2)">Send Reply →</button>
+              </div>
+              <div class="ref-acts">
+                <button class="ref-btn rb-mood" onclick="dToast('Saved to Moodboard ✓')">🎨 Save to Moodboard</button>
+                <button class="ref-btn rb-reply" onclick="dShowRefReply(2)">💬 Comment</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Earlier references -->
+          <div class="sh" style="margin-top:8px;"><div class="sht">Earlier</div></div>
+          <div class="ref-card">
+            <div class="ref-img">🛏️</div>
+            <div class="ref-body">
+              <div class="ref-note">"Bedroom lighting mood — warm and cozy, not too bright."</div>
+              <div class="ref-meta">Priya Sharma · 18 Oct 2025 · Master Bedroom</div>
+              <div class="ref-comment">
+                <div class="ref-comment-label">Your comment</div>
+                <div class="ref-comment-text">Perfect — we've already specified warm 3000K LEDs for all bedrooms. ✓</div>
+              </div>
+            </div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Sourcing -->
+      <div class="scr" id="d-sourcing">
+        <div class="topbar"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Sourcing</div><button class="ib" onclick="dSS('d-add-src')" style="background:var(--g);color:#fff;font-size:14px;">+</button></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">🛒</div><div class="ict">Photos from vendor visits and markets. Private to your team — client cannot see this.</div></div>
+          <div class="tabs">
+            <div class="tb2 active">All</div>
+            <div class="tb2">Tiles</div>
+            <div class="tb2">Furniture</div>
+            <div class="tb2">Hardware</div>
+          </div>
+          <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;overflow:hidden;">
+            <div class="src-card">
+              <div class="src-thumb">🪵</div>
+              <div class="src-info"><div class="src-nm">Teak veneer finish sample</div><div class="src-meta">Raj Furniture, Goregaon · 22 Oct</div><span class="src-cat">Furniture</span></div>
+            </div>
+            <div class="src-card">
+              <div class="src-thumb">🟫</div>
+              <div class="src-info"><div class="src-nm">Italian marble tile — 600×600</div><div class="src-meta">Stone World, Lower Parel · 20 Oct</div><span class="src-cat" style="background:#FEF2E4;color:#D97706;">Tiles</span></div>
+            </div>
+            <div class="src-card">
+              <div class="src-thumb">🔩</div>
+              <div class="src-info"><div class="src-nm">Hafele gold handles — 3 variants</div><div class="src-meta">Hafele showroom, Andheri · 18 Oct</div><span class="src-cat" style="background:#F0F7F2;color:var(--g2);">Hardware</span></div>
+            </div>
+            <div class="src-card">
+              <div class="src-thumb">💡</div>
+              <div class="src-info"><div class="src-nm">Pendant lights — dining area option</div><div class="src-meta">Lightology, Worli · 15 Oct</div><span class="src-cat" style="background:var(--purl);color:var(--pur);">Lighting</span></div>
+            </div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Sourcing Photo -->
+      <div class="scr" id="d-add-src">
+        <div class="topbar"><button class="bb" onclick="dSS('d-sourcing')">←</button><div class="tbt">Add Sourcing Photo</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="border:1.5px dashed var(--bor);border-radius:12px;padding:24px;text-align:center;margin-bottom:12px;cursor:pointer;" onclick="dToast('Camera/gallery opened')">
+            <div style="font-size:36px;margin-bottom:8px;">📷</div>
+            <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">Take or upload photo</div>
+            <div style="font-size:10px;color:var(--lgt);">Camera · Gallery · Drive</div>
+          </div>
+          <div class="fg"><label class="fl">Caption</label><input class="fi" placeholder="e.g. Teak veneer — warm finish"/></div>
+          <div class="fg"><label class="fl">Vendor / Location</label><input class="fi" placeholder="e.g. Raj Furniture, Goregaon"/></div>
+          <div class="fg"><label class="fl">Category</label><select class="fi"><option>Tiles</option><option>Furniture</option><option>Hardware</option><option>Fabric</option><option>Lighting</option><option>Other</option></select></div>
+          <button class="btn-p" onclick="dToast('Sourcing photo saved ✓');dSS('d-sourcing')">Save Photo</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Issues -->
+      <div class="scr" id="d-issues">
+        <div class="topbar"><button class="bb" onclick="dSS('d-home')">←</button><div class="tbt">Issues</div><button class="ib" onclick="dToast('New issue')" style="background:var(--g);color:#fff;font-size:14px;">+</button></div>
+        <div class="sc">
+          <div class="tabs">
+            <div class="tb2 active">Open (3)</div>
+            <div class="tb2">In Progress</div>
+            <div class="tb2">Resolved</div>
+          </div>
+          <div class="issue-card open-i">
+            <div class="ic-top"><div class="ic-title">Kids room study table position change</div><span class="pill pr">Open</span></div>
+            <div class="ic-meta">Reported by Arjun Kumar · 22 Oct · From log</div>
+            <div class="ic-linked" onclick="dToast('Diary entry opened')">📓 Log: 22 Oct</div>
+            <div class="ic-linked" onclick="dToast('Task opened')" style="color:var(--or);background:var(--orl);margin-left:5px;">✅ Task created</div>
+            <div class="br"><button style="flex:2;background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Marked in progress!')">Mark In Progress</button><button style="flex:1;background:var(--gl);color:var(--g);border:none;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Issue resolved ✓')">Resolve</button></div>
+          </div>
+          <div class="issue-card open-i">
+            <div class="ic-top"><div class="ic-title">Paint bleed on ceiling — master bedroom</div><span class="pill pr">Open</span></div>
+            <div class="ic-meta">Reported by Riya Desai · 20 Oct · From log</div>
+            <div class="ic-linked" onclick="dToast('Diary entry opened')">📓 Log: 20 Oct</div>
+            <div class="br"><button style="flex:2;background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;">Mark In Progress</button><button style="flex:1;background:var(--gl);color:var(--g);border:none;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Issue resolved ✓')">Resolve</button></div>
+          </div>
+          <div class="issue-card open-i">
+            <div class="ic-top"><div class="ic-title">Electrical point missing — kitchen backsplash</div><span class="pill pr">Open</span></div>
+            <div class="ic-meta">Reported by Arjun Kumar · 18 Oct</div>
+            <div class="br"><button style="flex:2;background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;">Mark In Progress</button><button style="flex:1;background:var(--gl);color:var(--g);border:none;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="dToast('Issue resolved ✓')">Resolve</button></div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client site diary home -->
+      <div class="scr active" id="c-home">
+        <div class="cl-header">
+          <div class="clh-t">Site Diary</div>
+          <div class="clh-s">Sharma 3BHK · Riya Desai</div>
+          <div class="clh-b"><span class="clh-badge">24 updates</span><span class="clh-badge">87 photos</span></div>
+        </div>
+        <div class="sc">
+          <div class="ic" style="margin-top:2px;"><div class="ici">👷</div><div class="ict">Track your project's daily progress. Upload your reference images for Riya to see.</div></div>
+
+          <div class="folder-nav">
+            <div class="folder-card" onclick="cSS('c-progress')">
+              <div class="fc-icon">📸</div>
+              <div class="fc-name">Progress Photos</div>
+              <div class="fc-count">87 photos from site</div>
+            </div>
+            <div class="folder-card" onclick="cSS('c-my-refs')">
+              <div class="fc-icon">🖼️</div>
+              <div class="fc-name">My References</div>
+              <div class="fc-count">12 uploaded by you</div>
+            </div>
+          </div>
+
+          <!-- Latest progress -->
+          <div class="sh"><div class="sht">Latest from site</div></div>
+          <div class="log-entry">
+            <div class="le-head" onclick="toggleLog('cl1')">
+              <div class="le-date">Today, 24 Oct 2025</div>
+              <div class="le-meta"><span class="le-weather">☀️</span><span class="le-by" style="background:var(--gl);color:var(--g);">Riya Desai</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+            </div>
+            <div class="le-body" id="cl1">
+              <div class="le-photos">
+                <div class="le-photo">🏗️</div>
+                <div class="le-photo">💡</div>
+                <div class="le-photo">📸</div>
+              </div>
+              <div class="le-text">False ceiling completed in living room. Cove lights installed and looking great! Kitchen cabinets arriving 28 Oct.</div>
+              <div class="le-stats"><span class="le-stat">👷 4 workers on site</span><span class="le-stat">☀️ Sunny</span></div>
+            </div>
+          </div>
+          <div class="log-entry">
+            <div class="le-head" onclick="toggleLog('cl2')">
+              <div class="le-date">22 Oct 2025</div>
+              <div class="le-meta"><span class="le-weather">🌥️</span><span class="le-by" style="background:#EEF2FF;color:var(--blue);">Arjun Kumar</span><div style="font-size:10px;color:var(--lgt);">▾</div></div>
+            </div>
+            <div class="le-body" id="cl2">
+              <div class="le-photos"><div class="le-photo">📸</div></div>
+              <div class="le-text">You visited site today! Wardrobe layout approved. Study table position updated as requested.</div>
+            </div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="cSS('c-my-refs')">+ Upload Reference Image</button></div>
+      </div>
+
+      <!-- SCREEN: Progress photos (client view) -->
+      <div class="scr" id="c-progress">
+        <div class="topbar"><button class="bb" onclick="cSS('c-home')">←</button><div class="tbt">Progress Photos</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="sh" style="margin-bottom:6px;"><div class="sht">October 2025</div></div>
+          <div class="photo-grid">
+            <div class="pg-item">🏗️<div class="pg-date">24 Oct</div></div>
+            <div class="pg-item">💡<div class="pg-date">24 Oct</div></div>
+            <div class="pg-item">📐<div class="pg-date">24 Oct</div></div>
+            <div class="pg-item">🪵<div class="pg-date">22 Oct</div></div>
+            <div class="pg-item">🎨<div class="pg-date">20 Oct</div></div>
+            <div class="pg-item">🔌<div class="pg-date">20 Oct</div></div>
+            <div class="pg-item">🏠<div class="pg-date">18 Oct</div></div>
+            <div class="pg-item">🚪<div class="pg-date">18 Oct</div></div>
+            <div class="pg-item">🪟<div class="pg-date">15 Oct</div></div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: My References -->
+      <div class="scr" id="c-my-refs">
+        <div class="topbar"><button class="bb" onclick="cSS('c-home')">←</button><div class="tbt">My References</div><button class="ib" onclick="cSS('c-upload-ref')" style="background:var(--g);color:#fff;font-size:14px;">+</button></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">💡</div><div class="ict">Upload images of what you want — style inspiration, products, colours. Riya will review and respond.</div></div>
+
+          <!-- Reference with designer reply -->
+          <div class="ref-card">
+            <div class="ref-img">🛋️</div>
+            <div class="ref-body">
+              <div class="ref-note">"I want this kind of clean minimal living room feel — white walls, natural wood, no clutter."</div>
+              <div class="ref-meta">Uploaded by you · 24 Oct 2025</div>
+              <div class="ref-comment">
+                <div class="ref-comment-label">Riya replied:</div>
+                <div class="ref-comment-text">Noted! This minimal aesthetic aligns with what we've planned. Will incorporate in moodboard. ✓</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ref-card">
+            <div class="ref-img">🍳</div>
+            <div class="ref-body">
+              <div class="ref-note">"Kitchen colour and handle style — I love this handleless look with the gold accents."</div>
+              <div class="ref-meta">Uploaded by you · 24 Oct 2025</div>
+              <div style="background:var(--amberl);border-radius:7px;padding:7px 9px;font-size:10px;color:var(--amber);font-weight:600;">⏳ Riya hasn't responded yet</div>
+            </div>
+          </div>
+
+          <div class="ref-card">
+            <div class="ref-img">🛏️</div>
+            <div class="ref-body">
+              <div class="ref-note">"Bedroom lighting mood — warm and cozy, not too bright."</div>
+              <div class="ref-meta">Uploaded by you · 18 Oct 2025</div>
+              <div class="ref-comment">
+                <div class="ref-comment-label">Riya replied:</div>
+                <div class="ref-comment-text">Perfect — we've already specified warm 3000K LEDs for all bedrooms. ✓</div>
+              </div>
+            </div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="cSS('c-upload-ref')">+ Upload Reference Image</button></div>
+      </div>
+
+      <!-- SCREEN: Upload Reference -->
+      <div class="scr" id="c-upload-ref">
+        <div class="topbar"><button class="bb" onclick="cSS('c-my-refs')">←</button><div class="tbt">Add Reference</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="upload-zone" onclick="cToast('Camera/gallery opened')">
+            <div class="uz-icon">📷</div>
+            <div class="uz-title">Take photo or upload from gallery</div>
+            <div class="uz-sub">Show Riya what you have in mind</div>
+          </div>
+          <div class="fg"><label class="fl">What room is this for?</label><select class="fi"><option>Living Room</option><option>Kitchen</option><option>Master Bedroom</option><option>Kids Room</option><option>All rooms / General</option></select></div>
+          <div class="fg"><label class="fl">Your note to Riya</label><textarea class="fi" rows="3" placeholder="e.g. I love this style for the living room — especially the warm lighting and natural wood…"></textarea></div>
+          <button class="btn-p" onclick="cSubmitRef()">Send to Riya →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Log toggles
+function toggleLog(id){const b=document.getElementById(id);b.classList.toggle('open');}
+
+// Log view toggle
+function setLogView(v){
+  document.getElementById('lv-feed').classList.toggle('active',v==='feed');
+  document.getElementById('lv-cal').classList.toggle('active',v==='cal');
+  document.getElementById('d-log-feed').style.display=v==='feed'?'block':'none';
+  document.getElementById('d-log-cal').style.display=v==='cal'?'block':'none';
+}
+
+// Weather select
+function setWx(el){document.querySelectorAll('.wx-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');}
+
+// Issue toggle
+let issueOn=false;
+function toggleIssueField(){
+  issueOn=!issueOn;
+  document.getElementById('it-tog').classList.toggle('on',issueOn);
+  document.getElementById('issue-fields').classList.toggle('open',issueOn);
+}
+
+// Client reference actions
+function dShowRefReply(num){
+  const r=document.getElementById('ref-'+num+'-reply');
+  r.style.display=r.style.display==='block'?'none':'block';
+}
+function dSendRefReply(num){
+  const input=document.getElementById('ref-'+num+'-input');
+  const text=input.value.trim()||'Noted!';
+  dToast('Reply sent to Priya ✓');
+  document.getElementById('ref-'+num+'-reply').style.display='none';
+  cToast('💬 Riya replied to your reference!');
+}
+
+// Client submit reference
+function cSubmitRef(){
+  cToast('Reference sent to Riya!');
+  dToast('🖼️ Priya uploaded a new reference!');
+  setTimeout(()=>cSS('c-my-refs'),800);
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function cToast(msg){showT(msg,1);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>

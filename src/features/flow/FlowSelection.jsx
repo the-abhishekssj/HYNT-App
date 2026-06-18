@@ -1,4 +1,4 @@
-function FlowSelection({ onSelectFlow }) {
+function FlowSelection({ onSelectFlow, onResetToEmpty, onResetDemo }) {
   return (
     <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
       <section className="mx-auto flex h-dvh w-full max-w-[480px] flex-col px-5 pb-8 pt-10">
@@ -25,6 +25,23 @@ function FlowSelection({ onSelectFlow }) {
             <p className="text-[12px] font-bold uppercase tracking-[0.18em] text-[#267449]">Flow 2</p>
             <p className="mt-2 text-[24px] font-black leading-[1.2] text-black">Professional</p>
             <p className="mt-1 text-[14px] font-medium leading-[1.45] text-[#5f5f5f]">preview professional user flow</p>
+          </button>
+        </div>
+
+        <div className="mt-auto flex flex-col gap-3">
+          <button
+            type="button"
+            onClick={onResetToEmpty}
+            className="w-full rounded-2xl border border-dashed border-[#5fc18a] bg-white py-3 text-center text-[14px] font-bold text-[#267449] hover:bg-[#eaf5ef] transition-colors"
+          >
+            Reset to Empty State (No Projects)
+          </button>
+          <button
+            type="button"
+            onClick={onResetDemo}
+            className="w-full rounded-2xl border border-[#d6e5dd] bg-white py-3 text-center text-[14px] font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            Reset to Demo State (Sharma 3BHK)
           </button>
         </div>
       </section>

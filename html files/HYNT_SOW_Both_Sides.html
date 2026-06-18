@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SOW Generator — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#B8CCB8;display:flex;justify-content:center;gap:32px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.phone-label{font-size:12px;font-weight:700;color:#5a7a5a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.statusbar{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.time{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.screen.active{display:flex;}
+.screen::-webkit-scrollbar{display:none;}
+.topbar{padding:12px 18px 10px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.topbar-title{font-size:16px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.back-btn{width:34px;height:34px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:16px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.icon-btn{width:34px;height:34px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:14px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:13px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-p:active{transform:scale(.98);}
+.btn-p:disabled{background:var(--lgt);box-shadow:none;cursor:default;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:12px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-ghost{background:var(--gp);color:var(--mut);border-radius:11px;padding:12px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-warn{background:var(--redl);color:var(--red);border-radius:11px;padding:12px;font-size:13px;font-weight:600;border:1px solid #F5C6C6;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-row{display:flex;gap:8px;margin-top:12px;}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.p-draft{background:var(--orl);color:var(--or);}
+.p-review{background:var(--bluel);color:var(--blue);}
+.p-revised{background:var(--orl);color:var(--or);}
+.p-pending{background:var(--amberl);color:var(--amber);}
+.p-executed{background:var(--gl);color:var(--g);}
+.p-remark{background:var(--orl);color:var(--or);}
+.p-updated{background:var(--gl);color:var(--g);}
+.p-rejected{background:var(--redl);color:var(--red);}
+.sdiv{height:1px;background:var(--borl);margin:12px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sh-t{font-size:13px;font-weight:700;color:var(--txt);}
+.sh-a{font-size:11px;font-weight:600;color:var(--g);cursor:pointer;}
+.tabs{display:flex;background:var(--gp);border-radius:9px;padding:3px;margin-bottom:14px;}
+.t-btn{flex:1;text-align:center;font-size:11px;font-weight:600;padding:8px 4px;border-radius:7px;color:var(--mut);cursor:pointer;transition:all .15s;}
+.t-btn.active{background:#fff;color:var(--g);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* SOW Accordion */
+.sow-sec{border:1px solid var(--bor);border-radius:11px;margin-bottom:7px;overflow:hidden;transition:border-color .2s;}
+.sow-sec.has-remark{border-color:var(--or);border-width:1.5px;}
+.sow-sec.updated{border-color:var(--g3);border-width:1.5px;}
+.sow-head{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;background:var(--gp);cursor:pointer;user-select:none;}
+.sow-hl{display:flex;align-items:center;gap:7px;}
+.sow-num{width:20px;height:20px;border-radius:6px;background:var(--g);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sow-ht{font-size:11px;font-weight:700;color:var(--txt);}
+.sow-hr{display:flex;align-items:center;gap:6px;}
+.chev{font-size:10px;color:var(--lgt);transition:transform .2s;}
+.chev.open{transform:rotate(180deg);}
+.sow-body{padding:12px 13px;border-top:1px solid var(--bor);background:#fff;display:none;}
+.sow-body.open{display:block;}
+.field-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--borl);}
+.field-row:last-child{border-bottom:none;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);width:100px;flex-shrink:0;padding-top:1px;}
+.fv{font-size:11px;font-weight:500;color:var(--txt);flex:1;text-align:right;}
+.fi{flex:1;border:1.5px solid var(--g3);border-radius:6px;padding:5px 8px;font-size:11px;font-family:'Poppins',sans-serif;color:var(--txt);outline:none;text-align:right;display:none;background:#fff;}
+.room-item{padding:7px 0;border-bottom:1px solid var(--borl);}
+.room-item:last-child{border-bottom:none;}
+.room-nm{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.room-sc{font-size:10px;color:var(--mut);line-height:1.6;}
+.room-sc-edit{width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:6px 8px;font-size:10px;font-family:'Poppins',sans-serif;resize:none;outline:none;display:none;margin-top:3px;color:var(--txt);}
+.excl-item{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid var(--borl);}
+.excl-item:last-child{border-bottom:none;}
+.excl-dot{width:5px;height:5px;border-radius:50%;background:var(--lgt);flex-shrink:0;}
+.excl-text{font-size:11px;color:var(--txt);flex:1;}
+.excl-del{font-size:11px;color:var(--lgt);cursor:pointer;display:none;}
+.add-row{display:flex;align-items:center;gap:7px;padding:7px 0;cursor:pointer;display:none;}
+.add-ic{width:18px;height:18px;border-radius:5px;background:var(--gl);color:var(--g);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.add-tx{font-size:10px;color:var(--lgt);}
+.body-text{font-size:11px;color:var(--txt);line-height:2.1;}
+.body-edit{width:100%;border:1.5px solid var(--g3);border-radius:7px;padding:9px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;line-height:1.8;display:none;color:var(--txt);}
+
+/* Remark block */
+.remark-block{background:var(--orl);border:1px solid #F5D5B8;border-radius:9px;padding:10px 12px;margin-top:8px;}
+.remark-label{font-size:9px;font-weight:700;color:var(--or);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.remark-text{font-size:11px;color:var(--txt);line-height:1.5;margin-bottom:8px;}
+.remark-actions{display:flex;gap:6px;}
+.r-edit{flex:2;background:var(--g);color:#fff;border:none;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+.r-reject{flex:1;background:#fff;color:var(--red);border:1px solid #F5C6C6;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+/* Rejected block */
+.rejected-block{background:var(--redl);border:1px solid #F5C6C6;border-radius:9px;padding:10px 12px;margin-top:8px;}
+.rejected-reason{font-size:11px;color:var(--red);line-height:1.5;}
+
+/* Updated indicator */
+.updated-tag{background:var(--gl);border-radius:6px;padding:4px 8px;font-size:9px;font-weight:700;color:var(--g);display:inline-block;margin-top:6px;}
+
+/* Add remark button (client) */
+.add-remark-btn{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--orl);border:1px solid #F5D5B8;border-radius:8px;margin-top:8px;cursor:pointer;}
+.ar-icon{font-size:13px;}
+.ar-text{font-size:10px;font-weight:700;color:var(--or);}
+
+/* Remark input (client) */
+.remark-input-wrap{margin-top:8px;display:none;}
+.remark-input{width:100%;border:1.5px solid var(--or);border-radius:8px;padding:9px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);}
+.remark-submit{background:var(--or);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;margin-top:6px;width:100%;}
+
+/* Template cards */
+.tmpl-card{border:2px solid var(--bor);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.tmpl-card:hover{border-color:var(--g3);}
+.tmpl-card.selected{border-color:var(--g);background:var(--gp);}
+.tmpl-icon{font-size:32px;margin-bottom:8px;}
+.tmpl-name{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.tmpl-sub{font-size:11px;color:var(--lgt);line-height:1.5;}
+.tmpl-tags{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.tmpl-tag{font-size:9px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--gl);color:var(--g);}
+
+/* Sig boxes */
+.sig-row{display:flex;gap:8px;margin-top:8px;}
+.sig-box{flex:1;border:1.5px dashed var(--bor);border-radius:11px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s;}
+.sig-box.signed{border-color:var(--g);background:var(--gl);border-style:solid;}
+.sig-box.pending{border-color:#F5D5B8;background:#FFFAF6;}
+.sig-lbl{font-size:9px;color:var(--lgt);margin-bottom:4px;}
+.sig-icon{font-size:20px;margin-bottom:3px;}
+.sig-nm{font-size:10px;font-weight:700;color:var(--txt);}
+.sig-st{font-size:9px;font-weight:600;margin-top:2px;}
+.sig-ok{color:var(--g);}
+.sig-wait{color:var(--or);}
+.sig-meta{font-size:8px;color:var(--lgt);margin-top:2px;}
+
+/* OTP screen */
+.otp-screen{padding:24px 20px;}
+.otp-title{font-size:18px;font-weight:700;color:var(--txt);margin-bottom:6px;}
+.otp-sub{font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:24px;}
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+.otp-digit{width:46px;height:54px;border:2px solid var(--bor);border-radius:11px;font-size:22px;font-weight:700;text-align:center;font-family:'Poppins',sans-serif;color:var(--txt);outline:none;}
+.otp-digit:focus{border-color:var(--g);}
+.otp-hint{font-size:11px;color:var(--lgt);text-align:center;margin-bottom:20px;}
+.otp-resend{font-size:11px;color:var(--g);font-weight:600;text-align:center;cursor:pointer;margin-top:8px;}
+
+/* Project header */
+.proj-hdr{background:var(--gl);border-radius:12px;padding:12px 14px;margin-bottom:13px;border:1px solid var(--bor);}
+.ph-title{font-size:14px;font-weight:700;color:#1a3d2b;margin-bottom:2px;}
+.ph-meta{font-size:10px;color:var(--g2);}
+.ph-pills{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.ph-pill{font-size:9px;padding:2px 9px;border-radius:10px;background:rgba(45,106,79,.12);color:var(--g);font-weight:600;}
+
+/* Info chip */
+.info-chip{background:var(--gl);border-radius:8px;padding:9px 11px;margin-bottom:12px;display:flex;gap:7px;align-items:flex-start;}
+.ic-icon{font-size:13px;flex-shrink:0;}
+.ic-text{font-size:10px;color:var(--g);line-height:1.5;}
+
+/* Amendment */
+.amend-card{border:1.5px solid var(--bor);border-radius:12px;padding:12px 13px;margin-bottom:8px;}
+.amend-card.active{border-color:var(--amber);}
+.amend-card.executed{border-color:var(--g);}
+.amend-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.amend-title{font-size:12px;font-weight:700;color:var(--txt);}
+.amend-change{background:var(--gp);border-radius:8px;padding:9px 11px;margin-bottom:8px;}
+.amend-old{font-size:10px;color:var(--lgt);text-decoration:line-through;margin-bottom:3px;}
+.amend-new{font-size:11px;color:var(--txt);}
+.amend-reason{font-size:10px;color:var(--mut);font-style:italic;}
+
+/* Bottom bar */
+.bottom-bar{background:var(--sur);border-top:1px solid var(--bor);padding:12px 14px 20px;flex-shrink:0;}
+
+/* Client header bar */
+.cl-header{background:var(--g);padding:18px 18px 14px;flex-shrink:0;}
+.clh-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-sub{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-badges{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Remarks summary */
+.remarks-summary{background:var(--orl);border:1px solid #F5D5B8;border-radius:11px;padding:11px 13px;margin-bottom:12px;}
+.rs-title{font-size:11px;font-weight:700;color:var(--or);margin-bottom:7px;}
+.rs-item{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(224,122,47,.15);}
+.rs-item:last-child{border-bottom:none;}
+.rs-sec{font-size:10px;font-weight:700;color:var(--txt);flex:1;}
+.rs-text{font-size:10px;color:var(--mut);flex:2;}
+
+/* Toast */
+.toast{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:9px 18px;border-radius:18px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ============================== DESIGNER PHONE ============================== -->
+<div class="phone-wrap">
+  <div class="phone-label">👷 Designer Side</div>
+  <div class="phone">
+    <div class="statusbar"><div class="time" id="d-clock">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Template Picker -->
+      <div class="screen active" id="d-template">
+        <div class="topbar"><button class="back-btn">←</button><div class="topbar-title">New SOW</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div class="info-chip"><div class="ic-icon">✦</div><div class="ic-text">Choose a template to start. All standard clauses are pre-filled. You customise from here.</div></div>
+          <div class="sh"><div class="sh-t">Select Template</div></div>
+          <div class="tmpl-card selected" id="tmpl-res" onclick="selectTemplate('res')">
+            <div class="tmpl-icon">🏠</div>
+            <div class="tmpl-name">Residential</div>
+            <div class="tmpl-sub">For apartments, villas, bungalows and home interiors. Includes standard residential exclusions and 30-30-24-10% payment structure.</div>
+            <div class="tmpl-tags"><span class="tmpl-tag">Home interiors</span><span class="tmpl-tag">30-30-24-10%</span><span class="tmpl-tag">±10% variation</span></div>
+          </div>
+          <div class="tmpl-card" id="tmpl-com" onclick="selectTemplate('com')">
+            <div class="tmpl-icon">🏢</div>
+            <div class="tmpl-name">Commercial</div>
+            <div class="tmpl-sub">For offices, retail, hospitality and commercial fit-outs. Includes MEP exclusions, defect liability clause and 40-30-20-10% structure.</div>
+            <div class="tmpl-tags"><span class="tmpl-tag">Office & retail</span><span class="tmpl-tag">40-30-20-10%</span><span class="tmpl-tag">±15% variation</span></div>
+          </div>
+          <div class="btn-row"><button class="btn-p" onclick="dShowScreen('d-draft')">Use Residential Template →</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Draft SOW -->
+      <div class="screen" id="d-draft">
+        <div class="topbar">
+          <button class="back-btn" onclick="dShowScreen('d-template')">←</button>
+          <div class="topbar-title">Scope of Work</div>
+          <div style="display:flex;gap:5px;">
+            <button class="icon-btn" id="d-edit-btn" onclick="dToggleEdit()" style="font-size:11px;color:var(--or);background:var(--orl);">✎</button>
+            <button class="icon-btn" onclick="dShowScreen('d-ai')" title="AI Generate" style="color:var(--g);">✦</button>
+            <button class="icon-btn" onclick="dToast('PDF downloading…')">↓</button>
+          </div>
+        </div>
+        <div class="sc" id="d-draft-scroll">
+          <!-- Status -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="pill p-draft" id="d-status">● Draft</div>
+            <div style="font-size:9px;color:var(--lgt);">Residential Template</div>
+          </div>
+          <!-- Project header -->
+          <div class="proj-hdr">
+            <div class="ph-title">Sharma 3BHK Renovation</div>
+            <div class="ph-meta">Priya Sharma · Bandra, Mumbai · May 2025</div>
+            <div class="ph-pills"><span class="ph-pill">3BHK Full Renovation</span><span class="ph-pill">₹18,00,000</span><span class="ph-pill">Jan 2026</span></div>
+          </div>
+          <!-- Sections -->
+          <div class="sow-sec" id="d-s1"><div class="sow-head" onclick="dToggleSec(1)"><div class="sow-hl"><div class="sow-num">1</div><div class="sow-ht">Project Overview</div></div><div class="sow-hr"><div class="chev open" id="dc1">▾</div></div></div>
+          <div class="sow-body open" id="db1">
+            <div class="field-row"><div class="fl">Project</div><div class="fv">Sharma 3BHK Renovation</div><input class="fi" value="Sharma 3BHK Renovation"/></div>
+            <div class="field-row"><div class="fl">Client</div><div class="fv">Priya Sharma</div><input class="fi" value="Priya Sharma"/></div>
+            <div class="field-row"><div class="fl">Location</div><div class="fv">Bandra, Mumbai</div><input class="fi" value="Bandra, Mumbai"/></div>
+            <div class="field-row"><div class="fl">Type</div><div class="fv">3BHK Full Renovation</div><input class="fi" value="3BHK Full Renovation"/></div>
+            <div class="field-row"><div class="fl">Start</div><div class="fv">June 2025</div><input class="fi" type="month" value="2025-06"/></div>
+            <div class="field-row"><div class="fl">Handover</div><div class="fv">January 2026</div><input class="fi" type="month" value="2026-01"/></div>
+          </div></div>
+
+          <div class="sow-sec" id="d-s2"><div class="sow-head" onclick="dToggleSec(2)"><div class="sow-hl"><div class="sow-num">2</div><div class="sow-ht">Scope — Room wise</div></div><div class="sow-hr"><div class="chev open" id="dc2">▾</div></div></div>
+          <div class="sow-body open" id="db2">
+            <div id="d-rooms">
+              <div class="room-item"><div class="room-nm">Living Room <span class="excl-del" onclick="this.closest('.room-item').remove()">✕</span></div><div class="room-sc">False ceiling · Feature wall · TV unit with storage</div><textarea class="room-sc-edit" rows="2">False ceiling · Feature wall · TV unit with storage</textarea></div>
+              <div class="room-item"><div class="room-nm">Kitchen <span class="excl-del" onclick="this.closest('.room-item').remove()">✕</span></div><div class="room-sc">Modular L-shape · Quartz countertop · Soft-close shutters</div><textarea class="room-sc-edit" rows="2">Modular L-shape · Quartz countertop · Soft-close shutters</textarea></div>
+              <div class="room-item"><div class="room-nm">Master Bedroom <span class="excl-del" onclick="this.closest('.room-item').remove()">✕</span></div><div class="room-sc">8ft wardrobe · Bed back panel · Study unit</div><textarea class="room-sc-edit" rows="2">8ft wardrobe · Bed back panel · Study unit</textarea></div>
+              <div class="room-item"><div class="room-nm">Kids Room ×2 <span class="excl-del" onclick="this.closest('.room-item').remove()">✕</span></div><div class="room-sc">Wardrobe · Study table · Wall graphics</div><textarea class="room-sc-edit" rows="2">Wardrobe · Study table · Wall graphics</textarea></div>
+            </div>
+            <div class="add-row" id="d-add-room" onclick="dAddRoom()"><div class="add-ic">+</div><div class="add-tx">Add room</div></div>
+          </div></div>
+
+          <div class="sow-sec" id="d-s3"><div class="sow-head" onclick="dToggleSec(3)"><div class="sow-hl"><div class="sow-num">3</div><div class="sow-ht">Exclusions</div></div><div class="sow-hr"><div class="chev" id="dc3">▾</div></div></div>
+          <div class="sow-body" id="db3">
+            <div id="d-excl">
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Civil / structural work</div><span class="excl-del" onclick="this.closest('.excl-item').remove()">✕</span></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Electrical rewiring</div><span class="excl-del" onclick="this.closest('.excl-item').remove()">✕</span></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Plumbing work</div><span class="excl-del" onclick="this.closest('.excl-item').remove()">✕</span></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Loose furniture</div><span class="excl-del" onclick="this.closest('.excl-item').remove()">✕</span></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Appliances and fixtures</div><span class="excl-del" onclick="this.closest('.excl-item').remove()">✕</span></div>
+            </div>
+            <div class="add-row" id="d-add-excl" onclick="dAddExcl()"><div class="add-ic">+</div><div class="add-tx">Add exclusion</div></div>
+          </div></div>
+
+          <div class="sow-sec" id="d-s4"><div class="sow-head" onclick="dToggleSec(4)"><div class="sow-hl"><div class="sow-num">4</div><div class="sow-ht">Timeline</div></div><div class="sow-hr"><div class="chev" id="dc4">▾</div></div></div>
+          <div class="sow-body" id="db4">
+            <div class="field-row"><div class="fl">Start</div><div class="fv">June 2025</div><input class="fi" type="month" value="2025-06"/></div>
+            <div class="field-row"><div class="fl">Duration</div><div class="fv">~7 months</div><input class="fi" value="~7 months"/></div>
+            <div class="field-row"><div class="fl">Handover</div><div class="fv">January 2026</div><input class="fi" type="month" value="2026-01"/></div>
+          </div></div>
+
+          <div class="sow-sec" id="d-s5"><div class="sow-head" onclick="dToggleSec(5)"><div class="sow-hl"><div class="sow-num">5</div><div class="sow-ht">Budget Estimate</div></div><div class="sow-hr"><div class="chev" id="dc5">▾</div></div></div>
+          <div class="sow-body" id="db5">
+            <div class="field-row"><div class="fl">Total Value</div><div class="fv" style="font-weight:700;color:var(--g);">₹18,00,000</div><input class="fi" value="₹18,00,000"/></div>
+            <div class="field-row"><div class="fl">Structure</div><div class="fv">30-30-24-10%</div><input class="fi" value="30-30-24-10%"/></div>
+            <div class="field-row"><div class="fl">GST</div><div class="fv">As applicable</div><input class="fi" value="As applicable"/></div>
+          </div></div>
+
+          <div class="sow-sec" id="d-s6"><div class="sow-head" onclick="dToggleSec(6)"><div class="sow-hl"><div class="sow-num">6</div><div class="sow-ht">Payment Terms</div></div><div class="sow-hr"><div class="chev" id="dc6">▾</div></div></div>
+          <div class="sow-body" id="db6">
+            <div id="d-pay-view" class="body-text">• 30% advance on project start<br/>• 30% at Milestone 1 completion<br/>• 24% at Milestone 2 completion<br/>• 10% on final handover<br/>• Payment delays beyond 7 days may pause work</div>
+            <textarea id="d-pay-edit" class="body-edit" rows="5">• 30% advance on project start
+• 30% at Milestone 1 completion
+• 24% at Milestone 2 completion
+• 10% on final handover
+• Payment delays beyond 7 days may pause work</textarea>
+          </div></div>
+
+          <div class="sow-sec" id="d-s7"><div class="sow-head" onclick="dToggleSec(7)"><div class="sow-hl"><div class="sow-num">7</div><div class="sow-ht">Terms & Notes</div></div><div class="sow-hr"><div class="chev" id="dc7">▾</div></div></div>
+          <div class="sow-body" id="db7">
+            <div id="d-terms-view" class="body-text">• ±10% variation on final bill acceptable<br/>• Client approvals required before fabrication<br/>• Scope additions quoted separately in writing<br/>• Site access to be provided during working hours<br/>• Jurisdiction: Mumbai</div>
+            <textarea id="d-terms-edit" class="body-edit" rows="5">• ±10% variation on final bill acceptable
+• Client approvals required before fabrication
+• Scope additions quoted separately in writing
+• Site access to be provided during working hours
+• Jurisdiction: Mumbai</textarea>
+          </div></div>
+
+          <div class="sow-sec" id="d-s8"><div class="sow-head" onclick="dToggleSec(8)"><div class="sow-hl"><div class="sow-num">8</div><div class="sow-ht">Signatures</div></div><div class="sow-hr"><div class="chev open" id="dc8">▾</div></div></div>
+          <div class="sow-body open" id="db8">
+            <div class="sig-row">
+              <div class="sig-box" id="d-designer-sig" onclick="dSignOTP()">
+                <div class="sig-lbl">Designer</div><div class="sig-icon" id="d-dsig-icon">✍️</div><div class="sig-nm">Riya Desai</div><div class="sig-st sig-wait" id="d-dsig-st">Tap to sign</div><div class="sig-meta" id="d-dsig-meta">—</div>
+              </div>
+              <div class="sig-box pending" id="d-client-sig">
+                <div class="sig-lbl">Client</div><div class="sig-icon" id="d-csig-icon">⏳</div><div class="sig-nm">Priya Sharma</div><div class="sig-st sig-wait" id="d-csig-st">Awaiting</div><div class="sig-meta" id="d-csig-meta">—</div>
+              </div>
+            </div>
+          </div></div>
+
+          <!-- Remarks section (shown after review) -->
+          <div id="d-remarks-section" style="display:none;">
+            <div class="sdiv"></div>
+            <div class="sh"><div class="sh-t" style="color:var(--or);">⚠ Client Remarks (2)</div></div>
+            <div style="font-size:11px;color:var(--mut);margin-bottom:10px;">Action all remarks before resubmitting.</div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bottom-bar" id="d-draft-bar">
+          <button class="btn-p" id="d-main-action" onclick="dSendForReview()">Send for Review →</button>
+          <div class="btn-row" style="margin-top:8px;"><button class="btn-ghost" onclick="dToast('Draft auto-saved')">Save Draft</button><button class="btn-ghost" onclick="dToast('PDF ready')">↓ PDF</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Remarks received -->
+      <div class="screen" id="d-remarks">
+        <div class="topbar"><button class="back-btn" onclick="dShowScreen('d-draft')">←</button><div class="topbar-title">Client Remarks</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div class="pill p-review" style="margin-bottom:12px;">● Under Review</div>
+          <div class="info-chip"><div class="ic-icon">⚠️</div><div class="ic-text">Priya has reviewed the SOW and added 2 remarks. Edit the section or reject each remark before resubmitting.</div></div>
+
+          <!-- Section 2 — with remark -->
+          <div class="sow-sec has-remark" id="dr-s2">
+            <div class="sow-head" onclick="drToggle('drb2','drc2')"><div class="sow-hl"><div class="sow-num">2</div><div class="sow-ht">Scope — Room wise</div></div><div class="sow-hr"><span class="pill p-remark">1 remark</span><div class="chev open" id="drc2">▾</div></div></div>
+            <div class="sow-body open" id="drb2">
+              <div class="room-item"><div class="room-nm">Kitchen</div><div class="room-sc" id="dr-kitchen-text">Modular L-shape · Quartz countertop · Soft-close shutters</div><textarea class="room-sc-edit" id="dr-kitchen-edit" rows="2" style="display:none;">Modular L-shape · Quartz countertop · Soft-close shutters</textarea></div>
+              <div class="remark-block">
+                <div class="remark-label">Priya's Remark</div>
+                <div class="remark-text">"I want granite countertop, not quartz. Also please include a chimney provision in the scope."</div>
+                <div class="remark-actions" id="dr-kitchen-actions">
+                  <button class="r-edit" onclick="drEditSection('kitchen')">✎ Edit this section</button>
+                  <button class="r-reject" onclick="drRejectRemark('kitchen')">✗ Reject</button>
+                </div>
+                <div id="dr-kitchen-save" style="display:none;margin-top:6px;"><button onclick="drSaveEdit('kitchen')" style="width:100%;background:var(--g);color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;">Save edit</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5 — with remark -->
+          <div class="sow-sec has-remark" id="dr-s5">
+            <div class="sow-head" onclick="drToggle('drb5','drc5')"><div class="sow-hl"><div class="sow-num">5</div><div class="sow-ht">Budget Estimate</div></div><div class="sow-hr"><span class="pill p-remark">1 remark</span><div class="chev" id="drc5">▾</div></div></div>
+            <div class="sow-body" id="drb5">
+              <div class="field-row"><div class="fl">Total Value</div><div class="fv" style="font-weight:700;color:var(--g);" id="dr-budget-text">₹18,00,000</div><input class="fi" id="dr-budget-edit" value="₹18,00,000"/></div>
+              <div class="remark-block">
+                <div class="remark-label">Priya's Remark</div>
+                <div class="remark-text">"Budget seems high. Can we bring it down to ₹15L? The kitchen granite change should be cheaper."</div>
+                <div class="remark-actions" id="dr-budget-actions">
+                  <button class="r-edit" onclick="drEditField('budget')">✎ Edit this field</button>
+                  <button class="r-reject" onclick="drRejectRemark('budget')">✗ Reject</button>
+                </div>
+                <div id="dr-budget-save" style="display:none;margin-top:6px;"><button onclick="drSaveField('budget')" style="width:100%;background:var(--g);color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;">Save edit</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bottom-bar">
+          <button class="btn-p" id="d-resubmit-btn" onclick="dResubmit()" disabled style="background:var(--lgt);">Resubmit — Action all remarks first</button>
+          <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--lgt);" id="d-remarks-progress">0 of 2 remarks actioned</div>
+        </div>
+      </div>
+
+      <!-- SCREEN: OTP Sign -->
+      <div class="screen" id="d-otp">
+        <div class="topbar"><button class="back-btn" onclick="dShowScreen('d-draft')">←</button><div class="topbar-title">Sign SOW</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div class="otp-screen" style="padding:0;">
+            <div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+              <div style="font-size:32px;margin-bottom:8px;">📱</div>
+              <div style="font-size:14px;font-weight:700;color:var(--txt);">Verify your identity</div>
+              <div style="font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;">OTP sent to <strong>+91 98765 ××××</strong><br/>Enter to sign the SOW</div>
+            </div>
+            <div class="otp-inputs">
+              <input class="otp-digit" maxlength="1" id="od1" oninput="dOtpNext(this,'od2')"/>
+              <input class="otp-digit" maxlength="1" id="od2" oninput="dOtpNext(this,'od3')"/>
+              <input class="otp-digit" maxlength="1" id="od3" oninput="dOtpNext(this,'od4')"/>
+              <input class="otp-digit" maxlength="1" id="od4" oninput="dOtpNext(this,'od5')"/>
+              <input class="otp-digit" maxlength="1" id="od5" oninput="dOtpNext(this,'od6')"/>
+              <input class="otp-digit" maxlength="1" id="od6" oninput="dOtpVerify()"/>
+            </div>
+            <div class="otp-hint">OTP valid for 10 minutes</div>
+            <button class="btn-p" onclick="dOtpVerify()">Verify & Sign</button>
+            <div class="otp-resend" onclick="dToast('New OTP sent!')">Resend OTP</div>
+            <div style="margin-top:20px;background:var(--gp);border-radius:10px;padding:10px 12px;font-size:10px;color:var(--mut);line-height:1.6;">By entering your OTP you confirm your identity and agree to the terms of this Scope of Work document. This constitutes a valid electronic signature under the Indian IT Act 2000.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Executed -->
+      <div class="screen" id="d-executed">
+        <div class="topbar"><button class="back-btn">←</button><div class="topbar-title">Scope of Work</div><button class="icon-btn" onclick="dToast('PDF downloaded!')">↓</button></div>
+        <div class="sc">
+          <div style="text-align:center;padding:20px 0 16px;">
+            <div style="font-size:48px;margin-bottom:10px;">✅</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px;">SOW Executed</div>
+            <div style="font-size:11px;color:var(--mut);">Both parties have signed. Document is locked.</div>
+          </div>
+          <div class="pill p-executed" style="margin:0 auto 16px;display:table;">● Executed · 24 May 2025</div>
+          <div class="proj-hdr">
+            <div class="ph-title">Sharma 3BHK Renovation</div>
+            <div class="ph-meta">Priya Sharma · Bandra, Mumbai</div>
+            <div class="ph-pills"><span class="ph-pill">Residential</span><span class="ph-pill">₹18,00,000</span><span class="ph-pill">Jan 2026</span></div>
+          </div>
+          <div class="sig-row" style="margin-bottom:14px;">
+            <div class="sig-box signed"><div class="sig-lbl">Designer</div><div class="sig-icon">✅</div><div class="sig-nm">Riya Desai</div><div class="sig-st sig-ok">✓ Signed</div><div class="sig-meta">24 May · 9:41 AM</div></div>
+            <div class="sig-box signed"><div class="sig-lbl">Client</div><div class="sig-icon">✅</div><div class="sig-nm">Priya Sharma</div><div class="sig-st sig-ok">✓ Signed</div><div class="sig-meta">24 May · 11:23 AM</div></div>
+          </div>
+          <div style="background:var(--orl);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:11px;color:var(--or);">🔒 Document locked. Any changes require a formal Amendment.</div>
+          <div class="sh"><div class="sh-t">Amendments</div><div class="sh-a" onclick="dRaiseAmendment()">+ Raise Amendment</div></div>
+          <div id="d-amendments">
+            <div style="text-align:center;padding:16px;font-size:11px;color:var(--lgt);">No amendments yet</div>
+          </div>
+        </div>
+        <div class="bottom-bar"><button class="btn-o" onclick="dRaiseAmendment()">+ Raise Amendment</button></div>
+      </div>
+
+      <!-- SCREEN: Amendment -->
+      <div class="screen" id="d-amendment">
+        <div class="topbar"><button class="back-btn" onclick="dShowScreen('d-executed')">←</button><div class="topbar-title">Amendment v1</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div class="info-chip"><div class="ic-icon">📝</div><div class="ic-text">This amendment will be sent to Priya for approval. Both parties must sign before it takes effect.</div></div>
+          <div class="sh"><div class="sh-t">What is changing?</div></div>
+          <div class="amend-card active">
+            <div class="amend-hdr"><div class="amend-title">Section 2 — Scope (Kitchen)</div><span class="pill p-draft">Draft</span></div>
+            <div class="amend-change">
+              <div class="amend-old">Modular L-shape · Quartz countertop</div>
+              <div class="amend-new">Modular L-shape · Granite countertop · Chimney provision</div>
+            </div>
+            <div class="amend-reason">Reason: Client requested granite over quartz and chimney point.</div>
+          </div>
+          <div class="sh" style="margin-top:8px;"><div class="sh-t">Reason for Amendment</div></div>
+          <textarea style="width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:10px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);" rows="3" placeholder="Describe why this amendment is needed…">Client requested change from quartz to granite countertop and addition of chimney provision in kitchen scope.</textarea>
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bottom-bar"><button class="btn-p" onclick="dToast('Amendment sent to Priya for approval!')">Send for Approval →</button></div>
+      </div>
+
+      <!-- SCREEN: AI Generate -->
+      <div class="screen" id="d-ai">
+        <div class="topbar"><button class="back-btn" onclick="dShowScreen('d-draft')">←</button><div class="topbar-title">AI Generate SOW</div><div style="width:34px;"></div></div>
+        <div class="sc" style="display:flex;flex-direction:column;padding:0;">
+          <div style="padding:12px 14px 0;">
+            <div class="info-chip"><div class="ic-icon">✦</div><div class="ic-text">AI knows your project details. It'll confirm, then ask room by room. Your SOW is generated at the end.</div></div>
+          </div>
+          <div style="flex:1;background:var(--sur);margin:0 14px;border:1px solid var(--bor);border-radius:14px;min-height:360px;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="flex:1;padding:14px;display:flex;flex-direction:column;gap:9px;overflow-y:auto;" id="d-ai-chat"></div>
+            <div style="padding:10px 12px 14px;background:var(--sur);border-top:1px solid var(--bor);display:flex;gap:7px;align-items:flex-end;">
+              <textarea style="flex:1;border:1.5px solid var(--bor);border-radius:11px;padding:9px 12px;font-size:12px;font-family:'Poppins',sans-serif;outline:none;resize:none;max-height:72px;color:var(--txt);" id="d-ai-in" rows="1" placeholder="Type your reply…" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,72)+'px';document.getElementById('d-ai-send').disabled=!this.value.trim()"></textarea>
+              <button style="width:38px;height:38px;border-radius:10px;background:var(--g);color:#fff;border:none;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;" id="d-ai-send" onclick="dSendAI()" disabled>↑</button>
+            </div>
+          </div>
+          <div style="padding:10px 14px 14px;"><button class="btn-o" onclick="dShowScreen('d-draft');dToast('SOW applied ✓')">✓ Apply generated SOW</button></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================== CLIENT PHONE ============================== -->
+<div class="phone-wrap">
+  <div class="phone-label">👤 Client Side</div>
+  <div class="phone">
+    <div class="statusbar"><div class="time" id="c-clock">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client receives SOW -->
+      <div class="screen active" id="c-receive">
+        <div class="cl-header">
+          <div class="clh-title">Scope of Work</div>
+          <div class="clh-sub">From Riya Desai · via Hynt Pro</div>
+          <div class="clh-badges"><span class="clh-badge">Sharma 3BHK</span><span class="clh-badge">For review</span></div>
+        </div>
+        <div class="sc">
+          <div class="info-chip"><div class="ic-icon">👆</div><div class="ic-text">Review each section carefully. Tap any section to add your remark if anything needs changing.</div></div>
+
+          <!-- Sections — client read with remark option -->
+          <div class="sow-sec" id="c-s1">
+            <div class="sow-head" onclick="cToggle('cb1','cc1')"><div class="sow-hl"><div class="sow-num">1</div><div class="sow-ht">Project Overview</div></div><div class="sow-hr"><div class="chev open" id="cc1">▾</div></div></div>
+            <div class="sow-body open" id="cb1">
+              <div class="field-row"><div class="fl">Project</div><div class="fv">Sharma 3BHK Renovation</div></div>
+              <div class="field-row"><div class="fl">Type</div><div class="fv">3BHK Full Renovation</div></div>
+              <div class="field-row"><div class="fl">Start</div><div class="fv">June 2025</div></div>
+              <div class="field-row"><div class="fl">Handover</div><div class="fv">January 2026</div></div>
+              <div class="add-remark-btn" onclick="cToggleRemark('r1')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on this section</div></div>
+              <div class="remark-input-wrap" id="r1"><textarea class="remark-input" placeholder="Your remark on Project Overview…" rows="2"></textarea><button class="remark-submit" onclick="cSubmitRemark(1)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s2">
+            <div class="sow-head" onclick="cToggle('cb2','cc2')"><div class="sow-hl"><div class="sow-num">2</div><div class="sow-ht">Scope — Room wise</div></div><div class="sow-hr"><div class="chev open" id="cc2">▾</div></div></div>
+            <div class="sow-body open" id="cb2">
+              <div class="room-item"><div class="room-nm">Living Room</div><div class="room-sc">False ceiling · Feature wall · TV unit with storage</div></div>
+              <div class="room-item"><div class="room-nm">Kitchen</div><div class="room-sc" id="c-kitchen-sc">Modular L-shape · Quartz countertop · Soft-close shutters</div></div>
+              <div class="room-item"><div class="room-nm">Master Bedroom</div><div class="room-sc">8ft wardrobe · Bed back panel · Study unit</div></div>
+              <div class="room-item"><div class="room-nm">Kids Room ×2</div><div class="room-sc">Wardrobe · Study table · Wall graphics</div></div>
+              <div class="add-remark-btn" id="c-remark-s2-btn" onclick="cToggleRemark('r2')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on this section</div></div>
+              <div class="remark-input-wrap" id="r2"><textarea class="remark-input" id="c-remark-s2-text" placeholder="e.g. I want granite not quartz…" rows="2">I want granite countertop, not quartz. Also please include a chimney provision in the scope.</textarea><button class="remark-submit" onclick="cSubmitRemark(2)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s3">
+            <div class="sow-head" onclick="cToggle('cb3','cc3')"><div class="sow-hl"><div class="sow-num">3</div><div class="sow-ht">Exclusions</div></div><div class="sow-hr"><div class="chev" id="cc3">▾</div></div></div>
+            <div class="sow-body" id="cb3">
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Civil / structural work</div></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Electrical rewiring</div></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Plumbing work</div></div>
+              <div class="excl-item"><div class="excl-dot"></div><div class="excl-text">Loose furniture</div></div>
+              <div class="add-remark-btn" onclick="cToggleRemark('r3')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on this section</div></div>
+              <div class="remark-input-wrap" id="r3"><textarea class="remark-input" placeholder="Your remark on exclusions…" rows="2"></textarea><button class="remark-submit" onclick="cSubmitRemark(3)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s4">
+            <div class="sow-head" onclick="cToggle('cb4','cc4')"><div class="sow-hl"><div class="sow-num">4</div><div class="sow-ht">Timeline</div></div><div class="sow-hr"><div class="chev" id="cc4">▾</div></div></div>
+            <div class="sow-body" id="cb4">
+              <div class="field-row"><div class="fl">Start</div><div class="fv">June 2025</div></div>
+              <div class="field-row"><div class="fl">Duration</div><div class="fv">~7 months</div></div>
+              <div class="field-row"><div class="fl">Handover</div><div class="fv">January 2026</div></div>
+              <div class="add-remark-btn" onclick="cToggleRemark('r4')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on timeline</div></div>
+              <div class="remark-input-wrap" id="r4"><textarea class="remark-input" placeholder="Your remark on timeline…" rows="2"></textarea><button class="remark-submit" onclick="cSubmitRemark(4)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s5">
+            <div class="sow-head" onclick="cToggle('cb5','cc5')"><div class="sow-hl"><div class="sow-num">5</div><div class="sow-ht">Budget Estimate</div></div><div class="sow-hr"><div class="chev" id="cc5">▾</div></div></div>
+            <div class="sow-body" id="cb5">
+              <div class="field-row"><div class="fl">Total Value</div><div class="fv" style="font-weight:700;color:var(--g);">₹18,00,000</div></div>
+              <div class="field-row"><div class="fl">Structure</div><div class="fv">30-30-24-10%</div></div>
+              <div class="add-remark-btn" id="c-remark-s5-btn" onclick="cToggleRemark('r5')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on budget</div></div>
+              <div class="remark-input-wrap" id="r5"><textarea class="remark-input" id="c-remark-s5-text" placeholder="e.g. Budget seems high…" rows="2">Budget seems high. Can we bring it down to ₹15L? The granite change should be cheaper.</textarea><button class="remark-submit" onclick="cSubmitRemark(5)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s6">
+            <div class="sow-head" onclick="cToggle('cb6','cc6')"><div class="sow-hl"><div class="sow-num">6</div><div class="sow-ht">Payment Terms</div></div><div class="sow-hr"><div class="chev" id="cc6">▾</div></div></div>
+            <div class="sow-body" id="cb6">
+              <div class="body-text">• 30% advance on project start<br/>• 30% at Milestone 1<br/>• 24% at Milestone 2<br/>• 10% on final handover</div>
+              <div class="add-remark-btn" onclick="cToggleRemark('r6')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on payment terms</div></div>
+              <div class="remark-input-wrap" id="r6"><textarea class="remark-input" placeholder="Your remark on payment…" rows="2"></textarea><button class="remark-submit" onclick="cSubmitRemark(6)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div class="sow-sec" id="c-s7">
+            <div class="sow-head" onclick="cToggle('cb7','cc7')"><div class="sow-hl"><div class="sow-num">7</div><div class="sow-ht">Terms & Notes</div></div><div class="sow-hr"><div class="chev" id="cc7">▾</div></div></div>
+            <div class="sow-body" id="cb7">
+              <div class="body-text">• ±10% variation acceptable<br/>• Client approvals before fabrication<br/>• Jurisdiction: Mumbai</div>
+              <div class="add-remark-btn" onclick="cToggleRemark('r7')"><div class="ar-icon">💬</div><div class="ar-text">Add remark on terms</div></div>
+              <div class="remark-input-wrap" id="r7"><textarea class="remark-input" placeholder="Your remark on terms…" rows="2"></textarea><button class="remark-submit" onclick="cSubmitRemark(7)">Submit remark</button></div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bottom-bar">
+          <button class="btn-p" id="c-submit-btn" onclick="cShowRemarksSummary()">Review & Submit Remarks →</button>
+          <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--lgt);" id="c-remark-count">0 remarks added · or proceed without remarks</div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Remarks summary -->
+      <div class="screen" id="c-summary">
+        <div class="topbar"><button class="back-btn" onclick="cShowScreen('c-receive')">←</button><div class="topbar-title">Review Remarks</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div class="info-chip"><div class="ic-icon">📋</div><div class="ic-text">Review your remarks before sending. Riya will action each one and resubmit the SOW.</div></div>
+          <div class="remarks-summary" id="c-remarks-display">
+            <div class="rs-title">Your remarks (2)</div>
+            <div class="rs-item"><div class="rs-sec">Section 2 — Scope</div><div class="rs-text">I want granite not quartz + chimney provision</div></div>
+            <div class="rs-item"><div class="rs-sec">Section 5 — Budget</div><div class="rs-text">Seems high, can we do ₹15L?</div></div>
+          </div>
+          <div style="height:12px;"></div>
+        </div>
+        <div class="bottom-bar">
+          <button class="btn-p" onclick="cSendRemarks()">Send Remarks to Riya →</button>
+          <div class="btn-row" style="margin-top:8px;"><button class="btn-ghost" onclick="cShowScreen('c-receive')">← Edit remarks</button><button class="btn-ghost" onclick="cProceedNoRemarks()">Proceed without remarks</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Waiting for revision -->
+      <div class="screen" id="c-waiting">
+        <div class="topbar"><div class="topbar-title">Scope of Work</div></div>
+        <div class="sc" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;">
+          <div style="font-size:48px;margin-bottom:14px;">⏳</div>
+          <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:6px;">Remarks sent!</div>
+          <div style="font-size:11px;color:var(--mut);line-height:1.6;max-width:280px;margin-bottom:20px;">Riya is reviewing your remarks and will update the SOW. You'll be notified when the revised version is ready.</div>
+          <div class="pill p-review">● Under Review by Designer</div>
+          <div style="margin-top:24px;background:var(--gp);border-radius:12px;padding:13px 15px;width:100%;text-align:left;">
+            <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:7px;">Your remarks</div>
+            <div style="font-size:10px;color:var(--mut);line-height:2;">Section 2: Granite + chimney<br/>Section 5: Budget ₹15L request</div>
+          </div>
+        </div>
+        <div class="bottom-bar"><button class="btn-ghost" onclick="cShowRevised()">⚡ See Revised SOW (simulate)</button></div>
+      </div>
+
+      <!-- SCREEN: Revised SOW received -->
+      <div class="screen" id="c-revised">
+        <div class="cl-header">
+          <div class="clh-title">Revised SOW</div>
+          <div class="clh-sub">Updated by Riya Desai · Review changes</div>
+          <div class="clh-badges"><span class="clh-badge">v2 · Revised</span><span class="clh-badge">2 changes</span></div>
+        </div>
+        <div class="sc">
+          <div class="info-chip"><div class="ic-icon">🔄</div><div class="ic-text">Riya has updated the SOW based on your remarks. Changes are highlighted. Rejected remarks show Riya's reason.</div></div>
+
+          <!-- Section 2 — updated -->
+          <div class="sow-sec updated" id="cr-s2">
+            <div class="sow-head" onclick="cToggle('crb2','crc2')"><div class="sow-hl"><div class="sow-num">2</div><div class="sow-ht">Scope — Room wise</div></div><div class="sow-hr"><span class="pill p-updated">✓ Updated</span><div class="chev open" id="crc2">▾</div></div></div>
+            <div class="sow-body open" id="crb2">
+              <div class="room-item"><div class="room-nm">Kitchen</div><div class="room-sc" style="color:var(--g);font-weight:500;">Modular L-shape · <strong>Granite countertop</strong> · Soft-close shutters · <strong>Chimney provision included</strong></div></div>
+              <div class="updated-tag">✓ Updated as requested</div>
+            </div>
+          </div>
+
+          <!-- Section 5 — rejected -->
+          <div class="sow-sec" id="cr-s5">
+            <div class="sow-head" onclick="cToggle('crb5','crc5')"><div class="sow-hl"><div class="sow-num">5</div><div class="sow-ht">Budget Estimate</div></div><div class="sow-hr"><span class="pill p-rejected">✗ Rejected</span><div class="chev open" id="crc5">▾</div></div></div>
+            <div class="sow-body open" id="crb5">
+              <div class="field-row"><div class="fl">Total Value</div><div class="fv" style="font-weight:700;color:var(--g);">₹18,00,000</div></div>
+              <div class="rejected-block">
+                <div style="font-size:9px;font-weight:700;color:var(--red);margin-bottom:4px;">Riya's Response</div>
+                <div class="rejected-reason">"The granite upgrade and chimney provision actually add ₹80,000 to the project cost. The revised budget would be ₹18,80,000. I've kept it at ₹18L by optimising elsewhere."</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bottom-bar">
+          <button class="btn-p" onclick="cShowScreen('c-otp')">Looks good — Sign & Accept →</button>
+          <div class="btn-row" style="margin-top:8px;"><button class="btn-ghost" onclick="cToast('Remarks sent!')">Add more remarks</button></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client OTP -->
+      <div class="screen" id="c-otp">
+        <div class="topbar"><button class="back-btn" onclick="cShowScreen('c-revised')">←</button><div class="topbar-title">Sign SOW</div><div style="width:34px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">📱</div>
+            <div style="font-size:14px;font-weight:700;color:var(--txt);">Verify your identity</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;">OTP sent to <strong>+91 98765 ××××</strong><br/>Enter to sign the SOW</div>
+          </div>
+          <div class="otp-inputs">
+            <input class="otp-digit" maxlength="1" id="co1" oninput="cOtpNext(this,'co2')"/>
+            <input class="otp-digit" maxlength="1" id="co2" oninput="cOtpNext(this,'co3')"/>
+            <input class="otp-digit" maxlength="1" id="co3" oninput="cOtpNext(this,'co4')"/>
+            <input class="otp-digit" maxlength="1" id="co4" oninput="cOtpNext(this,'co5')"/>
+            <input class="otp-digit" maxlength="1" id="co5" oninput="cOtpNext(this,'co6')"/>
+            <input class="otp-digit" maxlength="1" id="co6" oninput="cOtpExecute()"/>
+          </div>
+          <div class="otp-hint">OTP valid for 10 minutes</div>
+          <button class="btn-p" onclick="cOtpExecute()">Verify & Sign</button>
+          <div class="otp-resend" onclick="cToast('New OTP sent!')">Resend OTP</div>
+          <div style="margin-top:16px;background:var(--gp);border-radius:10px;padding:10px 12px;font-size:10px;color:var(--mut);line-height:1.6;">By entering your OTP you confirm your identity and agree to the Scope of Work. This is a valid electronic signature under the Indian IT Act 2000.</div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client executed -->
+      <div class="screen" id="c-executed">
+        <div class="topbar"><div class="topbar-title">Scope of Work</div><button class="icon-btn" onclick="cToast('PDF downloading…')">↓</button></div>
+        <div class="sc">
+          <div style="text-align:center;padding:20px 0 16px;">
+            <div style="font-size:48px;margin-bottom:10px;">🎉</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px;">SOW Signed!</div>
+            <div style="font-size:11px;color:var(--mut);">Your project is officially confirmed.</div>
+          </div>
+          <div class="pill p-executed" style="margin:0 auto 16px;display:table;">● Executed · 24 May 2025</div>
+          <div class="proj-hdr">
+            <div class="ph-title">Sharma 3BHK Renovation</div>
+            <div class="ph-meta">Designer: Riya Desai · Bandra, Mumbai</div>
+            <div class="ph-pills"><span class="ph-pill">₹18,00,000</span><span class="ph-pill">Jan 2026</span></div>
+          </div>
+          <div class="sig-row" style="margin-bottom:14px;">
+            <div class="sig-box signed"><div class="sig-lbl">Designer</div><div class="sig-icon">✅</div><div class="sig-nm">Riya Desai</div><div class="sig-st sig-ok">✓ Signed</div><div class="sig-meta">24 May · 9:41 AM</div></div>
+            <div class="sig-box signed"><div class="sig-lbl">You</div><div class="sig-icon">✅</div><div class="sig-nm">Priya Sharma</div><div class="sig-st sig-ok">✓ Signed</div><div class="sig-meta">24 May · 11:23 AM</div></div>
+          </div>
+          <div style="background:var(--gp);border-radius:11px;padding:12px 13px;font-size:11px;color:var(--mut);line-height:1.8;">
+            <strong style="color:var(--txt);">What happens next?</strong><br/>
+            • Riya will start detailed drawings<br/>
+            • Your first payment (30% = ₹5,40,000) is due on project start<br/>
+            • Any scope changes need a formal amendment
+          </div>
+        </div>
+        <div class="bottom-bar"><button class="btn-p" onclick="cToast('PDF saved!')">↓ Download Executed SOW</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Clocks ----
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['d-clock','c-clock'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// ---- Screen nav ----
+function dShowScreen(id){document.querySelectorAll('#d-draft').length;document.querySelectorAll('.phone').forEach((phone,i)=>{if(i===0){phone.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=phone.querySelector('#'+id);if(el)el.classList.add('active');}});}
+function cShowScreen(id){document.querySelectorAll('.phone')[1].querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.querySelector('.phone:last-child #'+id)||document.getElementById(id);if(el)el.classList.add('active');}
+
+// Fix: proper screen switchers
+function dSS(id){const phones=document.querySelectorAll('.phone');const p=phones[0];p.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const phones=document.querySelectorAll('.phone');const p=phones[1];p.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Rebind
+function dShowScreen(id){dSS(id);}
+function cShowScreen(id){cSS(id);}
+
+// ---- Templates ----
+function selectTemplate(t){
+  document.getElementById('tmpl-res').classList.toggle('selected',t==='res');
+  document.getElementById('tmpl-com').classList.toggle('selected',t==='com');
+  document.querySelector('#d-template .btn-p').textContent=t==='res'?'Use Residential Template →':'Use Commercial Template →';
+}
+
+// ---- Designer accordion ----
+let dEditMode=false;
+let dRemarksActioned=0;
+
+function dToggleSec(n){
+  const b=document.getElementById('db'+n);const c=document.getElementById('dc'+n);
+  const open=b.classList.toggle('open');c.classList.toggle('open',open);
+}
+
+function dToggleEdit(){
+  dEditMode=!dEditMode;
+  const btn=document.getElementById('d-edit-btn');
+  btn.textContent=dEditMode?'✓':'✎';
+  btn.style.background=dEditMode?'var(--gl)':'var(--orl)';
+  btn.style.color=dEditMode?'var(--g)':'var(--or)';
+  document.querySelectorAll('#d-draft .fv').forEach(el=>el.style.display=dEditMode?'none':'block');
+  document.querySelectorAll('#d-draft .fi').forEach(el=>el.style.display=dEditMode?'block':'none');
+  document.querySelectorAll('#d-draft .excl-del').forEach(el=>el.style.display=dEditMode?'inline':'none');
+  document.querySelectorAll('#d-draft .add-row').forEach(el=>el.style.display=dEditMode?'flex':'none');
+  document.querySelectorAll('#d-draft .room-sc').forEach(el=>el.style.display=dEditMode?'none':'block');
+  document.querySelectorAll('#d-draft .room-sc-edit').forEach(el=>el.style.display=dEditMode?'block':'none');
+  document.getElementById('d-pay-view').style.display=dEditMode?'none':'block';
+  document.getElementById('d-pay-edit').style.display=dEditMode?'block':'none';
+  document.getElementById('d-terms-view').style.display=dEditMode?'none':'block';
+  document.getElementById('d-terms-edit').style.display=dEditMode?'block':'none';
+  if(dEditMode)[1,2,3,4,5,6,7,8].forEach(n=>{document.getElementById('db'+n)?.classList.add('open');document.getElementById('dc'+n)?.classList.add('open');});
+  if(!dEditMode)dToast('Changes saved ✓');
+}
+
+function dAddRoom(){const name=prompt('Room name?');if(!name)return;const d=document.createElement('div');d.className='room-item';d.innerHTML=`<div class="room-nm">${name} <span class="excl-del" style="display:inline;" onclick="this.closest('.room-item').remove()">✕</span></div><div class="room-sc" style="display:none;">Add scope…</div><textarea class="room-sc-edit" rows="2" style="display:block;width:100%;border:1.5px solid var(--g3);border-radius:6px;padding:6px 8px;font-size:10px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);margin-top:3px;">Add scope…</textarea>`;document.getElementById('d-rooms').appendChild(d);}
+
+function dAddExcl(){const text=prompt('Exclusion?');if(!text)return;const d=document.createElement('div');d.className='excl-item';d.innerHTML=`<div class="excl-dot"></div><div class="excl-text">${text}</div><span class="excl-del" style="display:inline;font-size:11px;color:var(--lgt);cursor:pointer;" onclick="this.closest('.excl-item').remove()">✕</span>`;document.getElementById('d-excl').appendChild(d);}
+
+function dSendForReview(){
+  document.getElementById('d-status').textContent='● Under Review';
+  document.getElementById('d-status').className='pill p-review';
+  document.getElementById('d-main-action').textContent='Sent for review ✓';
+  document.getElementById('d-main-action').disabled=true;
+  dToast('SOW sent to Priya for review!');
+  setTimeout(()=>{
+    dShowScreen('d-remarks');
+    dToast('⚠️ Priya has added 2 remarks!');
+  },1500);
+}
+
+// ---- Remarks handling ----
+function drToggle(bodyId,chevId){const b=document.getElementById(bodyId);const c=document.getElementById(chevId);const open=b.classList.toggle('open');c.classList.toggle('open',open);}
+
+function drEditSection(key){
+  if(key==='kitchen'){
+    document.getElementById('dr-kitchen-text').style.display='none';
+    document.getElementById('dr-kitchen-edit').style.display='block';
+    document.getElementById('dr-kitchen-edit').value='Modular L-shape · Granite countertop · Soft-close shutters · Chimney provision included';
+    document.getElementById('dr-kitchen-actions').style.display='none';
+    document.getElementById('dr-kitchen-save').style.display='block';
+  }
+}
+
+function drSaveEdit(key){
+  if(key==='kitchen'){
+    document.getElementById('dr-kitchen-text').textContent=document.getElementById('dr-kitchen-edit').value;
+    document.getElementById('dr-kitchen-text').style.display='block';
+    document.getElementById('dr-kitchen-edit').style.display='none';
+    document.getElementById('dr-kitchen-save').style.display='none';
+    document.getElementById('dr-s2').className='sow-sec updated';
+    document.getElementById('dr-s2').querySelector('.sow-hr').innerHTML='<span class="pill p-updated">✓ Edited</span><div class="chev open">▾</div>';
+    dRemarksActioned++;
+    updateRemarksProgress();
+  }
+}
+
+function drRejectRemark(key){
+  const reason=prompt('Reason for rejecting this remark?','The granite upgrade and chimney add ₹80K to the cost. Budget maintained at ₹18L by optimising elsewhere.');
+  if(!reason)return;
+  if(key==='budget'){
+    document.getElementById('dr-s5').className='sow-sec';
+    document.getElementById('dr-s5').querySelector('.sow-hr').innerHTML='<span class="pill p-rejected">✗ Rejected</span><div class="chev open" id="drc5">▾</div>';
+    document.getElementById('drb5').classList.add('open');
+    document.getElementById('dr-budget-actions').style.display='none';
+    const rej=document.createElement('div');rej.className='rejected-block';rej.innerHTML=`<div style="font-size:9px;font-weight:700;color:var(--red);margin-bottom:4px;">Your response</div><div class="rejected-reason">${reason}</div>`;
+    document.getElementById('drb5').appendChild(rej);
+    dRemarksActioned++;
+    updateRemarksProgress();
+  }
+  if(key==='kitchen'){
+    document.getElementById('dr-kitchen-actions').style.display='none';
+    const rej=document.createElement('div');rej.innerHTML=`<div style="background:var(--redl);border:1px solid #F5C6C6;border-radius:8px;padding:8px 10px;margin-top:6px;font-size:11px;color:var(--red);">Rejected: ${reason}</div>`;
+    document.querySelector('#dr-s2 .remark-block').appendChild(rej);
+    dRemarksActioned++;
+    updateRemarksProgress();
+  }
+}
+
+function updateRemarksProgress(){
+  const btn=document.getElementById('d-resubmit-btn');
+  const prog=document.getElementById('d-remarks-progress');
+  prog.textContent=dRemarksActioned+' of 2 remarks actioned';
+  if(dRemarksActioned>=2){
+    btn.disabled=false;
+    btn.style.background='var(--g)';
+    btn.textContent='Resubmit to client →';
+  }
+}
+
+function dResubmit(){
+  dToast('Revised SOW sent to Priya!');
+  setTimeout(()=>dShowScreen('d-draft'),800);
+}
+
+// ---- OTP flow ----
+function dOtpNext(el,nextId){if(el.value.length===1){document.getElementById(nextId)?.focus();}}
+function dOtpVerify(){
+  const digits=['od1','od2','od3','od4','od5','od6'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(digits.length<6){document.getElementById('od1').focus();return;}
+  dToast('Identity verified ✓ — SOW signed!');
+  setTimeout(()=>{
+    document.getElementById('d-designer-sig').className='sig-box signed';
+    document.getElementById('d-dsig-icon').textContent='✅';
+    document.getElementById('d-dsig-st').textContent='✓ Signed';
+    document.getElementById('d-dsig-st').className='sig-st sig-ok';
+    document.getElementById('d-dsig-meta').textContent='24 May · 9:41 AM';
+    document.getElementById('d-status').textContent='● Pending Signature';
+    document.getElementById('d-status').className='pill p-pending';
+    dShowScreen('d-draft');
+    dToast('Waiting for Priya to sign…');
+  },600);
+}
+
+function dSignOTP(){dShowScreen('d-otp');}
+
+function dRaiseAmendment(){dShowScreen('d-amendment');}
+
+// ---- AI Chat ----
+const DSYS=`You are Hynt Pro's SOW Assistant helping interior designer Riya Desai. Project: Sharma 3BHK Renovation, client Priya Sharma, Bandra Mumbai, budget ₹18L, handover Jan 2026. Confirm details, ask room-wise scope, exclusions, then generate SOW. Be concise, one question at a time.`;
+let dAIHist=[];
+let dAIStarted=false;
+
+function dShowAI(){
+  dShowScreen('d-ai');
+  if(!dAIStarted){dAIStarted=true;dStartAI();}
+}
+
+async function dStartAI(){
+  dAIHist=[{role:'user',content:'Hi, start the SOW process for my project.'}];
+  dAITyping();
+  const r=await callClaude(DSYS,dAIHist);
+  dHideTyping();
+  dAIHist.push({role:'assistant',content:r});
+  dAddBubble('assistant',r);
+}
+
+async function dSendAI(){
+  const inp=document.getElementById('d-ai-in');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';inp.style.height='auto';
+  document.getElementById('d-ai-send').disabled=true;
+  dAddBubble('user',text);
+  dAIHist.push({role:'user',content:text});
+  dAITyping();
+  const r=await callClaude(DSYS,dAIHist);
+  dHideTyping();
+  dAIHist.push({role:'assistant',content:r});
+  dAddBubble('assistant',r);
+  inp.addEventListener('input',function h(){document.getElementById('d-ai-send').disabled=!this.value.trim();this.removeEventListener('input',h);},{once:true});
+}
+
+function dAddBubble(role,text){
+  const wrap=document.getElementById('d-ai-chat');
+  const d=document.createElement('div');
+  d.className=role==='user'?'user-bub':'ai-bub';
+  d.style.cssText='max-width:84%;padding:10px 12px;font-size:11px;line-height:1.65;border-radius:'+(role==='user'?'14px 14px 3px 14px':'14px 14px 14px 3px')+';background:'+(role==='user'?'var(--g)':'var(--sur)')+';color:'+(role==='user'?'#fff':'var(--txt)')+';align-self:'+(role==='user'?'flex-end':'flex-start')+(role!=='user'?';border:1px solid var(--bor)':'');
+  d.textContent=text;d.style.animation='fdup .3s ease';
+  wrap.appendChild(d);wrap.scrollTop=wrap.scrollHeight;
+}
+
+function dAITyping(){
+  const wrap=document.getElementById('d-ai-chat');
+  const t=document.createElement('div');t.id='d-ai-typing';
+  t.style.cssText='display:flex;gap:4px;padding:10px 12px;background:var(--sur);border:1px solid var(--bor);border-radius:14px 14px 14px 3px;align-self:flex-start;';
+  t.innerHTML='<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  wrap.appendChild(t);wrap.scrollTop=wrap.scrollHeight;
+}
+function dHideTyping(){const t=document.getElementById('d-ai-typing');if(t)t.remove();}
+
+document.getElementById('d-ai-in').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();dSendAI();}});
+
+// ---- Client functions ----
+let cRemarks=0;
+
+function cToggle(bodyId,chevId){const b=document.getElementById(bodyId);const c=document.getElementById(chevId);if(b){const open=b.classList.toggle('open');c.classList.toggle('open',open);}}
+
+function cToggleRemark(id){
+  const wrap=document.getElementById(id);
+  wrap.style.display=wrap.style.display==='block'?'none':'block';
+}
+
+function cSubmitRemark(secNum){
+  cRemarks++;
+  document.getElementById('c-remark-count').textContent=cRemarks+' remark'+(cRemarks>1?'s':'')+' added';
+  document.querySelector('#c-s'+secNum+' .add-remark-btn').innerHTML='<div class="ar-icon">💬</div><div class="ar-text" style="color:var(--g);">Remark added ✓</div>';
+  document.querySelector('#c-s'+secNum+' .add-remark-btn').style.background='var(--gl)';
+  document.querySelector('#c-s'+secNum+' .add-remark-btn').style.borderColor='var(--bor)';
+  document.getElementById('r'+secNum).style.display='none';
+  document.getElementById('c-s'+secNum).classList.add('has-remark');
+  cToast('Remark saved!');
+}
+
+function cShowRemarksSummary(){cShowScreen('c-summary');}
+
+function cSendRemarks(){
+  cToast('Remarks sent to Riya!');
+  setTimeout(()=>cShowScreen('c-waiting'),800);
+}
+
+function cProceedNoRemarks(){cShowScreen('c-otp');}
+
+function cShowRevised(){cShowScreen('c-revised');}
+
+function cOtpNext(el,nextId){if(el.value.length===1){document.getElementById(nextId)?.focus();}}
+function cOtpExecute(){
+  const digits=['co1','co2','co3','co4','co5','co6'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(digits.length<6){document.getElementById('co1').focus();return;}
+  cToast('Identity verified ✓ — SOW signed!');
+  setTimeout(()=>{
+    cShowScreen('c-executed');
+    // Also update designer side
+    document.querySelectorAll('.phone')[0].querySelector('#d-csig-icon').textContent='✅';
+    document.querySelectorAll('.phone')[0].querySelector('#d-csig-st').textContent='✓ Signed';
+    document.querySelectorAll('.phone')[0].querySelector('#d-csig-st').className='sig-st sig-ok';
+    document.querySelectorAll('.phone')[0].querySelector('#d-csig-meta').textContent='24 May · 11:23 AM';
+    document.querySelectorAll('.phone')[0].querySelector('#d-client-sig').className='sig-box signed';
+    document.querySelectorAll('.phone')[0].querySelector('#d-status').textContent='● Executed';
+    document.querySelectorAll('.phone')[0].querySelector('#d-status').className='pill p-executed';
+  },600);
+}
+
+// ---- Claude API ----
+async function callClaude(sys,msgs){
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:sys,messages:msgs})});
+    const d=await r.json();return d.content?.[0]?.text||'Something went wrong.';
+  }catch(e){return 'Connection error. Please try again.';}
+}
+
+// ---- Toasts ----
+function dToast(msg){showToast(msg,0);}
+function cToast(msg){showToast(msg,1);}
+function showToast(msg,phoneIdx){
+  const phone=document.querySelectorAll('.phone')[phoneIdx];
+  const ex=phone.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  phone.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+
+// Start AI if navigated
+document.getElementById('d-ai').addEventListener('transitionend',function(){});
+// Override the AI screen show
+const origDSS=dShowScreen;
+dShowScreen=function(id){origDSS(id);if(id==='d-ai'&&!dAIStarted){dAIStarted=true;dStartAI();}};
+</script>
+</body>
+</html>

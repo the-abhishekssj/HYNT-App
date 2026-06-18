@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Team — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#7A9A7A;display:flex;justify-content:center;gap:20px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#2a4a2a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:360px;height:780px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-wa{background:#25D366;color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--orl);color:var(--or);}
+.pb{background:var(--bluel);color:var(--blue);}
+.pgr{background:#F0F0F0;color:#666;}
+.py{background:var(--amberl);color:var(--amber);}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+
+/* Team member cards */
+.member-card{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--bor);border-radius:12px;margin-bottom:8px;}
+.member-card.pending{border-color:var(--amber);background:var(--amberl);}
+.member-card.client{border-color:var(--blue);background:var(--bluel);}
+.m-av{width:44px;height:44px;border-radius:13px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.m-info{flex:1;}
+.m-name{font-size:13px;font-weight:700;color:var(--txt);}
+.m-role{font-size:10px;color:var(--lgt);margin-top:1px;}
+.m-access{font-size:10px;font-weight:600;color:var(--mut);margin-top:3px;}
+.m-actions{display:flex;gap:5px;}
+.m-btn{width:30px;height:30px;border-radius:8px;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
+
+/* Role selector */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.role-opt{border:1.5px solid var(--bor);border-radius:10px;padding:11px 10px;cursor:pointer;transition:all .15s;}
+.role-opt:hover{border-color:var(--g3);}
+.role-opt.sel{border-color:var(--g);background:var(--gp);}
+.ro-icon{font-size:22px;margin-bottom:5px;}
+.ro-title{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.ro-sub{font-size:9px;color:var(--lgt);line-height:1.4;}
+
+/* Access matrix */
+.access-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:12px;}
+.access-table th{background:var(--gp);color:var(--mut);font-weight:700;padding:6px 8px;text-align:left;font-size:9px;}
+.access-table td{padding:6px 8px;border-bottom:1px solid var(--borl);color:var(--txt);}
+.access-table tr:last-child td{border-bottom:none;}
+.acc-full{color:var(--g);font-weight:700;}
+.acc-view{color:var(--blue);}
+.acc-edit{color:var(--or);}
+.acc-none{color:var(--lgt);}
+.acc-own{color:var(--pur);}
+
+/* Seat pricing card */
+.seat-card{border:1.5px solid var(--bor);border-radius:12px;padding:13px;margin-bottom:12px;}
+.seat-card.free{border-color:var(--g3);background:var(--gl);}
+.seat-card.paid{border-color:var(--amber);background:var(--amberl);}
+.sc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.sc-icon{font-size:22px;}
+.sc-title{font-size:13px;font-weight:700;color:var(--txt);}
+.sc-price{font-size:16px;font-weight:800;margin-left:auto;}
+.sc-desc{font-size:10px;color:var(--mut);line-height:1.6;}
+.sc-who{font-size:10px;font-weight:600;margin-top:6px;}
+.pay-toggle{display:flex;gap:6px;margin-top:8px;}
+.pt-opt{flex:1;padding:8px;border-radius:8px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;border:1.5px solid var(--bor);color:var(--mut);}
+.pt-opt.sel{background:var(--g);color:#fff;border-color:var(--g);}
+
+/* OTP */
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin:16px 0;}
+.otp-d{width:44px;height:52px;border:2px solid var(--bor);border-radius:10px;font-size:20px;font-weight:700;text-align:center;font-family:'Poppins',sans-serif;color:var(--txt);outline:none;}
+.otp-d:focus{border-color:var(--g);}
+
+/* WhatsApp preview */
+.wa-preview{background:#E8F5E9;border-radius:12px;padding:13px;margin-bottom:12px;border:1px solid #C8E6C9;}
+.wa-bubble{background:#fff;border-radius:12px 12px 3px 12px;padding:10px 12px;font-size:11px;color:var(--txt);line-height:1.6;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.wa-bubble strong{color:var(--g);}
+.wa-time{font-size:9px;color:var(--lgt);text-align:right;margin-top:4px;}
+.wa-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.wa-icon{width:32px;height:32px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;}
+.wa-name{font-size:11px;font-weight:700;color:var(--txt);}
+.wa-sub{font-size:9px;color:var(--lgt);}
+
+/* Project card (member/client view) */
+.proj-card{background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:14px;margin-bottom:10px;}
+.pc-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.pc-av{width:44px;height:44px;border-radius:13px;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.pc-title{font-size:14px;font-weight:700;color:var(--txt);}
+.pc-sub{font-size:10px;color:var(--lgt);margin-top:2px;}
+.role-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-bottom:11px;}
+.rb-super{background:#EEF2FF;color:var(--blue);}
+.rb-junior{background:var(--purl);color:var(--pur);}
+.rb-client{background:var(--bluel);color:var(--blue);}
+
+/* Tool access grid */
+.tool-access{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.ta-item{display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:9px;border:1px solid var(--bor);}
+.ta-item.has{border-color:var(--g3);background:var(--gp);}
+.ta-item.none{opacity:.4;}
+.ta-icon{font-size:16px;flex-shrink:0;}
+.ta-info{flex:1;}
+.ta-name{font-size:10px;font-weight:700;color:var(--txt);}
+.ta-level{font-size:9px;color:var(--mut);}
+
+/* Signup form */
+.signup-hero{background:var(--g);padding:28px 20px 20px;text-align:center;flex-shrink:0;}
+.sh-logo{font-size:32px;margin-bottom:6px;}
+.sh-title{font-size:20px;font-weight:800;color:#fff;margin-bottom:4px;}
+.sh-sub{font-size:11px;color:rgba(255,255,255,.75);}
+
+/* Success */
+.success-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:60vh;padding:20px;}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Team Home -->
+      <div class="scr active" id="d-team">
+        <div class="topbar"><button class="bb">←</button><div class="tbt">Team</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <!-- Project context -->
+          <div style="background:var(--gl);border-radius:11px;padding:11px 13px;margin-bottom:14px;border:1px solid var(--bor);">
+            <div style="font-size:13px;font-weight:700;color:#1a3d2b;">Sharma 3BHK Renovation</div>
+            <div style="font-size:10px;color:var(--g2);margin-top:2px;">Priya Sharma · Bandra, Mumbai</div>
+          </div>
+
+          <!-- Team members -->
+          <div class="sh"><div class="sht">Team Members (3)</div><div class="sha" onclick="dSS('d-add-team')">+ Add member</div></div>
+
+          <!-- Owner -->
+          <div class="member-card">
+            <div class="m-av" style="background:var(--g);">RD</div>
+            <div class="m-info">
+              <div class="m-name">Riya Desai</div>
+              <div class="m-role">Lead Designer</div>
+              <div class="m-access">Owner · Full access</div>
+            </div>
+            <span class="pill pp">Owner</span>
+          </div>
+
+          <!-- Site supervisor — active -->
+          <div class="member-card">
+            <div class="m-av" style="background:var(--blue);">AK</div>
+            <div class="m-info">
+              <div class="m-name">Arjun Kumar</div>
+              <div class="m-role">Site Supervisor</div>
+              <div class="m-access">View BOQ · Edit own tasks · Full diary</div>
+            </div>
+            <div class="m-actions">
+              <button class="m-btn" style="background:var(--gp);" onclick="dSS('d-member-detail')" title="View access">👁</button>
+              <button class="m-btn" style="background:var(--redl);" onclick="dToast('Arjun removed from project')" title="Remove">✕</button>
+            </div>
+          </div>
+
+          <!-- Junior designer — pending -->
+          <div class="member-card pending">
+            <div class="m-av" style="background:var(--pur);">SM</div>
+            <div class="m-info">
+              <div class="m-name">Sneha Malhotra</div>
+              <div class="m-role">Junior Designer</div>
+              <div class="m-access">Invite pending · ₹500 seat</div>
+            </div>
+            <div class="m-actions">
+              <span class="pill py">⏳ Pending</span>
+              <button class="m-btn" style="background:var(--amberl);" onclick="dToast('Reminder sent via WhatsApp!')">↩</button>
+            </div>
+          </div>
+
+          <div class="dv"></div>
+
+          <!-- Client -->
+          <div class="sh"><div class="sht">Client</div><div class="sha" onclick="dSS('d-add-client')">+ Add client</div></div>
+
+          <div class="member-card client">
+            <div class="m-av" style="background:var(--blue);">PS</div>
+            <div class="m-info">
+              <div class="m-name">Priya Sharma</div>
+              <div class="m-role">Client</div>
+              <div class="m-access">Homeowner app · +91 98765 43210</div>
+            </div>
+            <div class="m-actions">
+              <button class="m-btn" style="background:var(--bluel);" onclick="dToast('WhatsApp opened')" title="Message">💬</button>
+              <button class="m-btn" style="background:var(--gp);" onclick="dSS('d-client-access')" title="View access">👁</button>
+            </div>
+          </div>
+
+          <div class="dv"></div>
+
+          <!-- Seat summary -->
+          <div style="background:var(--gp);border-radius:11px;padding:11px 13px;border:1px solid var(--bor);">
+            <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:7px;">Seat Summary</div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--borl);"><span style="font-size:10px;color:var(--mut);">Arjun Kumar</span><span class="pill pp" style="font-size:9px;">Hynt Pro · Free</span></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="font-size:10px;color:var(--mut);">Sneha Malhotra</span><span class="pill py" style="font-size:9px;">₹500 · Pending payment</span></div>
+            <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--borl);display:flex;justify-content:space-between;"><span style="font-size:11px;font-weight:700;">Total seats cost</span><span style="font-size:13px;font-weight:800;color:var(--g);">₹500</span></div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Team Member -->
+      <div class="scr" id="d-add-team">
+        <div class="topbar"><button class="bb" onclick="dSS('d-team')">←</button><div class="tbt">Add Team Member</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <!-- Step 1: Details -->
+          <div class="fg"><label class="fl">Name</label><input class="fi" placeholder="Team member's full name" id="tm-name"/></div>
+          <div class="fg"><label class="fl">Phone Number</label><input class="fi" type="tel" placeholder="+91 98765 43210" id="tm-phone"/></div>
+
+          <!-- Role selection -->
+          <div class="fg">
+            <label class="fl">Role</label>
+            <div class="role-grid">
+              <div class="role-opt" onclick="setRole(this,'supervisor')"><div class="ro-icon">🏗️</div><div class="ro-title">Site Supervisor</div><div class="ro-sub">Diary, tasks, progress photos</div></div>
+              <div class="role-opt sel" onclick="setRole(this,'junior')"><div class="ro-icon">✏️</div><div class="ro-title">Junior Designer</div><div class="ro-sub">Design work, tasks, moodboard</div></div>
+              <div class="role-opt" onclick="setRole(this,'contractor')"><div class="ro-icon">🔨</div><div class="ro-title">Contractor</div><div class="ro-sub">Site diary, own tasks only</div></div>
+              <div class="role-opt" onclick="setRole(this,'admin')"><div class="ro-icon">⚙️</div><div class="ro-title">Admin</div><div class="ro-sub">Full access except team management</div></div>
+            </div>
+          </div>
+
+          <!-- Access preview -->
+          <div class="fg">
+            <label class="fl">Access Level — Junior Designer</label>
+            <div style="overflow-x:auto;border:1px solid var(--bor);border-radius:9px;">
+              <table class="access-table">
+                <tr><th>Tool</th><th>Access</th></tr>
+                <tr><td>SOW</td><td class="acc-view">View</td></tr>
+                <tr><td>BOQ</td><td class="acc-view">View</td></tr>
+                <tr><td>Tasks</td><td class="acc-own">Edit own</td></tr>
+                <tr><td>Finance</td><td class="acc-none">None</td></tr>
+                <tr><td>Site Diary</td><td class="acc-full">Full</td></tr>
+                <tr><td>Contract</td><td class="acc-view">View</td></tr>
+                <tr><td>Timeline</td><td class="acc-view">View</td></tr>
+                <tr><td>Drive</td><td class="acc-edit">Edit</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- Seat pricing -->
+          <div class="seat-card paid" id="seat-paid">
+            <div class="sc-top"><div class="sc-icon">💺</div><div class="sc-title">Seat Fee — ₹500</div><div class="sc-price" style="color:var(--amber);">₹500</div></div>
+            <div class="sc-desc">Sneha Malhotra is not a Hynt Pro subscriber. A one-time seat fee of ₹500 applies for this project.</div>
+            <div class="sc-who">Who pays?</div>
+            <div class="pay-toggle">
+              <div class="pt-opt sel" id="pt-me" onclick="setSeatPay('me')">I'll pay (₹500)</div>
+              <div class="pt-opt" id="pt-them" onclick="setSeatPay('them')">They pay on joining</div>
+            </div>
+          </div>
+
+          <div class="seat-card free" style="display:none;" id="seat-free">
+            <div class="sc-top"><div class="sc-icon">✅</div><div class="sc-title">Free Seat</div><div class="sc-price" style="color:var(--g);">₹0</div></div>
+            <div class="sc-desc">This member is an existing Hynt Pro subscriber. No seat fee required.</div>
+          </div>
+
+          <!-- WhatsApp preview -->
+          <div class="fg">
+            <label class="fl">Invite preview (WhatsApp)</label>
+            <div class="wa-preview">
+              <div class="wa-header"><div class="wa-icon">H</div><div><div class="wa-name">Hynt Pro</div><div class="wa-sub">Project invite</div></div></div>
+              <div class="wa-bubble">
+                Hey <strong>Sneha</strong>! 👋<br/><br/>
+                <strong>Riya Desai</strong> has added you to <strong>Sharma 3BHK Renovation</strong> on Hynt Pro as <strong>Junior Designer</strong>.<br/><br/>
+                Tap to join the project and get started:<br/>
+                <span style="color:var(--blue);text-decoration:underline;">hynt.app/join/abc123</span>
+                <div class="wa-time">Now · via Hynt Pro</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-wa" onclick="dSendInvite()">📱 Send WhatsApp Invite</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Client -->
+      <div class="scr" id="d-add-client">
+        <div class="topbar"><button class="bb" onclick="dSS('d-team')">←</button><div class="tbt">Add Client</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">👤</div><div class="ict">Client signs up on the Hynt homeowner app. Enter their mobile — they'll get an invite and this project appears in their app automatically.</div></div>
+          <div class="fg"><label class="fl">Client Name</label><input class="fi" value="Priya Sharma"/></div>
+          <div class="fg"><label class="fl">Mobile Number</label><input class="fi" type="tel" value="+91 98765 43210"/></div>
+          <div class="fg"><label class="fl">Email (optional)</label><input class="fi" type="email" placeholder="client@email.com"/></div>
+
+          <!-- What client sees -->
+          <div class="fg">
+            <label class="fl">Client Access — Pre-set</label>
+            <div style="border:1px solid var(--bor);border-radius:9px;overflow:hidden;">
+              <table class="access-table">
+                <tr><th>Tool</th><th>Client sees</th></tr>
+                <tr><td>SOW</td><td class="acc-view">Review & sign</td></tr>
+                <tr><td>BOQ / Quotation</td><td class="acc-view">Approve quotation</td></tr>
+                <tr><td>Tasks</td><td class="acc-view">Approvals tab only</td></tr>
+                <tr><td>Finance</td><td class="acc-view">Invoices & pay</td></tr>
+                <tr><td>Site Diary</td><td class="acc-view">Progress + refs</td></tr>
+                <tr><td>Contract</td><td class="acc-view">Sign only</td></tr>
+                <tr><td>Timeline</td><td class="acc-view">Read-only</td></tr>
+                <tr><td>Drive</td><td class="acc-view">Shared folder only</td></tr>
+              </table>
+            </div>
+          </div>
+
+          <!-- WhatsApp preview -->
+          <div class="fg">
+            <label class="fl">Invite preview (WhatsApp)</label>
+            <div class="wa-preview">
+              <div class="wa-header"><div class="wa-icon">H</div><div><div class="wa-name">Hynt Pro</div><div class="wa-sub">Project invite</div></div></div>
+              <div class="wa-bubble">
+                Hi <strong>Priya</strong>! 🏠<br/><br/>
+                <strong>Riya Desai</strong> has set up your project on <strong>Hynt</strong> — India's Home App.<br/><br/>
+                Track progress, approve designs, view invoices and more — all in one place.<br/><br/>
+                Download Hynt and sign in with this number to get started:<br/>
+                <span style="color:var(--blue);text-decoration:underline;">hynt.app/download</span>
+                <div class="wa-time">Now · via Hynt Pro</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-wa" onclick="dSendClientInvite()">📱 Send WhatsApp Invite</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Member detail / access -->
+      <div class="scr" id="d-member-detail">
+        <div class="topbar"><button class="bb" onclick="dSS('d-team')">←</button><div class="tbt">Arjun Kumar</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px;">
+            <div class="m-av" style="background:var(--blue);width:54px;height:54px;border-radius:16px;font-size:18px;">AK</div>
+            <div><div style="font-size:16px;font-weight:700;color:var(--txt);">Arjun Kumar</div><div style="font-size:11px;color:var(--lgt);">Site Supervisor · +91 97654 32109</div><div class="pill pp" style="margin-top:5px;">Active · Hynt Pro</div></div>
+          </div>
+          <div class="sh"><div class="sht">Tool Access</div><div class="sha" onclick="dToast('Role changed!')">Change role</div></div>
+          <div class="tool-access">
+            <div class="ta-item has"><div class="ta-icon">📓</div><div class="ta-info"><div class="ta-name">Site Diary</div><div class="ta-level" style="color:var(--g);">Full access</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">✅</div><div class="ta-info"><div class="ta-name">Tasks</div><div class="ta-level" style="color:var(--pur);">Edit own only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📊</div><div class="ta-info"><div class="ta-name">BOQ</div><div class="ta-level" style="color:var(--blue);">View only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📅</div><div class="ta-info"><div class="ta-name">Timeline</div><div class="ta-level" style="color:var(--blue);">View only</div></div></div>
+            <div class="ta-item none"><div class="ta-icon">💰</div><div class="ta-info"><div class="ta-name">Finance</div><div class="ta-level">No access</div></div></div>
+            <div class="ta-item none"><div class="ta-icon">📝</div><div class="ta-info"><div class="ta-name">Contract</div><div class="ta-level">No access</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">🗂️</div><div class="ta-info"><div class="ta-name">Drive</div><div class="ta-level" style="color:var(--blue);">View only</div></div></div>
+            <div class="ta-item none"><div class="ta-icon">📋</div><div class="ta-info"><div class="ta-name">SOW</div><div class="ta-level">No access</div></div></div>
+          </div>
+          <div class="dv"></div>
+          <div class="sh"><div class="sht">Activity</div></div>
+          <div style="font-size:10px;color:var(--mut);line-height:2.2;">Last active: Today, 9:15 AM<br/>Tasks completed: 4<br/>Log entries: 12<br/>Photos uploaded: 28</div>
+          <div class="br" style="margin-top:14px;"><button class="btn-o">Change Role</button><button class="btn-g" onclick="dToast('Arjun removed!')">Remove</button></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client access view -->
+      <div class="scr" id="d-client-access">
+        <div class="topbar"><button class="bb" onclick="dSS('d-team')">←</button><div class="tbt">Priya Sharma</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="display:flex;align-items:center;gap:13px;margin-bottom:14px;">
+            <div class="m-av" style="background:var(--blue);width:54px;height:54px;border-radius:16px;font-size:18px;">PS</div>
+            <div><div style="font-size:16px;font-weight:700;color:var(--txt);">Priya Sharma</div><div style="font-size:11px;color:var(--lgt);">Client · +91 98765 43210</div><div class="pill pb" style="margin-top:5px;">Homeowner app · Active</div></div>
+          </div>
+          <div class="sh"><div class="sht">Client Access</div></div>
+          <div class="tool-access">
+            <div class="ta-item has"><div class="ta-icon">📋</div><div class="ta-info"><div class="ta-name">SOW</div><div class="ta-level" style="color:var(--blue);">Review & sign</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📊</div><div class="ta-info"><div class="ta-name">Quotation</div><div class="ta-level" style="color:var(--blue);">Approve only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">✅</div><div class="ta-info"><div class="ta-name">Tasks</div><div class="ta-level" style="color:var(--blue);">Approvals only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">💰</div><div class="ta-info"><div class="ta-name">Finance</div><div class="ta-level" style="color:var(--blue);">Invoices & pay</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📓</div><div class="ta-info"><div class="ta-name">Site Diary</div><div class="ta-level" style="color:var(--blue);">Progress + refs</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📝</div><div class="ta-info"><div class="ta-name">Contract</div><div class="ta-level" style="color:var(--blue);">Sign only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">📅</div><div class="ta-info"><div class="ta-name">Timeline</div><div class="ta-level" style="color:var(--blue);">Read only</div></div></div>
+            <div class="ta-item has"><div class="ta-icon">🗂️</div><div class="ta-info"><div class="ta-name">Drive</div><div class="ta-level" style="color:var(--blue);">Shared folder</div></div></div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEAM MEMBER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Team Member Join</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="tc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: WhatsApp invite received -->
+      <div class="scr active" id="t-invite">
+        <div class="topbar"><div class="tbt">Hynt Pro Invite</div></div>
+        <div class="sc">
+          <div class="wa-preview" style="margin-bottom:14px;">
+            <div class="wa-header"><div class="wa-icon">H</div><div><div class="wa-name">Hynt Pro</div><div class="wa-sub">Project invite</div></div></div>
+            <div class="wa-bubble">
+              Hey <strong>Sneha</strong>! 👋<br/><br/>
+              <strong>Riya Desai</strong> has added you to <strong>Sharma 3BHK Renovation</strong> on Hynt Pro as <strong>Junior Designer</strong>.<br/><br/>
+              Tap to join the project and get started:<br/>
+              <span style="color:var(--blue);text-decoration:underline;">hynt.app/join/abc123</span>
+              <div class="wa-time">Now · via Hynt Pro</div>
+            </div>
+          </div>
+          <div style="background:var(--gl);border-radius:11px;padding:13px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;color:#1a3d2b;margin-bottom:2px;">Sharma 3BHK Renovation</div>
+            <div style="font-size:10px;color:var(--g2);">Priya Sharma · Bandra, Mumbai</div>
+            <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;"><span class="pill pp">Junior Designer</span><span class="pill pb">Added by Riya Desai</span></div>
+          </div>
+          <!-- Seat fee notice -->
+          <div style="background:var(--amberl);border:1px solid #F5D5B8;border-radius:11px;padding:12px 13px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:5px;">💺 Seat Fee — ₹500</div>
+            <div style="font-size:10px;color:var(--mut);line-height:1.6;">You are not a Hynt Pro subscriber. A one-time seat fee of ₹500 applies to join this project.<br/><br/><strong>Or subscribe to Hynt Pro at ₹5,000/yr</strong> and join unlimited projects for free.</div>
+            <div class="br" style="margin-top:10px;">
+              <button class="btn-p" style="flex:2;" onclick="tSS('t-otp')">Pay ₹500 & Join →</button>
+              <button class="btn-o" style="flex:1;" onclick="tToast('Subscribe page')">₹5K/yr</button>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;color:var(--lgt);">Already a Hynt Pro subscriber? <span style="color:var(--g);font-weight:700;cursor:pointer;" onclick="tSS('t-otp')">Sign in & join free →</span></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: OTP verify -->
+      <div class="scr" id="t-otp">
+        <div class="topbar"><button class="bb" onclick="tSS('t-invite')">←</button><div class="tbt">Verify & Join</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">📱</div>
+            <div style="font-size:14px;font-weight:700;color:var(--txt);">Verify your number</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;">OTP sent to <strong>+91 97654 ××××</strong></div>
+          </div>
+          <div class="otp-inputs">
+            <input class="otp-d" maxlength="1" id="to1" oninput="tOtp(this,'to2')"/>
+            <input class="otp-d" maxlength="1" id="to2" oninput="tOtp(this,'to3')"/>
+            <input class="otp-d" maxlength="1" id="to3" oninput="tOtp(this,'to4')"/>
+            <input class="otp-d" maxlength="1" id="to4" oninput="tOtp(this,'to5')"/>
+            <input class="otp-d" maxlength="1" id="to5" oninput="tOtp(this,'to6')"/>
+            <input class="otp-d" maxlength="1" id="to6" oninput="tOtpVerify()"/>
+          </div>
+          <div style="font-size:10px;color:var(--lgt);text-align:center;margin-bottom:16px;">OTP valid for 10 minutes</div>
+          <button class="btn-p" onclick="tOtpVerify()">Verify & Join Project →</button>
+          <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--g);font-weight:600;cursor:pointer;" onclick="tToast('New OTP sent!')">Resend OTP</div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Joined — project view -->
+      <div class="scr" id="t-joined">
+        <div class="topbar"><div class="tbt">Hynt Pro</div></div>
+        <div class="sc">
+          <div style="text-align:center;padding:16px 0 14px;">
+            <div style="font-size:44px;margin-bottom:9px;">🎉</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px;">You're in!</div>
+            <div style="font-size:11px;color:var(--mut);">Welcome to Sharma 3BHK Renovation</div>
+          </div>
+          <div class="proj-card">
+            <div class="pc-top">
+              <div class="pc-av">PS</div>
+              <div><div class="pc-title">Sharma 3BHK Renovation</div><div class="pc-sub">Priya Sharma · Bandra, Mumbai</div></div>
+            </div>
+            <div class="role-badge rb-junior">✏️ Junior Designer</div>
+            <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:9px;">Your access</div>
+            <div class="tool-access">
+              <div class="ta-item has"><div class="ta-icon">📓</div><div class="ta-info"><div class="ta-name">Site Diary</div><div class="ta-level" style="color:var(--g);">Full</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">✅</div><div class="ta-info"><div class="ta-name">Tasks</div><div class="ta-level" style="color:var(--pur);">Edit own</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">📊</div><div class="ta-info"><div class="ta-name">BOQ</div><div class="ta-level" style="color:var(--blue);">View</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">🗂️</div><div class="ta-info"><div class="ta-name">Drive</div><div class="ta-level" style="color:var(--or);">Edit</div></div></div>
+              <div class="ta-item none"><div class="ta-icon">💰</div><div class="ta-info"><div class="ta-name">Finance</div><div class="ta-level">None</div></div></div>
+              <div class="ta-item none"><div class="ta-icon">📝</div><div class="ta-info"><div class="ta-name">Contract</div><div class="ta-level">None</div></div></div>
+            </div>
+          </div>
+          <button class="btn-p" onclick="tToast('Opening project!')">Open Project →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Join</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: WhatsApp invite -->
+      <div class="scr active" id="c-invite">
+        <div class="topbar"><div class="tbt">Hynt Invite</div></div>
+        <div class="sc">
+          <div class="wa-preview" style="margin-bottom:14px;">
+            <div class="wa-header"><div class="wa-icon">H</div><div><div class="wa-name">Hynt</div><div class="wa-sub">India's Home App</div></div></div>
+            <div class="wa-bubble">
+              Hi <strong>Priya</strong>! 🏠<br/><br/>
+              <strong>Riya Desai</strong> has set up your project on <strong>Hynt</strong> — India's Home App.<br/><br/>
+              Track progress, approve designs, view invoices and more — all in one place.<br/><br/>
+              Download Hynt and sign in with this number:<br/>
+              <span style="color:var(--blue);text-decoration:underline;">hynt.app/download</span>
+              <div class="wa-time">Now · via Hynt Pro</div>
+            </div>
+          </div>
+          <div style="background:var(--gl);border-radius:11px;padding:13px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;color:#1a3d2b;margin-bottom:5px;">Your project is ready</div>
+            <div style="font-size:10px;color:var(--mut);line-height:1.8;">🏠 Sharma 3BHK Renovation<br/>👷 Designer: Riya Desai<br/>📍 Bandra, Mumbai<br/>💰 Budget: ₹18,00,000</div>
+          </div>
+          <button class="btn-p" onclick="cSS('c-signup')">Download Hynt & Sign Up →</button>
+          <div style="text-align:center;margin-top:10px;font-size:10px;color:var(--lgt);">Already have Hynt? <span style="color:var(--g);font-weight:700;cursor:pointer;" onclick="cSS('c-otp')">Sign in →</span></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Sign up -->
+      <div class="scr" id="c-signup">
+        <div class="signup-hero">
+          <div class="sh-logo">🏠</div>
+          <div class="sh-title">Welcome to Hynt</div>
+          <div class="sh-sub">India's Home App · Free for homeowners</div>
+        </div>
+        <div class="sc" style="padding-top:16px;">
+          <div class="fg"><label class="fl">Your Name</label><input class="fi" value="Priya Sharma"/></div>
+          <div class="fg"><label class="fl">Mobile Number</label><input class="fi" type="tel" value="+91 98765 43210"/></div>
+          <div class="fg"><label class="fl">Email (optional)</label><input class="fi" type="email" placeholder="priya@email.com"/></div>
+          <div style="background:var(--gl);border-radius:9px;padding:9px 11px;margin-bottom:12px;font-size:10px;color:var(--g);line-height:1.6;">✓ Hynt is completely free for homeowners.<br/>You'll be able to track your project, approve designs, pay invoices and chat with your designer — all in one place.</div>
+          <button class="btn-p" onclick="cSS('c-otp')">Get OTP & Sign Up →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client OTP -->
+      <div class="scr" id="c-otp">
+        <div class="topbar"><button class="bb" onclick="cSS('c-signup')">←</button><div class="tbt">Verify Number</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">📱</div>
+            <div style="font-size:14px;font-weight:700;color:var(--txt);">Verify your number</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;">OTP sent to <strong>+91 98765 ××××</strong></div>
+          </div>
+          <div class="otp-inputs">
+            <input class="otp-d" maxlength="1" id="co1" oninput="cOtp(this,'co2')"/>
+            <input class="otp-d" maxlength="1" id="co2" oninput="cOtp(this,'co3')"/>
+            <input class="otp-d" maxlength="1" id="co3" oninput="cOtp(this,'co4')"/>
+            <input class="otp-d" maxlength="1" id="co4" oninput="cOtp(this,'co5')"/>
+            <input class="otp-d" maxlength="1" id="co5" oninput="cOtp(this,'co6')"/>
+            <input class="otp-d" maxlength="1" id="co6" oninput="cOtpVerify()"/>
+          </div>
+          <div style="font-size:10px;color:var(--lgt);text-align:center;margin-bottom:16px;">OTP valid for 10 minutes</div>
+          <button class="btn-p" onclick="cOtpVerify()">Verify & Enter Hynt →</button>
+          <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--g);font-weight:600;cursor:pointer;" onclick="cToast('New OTP sent!')">Resend OTP</div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client joined — project view -->
+      <div class="scr" id="c-joined">
+        <div class="topbar"><div class="tbt">My Projects</div></div>
+        <div class="sc">
+          <div style="text-align:center;padding:16px 0 14px;">
+            <div style="font-size:44px;margin-bottom:9px;">🎉</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px;">Welcome to Hynt!</div>
+            <div style="font-size:11px;color:var(--mut);">Your project is ready to track.</div>
+          </div>
+          <div class="proj-card" style="cursor:pointer;" onclick="cToast('Opening project!')">
+            <div class="pc-top">
+              <div class="pc-av">RD</div>
+              <div><div class="pc-title">Sharma 3BHK Renovation</div><div class="pc-sub">Riya Desai · Bandra, Mumbai</div></div>
+            </div>
+            <div class="role-badge rb-client">🏠 Homeowner</div>
+            <div style="font-size:11px;font-weight:700;color:var(--txt);margin-bottom:9px;">What you can do</div>
+            <div class="tool-access">
+              <div class="ta-item has"><div class="ta-icon">📋</div><div class="ta-info"><div class="ta-name">SOW</div><div class="ta-level" style="color:var(--blue);">Review & sign</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">📊</div><div class="ta-info"><div class="ta-name">Quotation</div><div class="ta-level" style="color:var(--blue);">Approve</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">💰</div><div class="ta-info"><div class="ta-name">Finance</div><div class="ta-level" style="color:var(--blue);">View & pay</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">📓</div><div class="ta-info"><div class="ta-name">Site Diary</div><div class="ta-level" style="color:var(--blue);">Track progress</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">✅</div><div class="ta-info"><div class="ta-name">Approvals</div><div class="ta-level" style="color:var(--blue);">Decide items</div></div></div>
+              <div class="ta-item has"><div class="ta-icon">📅</div><div class="ta-info"><div class="ta-name">Timeline</div><div class="ta-level" style="color:var(--blue);">Track phases</div></div></div>
+            </div>
+            <div style="background:var(--orl);border-radius:9px;padding:9px 11px;"><div style="font-size:10px;font-weight:700;color:var(--or);margin-bottom:3px;">⚡ Action needed</div><div style="font-size:10px;color:var(--txt);">Invoice #003 due · ₹2,16,421 pending</div></div>
+          </div>
+          <button class="btn-p" onclick="cToast('Opening project!')">Go to My Project →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','tc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){nav(0,id);}
+function tSS(id){nav(1,id);}
+function cSS(id){nav(2,id);}
+function nav(idx,id){const p=document.querySelectorAll('.phone')[idx];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Role select
+function setRole(el,role){document.querySelectorAll('.role-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+
+// Seat payer
+function setSeatPay(who){
+  document.getElementById('pt-me').classList.toggle('sel',who==='me');
+  document.getElementById('pt-them').classList.toggle('sel',who==='them');
+}
+
+// Send invite
+function dSendInvite(){
+  dToast('WhatsApp invite sent to Sneha!');
+  setTimeout(()=>{
+    dSS('d-team');
+    dToast('Sneha added — invite pending');
+  },800);
+}
+
+function dSendClientInvite(){
+  dToast('WhatsApp invite sent to Priya!');
+  setTimeout(()=>dSS('d-team'),800);
+}
+
+// Team member OTP
+function tOtp(el,nextId){if(el.value.length===1){document.getElementById(nextId)?.focus();}}
+function tOtpVerify(){
+  const digits=['to1','to2','to3','to4','to5','to6'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(digits.length<6){document.getElementById('to1').focus();return;}
+  tToast('Verified! Joining project…');
+  setTimeout(()=>{
+    tSS('t-joined');
+    dToast('✓ Sneha Malhotra joined the project!');
+    // Update pending to active on designer side
+  },700);
+}
+
+// Client OTP
+function cOtp(el,nextId){if(el.value.length===1){document.getElementById(nextId)?.focus();}}
+function cOtpVerify(){
+  const digits=['co1','co2','co3','co4','co5','co6'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(digits.length<6){document.getElementById('co1').focus();return;}
+  cToast('Welcome to Hynt, Priya! 🎉');
+  setTimeout(()=>{
+    cSS('c-joined');
+    dToast('✓ Priya Sharma joined the homeowner app!');
+  },700);
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function tToast(msg){showT(msg,1);}
+function cToast(msg){showT(msg,2);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>

@@ -48,6 +48,7 @@ import ProSowWorkspace from './features/sow/ProSowWorkspace'
 import HomeownerSowReview from './features/sow/HomeownerSowReview'
 import ProjectTasksWorkspace from './features/tasks/ProjectTasksWorkspace'
 import PeopleAccessWorkspace from './features/team/PeopleAccessWorkspace'
+import { useSharedProject } from './features/collaboration/mockProjectStore'
 
 const INR = '\u20b9'
 const EMPTY = '\u2014'
@@ -570,7 +571,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [proHomeTab, setProHomeTab] = useState('home')
   const [isProHomeDense, setIsProHomeDense] = useState(false)
   const [proPrompt, setProPrompt] = useState('')
-  const [projects, setProjects] = useState(proProjects)
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [newProjectForm, setNewProjectForm] = useState({
     client: '',
@@ -587,6 +587,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   ])
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
+  const { projects: sharedProjects, actions: sharedProjectActions } = useSharedProject(selectedProjectId)
+  const projects = sharedProjects
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
   const [projectQuickInfoTab, setProjectQuickInfoTab] = useState('progress')
   const [projectTodayMs] = useState(() => Date.now())
@@ -870,26 +872,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               type="button"
               onClick={() => {
                 if (!newProjectForm.client.trim() || !newProjectForm.scope.trim()) return
-                const budget = Number(newProjectForm.budgetL || 0)
-                setProjects((prev) => [
-                  {
-                    id: `p-${Date.now()}`,
-                    client: newProjectForm.client.trim(),
-                    avatar: '/hynt-home/pro-1.png',
-                    phone: newProjectForm.phone.trim() || '+91 90000 00000',
-                    email: newProjectForm.email.trim() || 'client@example.com',
-                    location: newProjectForm.location.trim() || 'Mumbai',
-                    scope: newProjectForm.scope.trim(),
-                    status: newProjectForm.status,
-                    progress: newProjectForm.status === 'Done' ? 100 : newProjectForm.status === 'Pending' ? 20 : 10,
-                    kickoffDate: new Date().toISOString().slice(0, 10),
-                    budgetL: Number.isFinite(budget) ? budget : 0,
-                    spentL: 0,
-                    receivedL: 0,
-                    dueDate: newProjectForm.dueDate ? new Date(newProjectForm.dueDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'TBD',
-                  },
-                  ...prev,
-                ])
+                sharedProjectActions.createProject(newProjectForm)
                 setNewProjectForm({
                   client: '',
                   phone: '',
@@ -2142,6 +2125,12 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [isFlowSwitcherOpen, setIsFlowSwitcherOpen] = useState(false)
   const [isHomeownerSowOpen, setIsHomeownerSowOpen] = useState(false)
   const [isHomeownerTasksOpen, setIsHomeownerTasksOpen] = useState(false)
+  const [isHomeownerArchiveOpen, setIsHomeownerArchiveOpen] = useState(false)
+  const [isHomeownerFinanceOpen, setIsHomeownerFinanceOpen] = useState(false)
+  const [isHomeownerBoqOpen, setIsHomeownerBoqOpen] = useState(false)
+  const [isHomeownerTimelineOpen, setIsHomeownerTimelineOpen] = useState(false)
+  const [isHomeownerSiteDiaryOpen, setIsHomeownerSiteDiaryOpen] = useState(false)
+  const [selectedHomeownerTaskId, setSelectedHomeownerTaskId] = useState(null)
   const [messages, setMessages] = useState([])
   const [intent, setIntent] = useState(initialIntent)
   const [activeModal, setActiveModal] = useState(null)
@@ -2155,6 +2144,12 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [showHomeAiRive, setShowHomeAiRive] = useState(false)
   const thinkingTimersRef = useRef([])
   const chatScrollRef = useRef(null)
+  const {
+    projectTasks: sharedProjectTasks,
+    taskApprovals: sharedTaskApprovals,
+    taskStepCompletion: sharedTaskStepCompletion,
+    actions: sharedProjectActions,
+  } = useSharedProject('p-1')
 
   const allIntentFilled = useMemo(() => (
     intent.style.length > 0 && intent.budget?.range && intent.scope.length > 0 && intent.professional.length > 0
@@ -2749,17 +2744,17 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
   const homeownerNavItems = [
     ['home', 'Home', House],
+    ['project', 'Project', NotePencil],
     ['explore', 'Explore', Kanban],
     ['post', 'Post', Plus],
-    ['events', 'Events', CalendarDots],
     ['profile', 'Profile', User],
   ]
 
   const desktopSidebarItems = [
     ['home', 'Home', House],
+    ['project', 'Project', NotePencil],
     ['explore', 'Explore', Kanban],
     ['post', 'Post', Plus],
-    ['events', 'Events', CalendarDots],
   ]
 
   const renderHomeNav = () => (
@@ -3094,25 +3089,12 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
         <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Client-side preview</p>
-              <h2 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-[#102418]">Scope of Work review</h2>
-              <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Use the homeowner profile to inspect the client review, remarks, revised approval, OTP, and executed SOW states.</p>
+              <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Project portal</p>
+              <h2 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-[#102418]">Live project workspace</h2>
+              <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Review active decisions, progress, payments, documents, and shared archive items in one homeowner-facing place.</p>
             </div>
-            <button type="button" onClick={() => setIsHomeownerSowOpen(true)} className="shrink-0 rounded-full bg-[#173324] px-5 py-3 text-[14px] font-bold text-white shadow-sm">
-              Open SOW
-            </button>
-          </div>
-        </section>
-
-        <section className="rounded-[28px] border border-[#dce8e1] bg-white p-6 shadow-[0_20px_40px_rgba(18,24,21,0.06)]">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[12px] font-black uppercase tracking-[0.18em] text-[#267449]">Client-side preview</p>
-              <h2 className="mt-2 text-[24px] font-black tracking-[-0.03em] text-[#102418]">Task approvals</h2>
-              <p className="mt-2 max-w-[560px] text-[14px] font-medium leading-6 text-[#627268]">Review the homeowner approvals/tasks surface with pending items, resolved decisions, and detailed response states.</p>
-            </div>
-            <button type="button" onClick={() => setIsHomeownerTasksOpen(true)} className="shrink-0 rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[14px] font-bold text-[#173324] shadow-sm">
-              Open tasks
+            <button type="button" onClick={() => setHomeTab('project')} className="shrink-0 rounded-full bg-[#173324] px-5 py-3 text-[14px] font-bold text-white shadow-sm">
+              Open project
             </button>
           </div>
         </section>
@@ -3122,17 +3104,31 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
   const renderHome = () => {
     if (isHomeownerSowOpen) return <HomeownerSowReview onBack={() => setIsHomeownerSowOpen(false)} />
+    if (isHomeownerFinanceOpen) return <HomeownerFinanceWorkspace onBack={() => setIsHomeownerFinanceOpen(false)} />
     if (isHomeownerTasksOpen) {
       return (
         <ProjectTasksWorkspace
           mode="homeowner"
           onBack={() => setIsHomeownerTasksOpen(false)}
+          selectedProject={{ id: 'p-1', scope: '3BHK Full Renovation' }}
+          tasks={sharedProjectTasks}
+          setTasks={sharedProjectActions.setProjectTasks}
+          approvals={sharedTaskApprovals}
+          setApprovals={sharedProjectActions.setProjectTaskApprovals}
+          selectedTaskId={selectedHomeownerTaskId}
+          setSelectedTaskId={setSelectedHomeownerTaskId}
+          taskStepCompletion={sharedTaskStepCompletion}
+          setTaskStepCompletion={sharedProjectActions.setProjectTaskStepCompletion}
           homeownerClientName="Priya Sharma"
           homeownerProjectName="Sharma 3BHK"
           homeownerDesignerName="Riya Desai"
         />
       )
     }
+    if (isHomeownerArchiveOpen) return <HomeownerArchiveWorkspace onBack={() => setIsHomeownerArchiveOpen(false)} />
+    if (isHomeownerBoqOpen) return <HomeownerBoqWorkspace onBack={() => setIsHomeownerBoqOpen(false)} />
+    if (isHomeownerTimelineOpen) return <HomeownerTimelineWorkspace onBack={() => setIsHomeownerTimelineOpen(false)} />
+    if (isHomeownerSiteDiaryOpen) return <HomeownerSiteDiaryWorkspace onBack={() => setIsHomeownerSiteDiaryOpen(false)} />
 
     return (
     <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
@@ -3321,6 +3317,17 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           </div>
         </div>
             </section>
+          ) : null}
+          {homeTab === 'project' ? (
+            <HomeownerProjectPortal
+              onOpenSow={() => setIsHomeownerSowOpen(true)}
+              onOpenFinance={() => setIsHomeownerFinanceOpen(true)}
+              onOpenApprovals={() => setIsHomeownerTasksOpen(true)}
+              onOpenArchive={() => setIsHomeownerArchiveOpen(true)}
+              onOpenBoq={() => setIsHomeownerBoqOpen(true)}
+              onOpenTimeline={() => setIsHomeownerTimelineOpen(true)}
+              onOpenSiteDiary={() => setIsHomeownerSiteDiaryOpen(true)}
+            />
           ) : null}
           {homeTab === 'explore' ? renderExplorePage() : null}
           {homeTab === 'post' ? renderPostPage() : null}
@@ -3522,6 +3529,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
 function App() {
   const [activeFlow, setActiveFlow] = useState(() => localStorage.getItem(FLOW_STORAGE_KEY))
+  const { actions } = useSharedProject()
 
   const handleSelectFlow = (flow) => {
     localStorage.setItem(FLOW_STORAGE_KEY, flow)
@@ -3535,7 +3543,7 @@ function App() {
 
   if (activeFlow === 'homeowner') return <HomeownerFlow activeFlow={activeFlow} onSelectFlow={handleSelectFlow} />
   if (activeFlow === 'professional') return <ProfessionalHome onOpenFlowSwitcher={handleResetFlow} />
-  return <FlowSelection onSelectFlow={handleSelectFlow} />
+  return <FlowSelection onSelectFlow={handleSelectFlow} onResetToEmpty={actions.resetToEmpty} onResetDemo={actions.resetDemo} />
 }
 
 export default App

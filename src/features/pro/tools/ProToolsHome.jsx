@@ -1,8 +1,41 @@
+import { Eye } from '@phosphor-icons/react'
 import { featureInteractionMap } from '../../collaboration/featureInteractionMap'
+import { useSharedProject } from '../../collaboration/mockProjectStore'
+import ToolModuleCard from '../../shared/ToolModuleCard'
 
 function ProToolsHome({ tools }) {
+  const { activeViewer, activeViewerRoleId, roleTemplates, actions } = useSharedProject('p-1')
+
   return (
     <section className="px-4 py-6">
+      <section className="pb-6">
+        <div className="rounded-[24px] border border-[#e1e1e1] bg-white p-4">
+          <div className="flex items-start gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] text-black">
+              <Eye size={18} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="type-label uppercase text-[#5f7467]">Demo view as</p>
+              <p className="type-card-title mt-1 text-black">{activeViewer?.role?.label || 'Principal Pro'}</p>
+              <p className="type-meta mt-1 text-[#5f7467]">Global prototype switcher so you never get stuck inside restricted screens.</p>
+            </div>
+          </div>
+
+          <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
+            {roleTemplates.map((role) => (
+              <button
+                key={role.id}
+                type="button"
+                onClick={() => actions.setActiveViewerRole(role.id)}
+                className={`type-caption shrink-0 rounded-full border px-3 py-2 uppercase ${activeViewerRoleId === role.id ? 'border-black bg-black text-white' : 'border-[#dbe6df] bg-white text-[#5f7467]'}`}
+              >
+                {role.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="pb-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="type-section-title text-black">Active modules</h2>
@@ -11,20 +44,14 @@ function ProToolsHome({ tools }) {
 
         <div className="grid grid-cols-2 gap-3">
           {tools.map((tool) => {
-            const Icon = tool.icon
             return (
-              <article key={tool.title} className="rounded-2xl border border-[#e1e1e1] bg-[#fbfbfb] p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-10 place-items-center rounded-xl border border-[#e2e2e2] bg-white text-black">
-                    <Icon size={18} weight="regular" />
-                  </span>
-                  <span className="type-caption rounded-full bg-white px-2 py-1 uppercase text-[#888888]">
-                    {tool.title === 'Moodboard' || tool.title === 'BOQs' ? 'Assist' : 'Workspace'}
-                  </span>
-                </div>
-                <p className="type-card-title mt-4 text-black">{tool.title}</p>
-                <p className="type-meta mt-1 text-[#808080]">{tool.subtitle}</p>
-              </article>
+              <ToolModuleCard
+                key={tool.title}
+                icon={tool.icon}
+                title={tool.title}
+                subtitle={tool.subtitle}
+                badge={tool.title === 'Moodboard' || tool.title === 'BOQs' ? 'Assist' : 'Workspace'}
+              />
             )
           })}
         </div>

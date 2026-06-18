@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Timeline — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#6A8A9A;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#1a3a4a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-r{background:var(--redl);color:var(--red);border:1px solid #F5C6C6;border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--orl);color:var(--or);}
+.pr{background:var(--redl);color:var(--red);}
+.pgr{background:#F0F0F0;color:#666;}
+.pb{background:var(--bluel);color:var(--blue);}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+textarea.fi{resize:none;}
+.fi-row{display:flex;gap:8px;}
+
+/* Overall progress */
+.proj-bar{background:var(--g);border-radius:14px;padding:16px;margin-bottom:14px;}
+.pb-label{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:3px;}
+.pb-dates{font-size:13px;font-weight:700;color:#fff;margin-bottom:10px;}
+.pb-track{height:7px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;margin-bottom:6px;}
+.pb-fill{height:100%;border-radius:4px;background:#fff;}
+.pb-stats{display:flex;justify-content:space-between;}
+.pb-stat{font-size:10px;color:rgba(255,255,255,.8);}
+.pb-stat strong{color:#fff;}
+
+/* Phase cards */
+.phase-card{border-radius:13px;margin-bottom:8px;overflow:hidden;border:1px solid var(--bor);transition:border-color .2s;}
+.phase-card.active{border-color:var(--or);border-width:1.5px;}
+.phase-card.done-p{border-color:var(--bor);}
+.phase-card.delayed{border-color:var(--red);border-width:1.5px;}
+.phase-card.upcoming{border-color:var(--bor);}
+
+.phase-head{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;}
+.phase-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.pd-done{background:var(--g);}
+.pd-active{background:var(--or);}
+.pd-delayed{background:var(--red);}
+.pd-upcoming{background:var(--bor);}
+.phase-info{flex:1;}
+.phase-name{font-size:12px;font-weight:700;color:var(--txt);}
+.phase-dates{font-size:9px;color:var(--lgt);margin-top:2px;}
+.phase-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;flex-shrink:0;}
+.ps-done{background:var(--gl);color:var(--g);}
+.ps-active{background:var(--orl);color:var(--or);}
+.ps-delayed{background:var(--redl);color:var(--red);}
+.ps-upcoming{background:#F0F0F0;color:#666;}
+
+/* Phase expanded body */
+.phase-body{padding:0 14px 12px;background:#fff;display:none;}
+.phase-body.open{display:block;}
+.phase-detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--borl);}
+.phase-detail-row:last-child{border-bottom:none;}
+.pd-l{font-size:10px;color:var(--mut);font-weight:600;}
+.pd-v{font-size:10px;color:var(--txt);font-weight:500;text-align:right;flex:1;margin-left:8px;}
+.pd-v.edit{border:1.5px solid var(--g3);border-radius:6px;padding:3px 7px;background:#fff;}
+.phase-pbar{height:5px;background:var(--borl);border-radius:3px;margin:8px 0 4px;}
+.phase-pfill{height:100%;border-radius:3px;}
+
+/* Phase actions */
+.phase-actions{display:flex;gap:6px;margin-top:10px;}
+.pa-done{flex:2;background:var(--g);color:#fff;border:none;border-radius:9px;padding:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+.pa-delay{flex:1;background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:9px;padding:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+.pa-edit{flex:1;background:var(--gp);color:var(--mut);border:none;border-radius:9px;padding:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+/* Delay panel */
+.delay-panel{background:#FEF8F4;border-top:1px solid #F5D5B8;padding:12px 14px;display:none;}
+.delay-panel.open{display:block;}
+.delay-opts{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0 9px;}
+.delay-opt{font-size:10px;font-weight:600;padding:6px 12px;border-radius:8px;border:1px solid #F5D5B8;color:var(--or);background:#fff;cursor:pointer;}
+.delay-opt.sel{background:var(--or);color:#fff;border-color:var(--or);}
+.delay-reasons{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.delay-reason{font-size:9px;font-weight:600;padding:4px 9px;border-radius:8px;border:1px solid var(--bor);color:var(--mut);background:#fff;cursor:pointer;}
+.delay-reason.sel{background:var(--txt);color:#fff;border-color:var(--txt);}
+
+/* Ripple suggestion */
+.ripple-card{background:var(--amberl);border:1px solid #F5D5B8;border-radius:10px;padding:11px 13px;margin-top:9px;}
+.rp-title{font-size:10px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+.rp-item{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(245,213,184,.5);}
+.rp-item:last-child{border-bottom:none;}
+.rp-phase{font-size:10px;color:var(--txt);}
+.rp-change{font-size:10px;font-weight:700;color:var(--or);}
+
+/* Template picker */
+.tmpl-card{border:1.5px solid var(--bor);border-radius:13px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.tmpl-card.sel{border-color:var(--g);background:var(--gp);}
+.tc-icon{font-size:28px;margin-bottom:7px;}
+.tc-name{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:3px;}
+.tc-sub{font-size:10px;color:var(--lgt);margin-bottom:9px;}
+.tc-phases{display:flex;gap:4px;flex-wrap:wrap;}
+.tc-phase{font-size:9px;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--gl);color:var(--g);}
+
+/* Add phase */
+.add-phase-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--bor);border-radius:11px;cursor:pointer;margin-bottom:8px;}
+.ap-ic{width:20px;height:20px;border-radius:6px;background:var(--gl);color:var(--g);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.ap-tx{font-size:11px;color:var(--lgt);}
+
+/* Client timeline */
+.cl-header{background:linear-gradient(135deg,#2D6A4F 0%,#1a3d7a 100%);padding:20px 16px 16px;flex-shrink:0;}
+.clh-t{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-b{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Client phase row */
+.c-phase-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--borl);position:relative;}
+.c-phase-row:last-child{border-bottom:none;}
+.c-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.c-line{position:absolute;left:6px;top:25px;width:2px;height:calc(100% - 4px);background:var(--borl);z-index:0;}
+.c-phase-row:last-child .c-line{display:none;}
+.c-dot.done{background:var(--g);}
+.c-dot.active{background:var(--or);}
+.c-dot.delayed{background:var(--red);}
+.c-dot.upcoming{background:var(--bor);}
+.c-phase-info{flex:1;}
+.c-phase-name{font-size:12px;font-weight:700;color:var(--txt);}
+.c-phase-dates{font-size:9px;color:var(--lgt);margin-top:2px;}
+.c-phase-note{font-size:9px;color:var(--or);margin-top:2px;font-weight:600;}
+
+/* Delay notification (client) */
+.delay-notif{background:var(--redl);border:1px solid #F5C6C6;border-radius:11px;padding:11px 13px;margin-bottom:12px;}
+.dn-title{font-size:11px;font-weight:700;color:var(--red);margin-bottom:5px;}
+.dn-text{font-size:10px;color:var(--txt);line-height:1.6;}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Template Picker -->
+      <div class="scr active" id="d-template">
+        <div class="topbar"><button class="bb">←</button><div class="tbt">Setup Timeline</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">📅</div><div class="ict">Start from a pre-built template. Edit, reorder or add phases anytime.</div></div>
+          <div class="sh"><div class="sht">Choose Template</div></div>
+
+          <div class="tmpl-card sel" id="tmpl-res" onclick="selectTmpl('res')">
+            <div class="tc-icon">🏠</div>
+            <div class="tc-name">Residential</div>
+            <div class="tc-sub">Apartments, villas, home interiors</div>
+            <div class="tc-phases">
+              <span class="tc-phase">Kickoff</span>
+              <span class="tc-phase">Design</span>
+              <span class="tc-phase">Civil</span>
+              <span class="tc-phase">Carpentry</span>
+              <span class="tc-phase">Painting</span>
+              <span class="tc-phase">Handover</span>
+            </div>
+          </div>
+
+          <div class="tmpl-card" id="tmpl-com" onclick="selectTmpl('com')">
+            <div class="tc-icon">🏢</div>
+            <div class="tc-name">Commercial</div>
+            <div class="tc-sub">Offices, retail, hospitality fit-outs</div>
+            <div class="tc-phases">
+              <span class="tc-phase">Kickoff</span>
+              <span class="tc-phase">Concept</span>
+              <span class="tc-phase">MEP & Civil</span>
+              <span class="tc-phase">Fit-out</span>
+              <span class="tc-phase">Finishing</span>
+              <span class="tc-phase">Snagging</span>
+            </div>
+          </div>
+
+          <div class="tmpl-card" id="tmpl-blank" onclick="selectTmpl('blank')">
+            <div class="tc-icon">📋</div>
+            <div class="tc-name">Custom / Blank</div>
+            <div class="tc-sub">Start from scratch, add your own phases</div>
+          </div>
+
+          <button class="btn-p" style="margin-top:4px;" onclick="dSS('d-timeline')">Use Residential Template →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Main Timeline -->
+      <div class="scr" id="d-timeline">
+        <div class="topbar">
+          <button class="bb" onclick="dSS('d-template')">←</button>
+          <div class="tbt">Timeline</div>
+          <div style="display:flex;gap:5px;">
+            <button class="ib" onclick="dToast('Shared with client!')" title="Share">Share</button>
+            <button class="ib" onclick="dSS('d-add-phase')" style="background:var(--g);color:#fff;">+</button>
+          </div>
+        </div>
+        <div class="sc">
+
+          <!-- Project progress bar -->
+          <div class="proj-bar">
+            <div class="pb-label">Sharma 3BHK · Jun 2025 → Jan 2026</div>
+            <div class="pb-dates">7 months · 3 of 6 phases done</div>
+            <div class="pb-track"><div class="pb-fill" id="main-fill" style="width:50%;"></div></div>
+            <div class="pb-stats">
+              <div class="pb-stat">Started <strong>1 Jun</strong></div>
+              <div class="pb-stat"><strong>50%</strong> complete</div>
+              <div class="pb-stat">Handover <strong>Jan 2026</strong></div>
+            </div>
+          </div>
+
+          <!-- Phase 1 — Done -->
+          <div class="phase-card done-p">
+            <div class="phase-head" onclick="togglePhase('p1','pb1')">
+              <div class="phase-dot pd-done">✓</div>
+              <div class="phase-info">
+                <div class="phase-name">Kickoff & Site Visit</div>
+                <div class="phase-dates">1 Jun – 7 Jun 2025 · 1 week</div>
+              </div>
+              <div class="phase-status ps-done">Done</div>
+            </div>
+            <div class="phase-body" id="pb1">
+              <div class="phase-detail-row"><div class="pd-l">Completed</div><div class="pd-v">7 Jun 2025</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Assigned</div><div class="pd-v">Riya Desai</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">Site measured. Photos taken. Brief confirmed with Priya.</div></div>
+            </div>
+          </div>
+
+          <!-- Phase 2 — Done -->
+          <div class="phase-card done-p">
+            <div class="phase-head" onclick="togglePhase('p2','pb2')">
+              <div class="phase-dot pd-done">✓</div>
+              <div class="phase-info">
+                <div class="phase-name">Design & Approvals</div>
+                <div class="phase-dates">8 Jun – 30 Jun 2025 · 3 weeks</div>
+              </div>
+              <div class="phase-status ps-done">Done</div>
+            </div>
+            <div class="phase-body" id="pb2">
+              <div class="phase-detail-row"><div class="pd-l">Completed</div><div class="pd-v">28 Jun 2025</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Assigned</div><div class="pd-v">Riya Desai, Sneha Malhotra</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">All layouts approved. BOQ finalised. SOW signed.</div></div>
+            </div>
+          </div>
+
+          <!-- Phase 3 — Active -->
+          <div class="phase-card active" id="phase-3-card">
+            <div class="phase-head" onclick="togglePhase('p3','pb3')">
+              <div class="phase-dot pd-active" id="p3-dot">→</div>
+              <div class="phase-info">
+                <div class="phase-name">Civil & False Ceiling</div>
+                <div class="phase-dates" id="p3-dates">1 Jul – 31 Aug 2025 · 8 weeks</div>
+              </div>
+              <div class="phase-status ps-active" id="p3-status">In Progress</div>
+            </div>
+            <div class="phase-body open" id="pb3">
+              <div class="phase-detail-row"><div class="pd-l">Progress</div><div class="pd-v">60%</div></div>
+              <div class="phase-pbar"><div class="phase-pfill" style="width:60%;background:var(--or);"></div></div>
+              <div class="phase-detail-row"><div class="pd-l">Assigned</div><div class="pd-v">Arjun Kumar</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Tasks</div><div class="pd-v" style="color:var(--g);cursor:pointer;" onclick="dToast('Opening Tasks…')">4 open · 2 done →</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">False ceiling LR done. Bedrooms pending. Kitchen in progress.</div></div>
+              <div class="phase-actions" id="p3-actions">
+                <button class="pa-done" onclick="markPhaseDone()">✓ Mark Done</button>
+                <button class="pa-delay" onclick="toggleDelay('p3-delay')">Delay?</button>
+                <button class="pa-edit" onclick="dSS('d-edit-phase')">✎</button>
+              </div>
+            </div>
+            <!-- Delay panel -->
+            <div class="delay-panel" id="p3-delay">
+              <div style="font-size:11px;font-weight:700;color:var(--or);margin-bottom:7px;">How long is this phase delayed?</div>
+              <div class="delay-opts">
+                <div class="delay-opt" onclick="setDelay(this,'1W')">1 week</div>
+                <div class="delay-opt" onclick="setDelay(this,'2W')">2 weeks</div>
+                <div class="delay-opt" onclick="setDelay(this,'1M')">1 month</div>
+                <div class="delay-opt" onclick="setDelay(this,'?')">Not sure</div>
+              </div>
+              <div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:5px;">Reason</div>
+              <div class="delay-reasons">
+                <div class="delay-reason" onclick="setReason(this)">Material delay</div>
+                <div class="delay-reason" onclick="setReason(this)">Labour issue</div>
+                <div class="delay-reason" onclick="setReason(this)">Client approval pending</div>
+                <div class="delay-reason" onclick="setReason(this)">Site issue</div>
+              </div>
+              <!-- Ripple suggestion -->
+              <div class="ripple-card" id="ripple-card" style="display:none;">
+                <div class="rp-title">⚡ Suggested date adjustments</div>
+                <div style="font-size:10px;color:var(--mut);margin-bottom:7px;">Nothing is changed automatically. Adjust manually if needed.</div>
+                <div class="rp-item"><div class="rp-phase">Phase 4 — Modular & Carpentry</div><div class="rp-change">Push by 2 weeks</div></div>
+                <div class="rp-item"><div class="rp-phase">Phase 5 — Painting & Finishing</div><div class="rp-change">Push by 2 weeks</div></div>
+                <div class="rp-item"><div class="rp-phase">Handover</div><div class="rp-change">Jan → Feb 2026</div></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:9px;">
+                <button style="flex:2;background:var(--or);color:#fff;border:none;border-radius:9px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="confirmDelay()">Confirm Delay</button>
+                <button style="flex:1;background:var(--gp);color:var(--mut);border:none;border-radius:9px;padding:9px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;" onclick="toggleDelay('p3-delay')">Cancel</button>
+              </div>
+              <!-- Notify client -->
+              <div style="display:flex;align-items:center;gap:8px;margin-top:9px;padding:8px 10px;background:#fff;border-radius:8px;border:1px solid #F5D5B8;">
+                <div style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--or);cursor:pointer;" id="notif-chk" onclick="toggleNotifChk()"></div>
+                <div style="font-size:10px;color:var(--mut);">Notify Priya about this delay</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 4 — Upcoming -->
+          <div class="phase-card upcoming" id="phase-4-card">
+            <div class="phase-head" onclick="togglePhase('p4','pb4')">
+              <div class="phase-dot pd-upcoming" id="p4-dot"></div>
+              <div class="phase-info">
+                <div class="phase-name">Modular & Carpentry</div>
+                <div class="phase-dates" id="p4-dates">1 Sep – 15 Oct 2025 · 6 weeks</div>
+              </div>
+              <div class="phase-status ps-upcoming" id="p4-status">Upcoming</div>
+            </div>
+            <div class="phase-body" id="pb4">
+              <div class="phase-detail-row"><div class="pd-l">Assigned</div><div class="pd-v">Arjun Kumar, Sneha Malhotra</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">Modular kitchen, all wardrobes, TV unit</div></div>
+              <div class="phase-actions">
+                <button class="pa-done" onclick="dToast('Mark as in progress first!')" style="background:var(--lgt);">✓ Mark Done</button>
+                <button class="pa-edit" onclick="dSS('d-edit-phase')">✎ Edit</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase 5 — Upcoming -->
+          <div class="phase-card upcoming">
+            <div class="phase-head" onclick="togglePhase('p5','pb5')">
+              <div class="phase-dot pd-upcoming"></div>
+              <div class="phase-info">
+                <div class="phase-name">Painting & Finishing</div>
+                <div class="phase-dates">16 Oct – 15 Nov 2025 · 4 weeks</div>
+              </div>
+              <div class="phase-status ps-upcoming">Upcoming</div>
+            </div>
+            <div class="phase-body" id="pb5">
+              <div class="phase-detail-row"><div class="pd-l">Assigned</div><div class="pd-v">TBD</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">2 coats all rooms. Electrical + plumbing finishing.</div></div>
+            </div>
+          </div>
+
+          <!-- Phase 6 — Upcoming -->
+          <div class="phase-card upcoming">
+            <div class="phase-head" onclick="togglePhase('p6','pb6')">
+              <div class="phase-dot pd-upcoming"></div>
+              <div class="phase-info">
+                <div class="phase-name">Handover</div>
+                <div class="phase-dates">16 Nov – Jan 2026 · 6 weeks</div>
+              </div>
+              <div class="phase-status ps-upcoming">Upcoming</div>
+            </div>
+            <div class="phase-body" id="pb6">
+              <div class="phase-detail-row"><div class="pd-l">Target</div><div class="pd-v">January 2026</div></div>
+              <div class="phase-detail-row"><div class="pd-l">Notes</div><div class="pd-v">Snagging, touch-ups, final walkthrough with client.</div></div>
+            </div>
+          </div>
+
+          <!-- Add phase -->
+          <div class="add-phase-row" onclick="dSS('d-add-phase')">
+            <div class="ap-ic">+</div>
+            <div class="ap-tx">Add custom phase</div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+        <div class="bot-bar">
+          <button class="btn-p" onclick="dToast('Shared with Priya!')">Share with client →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN: Edit Phase -->
+      <div class="scr" id="d-edit-phase">
+        <div class="topbar"><button class="bb" onclick="dSS('d-timeline')">←</button><div class="tbt">Edit Phase</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Phase name</label><input class="fi" value="Civil & False Ceiling"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Start date</label><input class="fi" type="date" value="2025-07-01"/></div>
+            <div class="fg" style="flex:1;"><label class="fl">End date</label><input class="fi" type="date" value="2025-08-31"/></div>
+          </div>
+          <div class="fg"><label class="fl">Assigned to</label>
+            <select class="fi"><option>Arjun Kumar</option><option>Riya Desai</option><option>Sneha Malhotra</option><option>Multiple members</option></select>
+          </div>
+          <div class="fg"><label class="fl">Progress %</label>
+            <input class="fi" type="range" min="0" max="100" value="60" oninput="document.getElementById('prog-val').textContent=this.value+'%'"/>
+            <div style="font-size:11px;font-weight:700;color:var(--g);margin-top:4px;" id="prog-val">60%</div>
+          </div>
+          <div class="fg"><label class="fl">Notes</label><textarea class="fi" rows="3">False ceiling LR done. Bedrooms pending. Kitchen in progress.</textarea></div>
+          <button class="btn-p" onclick="dToast('Phase updated ✓');dSS('d-timeline')">Save Changes</button>
+          <div class="br"><button class="btn-r" onclick="dToast('Phase deleted');dSS('d-timeline')">Delete Phase</button></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Phase -->
+      <div class="scr" id="d-add-phase">
+        <div class="topbar"><button class="bb" onclick="dSS('d-timeline')">←</button><div class="tbt">Add Phase</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <!-- Quick add from checklist -->
+          <div class="sh"><div class="sht">Quick add</div></div>
+          <div style="font-size:10px;color:var(--lgt);margin-bottom:10px;">Tap to add to your timeline</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+            <div class="delay-opt" onclick="dToast('Snag & Rectification added!')">Snag & Rectification</div>
+            <div class="delay-opt" onclick="dToast('Soft furnishing added!')">Soft Furnishing</div>
+            <div class="delay-opt" onclick="dToast('Home automation added!')">Home Automation</div>
+            <div class="delay-opt" onclick="dToast('Landscaping added!')">Landscaping</div>
+            <div class="delay-opt" onclick="dToast('AV & Electrical added!')">AV & Electrical</div>
+            <div class="delay-opt" onclick="dToast('Client walkthrough added!')">Client Walkthrough</div>
+          </div>
+          <div class="dv"></div>
+          <div class="sh"><div class="sht">Custom phase</div></div>
+          <div class="fg"><label class="fl">Phase name</label><input class="fi" placeholder="e.g. Soft Furnishing & Decor"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Start date</label><input class="fi" type="date"/></div>
+            <div class="fg" style="flex:1;"><label class="fl">End date</label><input class="fi" type="date"/></div>
+          </div>
+          <div class="fg"><label class="fl">Assigned to</label><select class="fi"><option>Riya Desai</option><option>Arjun Kumar</option><option>Sneha Malhotra</option></select></div>
+          <div class="fg"><label class="fl">Notes</label><textarea class="fi" rows="2" placeholder="Optional…"></textarea></div>
+          <button class="btn-p" onclick="dToast('Phase added ✓');dSS('d-timeline')">Add Phase</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client Timeline -->
+      <div class="scr active" id="c-timeline">
+        <div class="cl-header">
+          <div class="clh-t">Project Timeline</div>
+          <div class="clh-s">Sharma 3BHK · Riya Desai</div>
+          <div class="clh-b"><span class="clh-badge">3 of 6 done</span><span class="clh-badge">Jan 2026 handover</span></div>
+        </div>
+        <div class="sc">
+          <!-- Overall progress -->
+          <div style="background:var(--gl);border-radius:12px;padding:13px 14px;margin-bottom:13px;border:1px solid var(--bor);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:11px;color:var(--mut);">Overall progress</span>
+              <span style="font-size:12px;font-weight:700;color:var(--g);">50%</span>
+            </div>
+            <div style="height:8px;background:var(--borl);border-radius:4px;overflow:hidden;margin-bottom:6px;"><div style="width:50%;height:100%;background:var(--g3);border-radius:4px;"></div></div>
+            <div style="display:flex;justify-content:space-between;">
+              <span style="font-size:10px;color:var(--lgt);">Started Jun 2025</span>
+              <span style="font-size:10px;color:var(--lgt);">Handover Jan 2026</span>
+            </div>
+          </div>
+
+          <!-- Delay notification -->
+          <div class="delay-notif" id="c-delay-notif" style="display:none;">
+            <div class="dn-title">⚠ Phase Delay Update</div>
+            <div class="dn-text">Civil & False Ceiling phase has been delayed by 2 weeks due to material delay. Revised completion: mid-September 2025.<br/><br/>Riya will keep you updated on subsequent phases.</div>
+          </div>
+
+          <!-- Phase list -->
+          <div style="border:1px solid var(--bor);border-radius:12px;padding:12px 14px;overflow:hidden;">
+            <div class="c-phase-row">
+              <div class="c-line"></div>
+              <div class="c-dot done"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Kickoff & Site Visit</div>
+                <div class="c-phase-dates">1 Jun – 7 Jun 2025</div>
+              </div>
+              <span class="pill pp">✓ Done</span>
+            </div>
+            <div class="c-phase-row">
+              <div class="c-line"></div>
+              <div class="c-dot done"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Design & Approvals</div>
+                <div class="c-phase-dates">8 Jun – 30 Jun 2025</div>
+              </div>
+              <span class="pill pp">✓ Done</span>
+            </div>
+            <div class="c-phase-row">
+              <div class="c-line"></div>
+              <div class="c-dot done" id="c-p3-dot"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Civil & False Ceiling</div>
+                <div class="c-phase-dates" id="c-p3-dates">1 Jul – 31 Aug 2025</div>
+                <div class="c-phase-note" id="c-p3-note" style="display:none;">⚠ Delayed by 2 weeks</div>
+              </div>
+              <span class="pill po" id="c-p3-status">In Progress</span>
+            </div>
+            <div class="c-phase-row">
+              <div class="c-line"></div>
+              <div class="c-dot upcoming" id="c-p4-dot"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Modular & Carpentry</div>
+                <div class="c-phase-dates" id="c-p4-dates">1 Sep – 15 Oct 2025</div>
+              </div>
+              <span class="pill pgr" id="c-p4-status">Upcoming</span>
+            </div>
+            <div class="c-phase-row">
+              <div class="c-line"></div>
+              <div class="c-dot upcoming"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Painting & Finishing</div>
+                <div class="c-phase-dates">16 Oct – 15 Nov 2025</div>
+              </div>
+              <span class="pill pgr">Upcoming</span>
+            </div>
+            <div class="c-phase-row">
+              <div class="c-dot upcoming"></div>
+              <div class="c-phase-info">
+                <div class="c-phase-name">Handover</div>
+                <div class="c-phase-dates">Jan 2026</div>
+              </div>
+              <span class="pill pgr">Upcoming</span>
+            </div>
+          </div>
+
+          <!-- What's happening now -->
+          <div style="margin-top:13px;border:1.5px solid var(--or);border-radius:12px;padding:12px 14px;background:#FFFAF6;">
+            <div style="font-size:10px;font-weight:700;color:var(--or);margin-bottom:6px;">⚡ Happening now</div>
+            <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:3px;">Civil & False Ceiling</div>
+            <div style="font-size:10px;color:var(--mut);line-height:1.6;">False ceiling completed in living room. Kitchen and bedrooms in progress. Expected to complete by end of August.</div>
+            <div style="margin-top:8px;display:flex;gap:5px;"><span class="pill po">60% complete</span><span style="font-size:10px;color:var(--lgt);padding-top:3px;">Est. completion: 31 Aug</span></div>
+          </div>
+
+          <!-- Simulate delay notification -->
+          <div style="margin-top:12px;">
+            <button class="btn-g" style="font-size:11px;" onclick="cSimulateDelay()">⚡ Simulate: Designer flags delay (demo)</button>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Template select
+function selectTmpl(t){
+  ['res','com','blank'].forEach(x=>document.getElementById('tmpl-'+x)?.classList.remove('sel'));
+  document.getElementById('tmpl-'+t)?.classList.add('sel');
+  const btn=document.querySelector('#d-template .btn-p');
+  const names={res:'Residential',com:'Commercial',blank:'Custom'};
+  if(btn)btn.textContent='Use '+names[t]+' Template →';
+}
+
+// Phase toggles
+function togglePhase(id,bodyId){
+  const body=document.getElementById(bodyId);
+  if(body)body.classList.toggle('open');
+}
+
+// Mark phase done
+let donePhases=2;
+function markPhaseDone(){
+  // Phase 3 → Done
+  document.getElementById('phase-3-card').className='phase-card done-p';
+  document.getElementById('p3-dot').className='phase-dot pd-done';
+  document.getElementById('p3-dot').textContent='✓';
+  document.getElementById('p3-status').className='phase-status ps-done';
+  document.getElementById('p3-status').textContent='Done';
+  document.getElementById('p3-actions').innerHTML='<div style="font-size:10px;color:var(--g);font-weight:600;">✓ Completed — '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</div>';
+
+  // Phase 4 → In Progress
+  document.getElementById('phase-4-card').className='phase-card active';
+  document.getElementById('p4-dot').className='phase-dot pd-active';
+  document.getElementById('p4-dot').textContent='→';
+  document.getElementById('p4-status').className='phase-status ps-active';
+  document.getElementById('p4-status').textContent='In Progress';
+
+  // Update progress
+  donePhases=3;
+  document.getElementById('main-fill').style.width='66%';
+
+  dToast('Phase 3 done ✓ — Phase 4 now active!');
+
+  // Update client side
+  document.getElementById('c-p3-dot').className='c-dot done';
+  document.getElementById('c-p3-status').className='pill pp';
+  document.getElementById('c-p3-status').textContent='✓ Done';
+  document.getElementById('c-p4-dot').className='c-dot active';
+  document.getElementById('c-p4-status').className='pill po';
+  document.getElementById('c-p4-status').textContent='In Progress';
+  cToast('✓ Phase 3 complete! Phase 4 started.');
+}
+
+// Delay
+function toggleDelay(id){document.getElementById(id).classList.toggle('open');}
+let selectedDelay='';
+let selectedReason='';
+function setDelay(el,val){
+  document.querySelectorAll('.delay-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedDelay=val;
+  document.getElementById('ripple-card').style.display=val?'block':'none';
+}
+function setReason(el){
+  document.querySelectorAll('.delay-reason').forEach(r=>r.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedReason=el.textContent;
+}
+function confirmDelay(){
+  if(!selectedDelay){dToast('Please select delay duration first');return;}
+  document.getElementById('phase-3-card').className='phase-card delayed';
+  document.getElementById('p3-dot').className='phase-dot pd-delayed';
+  document.getElementById('p3-dot').textContent='!';
+  document.getElementById('p3-status').className='phase-status ps-delayed';
+  document.getElementById('p3-status').textContent='Delayed '+selectedDelay;
+  document.getElementById('p3-delay').classList.remove('open');
+  dToast('Delay flagged ✓ — '+selectedDelay+(selectedReason?' · '+selectedReason:''));
+  if(document.getElementById('notif-chk').classList.contains('checked')){
+    cSimulateDelay();
+  }
+}
+function toggleNotifChk(){
+  const el=document.getElementById('notif-chk');
+  el.classList.toggle('checked');
+  el.style.background=el.classList.contains('checked')?'var(--or)':'';
+  el.textContent=el.classList.contains('checked')?'✓':'';
+}
+
+// Client simulate delay
+function cSimulateDelay(){
+  document.getElementById('c-delay-notif').style.display='block';
+  document.getElementById('c-p3-dot').className='c-dot delayed';
+  document.getElementById('c-p3-status').className='pill pr';
+  document.getElementById('c-p3-status').textContent='Delayed';
+  document.getElementById('c-p3-note').style.display='block';
+  cToast('⚠ Delay update received from Riya');
+  dToast('Client notified of delay ✓');
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function cToast(msg){showT(msg,1);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2500);
+}
+</script>
+</body>
+</html>

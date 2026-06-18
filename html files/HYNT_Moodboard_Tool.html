@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Moodboard — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#8C7A9C;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#3a2a4a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-ai{background:var(--purl);color:var(--pur);border-radius:11px;padding:11px;font-size:12px;font-weight:700;border:1px solid var(--pur);cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--orl);color:var(--or);}
+.pb{background:var(--bluel);color:var(--blue);}
+.ppu{background:var(--purl);color:var(--pur);}
+.pgr{background:#F0F0F0;color:#666;}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+textarea.fi{resize:none;}
+
+/* Board list */
+.board-card{border:1px solid var(--bor);border-radius:14px;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+.board-card:hover{border-color:var(--g3);}
+.board-card.shared{border-color:var(--g3);}
+.bc-preview{height:120px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;overflow:hidden;}
+.bc-thumb{background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:28px;}
+.bc-thumb:first-child{grid-row:span 2;}
+.bc-info{padding:11px 13px;background:var(--sur);}
+.bc-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:3px;}
+.bc-meta{font-size:10px;color:var(--lgt);}
+.bc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+
+/* Board content — masonry-style */
+.board-grid{columns:2;gap:8px;margin-bottom:12px;}
+.board-item{break-inside:avoid;margin-bottom:8px;border-radius:12px;overflow:hidden;border:1px solid var(--bor);cursor:pointer;position:relative;}
+.board-item.full{columns:unset;width:100%;}
+.board-item.has-comment::after{content:'💬';position:absolute;top:6px;right:6px;font-size:14px;background:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.15);}
+
+/* Image item */
+.bi-img{width:100%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:40px;}
+.bi-img.tall{min-height:140px;}
+.bi-img.short{min-height:80px;}
+.bi-caption{padding:7px 9px;background:#fff;font-size:10px;color:var(--mut);}
+
+/* Product item */
+.bi-product{background:#fff;padding:10px 11px;}
+.bp-img{width:100%;height:70px;background:var(--amberl);display:flex;align-items:center;justify-content:center;font-size:30px;border-radius:8px;margin-bottom:7px;}
+.bp-name{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.bp-brand{font-size:9px;color:var(--lgt);}
+.bp-price{font-size:12px;font-weight:700;color:var(--g);margin-top:4px;}
+.bp-link{font-size:9px;color:var(--blue);margin-top:3px;cursor:pointer;}
+
+/* Colour swatch item */
+.bi-colour{padding:10px 11px;background:#fff;}
+.bc-swatches{display:flex;gap:5px;margin-bottom:8px;}
+.bc-swatch{flex:1;height:40px;border-radius:8px;border:1px solid rgba(0,0,0,.08);}
+.bc-swatch-info{display:flex;gap:5px;flex-wrap:wrap;}
+.bsi{font-size:9px;color:var(--mut);}
+
+/* Text note item */
+.bi-text{padding:11px 12px;background:var(--gp);}
+.bt-label{font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.bt-content{font-size:11px;color:var(--txt);line-height:1.7;}
+
+/* Add item options */
+.add-opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.add-opt{border:1.5px solid var(--bor);border-radius:11px;padding:13px 10px;text-align:center;cursor:pointer;transition:border-color .15s;}
+.add-opt:hover{border-color:var(--g3);}
+.ao-icon{font-size:26px;margin-bottom:6px;}
+.ao-title{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.ao-sub{font-size:9px;color:var(--lgt);}
+
+/* Product link input */
+.product-preview{background:var(--gp);border-radius:10px;padding:11px;margin-top:8px;display:none;}
+.product-preview.show{display:block;}
+.pp-img{width:100%;height:90px;background:var(--amberl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:8px;}
+.pp-name{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.pp-brand{font-size:10px;color:var(--lgt);}
+.pp-price{font-size:13px;font-weight:700;color:var(--g);margin-top:4px;}
+
+/* Colour picker */
+.colour-picker-row{display:flex;gap:8px;margin-bottom:10px;}
+.cp-swatch{width:54px;height:54px;border-radius:10px;border:2px solid var(--bor);flex-shrink:0;cursor:pointer;}
+.cp-info{flex:1;}
+.cp-hex{font-size:12px;font-weight:700;color:var(--txt);font-family:monospace;}
+.cp-name{font-size:10px;color:var(--lgt);margin-top:2px;}
+.colour-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.cp-preset{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:border-color .15s;}
+.cp-preset:hover{border-color:#fff;}
+.cp-preset.sel{border-color:var(--txt);}
+
+/* Comment panel */
+.comment-panel{background:#fff;border-top:1px solid var(--bor);padding:13px;}
+.cp-header{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:9px;}
+.comment-item{display:flex;gap:8px;margin-bottom:10px;}
+.ci-av{width:28px;height:28px;border-radius:8px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ci-body{flex:1;background:var(--gp);border-radius:10px;padding:8px 10px;}
+.ci-name{font-size:9px;font-weight:700;color:var(--mut);margin-bottom:3px;}
+.ci-text{font-size:11px;color:var(--txt);line-height:1.5;}
+.ci-time{font-size:8px;color:var(--lgt);margin-top:3px;}
+.ci-reply{background:var(--gl);border-left:2px solid var(--g3);padding:6px 9px;border-radius:0 8px 8px 0;margin-top:5px;}
+.ci-reply-text{font-size:10px;color:var(--g);line-height:1.5;}
+.comment-input-row{display:flex;gap:7px;align-items:flex-end;margin-top:8px;}
+.comment-in{flex:1;border:1.5px solid var(--bor);border-radius:10px;padding:9px 11px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);}
+.comment-in:focus{border-color:var(--g3);}
+.comment-send{width:36px;height:36px;border-radius:9px;background:var(--g);color:#fff;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* AI Panel */
+.ai-panel{background:var(--purl);border:1px solid var(--pur);border-radius:12px;padding:13px;margin-bottom:12px;display:none;}
+.ai-panel.open{display:block;}
+.ai-result{margin-top:11px;display:none;}
+.ai-result.show{display:block;}
+.ai-palette{display:flex;gap:5px;margin-bottom:10px;}
+.ai-swatch{flex:1;height:36px;border-radius:7px;border:1px solid rgba(0,0,0,.08);}
+.ai-material-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(124,58,237,.1);}
+.ai-material-item:last-child{border-bottom:none;}
+.aim-icon{font-size:15px;flex-shrink:0;}
+.aim-text{font-size:11px;color:var(--txt);}
+
+/* Client view */
+.cl-header{background:linear-gradient(135deg,var(--g) 0%,var(--pur) 100%);padding:20px 16px 16px;flex-shrink:0;}
+.clh-t{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-b{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Client board item */
+.c-board-item{border-radius:12px;overflow:hidden;border:1px solid var(--bor);margin-bottom:9px;cursor:pointer;position:relative;}
+.c-board-item.commented{border-color:var(--pur);}
+.cbi-img{width:100%;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:48px;}
+.cbi-img.tall{min-height:160px;}
+.cbi-img.short{min-height:100px;}
+.cbi-body{padding:10px 12px;background:#fff;}
+.cbi-caption{font-size:11px;font-weight:600;color:var(--txt);margin-bottom:3px;}
+.cbi-note{font-size:10px;color:var(--mut);margin-bottom:8px;}
+.cbi-add-comment{display:flex;align-items:center;gap:6px;padding:7px 9px;background:var(--purl);border-radius:8px;cursor:pointer;}
+.cac-icon{font-size:13px;}
+.cac-text{font-size:10px;font-weight:700;color:var(--pur);}
+.client-comment-input{width:100%;border:1.5px solid var(--pur);border-radius:8px;padding:8px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);margin-top:7px;display:none;}
+.client-comment-submit{background:var(--pur);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;margin-top:6px;display:none;}
+.existing-comment{background:var(--purl);border-radius:8px;padding:8px 10px;margin-top:6px;}
+.ec-label{font-size:9px;font-weight:700;color:var(--pur);margin-bottom:3px;}
+.ec-text{font-size:10px;color:var(--txt);line-height:1.5;}
+.ec-reply{background:#fff;border-radius:6px;padding:6px 8px;margin-top:5px;border-left:2px solid var(--g3);}
+.ec-reply-text{font-size:10px;color:var(--g);}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Board List -->
+      <div class="scr active" id="d-boards">
+        <div class="topbar"><button class="bb">←</button><div class="tbt">Moodboard</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dSS('d-new-board')" style="background:var(--g);color:#fff;">+</button></div></div>
+        <div class="sc">
+          <div style="font-size:11px;color:var(--lgt);margin-bottom:12px;">Sharma 3BHK Renovation · 4 boards</div>
+
+          <!-- Board 1: Concept -->
+          <div class="board-card shared" onclick="dSS('d-board-1')">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#F0EBE0;">🛋️</div>
+              <div class="bc-thumb" style="background:#E8F0E8;">🌿</div>
+              <div class="bc-thumb" style="background:#F5F0E8;">🪵</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Concept — Overall Mood</div>
+              <div class="bc-meta">8 items · Shared with client</div>
+              <div class="bc-foot"><span class="pill pp">● Shared</span><span style="font-size:10px;color:var(--pur);">💬 2 comments</span></div>
+            </div>
+          </div>
+
+          <!-- Board 2: Living Room -->
+          <div class="board-card shared" onclick="dSS('d-board-2')">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#EAE0D5;">🛋️</div>
+              <div class="bc-thumb" style="background:#D5E8D5;">🎨</div>
+              <div class="bc-thumb" style="background:#E8E0D5;">💡</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Living Room — Materials</div>
+              <div class="bc-meta">11 items · Shared with client</div>
+              <div class="bc-foot"><span class="pill pp">● Shared</span><span style="font-size:10px;color:var(--pur);">💬 1 comment</span></div>
+            </div>
+          </div>
+
+          <!-- Board 3: Kitchen -->
+          <div class="board-card" onclick="dSS('d-board-2')">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#F5F0E8;">🍳</div>
+              <div class="bc-thumb" style="background:#E8F0F5;">🔩</div>
+              <div class="bc-thumb" style="background:#F0F5E8;">🪟</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Kitchen — Palette & Handles</div>
+              <div class="bc-meta">6 items · Draft</div>
+              <div class="bc-foot"><span class="pill pgr">● Draft</span></div>
+            </div>
+          </div>
+
+          <!-- Board 4: Master Bedroom -->
+          <div class="board-card" onclick="dSS('d-board-2')">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#EDE0F0;">🛏️</div>
+              <div class="bc-thumb" style="background:#F0EDE8;">🕯️</div>
+              <div class="bc-thumb" style="background:#E8EDF0;">🪞</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Master Bedroom — Mood</div>
+              <div class="bc-meta">5 items · Draft</div>
+              <div class="bc-foot"><span class="pill pgr">● Draft</span></div>
+            </div>
+          </div>
+
+          <!-- Add board -->
+          <div style="border:1.5px dashed var(--bor);border-radius:14px;padding:18px;text-align:center;cursor:pointer;margin-bottom:10px;" onclick="dSS('d-new-board')">
+            <div style="font-size:24px;margin-bottom:6px;">+</div>
+            <div style="font-size:12px;font-weight:700;color:var(--mut);">New Board</div>
+            <div style="font-size:10px;color:var(--lgt);margin-top:2px;">Concept · Room · Material · Palette</div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Board 1 — Concept -->
+      <div class="scr" id="d-board-1">
+        <div class="topbar">
+          <button class="bb" onclick="dSS('d-boards')">←</button>
+          <div class="tbt">Concept — Overall Mood</div>
+          <div style="display:flex;gap:5px;">
+            <button class="ib" onclick="dSS('d-add-item')" style="background:var(--g);color:#fff;">+</button>
+            <button class="ib" onclick="dToast('PDF exporting…')" title="Export">↓</button>
+            <button class="ib" onclick="dToast('Link copied! Share with client.')">Share</button>
+          </div>
+        </div>
+        <div class="sc">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span class="pill pp">● Shared</span>
+            <span style="font-size:10px;color:var(--pur);cursor:pointer;" onclick="dSS('d-comments')">💬 2 unread comments</span>
+          </div>
+
+          <!-- AI panel -->
+          <div class="ai-panel" id="d-ai-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:11px;font-weight:700;color:var(--pur);">✦ AI Mood Suggestion</div>
+              <div style="font-size:10px;color:var(--lgt);cursor:pointer;" onclick="dHideAI()">✕</div>
+            </div>
+            <textarea style="width:100%;border:1.5px solid var(--pur);border-radius:8px;padding:9px;font-size:11px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);background:#fff;" rows="2" id="ai-prompt" placeholder="Describe the style: e.g. Minimal Japandi living room, warm tones, natural wood…"></textarea>
+            <button class="btn-ai" style="margin-top:7px;" onclick="dGenerateMood()">✦ Generate Mood</button>
+            <div class="ai-result" id="ai-result">
+              <div style="font-size:11px;font-weight:700;color:var(--pur);margin:10px 0 6px;">Mood: Warm Japandi</div>
+              <div style="font-size:11px;color:var(--txt);line-height:1.6;margin-bottom:10px;">Clean lines with warmth — natural textures, muted earth tones, layered organic elements. Quiet luxury without clutter.</div>
+              <div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:6px;">Colour Palette</div>
+              <div class="ai-palette">
+                <div class="ai-swatch" style="background:#C8A882;" title="#C8A882"></div>
+                <div class="ai-swatch" style="background:#8A7968;" title="#8A7968"></div>
+                <div class="ai-swatch" style="background:#E8E0D5;" title="#E8E0D5"></div>
+                <div class="ai-swatch" style="background:#4A5240;" title="#4A5240"></div>
+                <div class="ai-swatch" style="background:#F5F0E8;" title="#F5F0E8"></div>
+              </div>
+              <div style="font-size:10px;font-weight:700;color:var(--mut);margin-bottom:7px;">Material Direction</div>
+              <div class="ai-material-item"><div class="aim-icon">🪵</div><div class="aim-text">Teak or ash wood — natural grain, matte finish</div></div>
+              <div class="ai-material-item"><div class="aim-icon">🧵</div><div class="aim-text">Linen or boucle upholstery — cream or oat tones</div></div>
+              <div class="ai-material-item"><div class="aim-icon">🪨</div><div class="aim-text">Matte plaster walls — warm white, no gloss</div></div>
+              <div class="ai-material-item"><div class="aim-icon">🔩</div><div class="aim-text">Brushed brass or matte black metal accents</div></div>
+              <button class="btn-p" style="margin-top:10px;" onclick="dApplyMood()">✓ Add to Board</button>
+            </div>
+          </div>
+
+          <!-- Board items — masonry grid -->
+          <div class="board-grid">
+            <!-- Image item 1 — tall -->
+            <div class="board-item has-comment" onclick="dSS('d-item-comment-1')">
+              <div class="bi-img tall" style="background:#F0EBE0;">🛋️</div>
+              <div class="bi-caption">Minimal sofa — warm linen</div>
+            </div>
+            <!-- Product item -->
+            <div class="board-item" onclick="dToast('Opens product link')">
+              <div class="bi-product">
+                <div class="bp-img">🔩</div>
+                <div class="bp-name">Brushed brass handle</div>
+                <div class="bp-brand">Hafele · Kitchen & Bath</div>
+                <div class="bp-price">₹1,200</div>
+                <div class="bp-link">→ hafele.com</div>
+              </div>
+            </div>
+            <!-- Colour swatch item -->
+            <div class="board-item" onclick="dToast('Colour selected')">
+              <div class="bi-colour">
+                <div class="bc-swatches">
+                  <div class="bc-swatch" style="background:#C8A882;"></div>
+                  <div class="bc-swatch" style="background:#8A7968;"></div>
+                  <div class="bc-swatch" style="background:#E8E0D5;"></div>
+                  <div class="bc-swatch" style="background:#4A5240;"></div>
+                </div>
+                <div class="bc-swatch-info">
+                  <span class="bsi">#C8A882 Warm Sand</span>
+                  <span class="bsi">· #4A5240 Forest</span>
+                </div>
+              </div>
+            </div>
+            <!-- Image item 2 -->
+            <div class="board-item has-comment" onclick="dSS('d-item-comment-1')">
+              <div class="bi-img short" style="background:#E8F0E8;">🌿</div>
+              <div class="bi-caption">Greenery accent</div>
+            </div>
+            <!-- Text note — full width -->
+            <div class="board-item full">
+              <div class="bi-text">
+                <div class="bt-label">Designer Note</div>
+                <div class="bt-content">All walls in matte finish — Asian Paints Royale Shyne in Warm White (N101). No gloss anywhere. Natural textures to do the talking.</div>
+              </div>
+            </div>
+            <!-- Image item 3 -->
+            <div class="board-item">
+              <div class="bi-img tall" style="background:#F5F0E8;">🪵</div>
+              <div class="bi-caption">Teak wood grain reference</div>
+            </div>
+            <!-- Product item 2 -->
+            <div class="board-item" onclick="dToast('Opens product link')">
+              <div class="bi-product">
+                <div class="bp-img" style="background:#F0EDE8;">🛋️</div>
+                <div class="bp-name">Boucle armchair — Oat</div>
+                <div class="bp-brand">Pepperfry · Living</div>
+                <div class="bp-price">₹28,500</div>
+                <div class="bp-link">→ pepperfry.com</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-ai" onclick="dShowAI()">✦ AI Mood Suggestion</button>
+          <div class="br"><button class="btn-o" onclick="dSS('d-add-item')">+ Add Item</button></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Board 2 — Living Room Materials -->
+      <div class="scr" id="d-board-2">
+        <div class="topbar">
+          <button class="bb" onclick="dSS('d-boards')">←</button>
+          <div class="tbt">Living Room — Materials</div>
+          <div style="display:flex;gap:5px;">
+            <button class="ib" onclick="dSS('d-add-item')" style="background:var(--g);color:#fff;">+</button>
+            <button class="ib" onclick="dToast('PDF exporting…')">↓</button>
+            <button class="ib" onclick="dToast('Link copied!')">Share</button>
+          </div>
+        </div>
+        <div class="sc">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span class="pill pp">● Shared</span>
+            <span style="font-size:10px;color:var(--pur);cursor:pointer;" onclick="dSS('d-comments')">💬 1 comment</span>
+          </div>
+          <div class="board-grid">
+            <div class="board-item has-comment" onclick="dSS('d-item-comment-2')">
+              <div class="bi-img tall" style="background:#EAE0D5;">🪨</div>
+              <div class="bi-caption">Italian marble tile 600×600</div>
+            </div>
+            <div class="board-item">
+              <div class="bi-product">
+                <div class="bp-img" style="background:#F0E8D5;">💡</div>
+                <div class="bp-name">Cove light strip — 3000K</div>
+                <div class="bp-brand">Philips Hue</div>
+                <div class="bp-price">₹4,200/m</div>
+                <div class="bp-link">→ philips.com</div>
+              </div>
+            </div>
+            <div class="board-item">
+              <div class="bi-colour">
+                <div class="bc-swatches">
+                  <div class="bc-swatch" style="background:#F5F2EC;"></div>
+                  <div class="bc-swatch" style="background:#C4B8A8;"></div>
+                  <div class="bc-swatch" style="background:#8C7B6A;"></div>
+                </div>
+                <div class="bc-swatch-info"><span class="bsi">Wall palette — 3 tones</span></div>
+              </div>
+            </div>
+            <div class="board-item">
+              <div class="bi-img short" style="background:#D5E8D5;">🎨</div>
+              <div class="bi-caption">Fluted panel detail</div>
+            </div>
+          </div>
+          <div style="height:10px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Item -->
+      <div class="scr" id="d-add-item">
+        <div class="topbar"><button class="bb" onclick="dSS('d-board-1')">←</button><div class="tbt">Add to Board</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="add-opts">
+            <div class="add-opt" onclick="dSS('d-add-image')"><div class="ao-icon">🖼️</div><div class="ao-title">Image</div><div class="ao-sub">Upload or from gallery</div></div>
+            <div class="add-opt" onclick="dSS('d-add-product')"><div class="ao-icon">🛒</div><div class="ao-title">Product Link</div><div class="ao-sub">Paste any URL</div></div>
+            <div class="add-opt" onclick="dSS('d-add-colour')"><div class="ao-icon">🎨</div><div class="ao-title">Colour Swatch</div><div class="ao-sub">Hex or extract from image</div></div>
+            <div class="add-opt" onclick="dSS('d-add-text')"><div class="ao-icon">📝</div><div class="ao-title">Text Note</div><div class="ao-sub">Label or spec note</div></div>
+          </div>
+          <div class="dv"></div>
+          <div class="sh"><div class="sht">Import from</div></div>
+          <div style="display:flex;gap:7px;">
+            <button class="btn-g" style="flex:1;" onclick="dToast('Opening Drive…')">🗂️ Drive</button>
+            <button class="btn-g" style="flex:1;" onclick="dToast('Opening Diary…')">📓 Site Diary</button>
+            <button class="btn-g" style="flex:1;" onclick="dToast('Opening Tasks…')">✅ Approvals</button>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Image -->
+      <div class="scr" id="d-add-image">
+        <div class="topbar"><button class="bb" onclick="dSS('d-add-item')">←</button><div class="tbt">Add Image</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="border:1.5px dashed var(--bor);border-radius:12px;padding:28px;text-align:center;margin-bottom:12px;cursor:pointer;" onclick="dToast('Camera/gallery opened')">
+            <div style="font-size:36px;margin-bottom:8px;">📷</div>
+            <div style="font-size:13px;font-weight:700;color:var(--txt);">Upload image</div>
+            <div style="font-size:10px;color:var(--lgt);margin-top:3px;">Camera · Gallery · Drive</div>
+          </div>
+          <div class="fg"><label class="fl">Caption</label><input class="fi" placeholder="e.g. Boucle armchair reference"/></div>
+          <div class="fg"><label class="fl">Room tag</label><select class="fi"><option>Living Room</option><option>Kitchen</option><option>Master Bedroom</option><option>Kids Room</option><option>All rooms</option></select></div>
+          <div class="fg"><label class="fl">Size on board</label>
+            <div style="display:flex;gap:7px;">
+              <div style="flex:1;border:1.5px solid var(--g);border-radius:9px;padding:9px;text-align:center;cursor:pointer;background:var(--gp);"><div style="font-size:11px;font-weight:700;color:var(--g);">Medium</div><div style="font-size:9px;color:var(--lgt);">Half width</div></div>
+              <div style="flex:1;border:1.5px solid var(--bor);border-radius:9px;padding:9px;text-align:center;cursor:pointer;"><div style="font-size:11px;font-weight:700;">Small</div><div style="font-size:9px;color:var(--lgt);">Quarter</div></div>
+              <div style="flex:1;border:1.5px solid var(--bor);border-radius:9px;padding:9px;text-align:center;cursor:pointer;"><div style="font-size:11px;font-weight:700;">Large</div><div style="font-size:9px;color:var(--lgt);">Full width</div></div>
+            </div>
+          </div>
+          <button class="btn-p" onclick="dToast('Image added to board ✓');dSS('d-board-1')">Add to Board</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Product Link -->
+      <div class="scr" id="d-add-product">
+        <div class="topbar"><button class="bb" onclick="dSS('d-add-item')">←</button><div class="tbt">Add Product Link</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">🛒</div><div class="ict">Paste any product URL — Pepperfry, Amazon, Hafele, Sleek, or any brand website. Hynt auto-fetches the details.</div></div>
+          <div class="fg">
+            <label class="fl">Product URL</label>
+            <input class="fi" id="prod-url" placeholder="https://pepperfry.com/…" oninput="dPreviewProduct(this.value)"/>
+          </div>
+          <div class="product-preview show" id="prod-preview">
+            <div class="pp-img">🛋️</div>
+            <div class="pp-name">Scandi 3-Seat Sofa — Warm Linen</div>
+            <div class="pp-brand">Pepperfry · Living Room</div>
+            <div class="pp-price">₹42,500</div>
+          </div>
+          <div class="fg" style="margin-top:10px;"><label class="fl">Your note</label><input class="fi" placeholder="e.g. Consider this for living room main sofa"/></div>
+          <button class="btn-p" onclick="dToast('Product added to board ✓');dSS('d-board-1')">Add to Board</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Colour -->
+      <div class="scr" id="d-add-colour">
+        <div class="topbar"><button class="bb" onclick="dSS('d-add-item')">←</button><div class="tbt">Add Colour Swatch</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="colour-picker-row">
+            <div class="cp-swatch" id="cp-preview" style="background:#C8A882;"></div>
+            <div class="cp-info">
+              <div class="cp-hex" id="cp-hex">#C8A882</div>
+              <div class="cp-name">Warm Sand</div>
+            </div>
+          </div>
+          <div class="sh"><div class="sht">Presets</div></div>
+          <div class="colour-presets">
+            <div class="cp-preset sel" style="background:#C8A882;" onclick="pickColour(this,'#C8A882')"></div>
+            <div class="cp-preset" style="background:#8A7968;" onclick="pickColour(this,'#8A7968')"></div>
+            <div class="cp-preset" style="background:#4A5240;" onclick="pickColour(this,'#4A5240')"></div>
+            <div class="cp-preset" style="background:#E8E0D5;" onclick="pickColour(this,'#E8E0D5')"></div>
+            <div class="cp-preset" style="background:#F5F0E8;" onclick="pickColour(this,'#F5F0E8')"></div>
+            <div class="cp-preset" style="background:#2D6A4F;" onclick="pickColour(this,'#2D6A4F')"></div>
+            <div class="cp-preset" style="background:#1A1A2E;" onclick="pickColour(this,'#1A1A2E')"></div>
+            <div class="cp-preset" style="background:#C0392B;" onclick="pickColour(this,'#C0392B')"></div>
+            <div class="cp-preset" style="background:#E8C99A;" onclick="pickColour(this,'#E8C99A')"></div>
+            <div class="cp-preset" style="background:#7FB3C8;" onclick="pickColour(this,'#7FB3C8')"></div>
+          </div>
+          <div class="fg"><label class="fl">Hex code</label><input class="fi" id="hex-input" value="#C8A882" oninput="updateColour(this.value)" placeholder="#000000"/></div>
+          <div class="fg"><label class="fl">Colour name (optional)</label><input class="fi" placeholder="e.g. Warm Sand · Asian Paints 7689"/></div>
+          <button class="btn-p" onclick="dToast('Swatch added to board ✓');dSS('d-board-1')">Add Swatch</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Text Note -->
+      <div class="scr" id="d-add-text">
+        <div class="topbar"><button class="bb" onclick="dSS('d-add-item')">←</button><div class="tbt">Add Text Note</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Label / Header (optional)</label><input class="fi" placeholder="e.g. Wall Finish Spec"/></div>
+          <div class="fg"><label class="fl">Note</label><textarea class="fi" rows="4" placeholder="e.g. All walls in matte finish — Asian Paints Royale Shyne Warm White…"></textarea></div>
+          <div class="fg"><label class="fl">Size on board</label>
+            <div style="display:flex;gap:7px;">
+              <div style="flex:1;border:1.5px solid var(--bor);border-radius:9px;padding:9px;text-align:center;cursor:pointer;"><div style="font-size:11px;font-weight:700;">Medium</div></div>
+              <div style="flex:1;border:1.5px solid var(--g);border-radius:9px;padding:9px;text-align:center;cursor:pointer;background:var(--gp);"><div style="font-size:11px;font-weight:700;color:var(--g);">Full width</div></div>
+            </div>
+          </div>
+          <button class="btn-p" onclick="dToast('Note added to board ✓');dSS('d-board-1')">Add Note</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: New Board -->
+      <div class="scr" id="d-new-board">
+        <div class="topbar"><button class="bb" onclick="dSS('d-boards')">←</button><div class="tbt">New Board</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Board Name</label><input class="fi" placeholder="e.g. Living Room — Materials"/></div>
+          <div class="fg"><label class="fl">Room tag (optional)</label><select class="fi"><option>— No tag —</option><option>Living Room</option><option>Kitchen</option><option>Master Bedroom</option><option>Kids Room</option><option>All rooms</option></select></div>
+          <div class="fg">
+            <label class="fl">Start with</label>
+            <div style="display:flex;gap:7px;">
+              <div style="flex:1;border:1.5px solid var(--g);border-radius:10px;padding:11px;text-align:center;cursor:pointer;background:var(--gp);" onclick="dSS('d-board-1')"><div style="font-size:22px;margin-bottom:4px;">📋</div><div style="font-size:11px;font-weight:700;color:var(--g);">Blank board</div></div>
+              <div style="flex:1;border:1.5px solid var(--pur);border-radius:10px;padding:11px;text-align:center;cursor:pointer;background:var(--purl);" onclick="dShowAI();dSS('d-board-1')"><div style="font-size:22px;margin-bottom:4px;">✦</div><div style="font-size:11px;font-weight:700;color:var(--pur);">AI suggest</div></div>
+            </div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Comments view -->
+      <div class="scr" id="d-comments">
+        <div class="topbar"><button class="bb" onclick="dSS('d-board-1')">←</button><div class="tbt">Comments</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="font-size:11px;color:var(--lgt);margin-bottom:12px;">Concept — Overall Mood · 2 comments</div>
+          <!-- Comment 1 -->
+          <div style="border:1px solid var(--bor);border-radius:12px;overflow:hidden;margin-bottom:10px;">
+            <div style="padding:10px 12px;background:var(--gp);display:flex;gap:9px;align-items:flex-start;">
+              <div style="font-size:26px;">🛋️</div>
+              <div style="font-size:10px;color:var(--mut);">Image: Minimal sofa — warm linen</div>
+            </div>
+            <div class="comment-panel">
+              <div class="comment-item">
+                <div class="ci-av" style="background:var(--blue);">PS</div>
+                <div class="ci-body">
+                  <div class="ci-name">Priya Sharma · Client</div>
+                  <div class="ci-text">I love this vibe! Can we get something similar but in a slightly darker fabric? The linen looks too light for our usage.</div>
+                  <div class="ci-time">24 Oct · 11:30 AM</div>
+                  <div class="ci-reply"><div class="ci-reply-text">Designer replied: Good point — I'll look at warm beige or taupe boucle options and update the board.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Comment 2 — unread -->
+          <div style="border:1.5px solid var(--pur);border-radius:12px;overflow:hidden;margin-bottom:10px;">
+            <div style="padding:10px 12px;background:var(--purl);display:flex;gap:9px;align-items:flex-start;">
+              <div style="font-size:26px;">🌿</div>
+              <div style="font-size:10px;color:var(--pur);font-weight:600;">Image: Greenery accent · New comment</div>
+            </div>
+            <div class="comment-panel">
+              <div class="comment-item">
+                <div class="ci-av" style="background:var(--blue);">PS</div>
+                <div class="ci-body">
+                  <div class="ci-name">Priya Sharma · Client</div>
+                  <div class="ci-text">I'm not a fan of indoor plants — we have young kids and some plants can be toxic. Can we use dried pampas grass or similar non-toxic alternatives?</div>
+                  <div class="ci-time">24 Oct · 2:15 PM · Unread</div>
+                </div>
+              </div>
+              <div class="comment-input-row">
+                <textarea class="comment-in" rows="1" placeholder="Reply to Priya…" id="d-reply-in"></textarea>
+                <button class="comment-send" onclick="dReply()">↑</button>
+              </div>
+            </div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Item detail with comment (designer) -->
+      <div class="scr" id="d-item-comment-1">
+        <div class="topbar"><button class="bb" onclick="dSS('d-board-1')">←</button><div class="tbt">Item Detail</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dToast('Item edited!')">✎</button><button class="ib" onclick="dToast('Item removed!')" style="color:var(--red);">🗑</button></div></div>
+        <div class="sc">
+          <div style="width:100%;height:200px;background:#F0EBE0;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:72px;margin-bottom:12px;border:1px solid var(--bor);">🛋️</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:3px;">Minimal sofa — warm linen</div>
+          <div style="font-size:10px;color:var(--lgt);margin-bottom:12px;">Image · Living Room · Medium size</div>
+          <div class="dv"></div>
+          <div class="sh"><div class="sht" style="color:var(--pur);">💬 Comments (1)</div></div>
+          <div class="comment-item">
+            <div class="ci-av" style="background:var(--blue);">PS</div>
+            <div class="ci-body">
+              <div class="ci-name">Priya Sharma · Client</div>
+              <div class="ci-text">I love this vibe! Can we get something similar but in a slightly darker fabric?</div>
+              <div class="ci-time">24 Oct · 11:30 AM</div>
+            </div>
+          </div>
+          <div class="comment-input-row">
+            <textarea class="comment-in" rows="1" placeholder="Reply to Priya…"></textarea>
+            <button class="comment-send" onclick="dToast('Reply sent!')">↑</button>
+          </div>
+          <button class="btn-g" style="margin-top:8px;" onclick="dToast('Comment marked resolved ✓')">✓ Mark resolved</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client board list -->
+      <div class="scr active" id="c-boards">
+        <div class="cl-header">
+          <div class="clh-t">Moodboards</div>
+          <div class="clh-s">Shared by Riya Desai · Sharma 3BHK</div>
+          <div class="clh-b"><span class="clh-badge">2 boards shared</span><span class="clh-badge">3 unread</span></div>
+        </div>
+        <div class="sc">
+          <div class="ic" style="margin-top:2px;"><div class="ici">💬</div><div class="ict">Browse your design boards. Tap any item to leave a comment for Riya.</div></div>
+
+          <div class="board-card shared" onclick="cSS('c-board-1')" style="margin-bottom:10px;">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#F0EBE0;">🛋️</div>
+              <div class="bc-thumb" style="background:#E8F0E8;">🌿</div>
+              <div class="bc-thumb" style="background:#F5F0E8;">🪵</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Concept — Overall Mood</div>
+              <div class="bc-meta">8 items · Shared 24 Oct</div>
+              <div class="bc-foot"><span class="pill pp">● Active</span><span style="font-size:10px;color:var(--pur);">Your 2 comments</span></div>
+            </div>
+          </div>
+
+          <div class="board-card shared" onclick="cSS('c-board-2')">
+            <div class="bc-preview">
+              <div class="bc-thumb" style="background:#EAE0D5;">🪨</div>
+              <div class="bc-thumb" style="background:#D5E8D5;">🎨</div>
+              <div class="bc-thumb" style="background:#E8E0D5;">💡</div>
+            </div>
+            <div class="bc-info">
+              <div class="bc-title">Living Room — Materials</div>
+              <div class="bc-meta">11 items · Shared 22 Oct</div>
+              <div class="bc-foot"><span class="pill pp">● Active</span><span style="font-size:10px;color:var(--pur);">1 unread reply</span></div>
+            </div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client Board 1 — Concept -->
+      <div class="scr" id="c-board-1">
+        <div class="topbar"><button class="bb" onclick="cSS('c-boards')">←</button><div class="tbt">Concept — Overall Mood</div><button class="ib" onclick="cToast('PDF downloading…')">↓</button></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">💬</div><div class="ict">Tap any item to add a comment. Riya will see it immediately.</div></div>
+
+          <!-- Item 1 — sofa — already commented -->
+          <div class="c-board-item commented" onclick="cToggleComment('c1')">
+            <div class="cbi-img tall" style="background:#F0EBE0;">🛋️</div>
+            <div class="cbi-body">
+              <div class="cbi-caption">Minimal sofa — warm linen</div>
+              <div class="existing-comment" id="c1-existing">
+                <div class="ec-label">Your comment</div>
+                <div class="ec-text">I love this! Can we get slightly darker fabric?</div>
+                <div class="ec-reply"><div class="ec-reply-text">Riya: Good point — I'll look at warm beige boucle options ✓</div></div>
+              </div>
+              <div class="cbi-add-comment" id="c1-btn" style="display:none;" onclick="cToggleComment('c1')"><div class="cac-icon">💬</div><div class="cac-text">Add comment</div></div>
+              <textarea class="client-comment-input" id="c1-input" rows="2" placeholder="Comment on this item…"></textarea>
+              <button class="client-comment-submit" id="c1-submit" onclick="cSubmitComment(1)">Send comment →</button>
+            </div>
+          </div>
+
+          <!-- Product item — no comment yet -->
+          <div class="c-board-item" onclick="cToggleComment('c2')">
+            <div style="padding:11px;background:#fff;">
+              <div style="height:70px;background:var(--amberl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:7px;">🔩</div>
+              <div style="font-size:11px;font-weight:700;">Brushed brass handle</div>
+              <div style="font-size:9px;color:var(--lgt);">Hafele · ₹1,200</div>
+              <div class="cbi-add-comment" id="c2-btn" style="margin-top:8px;" onclick="event.stopPropagation();cToggleComment('c2')"><div class="cac-icon">💬</div><div class="cac-text">Add comment</div></div>
+              <textarea class="client-comment-input" id="c2-input" rows="2" placeholder="Comment on this item…"></textarea>
+              <button class="client-comment-submit" id="c2-submit" onclick="cSubmitComment(2)">Send comment →</button>
+            </div>
+          </div>
+
+          <!-- Colour swatches -->
+          <div class="c-board-item" onclick="cToggleComment('c3')">
+            <div style="padding:10px 11px;background:#fff;">
+              <div style="display:flex;gap:5px;margin-bottom:8px;">
+                <div style="flex:1;height:40px;border-radius:8px;background:#C8A882;border:1px solid rgba(0,0,0,.08);"></div>
+                <div style="flex:1;height:40px;border-radius:8px;background:#8A7968;border:1px solid rgba(0,0,0,.08);"></div>
+                <div style="flex:1;height:40px;border-radius:8px;background:#E8E0D5;border:1px solid rgba(0,0,0,.08);"></div>
+                <div style="flex:1;height:40px;border-radius:8px;background:#4A5240;border:1px solid rgba(0,0,0,.08);"></div>
+              </div>
+              <div style="font-size:10px;color:var(--mut);">Colour palette — 4 tones</div>
+              <div class="cbi-add-comment" id="c3-btn" style="margin-top:7px;" onclick="event.stopPropagation();cToggleComment('c3')"><div class="cac-icon">💬</div><div class="cac-text">Add comment</div></div>
+              <textarea class="client-comment-input" id="c3-input" rows="2" placeholder="e.g. I prefer warmer tones…"></textarea>
+              <button class="client-comment-submit" id="c3-submit" onclick="cSubmitComment(3)">Send comment →</button>
+            </div>
+          </div>
+
+          <!-- Greenery — commented, awaiting reply -->
+          <div class="c-board-item commented" onclick="cToggleComment('c4')">
+            <div class="cbi-img short" style="background:#E8F0E8;">🌿</div>
+            <div class="cbi-body">
+              <div class="cbi-caption">Greenery accent</div>
+              <div class="existing-comment" id="c4-existing">
+                <div class="ec-label">Your comment</div>
+                <div class="ec-text">Not a fan of indoor plants — can we use dried pampas grass instead?</div>
+                <div style="font-size:9px;color:var(--amber);margin-top:4px;font-weight:600;">⏳ Awaiting Riya's reply</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text note -->
+          <div class="c-board-item" onclick="cToggleComment('c5')">
+            <div style="padding:11px 12px;background:var(--gp);">
+              <div style="font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Designer Note</div>
+              <div style="font-size:11px;color:var(--txt);line-height:1.7;">All walls in matte finish — Asian Paints Royale Shyne Warm White. Natural textures to do the talking.</div>
+              <div class="cbi-add-comment" id="c5-btn" style="margin-top:8px;" onclick="event.stopPropagation();cToggleComment('c5')"><div class="cac-icon">💬</div><div class="cac-text">Add comment</div></div>
+              <textarea class="client-comment-input" id="c5-input" rows="2" placeholder="Comment on this note…"></textarea>
+              <button class="client-comment-submit" id="c5-submit" onclick="cSubmitComment(5)">Send comment →</button>
+            </div>
+          </div>
+
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Client Board 2 — Materials -->
+      <div class="scr" id="c-board-2">
+        <div class="topbar"><button class="bb" onclick="cSS('c-boards')">←</button><div class="tbt">Living Room — Materials</div><button class="ib" onclick="cToast('PDF downloading…')">↓</button></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">💬</div><div class="ict">Tap any item to add a comment for Riya.</div></div>
+          <div class="c-board-item commented">
+            <div class="cbi-img tall" style="background:#EAE0D5;">🪨</div>
+            <div class="cbi-body">
+              <div class="cbi-caption">Italian marble tile 600×600</div>
+              <div class="existing-comment">
+                <div class="ec-label">Your comment</div>
+                <div class="ec-text">Love the marble! But worried about maintenance with kids — is there a more durable alternative?</div>
+                <div class="ec-reply"><div class="ec-reply-text">Riya: Great point — I'll add a vitrified tile option that looks like marble but is scratch-resistant ✓</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="c-board-item" onclick="cToggleComment('cm2')">
+            <div style="padding:11px;background:#fff;">
+              <div style="height:70px;background:#F0E8D5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:7px;">💡</div>
+              <div style="font-size:11px;font-weight:700;">Cove light strip — 3000K</div>
+              <div style="font-size:9px;color:var(--lgt);">Philips Hue · ₹4,200/m</div>
+              <div class="cbi-add-comment" id="cm2-btn" style="margin-top:8px;"><div class="cac-icon">💬</div><div class="cac-text">Add comment</div></div>
+              <textarea class="client-comment-input" id="cm2-input" rows="2" placeholder="Comment…"></textarea>
+              <button class="client-comment-submit" id="cm2-submit" onclick="cSubmitComment('m2')">Send →</button>
+            </div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// AI panel
+function dShowAI(){document.getElementById('d-ai-panel').classList.add('open');}
+function dHideAI(){document.getElementById('d-ai-panel').classList.remove('open');}
+function dGenerateMood(){
+  const prompt=document.getElementById('ai-prompt').value;
+  dToast('Generating mood…');
+  setTimeout(()=>{document.getElementById('ai-result').classList.add('show');},700);
+}
+function dApplyMood(){
+  dToast('Mood, palette & materials added to board ✓');
+  dHideAI();
+}
+
+// Colour picker
+function pickColour(el,hex){
+  document.querySelectorAll('.cp-preset').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cp-preview').style.background=hex;
+  document.getElementById('cp-hex').textContent=hex;
+  document.getElementById('hex-input').value=hex;
+}
+function updateColour(val){
+  if(val.match(/^#[0-9A-Fa-f]{6}$/)){
+    document.getElementById('cp-preview').style.background=val;
+    document.getElementById('cp-hex').textContent=val;
+  }
+}
+
+// Product preview
+function dPreviewProduct(val){
+  const p=document.getElementById('prod-preview');
+  p.style.display=val.length>5?'block':'none';
+}
+
+// Reply
+function dReply(){
+  const val=document.getElementById('d-reply-in').value.trim();
+  if(!val)return;
+  dToast('Reply sent to Priya ✓');
+  document.getElementById('d-reply-in').value='';
+}
+
+// Client comment toggles
+function cToggleComment(id){
+  const btn=document.getElementById(id+'-btn');
+  const input=document.getElementById(id+'-input');
+  const submit=document.getElementById(id+'-submit');
+  if(!input)return;
+  const open=input.style.display==='block';
+  input.style.display=open?'none':'block';
+  if(submit)submit.style.display=open?'none':'block';
+}
+
+function cSubmitComment(id){
+  const input=document.getElementById('c'+id+'-input');
+  const text=input?input.value.trim():'Great work!';
+  if(!text){cToast('Please write a comment first');return;}
+  cToast('Comment sent to Riya! ✓');
+  dToast('💬 New comment from Priya!');
+  if(input)input.style.display='none';
+  const sub=document.getElementById('c'+id+'-submit');
+  if(sub)sub.style.display='none';
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function cToast(msg){showT(msg,1);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>

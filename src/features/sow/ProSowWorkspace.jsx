@@ -10,10 +10,17 @@ import {
   NotePencil,
   PencilSimpleLine,
   Plus,
+  Sparkle,
   Trash,
 } from '@phosphor-icons/react'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import { sowTemplates } from './sowData'
+import {
+  buildAiGeneratedDocument,
+  getSowAmendmentOptions,
+  sowAiSteps,
+  sowStatusLabels,
+} from './sowFlowUtils'
 
 const templateIcons = {
   House,
@@ -21,35 +28,19 @@ const templateIcons = {
   Pencil: PencilSimpleLine,
 }
 
-const statusLabels = {
-  draft: 'Draft',
-  'client-review': 'With client',
-  remarks: 'Remarks',
-  'revision-ready': 'Revision ready',
-  executed: 'Executed',
+function formatStamp(value) {
+  if (!value) return 'Pending'
+  return new Date(value).toLocaleString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
-function SOWSection({ index, title, open, onToggle, badge, children }) {
+function StickyHeader({ title, subtitle, onBack, actions = null }) {
   return (
-    <article className="overflow-hidden rounded-2xl border border-[#dbe6df] bg-white shadow-[0_10px_26px_rgba(24,40,31,0.04)]">
-      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between pl-3 pr-4 py-3.5 text-left">
-        <span className="flex min-w-0 items-center gap-3">
-          <span className="type-caption grid size-6 shrink-0 place-items-center rounded-lg border border-[#d9e6de] bg-[#f4fbf7] text-[#267449]">{index}</span>
-          <span className="type-card-title truncate text-[#102418]">{title}</span>
-        </span>
-        <span className="flex shrink-0 items-center gap-2">
-          {badge ? <span className="type-caption rounded-full bg-[#e7f5ec] px-2 py-1 uppercase text-[#267449]">{badge}</span> : null}
-          <CaretDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
-        </span>
-      </button>
-      {open ? <div className="border-t border-[#eaeaea] px-4 py-4">{children}</div> : null}
-    </article>
-  )
-}
-
-function StickyHeader({ title, subtitle, onBack, actionLabel, onAction }) {
-  return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#dfe8e2] bg-[rgba(251,255,252,0.88)] backdrop-blur-[16px]">
+    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
       <div className="px-4 py-3">
         <div className="flex items-center justify-between py-1">
           <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
@@ -61,18 +52,30 @@ function StickyHeader({ title, subtitle, onBack, actionLabel, onAction }) {
               <span className="type-caption block truncate text-[#999999]">{subtitle}</span>
             </span>
           </button>
-          {actionLabel ? (
-            <button type="button" onClick={onAction} className="type-label shrink-0 rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
-              {actionLabel}
-            </button>
-          ) : (
-            <button type="button" className="grid size-8 shrink-0 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
-              <FileArrowDown size={15} />
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {actions}
+          </div>
         </div>
       </div>
     </header>
+  )
+}
+
+function SOWSection({ index, title, open, onToggle, badge, children }) {
+  return (
+    <article className="overflow-hidden rounded-[20px] border border-[#dbe6df] bg-white">
+      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-4 py-3 text-left">
+        <span className="flex min-w-0 items-center gap-3">
+          <span className="type-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
+          <span className="type-card-title truncate text-[#102418]">{title}</span>
+        </span>
+        <span className="flex shrink-0 items-center gap-2">
+          {badge ? <span className="type-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
+          <CaretDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+        </span>
+      </button>
+      {open ? <div className="border-t border-[#ececec] px-4 py-4">{children}</div> : null}
+    </article>
   )
 }
 
@@ -83,9 +86,42 @@ function InlineField({ label, value, onChange }) {
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="type-data-value mt-1 w-full rounded-xl border border-transparent bg-[#f7fbf8] px-3 py-2 text-black outline-none focus:border-[#dbe6df]"
+        className="type-data-value mt-1 w-full rounded-[16px] border border-transparent bg-[#f7fbf8] px-3 py-2 text-black outline-none focus:border-[#dbe6df]"
       />
     </label>
+  )
+}
+
+function OtpRow({ digits, setDigits }) {
+  const updateDigit = (index, value) => {
+    const next = value.replace(/\D/g, '').slice(-1)
+    setDigits((current) => current.map((digit, digitIndex) => (digitIndex === index ? next : digit)))
+  }
+
+  return (
+    <div className="grid grid-cols-6 gap-2">
+      {digits.map((digit, index) => (
+        <input
+          key={index}
+          value={digit}
+          inputMode="numeric"
+          maxLength={1}
+          onChange={(event) => updateDigit(index, event.target.value)}
+          className="type-page-title h-12 rounded-[14px] border border-[#dfdfdf] bg-white text-center text-black outline-none focus:border-black"
+        />
+      ))}
+    </div>
+  )
+}
+
+function SignatureCard({ label, name, state, stamp }) {
+  return (
+    <article className="rounded-[18px] border border-[#e2e2e2] bg-white p-3">
+      <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
+      <p className="type-card-title mt-2 text-black">{name}</p>
+      <p className={`type-caption mt-3 ${state === 'Signed' ? 'text-[#267449]' : 'text-[#777777]'}`}>{state}</p>
+      <p className="type-meta mt-1 text-[#8a8a8a]">{stamp}</p>
+    </article>
   )
 }
 
@@ -104,25 +140,30 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     terms: false,
     signatures: true,
   })
+  const [designerOtp, setDesignerOtp] = useState(['', '', '', '', '', ''])
+  const [aiStepIndex, setAiStepIndex] = useState(0)
+  const [aiReply, setAiReply] = useState('')
+  const [aiAnswers, setAiAnswers] = useState({})
+  const [amendmentDraft, setAmendmentDraft] = useState({
+    optionId: 'room-kitchen',
+    newValue: '',
+    reason: '',
+  })
 
   const selectedTemplate = sowTemplates.find((template) => template.id === selectedTemplateId) || sowTemplates[0]
   const document = sow?.document
   const openRemarks = sow?.remarks?.filter((remark) => remark.status === 'open') || []
   const latestResponses = sow?.responses || []
+  const pendingAmendments = sow?.amendments?.filter((amendment) => amendment.status === 'pending') || []
+  const amendmentOptions = document ? getSowAmendmentOptions(document) : []
+  const selectedAmendmentOption = amendmentOptions.find((option) => option.id === amendmentDraft.optionId) || amendmentOptions[0] || null
+  const aiComplete = aiStepIndex >= sowAiSteps.length
+  const aiPreviewDocument = sow ? buildAiGeneratedDocument({ document, project, answers: aiAnswers }) : null
+  const effectiveView = sow?.status === 'executed' && view === 'draft' ? 'executed' : view
 
-  const toggleSection = (key) => {
-    setOpenSections((current) => ({ ...current, [key]: !current[key] }))
-  }
+  const toggleSection = (key) => setOpenSections((current) => ({ ...current, [key]: !current[key] }))
 
-  const updateDocument = (key, value) => {
-    actions.updateSowDocument({ [key]: value })
-  }
-
-  const updateExclusion = (index, value) => {
-    const nextExclusions = [...document.exclusions]
-    nextExclusions[index] = value
-    actions.updateSowDocument({ exclusions: nextExclusions })
-  }
+  const updateDocument = (key, value) => actions.updateSowDocument({ [key]: value })
 
   const updateListItem = (key, index, value) => {
     const nextItems = [...document[key]]
@@ -130,20 +171,37 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     actions.updateSowDocument({ [key]: nextItems })
   }
 
-  const addListItem = (key, value) => {
-    actions.updateSowDocument({ [key]: [...document[key], value] })
-  }
-
   const removeListItem = (key, index) => {
     actions.updateSowDocument({ [key]: document[key].filter((_, itemIndex) => itemIndex !== index) })
   }
 
-  const addExclusion = () => {
-    actions.updateSowDocument({ exclusions: [...document.exclusions, 'New designer-managed exclusion'] })
+  const addListItem = (key, value) => actions.updateSowDocument({ [key]: [...document[key], value] })
+
+  const updateRoom = (roomId, field, value) => {
+    actions.updateSowDocument({
+      rooms: document.rooms.map((room) => (
+        room.id === roomId ? { ...room, [field]: value } : room
+      )),
+    })
   }
 
-  const removeExclusion = (index) => {
-    actions.updateSowDocument({ exclusions: document.exclusions.filter((_, itemIndex) => itemIndex !== index) })
+  const addRoom = () => {
+    actions.updateSowDocument({
+      rooms: [
+        ...document.rooms,
+        {
+          id: `room-${Date.now()}`,
+          name: 'New room',
+          scope: 'Add the room-wise scope here.',
+        },
+      ],
+    })
+  }
+
+  const removeRoom = (roomId) => {
+    actions.updateSowDocument({
+      rooms: document.rooms.filter((room) => room.id !== roomId),
+    })
   }
 
   const createDraft = () => {
@@ -151,9 +209,46 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     setView('draft')
   }
 
+  const openAmendmentComposer = () => {
+    const option = amendmentOptions[0]
+    setAmendmentDraft({
+      optionId: option?.id || '',
+      newValue: option?.currentValue || '',
+      reason: '',
+    })
+    setView('amendment')
+  }
+
+  const setAmendmentOption = (optionId) => {
+    const option = amendmentOptions.find((item) => item.id === optionId)
+    setAmendmentDraft({
+      optionId,
+      newValue: option?.currentValue || '',
+      reason: '',
+    })
+  }
+
+  const submitAmendment = () => {
+    if (!selectedAmendmentOption || !amendmentDraft.newValue.trim() || !amendmentDraft.reason.trim()) return
+    actions.createSowAmendment({
+      sectionKey: selectedAmendmentOption.patch.type === 'room-scope' ? 'rooms' : selectedAmendmentOption.patch.key,
+      sectionTitle: selectedAmendmentOption.sectionTitle,
+      targetId: selectedAmendmentOption.patch.targetId || null,
+      patch: selectedAmendmentOption.patch,
+      oldValue: selectedAmendmentOption.currentValue,
+      newValue: amendmentDraft.newValue,
+      reason: amendmentDraft.reason,
+    })
+    setView('executed')
+  }
+
   const approveRemark = (remark) => {
     if (remark.sectionKey === 'rooms' && remark.targetId) {
-      actions.updateRoomScope(remark.targetId, `${remark.body}`)
+      actions.updateRoomScope(remark.targetId, remark.body)
+    }
+    if (remark.sectionKey === 'budget') {
+      const match = remark.body.match(/(\d+\s?L|\d[\d,]+)/i)
+      if (match) actions.updateSowDocument({ totalValueLabel: match[1].replace(/\s+/g, '') })
     }
     actions.respondToRemark(remark.id, 'approve', 'Accepted. The requested change has been reflected in the revised SOW.')
   }
@@ -162,26 +257,46 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     actions.respondToRemark(remark.id, 'reject', 'Not accepted for this revision. The current scope/value has been retained with a professional note.')
   }
 
+  const submitAiReply = () => {
+    const step = sowAiSteps[aiStepIndex]
+    if (!step || !aiReply.trim()) return
+    setAiAnswers((current) => ({ ...current, [step.id]: aiReply.trim() }))
+    setAiReply('')
+    setAiStepIndex((current) => current + 1)
+  }
+
+  const applyAiDraft = () => {
+    if (!aiPreviewDocument) return
+    actions.applyGeneratedSowDocument(aiPreviewDocument, 'AI generated and applied a refreshed SOW draft')
+    setView('draft')
+  }
+
+  const verifyDesignerOtp = () => {
+    if (designerOtp.some((digit) => !digit)) return
+    actions.signDesigner()
+    setView('draft')
+  }
+
   const renderNoSow = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <StickyHeader title="Scope of Work" subtitle="No SOW yet" onBack={onBack} />
 
       <div className="px-4 py-5">
-        <section className="rounded-2xl border border-[#dbe6df] bg-[linear-gradient(180deg,#f4fbf7_0%,#ffffff_100%)] p-5 text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] text-black">
+        <section className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
           </div>
           <h1 className="type-page-title mt-4 text-black">Create the first SOW</h1>
-          <p className="type-body mt-2 text-[#5f7467]">This project does not have a Scope of Work yet. Start from a template, edit it, then send it to the homeowner flow.</p>
+          <p className="type-body mt-2 text-[#5f7467]">Start from a template, use the AI pass if you want, then send it into the homeowner review flow.</p>
         </section>
 
-        <section className="mt-4 rounded-2xl border border-[#e1e1e1] bg-white p-4">
-          <p className="type-label uppercase text-[#5f7467]">Live demo behavior</p>
-          <p className="type-body mt-2 text-[#5f7467]">Open the homeowner flow in another tab. It will wait here until this SOW is sent.</p>
+        <section className="mt-4 rounded-[20px] border border-[#e1e1e1] bg-white p-4">
+          <p className="type-label uppercase text-[#5f7467]">Shared demo behavior</p>
+          <p className="type-body mt-2 text-[#5f7467]">The homeowner flow will wait for this document and react to remarks, revisions, and signing in real time.</p>
         </section>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <button type="button" onClick={() => setView('template')} className="type-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
           Create SOW
           <ArrowRight size={16} />
@@ -196,9 +311,9 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
       <div className="px-4 py-5">
         <section className="pb-5">
-          <p className="type-caption uppercase text-[#6e907d]">Scope of work</p>
-          <h1 className="type-page-title mt-2 text-black">Start with a template that fits the project.</h1>
-          <p className="type-body mt-2 text-[#6f6f6f]">This creates a real mock SOW in the shared project state.</p>
+          <p className="type-caption uppercase text-[#6e907d]">Template picker</p>
+          <h1 className="type-page-title mt-2 text-black">Choose the structure you want to begin with.</h1>
+          <p className="type-body mt-2 text-[#6f6f6f]">This keeps the shared mock-state flow intact, but starts from the same HTML entry point.</p>
         </section>
 
         <div className="space-y-2">
@@ -210,14 +325,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                 key={template.id}
                 type="button"
                 onClick={() => setSelectedTemplateId(template.id)}
-                className={`w-full rounded-2xl border p-4 text-left ${selected ? 'border-black bg-white' : 'border-[#e1e1e1] bg-[#fbfbfb]'}`}
+                className={`w-full rounded-[22px] border p-4 text-left ${selected ? 'border-black bg-white' : 'border-[#e1e1e1] bg-[#fbfbfb]'}`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-11 place-items-center rounded-xl border border-[#e0e0e0] bg-white text-black">
+                  <span className="grid size-11 place-items-center rounded-[16px] border border-[#e0e0e0] bg-white text-black">
                     <Icon size={20} weight={selected ? 'fill' : 'regular'} />
                   </span>
                   <span className="type-caption rounded-full bg-white px-2 py-1 uppercase text-[#777777]">
-                    {template.id === 'residential' ? 'Homes' : 'Commercial'}
+                    {template.id === 'residential' ? 'Homes' : template.id === 'commercial' ? 'Commercial' : 'Custom'}
                   </span>
                 </div>
                 <p className="type-section-title mt-4 text-black">{template.name}</p>
@@ -235,7 +350,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <button type="button" onClick={createDraft} className="type-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
           Use {selectedTemplate.name} template
           <ArrowRight size={16} />
@@ -246,7 +361,21 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
   const renderDraftScreen = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[148px] pt-[56px]">
-      <StickyHeader title="Scope of Work" subtitle={`Revision ${sow.revision}`} onBack={onBack} actionLabel="Reset" onAction={actions.resetDemo} />
+      <StickyHeader
+        title="Scope of Work"
+        subtitle={`Revision ${sow.revision}`}
+        onBack={onBack}
+        actions={(
+          <>
+            <button type="button" onClick={() => setView('ai')} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black" aria-label="AI generate SOW">
+              <Sparkle size={15} />
+            </button>
+            <button type="button" onClick={actions.resetDemo} className="type-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
+              Reset
+            </button>
+          </>
+        )}
+      />
 
       <div className="px-4 py-5">
         <section className="pb-5">
@@ -255,34 +384,36 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               <p className="type-section-title truncate text-[#102418]">{document.projectName}</p>
               <p className="type-body mt-1 truncate text-[#5f7467]">{document.clientName} | {document.location}</p>
             </div>
-            <span className="type-caption shrink-0 rounded-full bg-[#e7f5ec] px-3 py-1 uppercase text-[#267449]">{statusLabels[sow.status] || 'Draft'}</span>
+            <span className="type-caption shrink-0 rounded-full bg-[#eef7f1] px-3 py-1 uppercase text-[#267449]">{sowStatusLabels[sow.status] || 'Draft'}</span>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2">
-            <div className="flex min-h-[60px] flex-col items-center justify-center rounded-xl border border-[#dce7f3] bg-[#f4f8ff] px-2.5 py-2.5 text-center">
+            <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
               <p className="type-utility text-[#73849d]">Value</p>
-              <p className="type-card-title mt-1 text-[#102418]">INR {document.totalValueLabel}</p>
+              <p className="type-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
             </div>
-            <div className="flex min-h-[60px] flex-col items-center justify-center rounded-xl border border-[#dbe6df] bg-[#f4fbf7] px-2.5 py-2.5 text-center">
+            <div className="rounded-[18px] border border-[#dbe6df] bg-white px-3 py-3">
               <p className="type-utility text-[#73867c]">Duration</p>
-              <p className="type-card-title mt-1 text-[#102418]">{document.durationLabel}</p>
+              <p className="type-card-title mt-2 text-[#102418]">{document.durationLabel}</p>
             </div>
-            <div className="flex min-h-[60px] flex-col items-center justify-center rounded-xl border border-[#efe2c8] bg-[#fff9ef] px-2.5 py-2.5 text-center">
-              <p className="type-utility text-[#987f53]">Remarks</p>
-              <p className="type-card-title mt-1 text-[#102418]">{openRemarks.length}</p>
+            <div className="rounded-[18px] border border-[#efe2c8] bg-white px-3 py-3">
+              <p className="type-utility text-[#987f53]">Open remarks</p>
+              <p className="type-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
             </div>
           </div>
+          {sow.aiGeneratedAt ? (
+            <p className="type-meta mt-3 text-[#5f7467]">Last AI pass: {formatStamp(sow.aiGeneratedAt)}</p>
+          ) : null}
         </section>
 
-        <div className="h-[6px] -mx-4 bg-[#e0e0e0]" />
-
-        <section className="space-y-3 py-5">
+        <div className="space-y-3 py-5">
           <SOWSection index="1" title="Project overview" open={openSections.overview} onToggle={() => toggleSection('overview')}>
             <div className="space-y-3">
               <InlineField label="Project" value={document.projectName} onChange={(value) => updateDocument('projectName', value)} />
               <InlineField label="Client" value={document.clientName} onChange={(value) => updateDocument('clientName', value)} />
               <InlineField label="Location" value={document.location} onChange={(value) => updateDocument('location', value)} />
               <InlineField label="Type" value={document.projectType} onChange={(value) => updateDocument('projectType', value)} />
+              <InlineField label="Start" value={document.startMonth} onChange={(value) => updateDocument('startMonth', value)} />
               <InlineField label="Handover" value={document.handoverMonth} onChange={(value) => updateDocument('handoverMonth', value)} />
             </div>
           </SOWSection>
@@ -290,42 +421,50 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <SOWSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')} badge={openRemarks.some((remark) => remark.sectionKey === 'rooms') ? 'Remark' : undefined}>
             <div className="space-y-3">
               {document.rooms.map((room) => (
-                <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
-                  <p className="type-card-title text-black">{room.name}</p>
+                <article key={room.id} className="rounded-[18px] border border-[#ebebeb] p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <input
+                      value={room.name}
+                      onChange={(event) => updateRoom(room.id, 'name', event.target.value)}
+                      className="type-card-title min-w-0 flex-1 bg-transparent text-black outline-none"
+                    />
+                    <button type="button" onClick={() => removeRoom(room.id)} className="grid size-8 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove room">
+                      <Trash size={15} />
+                    </button>
+                  </div>
                   <textarea
                     value={room.scope}
                     onChange={(event) => actions.updateRoomScope(room.id, event.target.value)}
-                    className="type-body mt-2 min-h-20 w-full rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="type-body mt-3 min-h-20 w-full rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
                 </article>
               ))}
+              <button type="button" onClick={addRoom} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+                <Plus size={15} />
+                Add room
+              </button>
             </div>
           </SOWSection>
 
           <SOWSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')} badge={openRemarks.some((remark) => remark.sectionKey === 'exclusions') ? 'Remark' : undefined}>
             <div className="space-y-3">
-              <div className="rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
+              <div className="rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-3">
                 <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">These define what is intentionally outside the professional scope. Homeowners can remark on them, but the designer owns the final list.</p>
+                <p className="type-body mt-1 text-black">The homeowner can question exclusions, but the pro controls the boundary of scope.</p>
               </div>
               {document.exclusions.map((item, index) => (
                 <div key={`${item}-${index}`} className="flex items-start gap-2">
                   <textarea
                     value={item}
-                    onChange={(event) => updateExclusion(index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    onChange={(event) => updateListItem('exclusions', index, event.target.value)}
+                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeExclusion(index)}
-                    aria-label="Remove exclusion"
-                    className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]"
-                  >
+                  <button type="button" onClick={() => removeListItem('exclusions', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove exclusion">
                     <Trash size={16} />
                   </button>
                 </div>
               ))}
-              <button type="button" onClick={addExclusion} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+              <button type="button" onClick={() => addListItem('exclusions', 'New designer-managed exclusion')} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
                 <Plus size={15} />
                 Add exclusion
               </button>
@@ -334,10 +473,6 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           <SOWSection index="4" title="Timeline" open={openSections.timeline} onToggle={() => toggleSection('timeline')} badge={openRemarks.some((remark) => remark.sectionKey === 'timeline') ? 'Remark' : undefined}>
             <div className="space-y-3">
-              <div className="rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-                <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">Timeline commitments are authored by the professional and reviewed by the homeowner.</p>
-              </div>
               <InlineField label="Start" value={document.startMonth} onChange={(value) => updateDocument('startMonth', value)} />
               <InlineField label="Duration" value={document.durationLabel} onChange={(value) => updateDocument('durationLabel', value)} />
               <InlineField label="Handover" value={document.handoverMonth} onChange={(value) => updateDocument('handoverMonth', value)} />
@@ -346,10 +481,6 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           <SOWSection index="5" title="Budget estimate" open={openSections.budget} onToggle={() => toggleSection('budget')} badge={openRemarks.some((remark) => remark.sectionKey === 'budget') ? 'Remark' : undefined}>
             <div className="space-y-3">
-              <div className="rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-                <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">The homeowner can question the estimate, but only the professional changes the commercial terms.</p>
-              </div>
               <InlineField label="Total value" value={document.totalValueLabel} onChange={(value) => updateDocument('totalValueLabel', value)} />
               <InlineField label="Structure" value={document.paymentStructure} onChange={(value) => updateDocument('paymentStructure', value)} />
               <InlineField label="GST" value={document.gstLabel} onChange={(value) => updateDocument('gstLabel', value)} />
@@ -358,23 +489,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           <SOWSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')} badge={openRemarks.some((remark) => remark.sectionKey === 'payment') ? 'Remark' : undefined}>
             <div className="space-y-3">
-              <div className="rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-                <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">Payment terms are contractual. Homeowner feedback becomes a remark before the designer edits.</p>
-              </div>
               {document.paymentTerms.map((term, index) => (
                 <div key={`${term}-${index}`} className="flex items-start gap-2">
                   <textarea
                     value={term}
                     onChange={(event) => updateListItem('paymentTerms', index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeListItem('paymentTerms', index)}
-                    aria-label="Remove payment term"
-                    className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]"
-                  >
+                  <button type="button" onClick={() => removeListItem('paymentTerms', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove payment term">
                     <Trash size={16} />
                   </button>
                 </div>
@@ -388,23 +510,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           <SOWSection index="7" title="Terms & notes" open={openSections.terms} onToggle={() => toggleSection('terms')} badge={openRemarks.some((remark) => remark.sectionKey === 'terms') ? 'Remark' : undefined}>
             <div className="space-y-3">
-              <div className="rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-                <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">These notes protect execution expectations and are revised by the professional after review.</p>
-              </div>
               {document.termsNotes.map((term, index) => (
                 <div key={`${term}-${index}`} className="flex items-start gap-2">
                   <textarea
                     value={term}
                     onChange={(event) => updateListItem('termsNotes', index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
-                  <button
-                    type="button"
-                    onClick={() => removeListItem('termsNotes', index)}
-                    aria-label="Remove term"
-                    className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]"
-                  >
+                  <button type="button" onClick={() => removeListItem('termsNotes', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove term">
                     <Trash size={16} />
                   </button>
                 </div>
@@ -417,28 +530,18 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           </SOWSection>
 
           <SOWSection index="8" title="Signatures" open={openSections.signatures} onToggle={() => toggleSection('signatures')} badge={openRemarks.some((remark) => remark.sectionKey === 'signatures') ? 'Remark' : undefined}>
-            <div className="mb-3 rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-              <p className="type-caption uppercase text-[#9f8350]">Approval controlled</p>
-              <p className="type-body mt-1 text-black">Signatures are not edited as text. They change through verification, approval, and execution states.</p>
+            <div className="mb-3 rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-3">
+              <p className="type-caption uppercase text-[#9f8350]">OTP verification</p>
+              <p className="type-body mt-1 text-black">Signatures are captured through the OTP step, not by typing into the document.</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {[
-                ['Designer', 'Riya Desai', sow.designerSigned ? 'Signed' : 'Pending'],
-                ['Client', document.clientName, sow.clientSigned ? 'Signed' : 'Waiting'],
-              ].map(([label, name, state]) => (
-                <article key={label} className="flex min-h-[150px] flex-col justify-between rounded-2xl border border-[#e2e2e2] bg-white p-3">
-                  <div>
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="type-card-title mt-2 text-black">{name}</p>
-                  </div>
-                  <span className={`type-caption w-fit rounded-full px-2 py-1 uppercase ${state === 'Signed' ? 'bg-[#eaf9f1] text-[#2a9a64]' : 'bg-[#f2f2f2] text-[#777777]'}`}>{state}</span>
-                </article>
-              ))}
+              <SignatureCard label="Designer" name={project?.designerName || 'Riya Desai'} state={sow.designerSigned ? 'Signed' : 'Tap to sign'} stamp={formatStamp(sow.designerSignedAt)} />
+              <SignatureCard label="Client" name={document.clientName} state={sow.clientSigned ? 'Signed' : 'Awaiting'} stamp={formatStamp(sow.clientSignedAt)} />
             </div>
           </SOWSection>
 
           {activity.length ? (
-            <section className="rounded-2xl border border-[#e1e1e1] bg-[#fbfbfb] p-4">
+            <section className="rounded-[20px] border border-[#e1e1e1] bg-white p-4">
               <p className="type-label uppercase text-[#5f7467]">Project activity</p>
               <div className="mt-3 space-y-2">
                 {activity.slice(0, 4).map((item) => (
@@ -447,95 +550,324 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               </div>
             </section>
           ) : null}
-        </section>
+        </div>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <button
           type="button"
           onClick={() => {
             if (!sow.designerSigned) {
-              actions.signDesigner()
+              setView('otp')
               return
             }
             actions.sendSow()
           }}
           className="type-body-strong h-12 w-full rounded-[18px] bg-black px-4 text-white"
         >
-          {sow.designerSigned ? 'Send to homeowner' : 'Verify & sign designer side'}
+          {sow.designerSigned ? 'Send for review' : 'Verify and sign designer side'}
         </button>
         <div className="mt-2 grid grid-cols-3 gap-2">
           <button type="button" onClick={() => setView('remarks')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Remarks</button>
-          <button type="button" onClick={() => setView('draft')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Save draft</button>
           <button type="button" onClick={() => setView('activity')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Activity</button>
+          <button type="button" onClick={() => setView('ai')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">AI draft</button>
         </div>
       </div>
     </section>
   )
 
-  const renderRemarksScreen = () => (
-    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
-      <StickyHeader title="Client remarks" subtitle={`${openRemarks.length} open`} onBack={() => setView('draft')} />
+  const renderAiScreen = () => {
+    const currentStep = sowAiSteps[aiStepIndex]
+    return (
+      <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+        <StickyHeader title="AI Generate SOW" subtitle="Guided draft builder" onBack={() => setView('draft')} />
 
-      <div className="px-4 py-5">
-        <article className="rounded-2xl border border-[#dbe6df] bg-[#f4fbf7] p-4">
-          <p className="type-section-title text-black">Homeowner feedback</p>
-          <p className="type-body mt-1 text-[#5f7467]">Accepting a remark can update the SOW. Rejecting keeps the current revision and sends a note back.</p>
-        </article>
+        <div className="px-4 py-5">
+          <section className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
+            <p className="type-body text-[#5f7467]">AI already knows the client, location, and base project details. It will confirm the important choices, then build a refined SOW draft in the shared project state.</p>
+          </section>
 
-        <div className="mt-4 space-y-3">
-          {(sow.remarks || []).length ? sow.remarks.map((remark) => {
-            const response = latestResponses.find((item) => item.remarkId === remark.id)
-            return (
-              <article key={remark.id} className="rounded-2xl border border-[#dbe6df] bg-white p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="type-label uppercase text-[#5f7467]">{remark.sectionTitle}</p>
-                    <p className="type-body mt-3 text-black">{remark.body}</p>
+          <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
+            <div className="space-y-4">
+              {sowAiSteps.slice(0, Math.min(aiStepIndex + 1, sowAiSteps.length)).map((step) => (
+                <article key={step.id} className="space-y-2">
+                  <div className="rounded-[16px] border border-[#e8efe9] bg-[#f8fbf9] p-3">
+                    <p className="type-caption uppercase text-[#6f8476]">{step.title}</p>
+                    <p className="type-body mt-2 text-black">{step.prompt}</p>
                   </div>
-                  <span className="type-caption shrink-0 rounded-full bg-[#f2f2f2] px-2 py-1 uppercase text-[#6f6f6f]">{remark.status}</span>
+                  {aiAnswers[step.id] ? (
+                    <div className="rounded-[16px] bg-black px-3 py-3 text-right text-white">
+                      <p className="type-body">{aiAnswers[step.id]}</p>
+                    </div>
+                  ) : null}
+                </article>
+              ))}
+            </div>
+          </section>
+
+          {aiComplete && aiPreviewDocument ? (
+            <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
+              <p className="type-section-title text-black">Generated preview</p>
+              <p className="type-body mt-2 text-[#5f7467]">Kitchen scope, exclusions, billing structure, and notes were refreshed from the guided answers.</p>
+              <div className="mt-4 space-y-3">
+                <div>
+                  <p className="type-label uppercase text-[#5f7467]">Kitchen</p>
+                  <p className="type-body mt-1 text-black">{aiPreviewDocument.rooms.find((room) => room.id === 'kitchen')?.scope || 'No kitchen scope'}</p>
                 </div>
-                {response ? (
-                  <div className="mt-3 rounded-xl border border-[#efe2c8] bg-[#fff9ef] p-3">
-                    <p className="type-caption uppercase text-[#9f8350]">{response.decision === 'approve' ? 'Accepted' : 'Rejected'}</p>
-                    <p className="type-body mt-2 text-black">{response.body}</p>
+                <div>
+                  <p className="type-label uppercase text-[#5f7467]">Payment terms</p>
+                  <div className="mt-1 space-y-1">
+                    {aiPreviewDocument.paymentTerms.slice(0, 4).map((term) => <p key={term} className="type-body text-black">{term}</p>)}
                   </div>
-                ) : (
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <button type="button" onClick={() => approveRemark(remark)} className="type-label h-10 rounded-xl bg-black text-white">Accept</button>
-                    <button type="button" onClick={() => rejectRemark(remark)} className="type-label h-10 rounded-xl border border-[#e0e0e0] bg-white text-black">Reject</button>
-                  </div>
-                )}
-              </article>
-            )
-          }) : (
-            <article className="rounded-2xl border border-[#e1e1e1] bg-white p-4 text-center">
-              <CheckCircle size={24} weight="fill" className="mx-auto text-[#267449]" />
-              <p className="type-card-title mt-3 text-black">No remarks yet</p>
-              <p className="type-body mt-1 text-[#5f7467]">When the homeowner comments in another tab, it will appear here.</p>
-            </article>
+                </div>
+              </div>
+            </section>
+          ) : null}
+        </div>
+
+        <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+          {aiComplete ? (
+            <button type="button" onClick={applyAiDraft} className="type-body-strong h-11 w-full rounded-full bg-black text-white">
+              Apply generated SOW
+            </button>
+          ) : (
+            <>
+              <textarea
+                value={aiReply}
+                onChange={(event) => setAiReply(event.target.value)}
+                placeholder={currentStep?.placeholder}
+                className="type-body min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+              />
+              <button type="button" onClick={submitAiReply} disabled={!aiReply.trim()} className="type-body-strong mt-3 h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+                Send answer
+              </button>
+            </>
           )}
         </div>
+      </section>
+    )
+  }
+
+  const renderOtpScreen = () => (
+    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+      <StickyHeader title="Sign SOW" subtitle="Designer verification" onBack={() => setView('draft')} />
+
+      <div className="px-4 py-5">
+        <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
+          <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
+            <CheckCircle size={28} weight="fill" />
+          </div>
+          <h2 className="type-page-title mt-4 text-black">Verify your identity</h2>
+          <p className="type-body mt-2 text-[#5f7467]">An OTP has been sent to the registered professional number. Verifying it signs the SOW before it is sent to the homeowner.</p>
+          <div className="mt-5">
+            <OtpRow digits={designerOtp} setDigits={setDesignerOtp} />
+          </div>
+          <p className="type-meta mt-4 text-[#7b7b7b]">OTP valid for 10 minutes. This acts as an electronic signature for the professional side.</p>
+        </article>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-        <button type="button" onClick={() => setView('draft')} className="type-body-strong h-11 w-full rounded-full bg-black text-white">
-          Back to SOW
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+        <button type="button" onClick={verifyDesignerOtp} disabled={designerOtp.some((digit) => !digit)} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+          Verify and sign
         </button>
       </div>
     </section>
   )
+
+  const renderRemarksScreen = () => {
+    const allActioned = (sow.remarks || []).length > 0 && openRemarks.length === 0
+    return (
+      <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+        <StickyHeader title="Client remarks" subtitle={`${openRemarks.length} open`} onBack={() => setView('draft')} />
+
+        <div className="px-4 py-5">
+          <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
+            <p className="type-section-title text-black">Action every remark before resubmitting</p>
+            <p className="type-body mt-1 text-[#5f7467]">This follows the HTML review pattern: accept or reject each remark, then resubmit the revision.</p>
+          </article>
+
+          <div className="mt-4 space-y-3">
+            {(sow.remarks || []).length ? sow.remarks.map((remark) => {
+              const response = latestResponses.find((item) => item.remarkId === remark.id)
+              return (
+                <article key={remark.id} className={`rounded-[20px] border p-4 ${remark.status === 'open' ? 'border-[#efe2c8] bg-white' : 'border-[#dbe6df] bg-white'}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="type-label uppercase text-[#5f7467]">{remark.sectionTitle}</p>
+                      <p className="type-body mt-3 text-black">{remark.body}</p>
+                    </div>
+                    <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${remark.status === 'accepted' ? 'bg-[#eaf9f1] text-[#267449]' : remark.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{remark.status}</span>
+                  </div>
+                  {response ? (
+                    <div className={`mt-3 rounded-[16px] p-3 ${response.decision === 'approve' ? 'bg-[#f4fbf7]' : 'bg-[#fff5f5]'}`}>
+                      <p className="type-caption uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
+                      <p className="type-body mt-2 text-black">{response.body}</p>
+                    </div>
+                  ) : (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <button type="button" onClick={() => approveRemark(remark)} className="type-label h-10 rounded-xl bg-black text-white">Accept</button>
+                      <button type="button" onClick={() => rejectRemark(remark)} className="type-label h-10 rounded-xl border border-[#e0e0e0] bg-white text-black">Reject</button>
+                    </div>
+                  )}
+                </article>
+              )
+            }) : (
+              <article className="rounded-[20px] border border-[#e1e1e1] bg-white p-4 text-center">
+                <CheckCircle size={24} weight="fill" className="mx-auto text-[#267449]" />
+                <p className="type-card-title mt-3 text-black">No remarks yet</p>
+                <p className="type-body mt-1 text-[#5f7467]">When the homeowner comments in another tab, it will appear here.</p>
+              </article>
+            )}
+          </div>
+        </div>
+
+        <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+          <button type="button" onClick={() => { actions.sendSow(); setView('draft') }} disabled={!allActioned} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+            {allActioned ? 'Resubmit to homeowner' : 'Action all remarks first'}
+          </button>
+          <p className="type-meta mt-2 text-center text-[#7b7b7b]">{(sow.remarks || []).length - openRemarks.length} of {(sow.remarks || []).length} remarks actioned</p>
+        </div>
+      </section>
+    )
+  }
 
   const renderActivityScreen = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <StickyHeader title="Project activity" subtitle="Shared events" onBack={() => setView('draft')} />
       <div className="space-y-3 px-4 py-5">
         {activity.map((item) => (
-          <article key={item.id} className="rounded-2xl border border-[#dbe6df] bg-white p-4">
+          <article key={item.id} className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
             <p className="type-card-title text-black">{item.actor}</p>
             <p className="type-body mt-1 text-[#5f7467]">{item.text}</p>
           </article>
         ))}
+      </div>
+    </section>
+  )
+
+  const renderExecutedScreen = () => (
+    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+      <StickyHeader
+        title="Scope of Work"
+        subtitle="Executed document"
+        onBack={onBack}
+        actions={<button type="button" className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black"><FileArrowDown size={15} /></button>}
+      />
+
+      <div className="px-4 py-5">
+        <section className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
+          <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
+            <CheckCircle size={28} weight="fill" />
+          </div>
+          <h1 className="type-page-title mt-4 text-black">SOW executed</h1>
+          <p className="type-body mt-2 text-[#5f7467]">Both parties have signed. The base document is locked, and any change now moves through a formal amendment.</p>
+          <p className="type-meta mt-3 text-[#7b7b7b]">Revision {sow.revision}</p>
+        </section>
+
+        <section className="mt-4 grid grid-cols-2 gap-3">
+          <SignatureCard label="Designer" name={project?.designerName || 'Riya Desai'} state="Signed" stamp={formatStamp(sow.designerSignedAt)} />
+          <SignatureCard label="Client" name={document.clientName} state="Signed" stamp={formatStamp(sow.clientSignedAt)} />
+        </section>
+
+        <section className="mt-4 rounded-[20px] border border-[#efe2c8] bg-[#fff9ef] p-4">
+          <p className="type-section-title text-black">Amendments</p>
+          <p className="type-body mt-1 text-[#5f7467]">Raise a formal amendment when the scope, budget, or terms change after execution.</p>
+        </section>
+
+        <section className="mt-4 space-y-3">
+          {(sow.amendments || []).length ? sow.amendments.map((amendment) => (
+            <article key={amendment.id} className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="type-card-title text-black">Amendment v{amendment.version}</p>
+                  <p className="type-meta mt-1 text-[#7b7b7b]">{amendment.sectionTitle}</p>
+                </div>
+                <span className={`type-caption rounded-full px-2 py-1 uppercase ${amendment.status === 'approved' ? 'bg-[#eaf9f1] text-[#267449]' : amendment.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{amendment.status}</span>
+              </div>
+              <div className="mt-3 rounded-[16px] bg-[#fafafa] p-3">
+                <p className="type-caption uppercase text-[#7b7b7b]">From</p>
+                <p className="type-body mt-1 text-[#8a8a8a]">{amendment.oldValue}</p>
+                <p className="type-caption mt-3 uppercase text-[#7b7b7b]">To</p>
+                <p className="type-body mt-1 text-black">{amendment.newValue}</p>
+              </div>
+              <p className="type-body mt-3 text-[#5f7467]">Reason: {amendment.reason}</p>
+              {amendment.responseText ? <p className="type-meta mt-2 text-[#7b7b7b]">{amendment.responseText}</p> : null}
+            </article>
+          )) : (
+            <article className="rounded-[20px] border border-[#e1e1e1] bg-white p-4 text-center">
+              <p className="type-card-title text-black">No amendments yet</p>
+              <p className="type-body mt-1 text-[#5f7467]">Raise one when the executed document needs a formal change.</p>
+            </article>
+          )}
+        </section>
+
+        {pendingAmendments.length ? (
+          <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
+            <p className="type-label uppercase text-[#5f7467]">Pending with homeowner</p>
+            <p className="type-body mt-1 text-[#5f7467]">{pendingAmendments.length} amendment{pendingAmendments.length > 1 ? 's are' : ' is'} waiting for homeowner approval.</p>
+          </section>
+        ) : null}
+      </div>
+
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+        <button type="button" onClick={openAmendmentComposer} className="type-body-strong h-11 w-full rounded-full border border-black bg-white text-black">
+          Raise amendment
+        </button>
+      </div>
+    </section>
+  )
+
+  const renderAmendmentScreen = () => (
+    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+      <StickyHeader title={`Amendment v${(sow?.amendments?.length || 0) + 1}`} subtitle="Send for homeowner approval" onBack={() => setView('executed')} />
+
+      <div className="px-4 py-5">
+        <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
+          <p className="type-body text-[#5f7467]">This amendment will be visible to the homeowner in the shared review flow. It only takes effect once they approve it.</p>
+        </article>
+
+        <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
+          <label className="block">
+            <span className="type-label uppercase text-[#5f7467]">What is changing</span>
+            <select value={amendmentDraft.optionId} onChange={(event) => setAmendmentOption(event.target.value)} className="type-body mt-2 h-11 w-full rounded-[16px] border border-[#dbe6df] bg-white px-3 text-black outline-none">
+              {amendmentOptions.map((option) => (
+                <option key={option.id} value={option.id}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+
+          {selectedAmendmentOption ? (
+            <div className="mt-4 rounded-[18px] bg-[#fafafa] p-3">
+              <p className="type-caption uppercase text-[#7b7b7b]">Current value</p>
+              <p className="type-body mt-2 text-[#7b7b7b] whitespace-pre-wrap">{selectedAmendmentOption.currentValue}</p>
+            </div>
+          ) : null}
+
+          <label className="mt-4 block">
+            <span className="type-label uppercase text-[#5f7467]">New value</span>
+            <textarea
+              value={amendmentDraft.newValue}
+              onChange={(event) => setAmendmentDraft((current) => ({ ...current, newValue: event.target.value }))}
+              className="type-body mt-2 min-h-28 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+            />
+          </label>
+
+          <label className="mt-4 block">
+            <span className="type-label uppercase text-[#5f7467]">Reason for amendment</span>
+            <textarea
+              value={amendmentDraft.reason}
+              onChange={(event) => setAmendmentDraft((current) => ({ ...current, reason: event.target.value }))}
+              placeholder="Describe why this amendment is needed."
+              className="type-body mt-2 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+            />
+          </label>
+        </section>
+      </div>
+
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+        <button type="button" onClick={submitAmendment} disabled={!amendmentDraft.newValue.trim() || !amendmentDraft.reason.trim()} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+          Send for approval
+        </button>
       </div>
     </section>
   )
@@ -550,10 +882,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
   return (
     <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-      {view === 'template' ? renderTemplateScreen() : null}
-      {view === 'draft' ? renderDraftScreen() : null}
-      {view === 'remarks' ? renderRemarksScreen() : null}
-      {view === 'activity' ? renderActivityScreen() : null}
+      {effectiveView === 'template' ? renderTemplateScreen() : null}
+      {effectiveView === 'draft' ? renderDraftScreen() : null}
+      {effectiveView === 'ai' ? renderAiScreen() : null}
+      {effectiveView === 'otp' ? renderOtpScreen() : null}
+      {effectiveView === 'remarks' ? renderRemarksScreen() : null}
+      {effectiveView === 'activity' ? renderActivityScreen() : null}
+      {effectiveView === 'executed' ? renderExecutedScreen() : null}
+      {effectiveView === 'amendment' ? renderAmendmentScreen() : null}
     </main>
   )
 }

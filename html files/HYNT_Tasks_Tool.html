@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tasks — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#9FB89F;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#3a5a3a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-r{background:var(--redl);color:var(--red);border:1px solid #F5C6C6;border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--orl);color:var(--or);}
+.pr{background:var(--redl);color:var(--red);}
+.pb{background:var(--bluel);color:var(--blue);}
+.ppu{background:var(--purl);color:var(--pur);}
+.pgr{background:#F0F0F0;color:#666;}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+
+/* Main tabs */
+.main-tabs{display:flex;border-bottom:1px solid var(--bor);flex-shrink:0;}
+.main-tab{flex:1;text-align:center;font-size:10px;font-weight:600;padding:10px 3px;color:var(--lgt);cursor:pointer;border-bottom:2px solid transparent;}
+.main-tab.active{color:var(--g);border-bottom-color:var(--g);}
+
+/* View toggle */
+.vtog{display:flex;background:var(--gp);border-radius:8px;padding:3px;margin-bottom:12px;}
+.vt{flex:1;text-align:center;font-size:10px;font-weight:600;padding:7px 3px;border-radius:6px;color:var(--mut);cursor:pointer;}
+.vt.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.pnl{display:none;}
+.pnl.active{display:block;}
+
+/* Filter pills */
+.filter-row{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fpill{font-size:10px;font-weight:600;padding:5px 11px;border-radius:20px;border:1px solid var(--bor);color:var(--mut);white-space:nowrap;cursor:pointer;}
+.fpill.active{background:var(--g);color:#fff;border-color:var(--g);}
+
+/* Section header */
+.sec-hdr{font-size:10px;font-weight:700;margin:12px 0 7px;}
+.sec-hdr.overdue{color:var(--red);}
+.sec-hdr.today{color:var(--or);}
+.sec-hdr.week{color:var(--mut);}
+.sec-hdr.done{color:var(--lgt);}
+
+/* Task item */
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-bottom:1px solid var(--borl);}
+.task-item:last-child{border-bottom:none;}
+.tcheck{width:20px;height:20px;border-radius:6px;border:2px solid var(--bor);flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.tcheck.done{background:var(--g);border-color:var(--g);color:#fff;}
+.tcheck.ip{background:var(--orl);border-color:var(--or);color:var(--or);}
+.tc{flex:1;}
+.tnm{font-size:11px;font-weight:600;color:var(--txt);line-height:1.4;}
+.tnm.done{text-decoration:line-through;color:var(--lgt);}
+.tmeta{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center;}
+.tass{font-size:9px;background:var(--gl);color:var(--g);padding:2px 6px;border-radius:4px;font-weight:600;}
+.tdue{font-size:9px;color:var(--lgt);}
+.tdue.ov{color:var(--red);font-weight:600;}
+.tdue.today{color:var(--or);font-weight:600;}
+.tpri{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;}
+.phi{background:var(--redl);color:var(--red);}
+.pme{background:var(--orl);color:var(--or);}
+.plo{background:var(--gl);color:var(--g);}
+.trec{font-size:9px;color:var(--pur);background:var(--purl);padding:2px 5px;border-radius:4px;}
+.tsrc{font-size:8px;color:var(--lgt);background:var(--gp);padding:1px 5px;border-radius:4px;}
+
+/* Task expand panel */
+.task-expand{background:var(--gp);border-radius:9px;padding:9px 11px;margin:6px 0 2px;display:none;}
+.task-expand.open{display:block;}
+.te-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--borl);}
+.te-row:last-child{border-bottom:none;}
+.te-l{font-size:9px;color:var(--mut);}
+.te-v{font-size:9px;font-weight:600;color:var(--txt);}
+.te-acts{display:flex;gap:6px;margin-top:7px;}
+.te-btn{flex:1;background:#fff;color:var(--g);border:1px solid var(--bor);border-radius:7px;padding:5px;font-size:10px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;text-align:center;}
+
+/* Add task row */
+.add-task-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--borl);margin-top:4px;cursor:pointer;}
+.add-ic{width:20px;height:20px;border-radius:6px;background:var(--gl);color:var(--g);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.add-tx{font-size:11px;color:var(--lgt);}
+
+/* Kanban */
+.k-wrap{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;}
+.k-wrap::-webkit-scrollbar{height:3px;}
+.k-wrap::-webkit-scrollbar-thumb{background:var(--bor);border-radius:2px;}
+.k-col{min-width:118px;flex-shrink:0;}
+.k-head{font-size:10px;font-weight:700;padding:7px 10px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;}
+.k-todo .k-head{background:#F0F0F0;color:#555;}
+.k-ip .k-head{background:var(--orl);color:var(--or);}
+.k-done .k-head{background:var(--gl);color:var(--g);}
+.k-body{background:var(--gp);border-radius:0 0 8px 8px;padding:6px;min-height:100px;border:1px solid var(--bor);border-top:none;}
+.k-card{background:#fff;border-radius:8px;padding:9px;margin-bottom:6px;border:1px solid var(--bor);cursor:pointer;}
+.k-cn{font-size:10px;font-weight:600;color:var(--txt);line-height:1.3;margin-bottom:5px;}
+.k-meta{display:flex;justify-content:space-between;align-items:center;}
+.k-av{width:20px;height:20px;border-radius:6px;background:var(--g);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.k-due{font-size:9px;color:var(--lgt);}
+.k-due.ov{color:var(--red);}
+.k-add{display:flex;align-items:center;gap:5px;padding:6px 8px;cursor:pointer;}
+.k-add-ic{width:16px;height:16px;border-radius:4px;background:var(--gl);color:var(--g);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.k-add-tx{font-size:9px;color:var(--lgt);}
+
+/* Approval items */
+.apr-card{border:1px solid var(--bor);border-radius:11px;margin-bottom:8px;overflow:hidden;}
+.apr-card.pending{border-color:var(--amber);}
+.apr-card.approved{border-color:var(--g3);}
+.apr-card.rejected{border-color:var(--red);}
+.apr-card.question{border-color:var(--pur);}
+.apr-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--gp);}
+.apr-nm{font-size:11px;font-weight:700;color:var(--txt);}
+.apr-body{padding:10px 12px;background:#fff;}
+.apr-img{width:100%;height:80px;background:var(--gl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:8px;}
+.apr-desc{font-size:10px;color:var(--mut);line-height:1.5;margin-bottom:7px;}
+.apr-response{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:7px;}
+.apr-response.reject{background:var(--redl);}
+.apr-response.question{background:var(--purl);}
+.apr-r-label{font-size:9px;font-weight:700;margin-bottom:3px;}
+.apr-r-text{font-size:10px;line-height:1.5;}
+.apr-acts{display:flex;gap:6px;}
+.apr-btn{flex:1;padding:7px;border-radius:8px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;border:none;font-family:'Poppins',sans-serif;}
+.apr-a{background:var(--g);color:#fff;}
+.apr-re{background:var(--redl);color:var(--red);border:1px solid #F5C6C6;}
+.apr-q{background:var(--purl);color:var(--pur);}
+.apr-meta{font-size:9px;color:var(--lgt);margin-top:5px;}
+
+/* AI suggest panel */
+.ai-panel{background:var(--gp);border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.ai-panel.open{display:block;}
+.ai-suggest-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--borl);}
+.ai-suggest-item:last-child{border-bottom:none;}
+.ai-chk{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--bor);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.ai-chk.sel{background:var(--g);border-color:var(--g);color:#fff;}
+.ai-nm{font-size:11px;color:var(--txt);flex:1;}
+.ai-pri{font-size:8px;font-weight:700;padding:2px 5px;border-radius:4px;}
+
+/* New task form */
+.form-panel{background:var(--gp);border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.form-panel.open{display:block;}
+.fg{margin-bottom:9px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+.fi-row{display:flex;gap:8px;}
+.rec-opts{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.rec-opt{font-size:10px;font-weight:600;padding:5px 10px;border-radius:8px;border:1px solid var(--bor);color:var(--mut);cursor:pointer;}
+.rec-opt.active{background:var(--pur);color:#fff;border-color:var(--pur);}
+
+/* New approval form */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.type-opt{border:1.5px solid var(--bor);border-radius:9px;padding:10px;text-align:center;cursor:pointer;}
+.type-opt.sel{border-color:var(--g);background:var(--gp);}
+.type-icon{font-size:22px;margin-bottom:4px;}
+.type-nm{font-size:10px;font-weight:700;color:var(--txt);}
+
+/* Client approval screen */
+.cl-header{background:var(--g);padding:16px 16px 12px;flex-shrink:0;}
+.clh-t{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+
+/* Client approval item */
+.c-apr-card{border:1px solid var(--bor);border-radius:12px;padding:13px;margin-bottom:10px;}
+.c-apr-card.pending{border-color:var(--amber);background:#FFFDF0;}
+.c-apr-title{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.c-apr-type{font-size:10px;color:var(--lgt);margin-bottom:8px;}
+.c-apr-img{width:100%;height:120px;background:var(--gl);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:10px;border:1px solid var(--bor);}
+.c-apr-desc{font-size:11px;color:var(--txt);line-height:1.6;margin-bottom:12px;}
+.c-apr-acts{display:flex;gap:7px;}
+.ca-approve{flex:2;background:var(--g);color:#fff;border:none;border-radius:10px;padding:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+.ca-reject{flex:1;background:var(--redl);color:var(--red);border:1px solid #F5C6C6;border-radius:10px;padding:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+.ca-question{flex:1;background:var(--purl);color:var(--pur);border:none;border-radius:10px;padding:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Poppins',sans-serif;}
+
+/* Reject / question input */
+.response-input{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:9px 11px;font-size:12px;font-family:'Poppins',sans-serif;resize:none;outline:none;color:var(--txt);margin-top:8px;display:none;}
+.response-submit{margin-top:7px;display:none;}
+
+/* Bot bar */
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Tasks Main -->
+      <div class="scr active" id="d-tasks">
+        <div class="topbar">
+          <button class="bb">←</button>
+          <div class="tbt">Tasks</div>
+          <div style="display:flex;gap:5px;">
+            <button class="ib" onclick="dShowAI()" title="AI suggest" style="color:var(--pur);background:var(--purl);">✦</button>
+            <button class="ib" onclick="dSS('d-new-task')" style="background:var(--g);color:#fff;">+</button>
+          </div>
+        </div>
+
+        <!-- Main tabs -->
+        <div style="padding:0 16px;flex-shrink:0;">
+          <div class="main-tabs">
+            <div class="main-tab active" id="mt-my" onclick="dSetTab('my')">My Tasks</div>
+            <div class="main-tab" id="mt-team" onclick="dSetTab('team')">Team</div>
+            <div class="main-tab" id="mt-apr" onclick="dSetTab('apr')">Approvals <span style="background:var(--amber);color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:3px;">2</span></div>
+          </div>
+        </div>
+
+        <div class="sc">
+          <!-- AI SUGGEST PANEL -->
+          <div class="ai-panel" id="d-ai-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;">
+              <div style="font-size:11px;font-weight:700;color:var(--pur);">✦ AI Task Suggestions</div>
+              <div style="font-size:10px;color:var(--lgt);cursor:pointer;" onclick="dHideAI()">✕</div>
+            </div>
+            <div style="font-size:10px;color:var(--mut);margin-bottom:9px;">Based on Civil & Ceiling phase · Sharma 3BHK</div>
+            <div id="ai-suggestions">
+              <div class="ai-suggest-item"><div class="ai-chk sel" onclick="toggleAIChk(this)">✓</div><div class="ai-nm">Confirm false ceiling design with client</div><span class="ai-pri phi">High</span></div>
+              <div class="ai-suggest-item"><div class="ai-chk sel" onclick="toggleAIChk(this)">✓</div><div class="ai-nm">Order gypsum boards — ABC Contractors</div><span class="ai-pri pme">Med</span></div>
+              <div class="ai-suggest-item"><div class="ai-chk" onclick="toggleAIChk(this)"></div><div class="ai-nm">Book electrical contractor for marking</div><span class="ai-pri pme">Med</span></div>
+              <div class="ai-suggest-item"><div class="ai-chk" onclick="toggleAIChk(this)"></div><div class="ai-nm">Site measurement — all rooms</div><span class="ai-pri plo">Low</span></div>
+              <div class="ai-suggest-item"><div class="ai-chk" onclick="toggleAIChk(this)"></div><div class="ai-nm">Weekly site visit — schedule</div><span class="ai-pri plo">Low</span></div>
+            </div>
+            <div class="br" style="margin-top:10px;"><button class="btn-p" style="flex:2;" onclick="dAddAITasks()">Add selected tasks</button><button class="btn-g" style="flex:1;" onclick="dHideAI()">Skip</button></div>
+          </div>
+
+          <!-- MY TASKS TAB -->
+          <div id="tab-my">
+            <div class="vtog">
+              <div class="vt active" id="vt-list" onclick="dSetView('list')">☰ List</div>
+              <div class="vt" id="vt-kanban" onclick="dSetView('kanban')">⊞ Kanban</div>
+            </div>
+            <div class="filter-row">
+              <div class="fpill active">All</div>
+              <div class="fpill">To Do</div>
+              <div class="fpill">In Progress</div>
+              <div class="fpill">Done</div>
+            </div>
+
+            <!-- LIST VIEW -->
+            <div id="d-list-view">
+              <!-- Overdue -->
+              <div class="sec-hdr overdue">⚠ Overdue · 1</div>
+              <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;margin-bottom:10px;overflow:hidden;">
+                <div class="task-item">
+                  <div class="tcheck ip">→</div>
+                  <div class="tc">
+                    <div class="tnm">Get wardrobe material approval from client</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue ov">2 days overdue</span><span class="tpri phi">High</span></div>
+                    <div class="task-expand" id="te-1">
+                      <div class="te-row"><div class="te-l">Priority</div><div class="te-v" style="color:var(--red);">High</div></div>
+                      <div class="te-row"><div class="te-l">Source</div><div class="te-v">Manual</div></div>
+                      <div class="te-row"><div class="te-l">Notes</div><div class="te-v">Check wardrobe finish options with Priya</div></div>
+                      <div class="te-acts"><button class="te-btn" onclick="dToast('Task edited!')">Edit</button><button class="te-btn" style="color:var(--red);" onclick="dToast('Task deleted!')">Delete</button><button class="te-btn" onclick="dToast('Reassigned!')">Reassign</button></div>
+                    </div>
+                  </div>
+                  <div style="font-size:16px;color:var(--lgt);cursor:pointer;padding-left:6px;" onclick="toggleExpand('te-1')">⋯</div>
+                </div>
+              </div>
+
+              <!-- Today -->
+              <div class="sec-hdr today">Today · 2</div>
+              <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;margin-bottom:10px;overflow:hidden;">
+                <div class="task-item">
+                  <div class="tcheck" onclick="toggleCheck(this)"></div>
+                  <div class="tc">
+                    <div class="tnm">Confirm false ceiling design with client</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue today">Today</span><span class="tpri phi">High</span><span class="tsrc">✦ AI</span></div>
+                  </div>
+                </div>
+                <div class="task-item">
+                  <div class="tcheck" onclick="toggleCheck(this)"></div>
+                  <div class="tc">
+                    <div class="tnm">Order gypsum boards — ABC Contractors</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue today">Today</span><span class="tpri pme">Med</span><span class="tsrc">✦ AI</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- This week -->
+              <div class="sec-hdr week">This week · 3</div>
+              <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;margin-bottom:10px;overflow:hidden;">
+                <div class="task-item">
+                  <div class="tcheck" onclick="toggleCheck(this)"></div>
+                  <div class="tc">
+                    <div class="tnm">Weekly site visit</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue">Mon 27 Oct</span><span class="tpri pme">Med</span><span class="trec">↻ Weekly</span></div>
+                  </div>
+                </div>
+                <div class="task-item">
+                  <div class="tcheck" onclick="toggleCheck(this)"></div>
+                  <div class="tc">
+                    <div class="tnm">Follow up on invoice #003</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue">28 Oct</span><span class="tpri phi">High</span></div>
+                  </div>
+                </div>
+                <div class="task-item">
+                  <div class="tcheck" onclick="toggleCheck(this)"></div>
+                  <div class="tc">
+                    <div class="tnm">Fix kids room study table position</div>
+                    <div class="tmeta"><span class="tass">You</span><span class="tdue">29 Oct</span><span class="tpri pme">Med</span><span class="tsrc">📓 Diary</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Done -->
+              <div class="sec-hdr done">Done · 3</div>
+              <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;margin-bottom:10px;overflow:hidden;opacity:.6;">
+                <div class="task-item"><div class="tcheck done">✓</div><div class="tc"><div class="tnm done">Site visit & measurement</div><div class="tmeta"><span class="tdue">Done 18 Oct</span></div></div></div>
+                <div class="task-item"><div class="tcheck done">✓</div><div class="tc"><div class="tnm done">Concept presentation to client</div><div class="tmeta"><span class="tdue">Done 22 Oct</span></div></div></div>
+                <div class="task-item"><div class="tcheck done">✓</div><div class="tc"><div class="tnm done">BOQ submitted for approval</div><div class="tmeta"><span class="tdue">Done 24 Oct</span></div></div></div>
+              </div>
+
+              <div class="add-task-row" onclick="dSS('d-new-task')"><div class="add-ic">+</div><div class="add-tx">Add task</div></div>
+              <div style="height:10px;"></div>
+            </div>
+
+            <!-- KANBAN VIEW -->
+            <div id="d-kanban-view" style="display:none;">
+              <div class="k-wrap">
+                <div class="k-col k-todo">
+                  <div class="k-head">To Do <span style="background:rgba(0,0,0,.1);padding:1px 6px;border-radius:8px;">4</span></div>
+                  <div class="k-body">
+                    <div class="k-card"><div class="k-cn">Confirm ceiling design</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due today">Today</div></div></div>
+                    <div class="k-card"><div class="k-cn">Order gypsum boards</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">27 Oct</div></div></div>
+                    <div class="k-card"><div class="k-cn">Weekly site visit</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">Mon</div></div></div>
+                    <div class="k-card"><div class="k-cn">Follow up invoice</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">28 Oct</div></div></div>
+                    <div class="k-add" onclick="dSS('d-new-task')"><div class="k-add-ic">+</div><div class="k-add-tx">Add task</div></div>
+                  </div>
+                </div>
+                <div class="k-col k-ip">
+                  <div class="k-head">In Progress <span style="background:rgba(0,0,0,.1);padding:1px 6px;border-radius:8px;">1</span></div>
+                  <div class="k-body">
+                    <div class="k-card" style="border-color:var(--red);"><div class="k-cn">Wardrobe material approval</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due ov">Overdue</div></div></div>
+                  </div>
+                </div>
+                <div class="k-col k-done">
+                  <div class="k-head">Done <span style="background:rgba(0,0,0,.1);padding:1px 6px;border-radius:8px;">3</span></div>
+                  <div class="k-body">
+                    <div class="k-card" style="opacity:.6;"><div class="k-cn">Site visit & measurement</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">18 Oct</div></div></div>
+                    <div class="k-card" style="opacity:.6;"><div class="k-cn">Concept presentation</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">22 Oct</div></div></div>
+                    <div class="k-card" style="opacity:.6;"><div class="k-cn">BOQ submitted</div><div class="k-meta"><div class="k-av">RD</div><div class="k-due">24 Oct</div></div></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height:10px;"></div>
+            </div>
+          </div>
+
+          <!-- TEAM TAB -->
+          <div id="tab-team" style="display:none;">
+            <div class="filter-row">
+              <div class="fpill active">All</div>
+              <div class="fpill">Arjun</div>
+              <div class="fpill">Sneha</div>
+            </div>
+            <div style="border:1px solid var(--bor);border-radius:11px;padding:0 12px;margin-bottom:10px;overflow:hidden;">
+              <div class="task-item">
+                <div class="tcheck ip">→</div>
+                <div class="tc">
+                  <div class="tnm">False ceiling measurement — all rooms</div>
+                  <div class="tmeta"><span class="tass" style="background:#EEF2FF;color:var(--blue);">Arjun Kumar</span><span class="tdue today">Today</span><span class="tpri pme">Med</span></div>
+                </div>
+              </div>
+              <div class="task-item">
+                <div class="tcheck" onclick="toggleCheck(this)"></div>
+                <div class="tc">
+                  <div class="tnm">Prepare flooring options — 3 samples</div>
+                  <div class="tmeta"><span class="tass" style="background:var(--purl);color:var(--pur);">Sneha Malhotra</span><span class="tdue">28 Oct</span><span class="tpri pme">Med</span></div>
+                </div>
+              </div>
+              <div class="task-item">
+                <div class="tcheck" onclick="toggleCheck(this)"></div>
+                <div class="tc">
+                  <div class="tnm">Get vendor quotes — painting</div>
+                  <div class="tmeta"><span class="tass" style="background:#EEF2FF;color:var(--blue);">Arjun Kumar</span><span class="tdue">30 Oct</span><span class="tpri plo">Low</span></div>
+                </div>
+              </div>
+              <div class="task-item">
+                <div class="tcheck done">✓</div>
+                <div class="tc">
+                  <div class="tnm done">Vendor quotes — modular kitchen</div>
+                  <div class="tmeta"><span class="tass" style="background:#EEF2FF;color:var(--blue);">Arjun Kumar</span><span class="tdue">Done 20 Oct</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="add-task-row" onclick="dSS('d-new-task')"><div class="add-ic">+</div><div class="add-tx">Assign task to team</div></div>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- APPROVALS TAB -->
+          <div id="tab-apr" style="display:none;">
+            <div style="font-size:10px;color:var(--mut);margin-bottom:11px;">Items sent to Priya Sharma for approval. She is notified on her Hynt link.</div>
+
+            <!-- Pending -->
+            <div class="apr-card pending">
+              <div class="apr-head"><div class="apr-nm">Kitchen countertop — Granite vs Marble</div><span class="pill" style="background:var(--amberl);color:var(--amber);">⏳ Awaiting</span></div>
+              <div class="apr-body">
+                <div class="apr-img">🍳</div>
+                <div class="apr-desc">Please select your preferred countertop material. Granite is more durable, marble is more premium looking.</div>
+                <div class="apr-meta">Sent: 22 Oct 2025 · Type: Material · Due: 28 Oct</div>
+                <div class="apr-acts" style="margin-top:8px;"><button class="te-btn" onclick="dToast('Reminder sent to Priya!')">Send reminder</button><button class="te-btn" onclick="dToast('Item edited!')">Edit</button></div>
+              </div>
+            </div>
+
+            <!-- Question received -->
+            <div class="apr-card question">
+              <div class="apr-head"><div class="apr-nm">Wall colour — Sage green vs Warm grey</div><span class="pill ppu">💬 Question</span></div>
+              <div class="apr-body">
+                <div class="apr-img">🎨</div>
+                <div class="apr-response question">
+                  <div class="apr-r-label" style="color:var(--pur);">Priya asked:</div>
+                  <div class="apr-r-text">"Can I see the sage green with the existing sofa colour? I want to make sure it matches."</div>
+                </div>
+                <div class="apr-meta">Sent: 20 Oct · Response: 22 Oct</div>
+                <div style="margin-top:8px;"><button class="btn-p" onclick="dToast('Reply sent to Priya!')">Reply to Priya</button></div>
+              </div>
+            </div>
+
+            <!-- Approved -->
+            <div class="apr-card approved">
+              <div class="apr-head"><div class="apr-nm">False ceiling layout — Cove lighting</div><span class="pill pp">✓ Approved</span></div>
+              <div class="apr-body">
+                <div class="apr-response"><div class="apr-r-label" style="color:var(--g);">Priya approved</div><div class="apr-r-text">Approved on 21 Oct · Auto-saved to Drive → Drawings</div></div>
+              </div>
+            </div>
+
+            <!-- Rejected -->
+            <div class="apr-card rejected">
+              <div class="apr-head"><div class="apr-nm">Kids room theme — Jungle vs Space</div><span class="pill pr">✗ Rejected</span></div>
+              <div class="apr-body">
+                <div class="apr-response reject"><div class="apr-r-label" style="color:var(--red);">Priya rejected:</div><div class="apr-r-text">"Neither — my kids want an ocean theme. Can you share ocean-themed options?"</div></div>
+                <div class="apr-acts" style="margin-top:8px;"><button class="btn-p" onclick="dSS('d-new-apr')">Send revised options →</button></div>
+              </div>
+            </div>
+
+            <button class="btn-o" style="margin-top:4px;" onclick="dSS('d-new-apr')">+ Send item for approval</button>
+            <div style="height:10px;"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SCREEN: New Task -->
+      <div class="scr" id="d-new-task">
+        <div class="topbar"><button class="bb" onclick="dSS('d-tasks')">←</button><div class="tbt">New Task</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Task title</label><input class="fi" placeholder="What needs to be done?" id="nt-title"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Assign to</label><select class="fi" id="nt-assignee"><option>Me</option><option>Arjun Kumar</option><option>Sneha Malhotra</option></select></div>
+            <div class="fg" style="flex:1;"><label class="fl">Priority</label><select class="fi" id="nt-pri"><option>High</option><option>Medium</option><option>Low</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Due Date</label><input class="fi" type="date" id="nt-due"/></div>
+          <div class="fg"><label class="fl">Linked to phase</label><select class="fi"><option>Civil & False Ceiling</option><option>Modular & Carpentry</option><option>Finishing</option><option>None</option></select></div>
+          <div class="fg"><label class="fl">Notes</label><textarea class="fi" rows="2" placeholder="Optional notes…" style="resize:none;"></textarea></div>
+          <!-- Recurring -->
+          <div class="fg">
+            <label class="fl">Recurring</label>
+            <div class="rec-opts">
+              <div class="rec-opt active" onclick="setRec(this)">None</div>
+              <div class="rec-opt" onclick="setRec(this)">Daily</div>
+              <div class="rec-opt" onclick="setRec(this)">Weekly</div>
+              <div class="rec-opt" onclick="setRec(this)">Monthly</div>
+              <div class="rec-opt" onclick="setRec(this)">Custom</div>
+            </div>
+          </div>
+          <button class="btn-p" onclick="dToast('Task created ✓');dSS('d-tasks')">Create Task</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: New Approval Item -->
+      <div class="scr" id="d-new-apr">
+        <div class="topbar"><button class="bb" onclick="dSS('d-tasks')">←</button><div class="tbt">Send for Approval</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg">
+            <label class="fl">Type</label>
+            <div class="type-grid">
+              <div class="type-opt sel" onclick="setAprType(this)"><div class="type-icon">🪵</div><div class="type-nm">Material</div></div>
+              <div class="type-opt" onclick="setAprType(this)"><div class="type-icon">📐</div><div class="type-nm">Design / Layout</div></div>
+              <div class="type-opt" onclick="setAprType(this)"><div class="type-icon">🔄</div><div class="type-nm">Change Request</div></div>
+              <div class="type-opt" onclick="setAprType(this)"><div class="type-icon">📎</div><div class="type-nm">Other</div></div>
+            </div>
+          </div>
+          <div class="fg"><label class="fl">Title</label><input class="fi" placeholder="e.g. Kitchen countertop — 3 options"/></div>
+          <div class="fg"><label class="fl">Description for client</label><textarea class="fi" rows="3" style="resize:none;" placeholder="Explain what you need them to decide…"></textarea></div>
+          <div style="border:1.5px dashed var(--bor);border-radius:10px;padding:16px;text-align:center;margin-bottom:10px;cursor:pointer;" onclick="dToast('Image/file picker opened')">
+            <div style="font-size:28px;margin-bottom:6px;">📎</div>
+            <div style="font-size:11px;font-weight:700;color:var(--txt);">Attach image or file</div>
+            <div style="font-size:10px;color:var(--lgt);margin-top:3px;">Photo · PDF · From Drive</div>
+          </div>
+          <div class="fg"><label class="fl">Response needed by</label><input class="fi" type="date"/></div>
+          <button class="btn-p" onclick="dToast('Sent to Priya for approval!');dSS('d-tasks')">Send to Priya →</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client approvals list -->
+      <div class="scr active" id="c-approvals">
+        <div class="cl-header">
+          <div class="clh-t">Approvals Needed</div>
+          <div class="clh-s">From Riya Desai · Sharma 3BHK</div>
+        </div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:9px;padding:8px 11px;margin-bottom:12px;font-size:10px;color:var(--g);line-height:1.5;">👆 Riya needs your decisions on these items. Tap each to review and respond.</div>
+
+          <!-- Pending items -->
+          <div class="sh"><div class="sht">Needs your response (2)</div></div>
+
+          <div class="c-apr-card pending" onclick="cSS('c-apr-detail-1')" style="cursor:pointer;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;"><div class="c-apr-title">Kitchen countertop</div><span class="pill" style="background:var(--amberl);color:var(--amber);">⏳ Pending</span></div>
+            <div class="c-apr-type">Material selection · Due 28 Oct</div>
+            <div style="height:50px;background:var(--gl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">🍳</div>
+          </div>
+
+          <div class="c-apr-card pending" onclick="cSS('c-apr-detail-2')" style="cursor:pointer;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;"><div class="c-apr-title">Wall colour — Sage green vs Warm grey</div><span class="pill" style="background:var(--amberl);color:var(--amber);">⏳ Pending</span></div>
+            <div class="c-apr-type">Design selection · Due 30 Oct</div>
+            <div style="height:50px;background:var(--gl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">🎨</div>
+          </div>
+
+          <div class="sh" style="margin-top:14px;"><div class="sht">Completed (2)</div></div>
+          <div class="c-apr-card approved">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><div class="c-apr-title">False ceiling layout</div><span class="pill pp">✓ Approved</span></div>
+            <div class="c-apr-type">Design · Approved 21 Oct</div>
+          </div>
+          <div class="c-apr-card rejected">
+            <div style="display:flex;align-items:center;justify-content:space-between;"><div class="c-apr-title">Kids room theme</div><span class="pill pr">✗ Rejected</span></div>
+            <div class="c-apr-type">Design · Rejected 20 Oct · Asked for ocean theme</div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Approval detail 1 — countertop -->
+      <div class="scr" id="c-apr-detail-1">
+        <div class="topbar"><button class="bb" onclick="cSS('c-approvals')">←</button><div class="tbt">Approval Needed</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--amberl);border-radius:9px;padding:8px 11px;margin-bottom:12px;font-size:10px;color:var(--amber);font-weight:600;">⏳ Response needed by 28 Oct 2025</div>
+          <div class="c-apr-title" style="font-size:15px;margin-bottom:4px;">Kitchen countertop</div>
+          <div class="c-apr-type" style="font-size:11px;margin-bottom:12px;">Material selection · From Riya Desai</div>
+          <div class="c-apr-img" style="height:160px;font-size:64px;">🍳</div>
+          <div class="c-apr-desc">Please select your preferred countertop material for the modular kitchen. We have shortlisted two options that fit your budget and style.<br/><br/><strong>Granite:</strong> More durable, lower maintenance, great for daily cooking use.<br/><br/><strong>Marble:</strong> Premium look, elegant, requires more care and sealing.</div>
+
+          <!-- Response options -->
+          <div id="c-resp-1">
+            <div class="c-apr-acts">
+              <button class="ca-approve" onclick="cApprove(1,'Granite countertop')">✓ Approve Granite</button>
+              <button class="ca-approve" onclick="cApprove(1,'Marble countertop')" style="background:var(--g2);">✓ Marble</button>
+            </div>
+            <div class="br">
+              <button class="ca-reject" onclick="cShowReject(1)">✗ Neither</button>
+              <button class="ca-question" onclick="cShowQuestion(1)">💬 Question</button>
+            </div>
+            <textarea class="response-input" id="rej-1" rows="3" placeholder="Tell Riya what you'd prefer instead…"></textarea>
+            <button class="btn-r response-submit" id="rej-sub-1" onclick="cSubmitReject(1)">Send feedback →</button>
+            <textarea class="response-input" id="q-1" rows="3" placeholder="Ask Riya a question…"></textarea>
+            <button class="btn-p response-submit" id="q-sub-1" onclick="cSubmitQuestion(1)">Send question →</button>
+          </div>
+          <div id="c-resp-1-done" style="display:none;"></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Approval detail 2 — wall colour -->
+      <div class="scr" id="c-apr-detail-2">
+        <div class="topbar"><button class="bb" onclick="cSS('c-approvals')">←</button><div class="tbt">Approval Needed</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--amberl);border-radius:9px;padding:8px 11px;margin-bottom:12px;font-size:10px;color:var(--amber);font-weight:600;">⏳ Response needed by 30 Oct 2025</div>
+          <div class="c-apr-title" style="font-size:15px;margin-bottom:4px;">Wall Colour</div>
+          <div class="c-apr-type" style="font-size:11px;margin-bottom:12px;">Design selection · From Riya Desai</div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <div style="flex:1;background:#8FAF8F;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">Sage Green</div>
+            <div style="flex:1;background:#C4B8A8;border-radius:10px;height:80px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">Warm Grey</div>
+          </div>
+          <div class="c-apr-desc">Choose your preferred wall colour for the living room and bedrooms. Both options are from Asian Paints Royale Shyne.</div>
+          <div id="c-resp-2">
+            <div class="c-apr-acts">
+              <button class="ca-approve" onclick="cApprove(2,'Sage green')" style="background:#8FAF8F;">✓ Sage Green</button>
+              <button class="ca-approve" onclick="cApprove(2,'Warm grey')" style="background:#A09080;">✓ Warm Grey</button>
+            </div>
+            <div class="br">
+              <button class="ca-reject" onclick="cShowReject(2)">✗ Neither</button>
+              <button class="ca-question" onclick="cShowQuestion(2)">💬 Question</button>
+            </div>
+            <textarea class="response-input" id="rej-2" rows="3" placeholder="Tell Riya what you'd prefer…"></textarea>
+            <button class="btn-r response-submit" id="rej-sub-2" onclick="cSubmitReject(2)">Send feedback →</button>
+            <textarea class="response-input" id="q-2" rows="3" placeholder="Ask Riya a question…"></textarea>
+            <button class="btn-p response-submit" id="q-sub-2" onclick="cSubmitQuestion(2)">Send question →</button>
+          </div>
+          <div id="c-resp-2-done" style="display:none;"></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Tabs
+function dSetTab(t){
+  ['my','team','apr'].forEach(x=>{
+    document.getElementById('mt-'+x).classList.toggle('active',x===t);
+    document.getElementById('tab-'+x).style.display=x===t?'block':'none';
+  });
+}
+// Init tabs
+document.getElementById('tab-team').style.display='none';
+document.getElementById('tab-apr').style.display='none';
+
+// Views
+function dSetView(v){
+  document.getElementById('vt-list').classList.toggle('active',v==='list');
+  document.getElementById('vt-kanban').classList.toggle('active',v==='kanban');
+  document.getElementById('d-list-view').style.display=v==='list'?'block':'none';
+  document.getElementById('d-kanban-view').style.display=v==='kanban'?'block':'none';
+}
+
+// Task check
+function toggleCheck(el){
+  el.classList.toggle('done');
+  el.textContent=el.classList.contains('done')?'✓':'';
+  const nm=el.closest('.task-item').querySelector('.tnm');
+  if(nm)nm.classList.toggle('done',el.classList.contains('done'));
+  if(el.classList.contains('done'))dToast('Task completed ✓');
+}
+
+// Task expand
+function toggleExpand(id){document.getElementById(id).classList.toggle('open');}
+
+// AI suggest
+function dShowAI(){document.getElementById('d-ai-panel').classList.add('open');}
+function dHideAI(){document.getElementById('d-ai-panel').classList.remove('open');}
+function toggleAIChk(el){el.classList.toggle('sel');el.textContent=el.classList.contains('sel')?'✓':'';}
+function dAddAITasks(){
+  const sel=document.querySelectorAll('#ai-suggestions .ai-chk.sel').length;
+  dToast(sel+' tasks added ✓');
+  dHideAI();
+}
+
+// Recurring
+function setRec(el){document.querySelectorAll('.rec-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');}
+
+// Approval type
+function setAprType(el){document.querySelectorAll('.type-opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+
+// Client approval actions
+function cApprove(num,choice){
+  cToast('✓ '+choice+' approved!');
+  const done=document.getElementById('c-resp-'+num+'-done');
+  done.innerHTML=`<div style="background:var(--gl);border-radius:11px;padding:13px;text-align:center;"><div style="font-size:36px;margin-bottom:8px;">✅</div><div style="font-size:13px;font-weight:700;color:var(--g);">${choice} approved!</div><div style="font-size:10px;color:var(--mut);margin-top:4px;">Riya has been notified. Item saved to your Drive.</div></div>`;
+  document.getElementById('c-resp-'+num).style.display='none';
+  done.style.display='block';
+  // Update designer side
+  dToast('✓ Priya approved: '+choice+'! Saved to Drive.');
+  setTimeout(()=>cSS('c-approvals'),1500);
+}
+
+function cShowReject(num){
+  const r=document.getElementById('rej-'+num);const rs=document.getElementById('rej-sub-'+num);
+  const q=document.getElementById('q-'+num);const qs=document.getElementById('q-sub-'+num);
+  q.style.display='none';qs.style.display='none';
+  r.style.display=r.style.display==='block'?'none':'block';
+  rs.style.display=r.style.display;
+}
+
+function cShowQuestion(num){
+  const r=document.getElementById('rej-'+num);const rs=document.getElementById('rej-sub-'+num);
+  const q=document.getElementById('q-'+num);const qs=document.getElementById('q-sub-'+num);
+  r.style.display='none';rs.style.display='none';
+  q.style.display=q.style.display==='block'?'none':'block';
+  qs.style.display=q.style.display;
+}
+
+function cSubmitReject(num){
+  cToast('Feedback sent to Riya!');
+  dToast('⚠ Priya rejected item #'+num+' — check Approvals');
+  setTimeout(()=>cSS('c-approvals'),800);
+}
+
+function cSubmitQuestion(num){
+  cToast('Question sent to Riya!');
+  dToast('💬 Priya asked a question — check Approvals');
+  setTimeout(()=>cSS('c-approvals'),800);
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function cToast(msg){showT(msg,1);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>

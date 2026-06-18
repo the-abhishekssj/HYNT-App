@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react'
 import {
-  CaretLeft,
   ChatCircleDots,
   Check,
   CheckCircle,
   Circle,
   ClockCountdown,
   DotsThree,
-  Kanban,
   ListBullets,
   PaperPlaneTilt,
   PencilSimple,
@@ -17,6 +15,7 @@ import {
   UsersThree,
   XCircle,
 } from '@phosphor-icons/react'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const tabs = [
   { key: 'my', label: 'My Tasks', icon: ListBullets },
@@ -116,20 +115,28 @@ function SectionHeader({ title, meta, tone = 'text-[#6f7d74]' }) {
   )
 }
 
-function TaskRow({ task, onOpen, onToggleStatus, onOpenActions, assigneeLabel = task.assignee }) {
+function TaskRow({
+  task,
+  onOpen,
+  onToggleStatus,
+  onOpenActions,
+  assigneeLabel = task.assignee,
+  canUpdate = true,
+}) {
   return (
     <article className="border-b border-[#edf1ee] py-4 last:border-b-0">
       <div className="flex items-start gap-3">
         <button
           type="button"
           onClick={() => onToggleStatus(task)}
+          disabled={!canUpdate}
           className={`mt-0.5 grid size-6 shrink-0 place-items-center rounded-lg border ${
             task.status === 'done'
               ? 'border-[#26c485] bg-[#26c485] text-white'
               : task.status === 'inprogress'
                 ? 'border-[#d6b08d] bg-[#fff4e8] text-[#b66d29]'
                 : 'border-[#d5ddd7] bg-white text-[#94a096]'
-          }`}
+          } ${!canUpdate ? 'cursor-not-allowed opacity-45' : ''}`}
           aria-label={`Update ${task.title}`}
         >
           {task.status === 'done' ? <Check size={14} weight="bold" /> : task.status === 'inprogress' ? <ClockCountdown size={14} weight="bold" /> : <Circle size={12} weight="bold" />}
@@ -149,12 +156,26 @@ function TaskRow({ task, onOpen, onToggleStatus, onOpenActions, assigneeLabel = 
             }`}>
               {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
             </span>
+            {task.priority ? (
+              <span className={`type-caption rounded-md px-2 py-1 ${
+                task.priority === 'High'
+                  ? 'bg-[#fff0f0] text-[#c34545]'
+                  : task.priority === 'Medium'
+                    ? 'bg-[#fff4e8] text-[#b66d29]'
+                    : 'bg-[#eef7f1] text-[#267449]'
+              }`}>
+                {task.priority}
+              </span>
+            ) : null}
+            {task.linkedTo ? <span className="type-caption rounded-md bg-[#f2f4f3] px-2 py-1 text-[#6b7670]">Source: {task.linkedTo}</span> : null}
           </div>
         </button>
 
-        <button type="button" onClick={() => onOpenActions(task.id)} className="grid size-8 shrink-0 place-items-center rounded-full bg-[#f6f8f7] text-[#728078]" aria-label="Task actions">
-          <DotsThree size={16} weight="bold" />
-        </button>
+        {canUpdate ? (
+          <button type="button" onClick={() => onOpenActions(task.id)} className="grid size-8 shrink-0 place-items-center rounded-full bg-[#f6f8f7] text-[#728078]" aria-label="Task actions">
+            <DotsThree size={16} weight="bold" />
+          </button>
+        ) : null}
       </div>
     </article>
   )
@@ -201,6 +222,7 @@ function ProTaskDetail({
   selectedProject,
   task,
   completedByIndex,
+  canMoveTask,
   onBack,
   onMoveTask,
   onToggleStep,
@@ -208,18 +230,12 @@ function ProTaskDetail({
   return (
     <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
       <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
-        <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e6ece8] bg-white/95 backdrop-blur">
-          <div className="flex items-center justify-between px-4 py-3">
-            <button type="button" onClick={onBack} className="flex items-center gap-3">
-              <CaretLeft size={20} />
-              <div className="text-left">
-                <p className="type-section-title text-black">Task details</p>
-                <p className="type-meta text-[#7f8a84]">{selectedProject.scope}</p>
-              </div>
-            </button>
-            <span className={`type-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-          </div>
-        </header>
+        <ProjectWorkspaceHeader
+          title="Task details"
+          subtitle={selectedProject.scope}
+          onBack={onBack}
+          actions={<span className={`type-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>}
+        />
 
         <div className="px-4 pt-6">
           <section className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
@@ -237,6 +253,24 @@ function ProTaskDetail({
                 </div>
               ))}
             </div>
+            <div className="mt-5 border-t border-[#e3ebe5] pt-1">
+              {[
+                ['Priority', task.priority],
+                ['Source', task.linkedTo || 'Manual'],
+                ...(task.sourceLabel ? [['Diary update', task.sourceLabel]] : []),
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-start justify-between gap-4 border-b border-[#edf1ee] py-3 last:border-b-0">
+                  <p className="type-caption uppercase text-[#91a097]">{label}</p>
+                  <p className="type-body max-w-[62%] text-right text-[#1d1d1d]">{value}</p>
+                </div>
+              ))}
+            </div>
+            {task.note ? (
+              <div className="mt-4 border-l-2 border-[#d46f1f] pl-3">
+                <p className="type-caption uppercase text-[#a85d22]">Issue note</p>
+                <p className="type-body mt-1 text-[#46544c]">{task.note}</p>
+              </div>
+            ) : null}
           </section>
 
           <section className="mt-6 rounded-[20px] border border-[#e3ebe5] bg-white p-5">
@@ -247,7 +281,8 @@ function ProTaskDetail({
                   key={step}
                   type="button"
                   onClick={() => onToggleStep(index)}
-                  className="flex w-full items-start gap-3 border-b border-[#edf1ee] py-4 text-left last:border-b-0"
+                  disabled={!canMoveTask}
+                  className={`flex w-full items-start gap-3 border-b border-[#edf1ee] py-4 text-left last:border-b-0 ${!canMoveTask ? 'cursor-default' : ''}`}
                 >
                   <span className="mt-0.5 text-[#5c6e63]">
                     {completedByIndex[index] ? <CheckCircle size={18} weight="fill" className="text-[#26c485]" /> : <Circle size={18} />}
@@ -263,14 +298,20 @@ function ProTaskDetail({
         </div>
       </section>
 
-      <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-        <p className="type-label mb-3 uppercase text-[#7a8780]">Move task to</p>
-        <div className="no-scrollbar flex gap-2 overflow-x-auto">
-          <TaskStatusChip label="To do" selected={task.status === 'todo'} onClick={() => onMoveTask('todo')} />
-          <TaskStatusChip label="In progress" selected={task.status === 'inprogress'} onClick={() => onMoveTask('inprogress')} />
-          <TaskStatusChip label="Done" selected={task.status === 'done'} onClick={() => onMoveTask('done')} />
+      {canMoveTask ? (
+        <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+          <p className="type-label mb-3 uppercase text-[#7a8780]">Move task to</p>
+          <div className="no-scrollbar flex gap-2 overflow-x-auto">
+            <TaskStatusChip label="To do" selected={task.status === 'todo'} onClick={() => onMoveTask('todo')} />
+            <TaskStatusChip label="In progress" selected={task.status === 'inprogress'} onClick={() => onMoveTask('inprogress')} />
+            <TaskStatusChip label="Done" selected={task.status === 'done'} onClick={() => onMoveTask('done')} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
+          <p className="type-body text-[#6f7c74]">This role can review task details, but only assigned contributors or the principal pro can move statuses.</p>
+        </div>
+      )}
     </main>
   )
 }
@@ -280,6 +321,8 @@ export default function ProjectTasksWorkspace({
   selectedProject,
   tasks = [],
   setTasks,
+  approvals = null,
+  setApprovals = null,
   selectedTaskId,
   setSelectedTaskId,
   taskStepCompletion = {},
@@ -288,59 +331,91 @@ export default function ProjectTasksWorkspace({
   homeownerClientName = 'Priya Sharma',
   homeownerProjectName = 'Sharma 3BHK',
   homeownerDesignerName = 'Riya Desai',
+  permissions = null,
+  viewerRoleLabel = 'Principal Pro',
+  viewerName = 'Riya Desai',
 }) {
+  const resolvedPermissions = permissions || {
+    canViewTasks: true,
+    canCreateTasks: true,
+    canUpdateTasks: true,
+    canApproveTasks: true,
+    canViewTeamTasks: true,
+    isHomeowner: false,
+  }
   const [activeTab, setActiveTab] = useState('my')
-  const [activeView, setActiveView] = useState('list')
   const [taskFilter, setTaskFilter] = useState('All')
   const [taskActionTargetId, setTaskActionTargetId] = useState(null)
-  const [isComposerOpen, setIsComposerOpen] = useState(false)
+  const [composerMode, setComposerMode] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskAssignee, setNewTaskAssignee] = useState('Me')
   const [newTaskPriority, setNewTaskPriority] = useState('High')
   const [newTaskDue, setNewTaskDue] = useState('Today')
-  const [approvalItems, setApprovalItems] = useState(approvalSeed)
+  const [localApprovalItems, setLocalApprovalItems] = useState(approvalSeed)
+  const approvalItems = approvals ?? localApprovalItems
+  const updateApprovalItems = setApprovals ?? setLocalApprovalItems
+  const [newApprovalTitle, setNewApprovalTitle] = useState('')
+  const [newApprovalType, setNewApprovalType] = useState('Material selection')
+  const [newApprovalDescription, setNewApprovalDescription] = useState('')
+  const [newApprovalDueDate, setNewApprovalDueDate] = useState('')
   const [selectedApprovalId, setSelectedApprovalId] = useState(null)
   const [clientResponse, setClientResponse] = useState('')
+  const viewerTaskAliases = useMemo(() => {
+    const firstName = viewerName.split(' ')[0]
+    return Array.from(new Set([viewerName, firstName].filter(Boolean)))
+  }, [viewerName])
 
-  const selectedTask = tasks.find((task) => task.id === selectedTaskId) || null
+  const scopedTasks = useMemo(() => {
+    if (mode === 'homeowner') return tasks
+    if (resolvedPermissions.canViewTeamTasks || resolvedPermissions.isPrincipalPro) return tasks
+    return tasks.filter((task) => viewerTaskAliases.includes(task.assignee) || viewerTaskAliases.includes(task.assignedBy))
+  }, [mode, resolvedPermissions.canViewTeamTasks, resolvedPermissions.isPrincipalPro, tasks, viewerTaskAliases])
+
+  const visibleTabs = useMemo(() => {
+    if (mode === 'homeowner') return []
+    return tabs.filter((tab) => {
+      if (tab.key === 'my') return resolvedPermissions.canViewTasks
+      if (tab.key === 'team') return resolvedPermissions.canViewTeamTasks
+      if (tab.key === 'approvals') return resolvedPermissions.canApproveTasks
+      return true
+    })
+  }, [mode, resolvedPermissions.canApproveTasks, resolvedPermissions.canViewTasks, resolvedPermissions.canViewTeamTasks])
+
+  const currentTab = visibleTabs.some((tab) => tab.key === activeTab) ? activeTab : (visibleTabs[0]?.key || 'my')
+  const visibleTabGridClass = visibleTabs.length === 1 ? 'grid-cols-1' : visibleTabs.length === 2 ? 'grid-cols-2' : 'grid-cols-3'
+  const selectedTask = scopedTasks.find((task) => task.id === selectedTaskId) || null
   const selectedApproval = approvalItems.find((item) => item.id === selectedApprovalId) || null
 
   const groupedTasks = useMemo(() => ({
-    overdue: tasks.filter((task) => task.due === 'Overdue'),
-    today: tasks.filter((task) => task.due === 'Today'),
-    week: tasks.filter((task) => !['Overdue', 'Today', 'Done'].includes(task.due)),
-    done: tasks.filter((task) => task.status === 'done' || task.due === 'Done'),
-  }), [tasks])
+    overdue: scopedTasks.filter((task) => task.due === 'Overdue'),
+    today: scopedTasks.filter((task) => task.due === 'Today'),
+    week: scopedTasks.filter((task) => !['Overdue', 'Today', 'Done'].includes(task.due)),
+    done: scopedTasks.filter((task) => task.status === 'done' || task.due === 'Done'),
+  }), [scopedTasks])
 
   const filteredTasks = useMemo(() => {
-    if (taskFilter === 'All') return tasks
-    if (taskFilter === 'To do') return tasks.filter((task) => task.status === 'todo')
-    if (taskFilter === 'In progress') return tasks.filter((task) => task.status === 'inprogress')
-    return tasks.filter((task) => task.status === 'done')
-  }, [taskFilter, tasks])
+    if (taskFilter === 'All') return scopedTasks
+    if (taskFilter === 'To do') return scopedTasks.filter((task) => task.status === 'todo')
+    if (taskFilter === 'In progress') return scopedTasks.filter((task) => task.status === 'inprogress')
+    return scopedTasks.filter((task) => task.status === 'done')
+  }, [scopedTasks, taskFilter])
 
   const getTaskCount = (filter) => {
-    if (filter === 'All') return tasks.length
-    if (filter === 'To do') return tasks.filter((task) => task.status === 'todo').length
-    if (filter === 'In progress') return tasks.filter((task) => task.status === 'inprogress').length
-    return tasks.filter((task) => task.status === 'done').length
+    if (filter === 'All') return scopedTasks.length
+    if (filter === 'To do') return scopedTasks.filter((task) => task.status === 'todo').length
+    if (filter === 'In progress') return scopedTasks.filter((task) => task.status === 'inprogress').length
+    return scopedTasks.filter((task) => task.status === 'done').length
   }
 
   const teamGroups = useMemo(() => {
     const map = new Map()
-    tasks.forEach((task) => {
+    scopedTasks.forEach((task) => {
       const current = map.get(task.assignee) || []
       current.push(task)
       map.set(task.assignee, current)
     })
     return Array.from(map.entries())
-  }, [tasks])
-
-  const columns = [
-    { key: 'todo', title: 'To do', tone: 'bg-[#f2f4f3] text-[#5f6b64]' },
-    { key: 'inprogress', title: 'In progress', tone: 'bg-[#fff1e3] text-[#ad6522]' },
-    { key: 'done', title: 'Done', tone: 'bg-[#ebf8ef] text-[#267449]' },
-  ]
+  }, [scopedTasks])
 
   const approvalSections = {
     pending: approvalItems.filter((item) => item.status === 'pending' || item.status === 'question'),
@@ -348,6 +423,7 @@ export default function ProjectTasksWorkspace({
   }
 
   const moveTaskStatus = (taskId, nextStatus) => {
+    if (!resolvedPermissions.canUpdateTasks) return
     setTasks((prev) => prev.map((task) => (
       task.id === taskId
         ? {
@@ -360,18 +436,21 @@ export default function ProjectTasksWorkspace({
   }
 
   const cycleTaskStatus = (task) => {
+    if (!resolvedPermissions.canUpdateTasks) return
     const next = task.status === 'todo' ? 'inprogress' : task.status === 'inprogress' ? 'done' : 'todo'
     moveTaskStatus(task.id, next)
   }
 
   const createTask = () => {
+    if (!resolvedPermissions.canCreateTasks) return
     if (!newTaskTitle.trim()) return
     setTasks((prev) => [
       {
         id: `t-${Date.now()}`,
+        projectId: selectedProject?.id || 'p-1',
         title: newTaskTitle.trim(),
         assignee: newTaskAssignee === 'Me' ? 'You' : newTaskAssignee,
-        assignedBy: selectedProject?.client || homeownerClientName,
+        assignedBy: viewerName,
         due: newTaskDue,
         dueDate: newTaskDue === 'Today' ? '20 May 2026' : newTaskDue === 'Overdue' ? '18 May 2026' : '27 May 2026',
         dueTime: '06:00 PM',
@@ -382,6 +461,11 @@ export default function ProjectTasksWorkspace({
           'Close the task with client update',
         ],
         priority: newTaskPriority,
+        linkedTo: null,
+        sourceEntryId: null,
+        sourceIssueId: null,
+        sourceLabel: '',
+        note: '',
       },
       ...prev,
     ])
@@ -389,17 +473,47 @@ export default function ProjectTasksWorkspace({
     setNewTaskAssignee('Me')
     setNewTaskPriority('High')
     setNewTaskDue('Today')
-    setIsComposerOpen(false)
+    setComposerMode(null)
+  }
+
+  const createApproval = () => {
+    if (!resolvedPermissions.canApproveTasks || !newApprovalTitle.trim() || !newApprovalDescription.trim()) return
+    const now = new Date()
+    const dueDate = newApprovalDueDate
+      ? new Date(`${newApprovalDueDate}T00:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+      : 'TBD'
+    updateApprovalItems((prev) => [{
+      id: `apr-${Date.now()}`,
+      projectId: selectedProject?.id || 'p-1',
+      title: newApprovalTitle.trim(),
+      type: newApprovalType,
+      status: 'pending',
+      description: newApprovalDescription.trim(),
+      dueDate,
+      sentAt: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+      sentBy: viewerName,
+      homeownerName: selectedProject?.client || homeownerClientName,
+      image: '/hynt-home/product.png',
+      clientQuestion: '',
+      respondedAt: null,
+    }, ...prev])
+    setNewApprovalTitle('')
+    setNewApprovalType('Material selection')
+    setNewApprovalDescription('')
+    setNewApprovalDueDate('')
+    setActiveTab('approvals')
+    setComposerMode(null)
   }
 
   const handleApprovalResponse = (nextStatus) => {
     if (!selectedApproval) return
-    setApprovalItems((prev) => prev.map((item) => (
+    updateApprovalItems((prev) => prev.map((item) => (
       item.id === selectedApproval.id
         ? {
             ...item,
             status: nextStatus,
-            clientQuestion: nextStatus === 'question' ? clientResponse.trim() || item.clientQuestion : item.clientQuestion,
+            clientQuestion: ['question', 'rejected'].includes(nextStatus) ? clientResponse.trim() || item.clientQuestion : item.clientQuestion,
+            respondedAt: new Date().toISOString(),
           }
         : item
     )))
@@ -411,15 +525,13 @@ export default function ProjectTasksWorkspace({
     if (selectedApproval) {
       return (
         <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
-          <section className="mx-auto w-full max-w-[390px] pb-8">
-            <header className="bg-[#173324] px-4 pb-5 pt-5 text-white">
-              <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body mb-4 flex items-center gap-2">
-                <CaretLeft size={18} />
-                Back
-              </button>
-              <p className="type-page-title">Approvals needed</p>
-              <p className="type-body mt-2 text-white/72">From {homeownerDesignerName} / {homeownerProjectName}</p>
-            </header>
+          <section className="mx-auto w-full max-w-[390px] pb-8 pt-16">
+            <ProjectWorkspaceHeader
+              title="Approval task"
+              subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`}
+              onBack={() => setSelectedApprovalId(null)}
+              actions={<span className={`type-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>{approvalLabel[selectedApproval.status]}</span>}
+            />
 
             <div className="px-4 pt-5">
               <article className="rounded-[20px] border border-[#e2e9e4] bg-white p-5 shadow-[0_12px_32px_rgba(17,24,20,0.06)]">
@@ -476,19 +588,12 @@ export default function ProjectTasksWorkspace({
 
     return (
       <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
-        <section className="mx-auto w-full max-w-[390px] pb-8">
-          <header className="bg-[#173324] px-4 pb-5 pt-5 text-white">
-            <button type="button" onClick={onBack} className="type-body mb-4 flex items-center gap-2">
-              <CaretLeft size={18} />
-              Back
-            </button>
-            <p className="type-page-title">Approvals needed</p>
-            <p className="type-body mt-2 text-white/72">From {homeownerDesignerName} · {homeownerProjectName}</p>
-          </header>
+        <section className="mx-auto w-full max-w-[390px] pb-8 pt-16">
+          <ProjectWorkspaceHeader title="Tasks" subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`} onBack={onBack} />
 
           <div className="px-4 pt-5">
             <div className="type-body-strong rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[#267449]">
-              {homeownerDesignerName} needs your decisions on these items. Open each card to review and respond.
+              {homeownerDesignerName} has sent these items for your approval. Open each task to review and respond.
             </div>
 
             <section className="mt-6">
@@ -507,6 +612,23 @@ export default function ProjectTasksWorkspace({
                   <ApprovalCard key={item.id} item={item} onOpen={setSelectedApprovalId} compact />
                 ))}
               </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    )
+  }
+
+  if (!resolvedPermissions.canViewTasks) {
+    return (
+      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+        <section className="mx-auto w-full max-w-[390px] pb-12 pt-16">
+          <ProjectWorkspaceHeader title="Tasks" subtitle={selectedProject?.scope || homeownerProjectName} onBack={onBack} />
+          <div className="px-4 pt-8">
+            <section className="rounded-[24px] border border-[#e3ebe5] bg-[#fbfcfb] px-5 py-6">
+              <p className="type-label uppercase text-[#7a8780]">Restricted access</p>
+              <h1 className="type-page-title mt-2 text-[#102418]">{viewerRoleLabel} cannot open project tasks.</h1>
+              <p className="type-body mt-3 text-[#5f6f66]">Switch to a role with task visibility, or grant this member access from People & Access.</p>
             </section>
           </div>
         </section>
@@ -537,6 +659,7 @@ export default function ProjectTasksWorkspace({
         selectedProject={selectedProject}
         task={selectedTask}
         completedByIndex={completedByIndex}
+        canMoveTask={resolvedPermissions.canUpdateTasks}
         onBack={() => setSelectedTaskId(null)}
         onMoveTask={(nextStatus) => moveTaskStatus(selectedTask.id, nextStatus)}
         onToggleStep={toggleStep}
@@ -547,31 +670,31 @@ export default function ProjectTasksWorkspace({
   return (
     <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
       <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
-        <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e6ece8] bg-white/95 backdrop-blur">
-          <div className="flex items-center justify-between px-4 py-3">
-            <button type="button" onClick={onBack} className="flex items-center gap-3">
-              <CaretLeft size={20} />
-              <div className="text-left">
-                <p className="type-section-title text-black">Tasks</p>
-                <p className="type-meta text-[#7f8a84]">{selectedProject?.scope || homeownerProjectName}</p>
-              </div>
-            </button>
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setActiveTab('approvals')} className="grid size-9 place-items-center rounded-full bg-[#f4efff] text-[#6844d8]" aria-label="Open approvals">
-                <PaperPlaneTilt size={18} weight="bold" />
-              </button>
-              <button type="button" onClick={() => setIsComposerOpen((prev) => !prev)} className="grid size-9 place-items-center rounded-full bg-black text-white" aria-label="Create task">
-                <Plus size={18} weight="bold" />
-              </button>
-            </div>
-          </div>
-        </header>
+        <ProjectWorkspaceHeader
+          title="Tasks"
+          subtitle={selectedProject?.scope || homeownerProjectName}
+          onBack={onBack}
+          actions={(
+            <>
+              {resolvedPermissions.canApproveTasks ? (
+                <button type="button" onClick={() => setComposerMode('approval')} className="grid size-9 place-items-center rounded-full bg-[#f4efff] text-[#6844d8]" aria-label="Send for approval">
+                  <PaperPlaneTilt size={18} weight="bold" />
+                </button>
+              ) : null}
+              {resolvedPermissions.canCreateTasks ? (
+                <button type="button" onClick={() => setComposerMode('task')} className="grid size-9 place-items-center rounded-full bg-black text-white" aria-label="Create task">
+                  <Plus size={18} weight="bold" />
+                </button>
+              ) : null}
+            </>
+          )}
+        />
 
         <div className="px-4 pt-5">
-          <div className="grid grid-cols-3 gap-2 rounded-[20px] border border-[#e4ebe6] bg-[#fbfcfb] p-2">
-            {tabs.map((tab) => {
+          <div className={`grid gap-2 rounded-[20px] border border-[#e4ebe6] bg-[#fbfcfb] p-2 ${visibleTabGridClass}`}>
+            {visibleTabs.map((tab) => {
               const Icon = tab.icon
-              const active = activeTab === tab.key
+              const active = currentTab === tab.key
               return (
                 <button
                   key={tab.key}
@@ -586,84 +709,8 @@ export default function ProjectTasksWorkspace({
             })}
           </div>
 
-          {isComposerOpen ? (
-            <section className="mt-6 rounded-[20px] border border-[#e3ebe5] bg-[#f7faf8] p-5">
-              <SectionHeader title="New task" />
-              <div className="space-y-4">
-                <label className="block">
-                  <p className="type-label mb-2 uppercase text-[#7a8780]">Task title</p>
-                  <input
-                    value={newTaskTitle}
-                    onChange={(event) => setNewTaskTitle(event.target.value)}
-                    placeholder="What needs to be done?"
-                    className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]"
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Assign to</p>
-                    <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
-                      {['Me', 'Rohan', 'Aarav', 'Nisha', 'Vikram', 'Meera', 'Arjun'].map((name) => <option key={name}>{name}</option>)}
-                    </select>
-                  </label>
-                  <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Priority</p>
-                    <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
-                      {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
-                    </select>
-                  </label>
-                </div>
-                <label className="block">
-                  <p className="type-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
-                  <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="type-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 outline-none">
-                    {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
-                  </select>
-                </label>
-
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsComposerOpen(false)
-                      setNewTaskTitle('')
-                      setNewTaskAssignee('Me')
-                      setNewTaskPriority('High')
-                      setNewTaskDue('Today')
-                    }}
-                    className="type-body-strong h-12 rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#4f5d55]"
-                  >
-                    Cancel
-                  </button>
-                  <button type="button" onClick={createTask} className="type-body-strong h-12 rounded-2xl bg-black px-4 text-white">
-                    Create task
-                  </button>
-                </div>
-              </div>
-            </section>
-          ) : null}
-
-          {activeTab === 'my' ? (
+          {currentTab === 'my' ? (
             <section className="mt-6">
-              <div className="flex items-center rounded-2xl border border-[#e4ebe6] bg-[#f5f8f6] p-1">
-                {[
-                  ['list', 'List', ListBullets],
-                  ['kanban', 'Kanban', Kanban],
-                ].map(([viewKey, label, Icon]) => {
-                  const active = activeView === viewKey
-                  return (
-                    <button
-                      key={viewKey}
-                      type="button"
-                      onClick={() => setActiveView(viewKey)}
-                      className={`type-body flex h-10 flex-1 items-center justify-center gap-2 rounded-[14px] px-4 ${active ? 'bg-white font-semibold text-[#173324] shadow-sm' : 'text-[#6f7c74]'}`}
-                    >
-                      <Icon size={16} weight={active ? 'fill' : 'regular'} />
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-
               <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
                 {taskFilters.map((filter) => (
                   <button
@@ -680,78 +727,58 @@ export default function ProjectTasksWorkspace({
                 ))}
               </div>
 
-              {activeView === 'list' ? (
-                <div className="mt-6 space-y-6">
-                  {[
-                    ['Overdue', groupedTasks.overdue, 'text-[#c34545]'],
-                    ['Today', groupedTasks.today, 'text-[#c66f19]'],
-                    ['This week', groupedTasks.week, 'text-[#6f7d74]'],
-                    ['Done', groupedTasks.done, 'text-[#96a39c]'],
-                  ].map(([label, sectionTasks, tone]) => {
-                    const visibleTasks = sectionTasks.filter((task) => (
-                      taskFilter === 'All'
-                        ? true
-                        : taskFilter === 'To do'
-                          ? task.status === 'todo'
-                          : taskFilter === 'In progress'
-                            ? task.status === 'inprogress'
-                            : task.status === 'done'
-                    ))
-                    if (!visibleTasks.length) return null
-                    return (
-                      <section key={label}>
-                        <SectionHeader title={label} meta={String(visibleTasks.length)} tone={tone} />
-                        <div className={`overflow-hidden rounded-[20px] border ${label === 'Done' ? 'border-[#e7ece9] bg-[#fbfcfb]' : 'border-[#e3ebe5] bg-white'} px-4`}>
-                          {visibleTasks.map((task) => (
-                            <TaskRow
-                              key={task.id}
-                              task={task}
-                              onOpen={setSelectedTaskId}
-                              onToggleStatus={cycleTaskStatus}
-                              onOpenActions={setTaskActionTargetId}
-                              assigneeLabel={task.assignee}
-                            />
-                          ))}
-                        </div>
-                      </section>
-                    )
-                  })}
-                </div>
-              ) : (
-                <div className="no-scrollbar mt-6 flex gap-3 overflow-x-auto pb-2">
-                  {columns.map((column) => {
-                    const columnTasks = filteredTasks.filter((task) => task.status === column.key)
-                    return (
-                      <section key={column.key} className="w-[264px] shrink-0 rounded-[20px] border border-[#e3ebe5] bg-[#f8faf9] p-4">
-                        <div className="mb-4 flex items-center justify-between">
-                          <p className="type-card-title text-[#173324]">{column.title}</p>
-                          <span className={`type-caption rounded-full px-3 py-1 uppercase ${column.tone}`}>{columnTasks.length}</span>
-                        </div>
-                        <div className="space-y-3">
-                          {columnTasks.map((task) => (
-                            <button key={task.id} type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full rounded-[20px] border border-[#dde6e0] bg-white p-4 text-left">
-                              <p className="type-card-title text-[#1d1d1d]">{task.title}</p>
-                              <div className="mt-3 flex items-center justify-between">
-                                <span className="type-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{task.assignee}</span>
-                                <span className={`type-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-                              </div>
-                            </button>
-                          ))}
-                          <button type="button" onClick={() => setIsComposerOpen(true)} className="type-body flex w-full items-center gap-2 rounded-[18px] border border-dashed border-[#d8e2db] px-4 py-3 text-[#6f7c74]">
-                            <span className="grid size-6 place-items-center rounded-lg bg-[#ecf5ef] text-[#267449]"><Plus size={14} weight="bold" /></span>
-                            Add task
-                          </button>
-                        </div>
-                      </section>
-                    )
-                  })}
-                </div>
-              )}
+              <div className="mt-6 space-y-6">
+                {filteredTasks.length === 0 ? (
+                  <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
+                    <p className="type-body text-[#6f7c74]">No tasks match the current filter for this role.</p>
+                  </div>
+                ) : null}
+                {[
+                  ['Overdue', groupedTasks.overdue, 'text-[#c34545]'],
+                  ['Today', groupedTasks.today, 'text-[#c66f19]'],
+                  ['This week', groupedTasks.week, 'text-[#6f7d74]'],
+                  ['Done', groupedTasks.done, 'text-[#96a39c]'],
+                ].map(([label, sectionTasks, tone]) => {
+                  const visibleTasks = sectionTasks.filter((task) => (
+                    taskFilter === 'All'
+                      ? true
+                      : taskFilter === 'To do'
+                        ? task.status === 'todo'
+                        : taskFilter === 'In progress'
+                          ? task.status === 'inprogress'
+                          : task.status === 'done'
+                  ))
+                  if (!visibleTasks.length) return null
+                  return (
+                    <section key={label}>
+                      <SectionHeader title={label} meta={String(visibleTasks.length)} tone={tone} />
+                      <div className={`overflow-hidden rounded-[20px] border ${label === 'Done' ? 'border-[#e7ece9] bg-[#fbfcfb]' : 'border-[#e3ebe5] bg-white'} px-4`}>
+                        {visibleTasks.map((task) => (
+                          <TaskRow
+                            key={task.id}
+                            task={task}
+                            onOpen={setSelectedTaskId}
+                            onToggleStatus={cycleTaskStatus}
+                            onOpenActions={setTaskActionTargetId}
+                            assigneeLabel={task.assignee}
+                            canUpdate={resolvedPermissions.canUpdateTasks}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  )
+                })}
+              </div>
             </section>
           ) : null}
 
-          {activeTab === 'team' ? (
+          {currentTab === 'team' ? (
             <section className="mt-6 space-y-6">
+              {teamGroups.length === 0 ? (
+                <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
+                  <p className="type-body text-[#6f7c74]">No team tasks are visible for this role yet.</p>
+                </div>
+              ) : null}
               {teamGroups.map(([assignee, assigneeTasks]) => (
                 <section key={assignee}>
                   <SectionHeader title={assignee} meta={`${assigneeTasks.length} tasks`} tone="text-[#102418]" />
@@ -764,6 +791,7 @@ export default function ProjectTasksWorkspace({
                         onToggleStatus={cycleTaskStatus}
                         onOpenActions={setTaskActionTargetId}
                         assigneeLabel={assignee}
+                        canUpdate={resolvedPermissions.canUpdateTasks}
                       />
                     ))}
                   </div>
@@ -772,7 +800,7 @@ export default function ProjectTasksWorkspace({
             </section>
           ) : null}
 
-          {activeTab === 'approvals' ? (
+          {currentTab === 'approvals' ? (
             <section className="mt-6 space-y-6">
               <div className="type-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
                 Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
@@ -800,13 +828,101 @@ export default function ProjectTasksWorkspace({
         </div>
       </section>
 
-      {taskActionTargetId ? (
+      {composerMode ? (
+        <div className="fixed inset-0 z-[100] bg-black/30">
+          <button type="button" onClick={() => setComposerMode(null)} className="absolute inset-0 cursor-default" aria-label="Close composer" />
+          <aside className="absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col border-l border-[#e3e9e5] bg-white shadow-[-18px_0_48px_rgba(16,36,24,0.14)]">
+            <header className="flex items-start justify-between border-b border-[#e6ece8] px-5 py-5">
+              <div>
+                <p className="type-label uppercase text-[#7a8780]">{composerMode === 'task' ? 'Project task' : 'Homeowner decision'}</p>
+                <h2 className="type-page-title mt-1 text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
+                <p className="type-meta mt-1 text-[#7a8780]">{selectedProject?.scope || homeownerProjectName}</p>
+              </div>
+              <button type="button" onClick={() => setComposerMode(null)} className="grid size-10 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
+                <XCircle size={20} weight="fill" />
+              </button>
+            </header>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6">
+              {composerMode === 'task' ? (
+                <div className="space-y-5">
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Task title</p>
+                    <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="What needs to be done?" autoFocus className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <label className="block">
+                      <p className="type-label mb-2 uppercase text-[#7a8780]">Assign to</p>
+                      <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                        {['Me', 'Riya Desai', 'Aanya Rao', 'Nisha Reddy', 'Priya Sharma'].map((name) => <option key={name}>{name}</option>)}
+                      </select>
+                    </label>
+                    <label className="block">
+                      <p className="type-label mb-2 uppercase text-[#7a8780]">Priority</p>
+                      <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                        {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
+                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
+                    </select>
+                  </label>
+                  <div className="border-l-2 border-[#b7c8bd] pl-3">
+                    <p className="type-body text-[#5d6d64]">This is an internal project task. It will only appear to the assigned professional team.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Approval title</p>
+                    <input value={newApprovalTitle} onChange={(event) => setNewApprovalTitle(event.target.value)} placeholder="What should the homeowner decide?" autoFocus className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                  </label>
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Approval type</p>
+                    <select value={newApprovalType} onChange={(event) => setNewApprovalType(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      {['Material selection', 'Design approval', 'Design selection', 'Change request', 'Other'].map((type) => <option key={type}>{type}</option>)}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Description for homeowner</p>
+                    <textarea value={newApprovalDescription} onChange={(event) => setNewApprovalDescription(event.target.value)} rows={5} placeholder="Explain the decision and the available options" className="type-body w-full resize-none rounded-xl border border-[#d8e2db] bg-white px-4 py-3 outline-none placeholder:text-[#99a39d]" />
+                  </label>
+                  <label className="block">
+                    <p className="type-label mb-2 uppercase text-[#7a8780]">Response needed by</p>
+                    <input type="date" value={newApprovalDueDate} onChange={(event) => setNewApprovalDueDate(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none" />
+                  </label>
+                  <div className="border-l-2 border-[#6844d8] pl-3">
+                    <p className="type-body text-[#5d566f]">This will appear immediately in {selectedProject?.client || homeownerClientName}&apos;s Tasks list.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <footer className="grid grid-cols-[auto_1fr] gap-3 border-t border-[#e6ece8] bg-white px-5 pb-6 pt-4">
+              <button type="button" onClick={() => setComposerMode(null)} className="type-body-strong h-12 rounded-xl border border-[#d8e2db] px-5 text-[#4f5d55]">Cancel</button>
+              <button
+                type="button"
+                onClick={composerMode === 'task' ? createTask : createApproval}
+                disabled={composerMode === 'task' ? !newTaskTitle.trim() : !newApprovalTitle.trim() || !newApprovalDescription.trim()}
+                className="type-body-strong h-12 rounded-xl bg-[#173324] px-5 text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {composerMode === 'task' ? 'Create task' : 'Send to homeowner'}
+              </button>
+            </footer>
+          </aside>
+        </div>
+      ) : null}
+
+      {taskActionTargetId && resolvedPermissions.canUpdateTasks ? (
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
           <p className="type-label mb-3 uppercase text-[#7a8780]">Task actions</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
-            <TaskStatusChip label="To do" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { moveTaskStatus(taskActionTargetId, 'todo'); setTaskActionTargetId(null) }} />
-            <TaskStatusChip label="In progress" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { moveTaskStatus(taskActionTargetId, 'inprogress'); setTaskActionTargetId(null) }} />
-            <TaskStatusChip label="Done" selected={tasks.find((task) => task.id === taskActionTargetId)?.status === 'done'} onClick={() => { moveTaskStatus(taskActionTargetId, 'done'); setTaskActionTargetId(null) }} />
+            <TaskStatusChip label="To do" selected={scopedTasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { moveTaskStatus(taskActionTargetId, 'todo'); setTaskActionTargetId(null) }} />
+            <TaskStatusChip label="In progress" selected={scopedTasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { moveTaskStatus(taskActionTargetId, 'inprogress'); setTaskActionTargetId(null) }} />
+            <TaskStatusChip label="Done" selected={scopedTasks.find((task) => task.id === taskActionTargetId)?.status === 'done'} onClick={() => { moveTaskStatus(taskActionTargetId, 'done'); setTaskActionTargetId(null) }} />
           </div>
           <button
             type="button"

@@ -47,6 +47,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
     invites,
     roleTemplates,
     permissionGroups,
+    activeViewer,
     activeViewerRoleId,
     actions,
   } = useSharedProject(projectId)
@@ -56,14 +57,14 @@ function PeopleAccessWorkspace({ project, onBack }) {
   const [openMemberId, setOpenMemberId] = useState(memberships.find((membership) => membership.roleId !== 'principal-pro')?.id || null)
 
   const selectedInviteRole = roleTemplates.find((role) => role.id === inviteRoleId) || roleTemplates[0]
-  const activeViewerRole = roleTemplates.find((role) => role.id === activeViewerRoleId) || roleTemplates[0]
+  const activeViewerRole = activeViewer?.role || roleTemplates.find((role) => role.id === activeViewerRoleId) || roleTemplates[0]
   const acceptedMembers = memberships.filter((membership) => membership.status === 'accepted')
   const pendingInvites = invites.filter((invite) => invite.status === 'pending')
 
   const viewerSummary = useMemo(() => {
-    if (activeViewerRole?.grants?.includes('all')) return 'Full project access'
-    return `${activeViewerRole?.grants?.length || 0} grants active`
-  }, [activeViewerRole])
+    if (activeViewer?.grants?.includes('all')) return 'Full project access'
+    return `${activeViewer?.grants?.length || 0} grants active`
+  }, [activeViewer])
 
   const sendInvite = () => {
     actions.createInvite({
@@ -83,7 +84,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
   return (
     <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
       <section className="mx-auto w-full max-w-[390px] pb-32 pt-16">
-        <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.82)] backdrop-blur-[16px]">
+        <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
           <div className="px-4 py-3">
             <div className="flex items-center justify-between py-1">
               <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">

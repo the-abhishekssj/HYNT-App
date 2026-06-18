@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finance — Hynt Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --g:#2D6A4F;--g2:#3A8062;--g3:#52B788;--gl:#EAF3EE;--gp:#F0F7F2;
+  --bg:#F7F9F7;--sur:#FFFFFF;--bor:#DDE8DD;--borl:#ECF2EC;
+  --txt:#151C15;--mut:#6B7D6B;--lgt:#A8B8A8;
+  --or:#E07A2F;--orl:#FEF0E4;--red:#C0392B;--redl:#FDECEA;
+  --blue:#2563EB;--bluel:#EFF6FF;--amber:#F59E0B;--amberl:#FFF8E1;
+  --pur:#7C3AED;--purl:#F5F3FF;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{background:#A8BFA8;display:flex;justify-content:center;gap:28px;align-items:flex-start;min-height:100vh;padding:24px;font-family:'Poppins',sans-serif;flex-wrap:wrap;}
+.pw{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.plbl{font-size:11px;font-weight:700;color:#4a6a4a;letter-spacing:.08em;text-transform:uppercase;}
+.phone{width:375px;height:812px;background:var(--bg);border-radius:44px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.3),0 0 0 9px #1a1a1a,0 0 0 11px #2a2a2a;display:flex;flex-direction:column;}
+.sb{height:44px;background:var(--sur);display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 8px;flex-shrink:0;}
+.tm{font-size:14px;font-weight:700;color:var(--txt);}
+.app{flex:1;overflow:hidden;position:relative;}
+.scr{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;flex-direction:column;background:var(--bg);}
+.scr.active{display:flex;}
+.scr::-webkit-scrollbar{display:none;}
+.topbar{padding:11px 16px 9px;background:var(--sur);border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tbt{font-size:15px;font-weight:700;color:var(--txt);letter-spacing:-.02em;}
+.bb{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:15px;color:var(--g);display:flex;align-items:center;justify-content:center;}
+.ib{width:32px;height:32px;border-radius:9px;background:var(--gp);border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;}
+.sc{padding:13px;flex:1;overflow-y:auto;}
+.sc::-webkit-scrollbar{display:none;}
+.btn-p{background:var(--g);color:#fff;border-radius:11px;padding:12px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;box-shadow:0 3px 12px rgba(45,106,79,.25);width:100%;}
+.btn-p:disabled{background:var(--lgt);box-shadow:none;cursor:default;}
+.btn-o{background:transparent;color:var(--g);border:1.5px solid var(--g);border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-g{background:var(--gp);color:var(--mut);border-radius:11px;padding:11px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.btn-r{background:var(--orl);color:var(--or);border:1px solid #F5D5B8;border-radius:11px;padding:11px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;width:100%;}
+.br{display:flex;gap:7px;margin-top:8px;}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;}
+.pd{background:var(--orl);color:var(--or);}
+.ps{background:var(--bluel);color:var(--blue);}
+.pv{background:var(--purl);color:var(--pur);}
+.pp{background:var(--gl);color:var(--g);}
+.po{background:var(--redl);color:var(--red);}
+.pu{background:#F0F0F0;color:#666;}
+.pc{background:#F0F0F0;color:#888;text-decoration:line-through;}
+.dv{height:1px;background:var(--borl);margin:11px 0;}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sht{font-size:12px;font-weight:700;color:var(--txt);}
+.sha{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.tabs{display:flex;background:var(--gp);border-radius:8px;padding:3px;margin-bottom:12px;}
+.tb2{flex:1;text-align:center;font-size:10px;font-weight:600;padding:7px 3px;border-radius:6px;color:var(--mut);cursor:pointer;}
+.tb2.active{background:#fff;color:var(--g);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.pnl{display:none;}
+.pnl.active{display:block;}
+.ic{background:var(--gl);border-radius:8px;padding:8px 10px;margin-bottom:11px;display:flex;gap:6px;align-items:flex-start;}
+.ici{font-size:13px;flex-shrink:0;}
+.ict{font-size:10px;color:var(--g);line-height:1.5;}
+.bot-bar{background:var(--sur);border-top:1px solid var(--bor);padding:11px 13px 18px;flex-shrink:0;}
+
+/* Dashboard cards */
+.dash-hero{background:var(--g);border-radius:14px;padding:16px;margin-bottom:12px;}
+.dh-label{font-size:10px;color:rgba(255,255,255,.7);margin-bottom:3px;}
+.dh-val{font-size:28px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1;}
+.dh-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:4px;}
+.dh-row{display:flex;gap:8px;margin-top:12px;}
+.dh-stat{flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:9px;}
+.dhs-val{font-size:13px;font-weight:700;color:#fff;}
+.dhs-lbl{font-size:9px;color:rgba(255,255,255,.65);margin-top:2px;}
+.stat-row{display:flex;gap:7px;margin-bottom:11px;}
+.stat-box{flex:1;border-radius:10px;padding:9px;border:1px solid var(--bor);}
+.sv{font-size:14px;font-weight:700;line-height:1;}
+.sl{font-size:9px;color:var(--lgt);margin-top:3px;}
+.sg{background:var(--gp);}.sg .sv{color:var(--g);}
+.so{background:var(--orl);}.so .sv{color:var(--or);}
+.sr{background:var(--redl);}.sr .sv{color:var(--red);}
+.sp{background:var(--purl);}.sp .sv{color:var(--pur);}
+
+/* Progress bar */
+.pbar{height:7px;background:var(--borl);border-radius:4px;overflow:hidden;margin:8px 0 4px;}
+.pfill{height:100%;border-radius:4px;background:var(--g3);}
+
+/* Timeline dots */
+.tl-wrap{display:flex;gap:0;margin-bottom:12px;position:relative;}
+.tl-wrap::before{content:'';position:absolute;top:7px;left:7px;right:7px;height:2px;background:var(--bor);z-index:0;}
+.tl-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;z-index:1;}
+.tl-dot{width:15px;height:15px;border-radius:50%;border:2px solid var(--bor);background:#fff;flex-shrink:0;}
+.tl-dot.paid{background:var(--g);border-color:var(--g);}
+.tl-dot.pending{background:var(--or);border-color:var(--or);}
+.tl-dot.upcoming{background:#fff;border-color:var(--bor);}
+.tl-lbl{font-size:8px;font-weight:600;color:var(--mut);text-align:center;}
+.tl-amt{font-size:9px;font-weight:700;color:var(--txt);text-align:center;}
+
+/* Invoice cards */
+.inv-card{border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:7px;}
+.inv-card.pending{border-color:var(--or);}
+.inv-card.overdue{border-color:var(--red);}
+.inv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;}
+.inv-nm{font-size:11px;font-weight:700;color:var(--txt);}
+.inv-amt{font-size:13px;font-weight:700;color:var(--txt);}
+.inv-meta{font-size:9px;color:var(--lgt);margin-bottom:6px;}
+.inv-foot{display:flex;align-items:center;justify-content:space-between;}
+.inv-act{font-size:10px;font-weight:600;color:var(--g);cursor:pointer;}
+.inv-act.red{color:var(--red);}
+
+/* New invoice form */
+.form-panel{background:var(--gp);border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.form-panel.open{display:block;}
+.fg{margin-bottom:10px;}
+.fl{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:block;}
+.fi{width:100%;border:1.5px solid var(--bor);border-radius:9px;padding:10px 12px;font-size:12px;font-family:'Poppins',sans-serif;color:var(--txt);background:var(--sur);outline:none;}
+.fi:focus{border-color:var(--g3);}
+select.fi{appearance:none;}
+.fi-row{display:flex;gap:8px;}
+.calc-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--borl);}
+.calc-row:last-child{border-bottom:none;}
+.calc-l{font-size:10px;color:var(--mut);}
+.calc-v{font-size:10px;font-weight:700;color:var(--txt);}
+
+/* Expense cards */
+.exp-card{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--borl);}
+.exp-card:last-child{border-bottom:none;}
+.exp-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.exp-info{flex:1;}
+.exp-nm{font-size:11px;font-weight:600;color:var(--txt);}
+.exp-meta{font-size:9px;color:var(--lgt);margin-top:2px;}
+.exp-amt{font-size:12px;font-weight:700;color:var(--red);text-align:right;flex-shrink:0;}
+.exp-receipt{font-size:9px;color:var(--g);font-weight:600;cursor:pointer;}
+
+/* Category badges */
+.cat-vdr{background:#EEF2FF;color:var(--blue);}
+.cat-mat{background:var(--amberl);color:var(--amber);}
+.cat-lab{background:var(--orl);color:var(--or);}
+.cat-trv{background:var(--purl);color:var(--pur);}
+.cat-mis{background:var(--gp);color:var(--mut);}
+
+/* Add expense */
+.add-exp-panel{background:var(--gp);border:1px solid var(--bor);border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.add-exp-panel.open{display:block;}
+.upload-bill{border:1.5px dashed var(--bor);border-radius:9px;padding:14px;text-align:center;cursor:pointer;margin-top:8px;}
+.ub-icon{font-size:24px;margin-bottom:4px;}
+.ub-text{font-size:10px;color:var(--lgt);}
+
+/* P&L Report */
+.pl-section{margin-bottom:12px;}
+.pl-hdr{font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--bor);}
+.pl-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--borl);}
+.pl-row:last-child{border-bottom:none;}
+.pl-l{font-size:11px;color:var(--txt);}
+.pl-v{font-size:11px;font-weight:600;color:var(--txt);}
+.pl-v.green{color:var(--g);}
+.pl-v.red{color:var(--red);}
+.pl-v.amber{color:var(--amber);}
+.pl-total{display:flex;justify-content:space-between;padding:9px 12px;background:var(--gp);border-radius:9px;margin-top:8px;}
+.pl-tl{font-size:12px;font-weight:700;color:var(--txt);}
+.pl-tv{font-size:14px;font-weight:700;}
+
+/* GST table */
+.gst-table{width:100%;border-collapse:collapse;font-size:10px;}
+.gst-table th{background:var(--gp);color:var(--mut);font-weight:700;padding:6px 9px;text-align:left;}
+.gst-table td{padding:7px 9px;border-bottom:1px solid var(--borl);color:var(--txt);}
+.gst-table tr:last-child td{border-bottom:none;}
+
+/* Record payment panel */
+.rec-panel{background:#FEF8F4;border:1px solid #F5D5B8;border-radius:11px;padding:11px 13px;margin-bottom:11px;display:none;}
+.rec-panel.open{display:block;}
+
+/* OTP */
+.otp-inputs{display:flex;gap:7px;justify-content:center;margin:16px 0;}
+.otp-d{width:42px;height:50px;border:2px solid var(--bor);border-radius:10px;font-size:20px;font-weight:700;text-align:center;font-family:'Poppins',sans-serif;color:var(--txt);outline:none;}
+.otp-d:focus{border-color:var(--g);}
+
+/* Client invoice view */
+.cl-header{background:var(--g);padding:16px 16px 12px;flex-shrink:0;}
+.clh-t{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
+.clh-s{font-size:10px;color:rgba(255,255,255,.75);}
+.clh-b{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.clh-badge{background:rgba(255,255,255,.2);color:#fff;font-size:9px;font-weight:600;padding:2px 9px;border-radius:10px;}
+
+/* Pay button */
+.pay-btn{background:var(--g);color:#fff;border-radius:11px;padding:13px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(45,106,79,.3);}
+.rzp-tag{font-size:9px;color:var(--lgt);text-align:center;margin-top:5px;}
+
+/* Success screen */
+.success-circle{width:80px;height:80px;border-radius:50%;background:var(--gl);border:3px solid var(--g3);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 14px;}
+
+/* Toast */
+.toast{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 16px;border-radius:16px;font-size:11px;font-weight:600;white-space:nowrap;z-index:999;pointer-events:none;animation:fdup .3s ease;}
+@keyframes fdup{from{opacity:0;transform:translateX(-50%) translateY(6px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ===== DESIGNER PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👷 Designer Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="dc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Overview Dashboard -->
+      <div class="scr active" id="d-overview">
+        <div class="topbar"><button class="bb">←</button><div class="tbt">Finance</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dSS('d-report')" title="Reports">📊</button><button class="ib" onclick="dSS('d-new-inv')" title="New invoice" style="background:var(--g);color:#fff;">+</button></div></div>
+        <div class="sc">
+          <!-- Hero card -->
+          <div class="dash-hero">
+            <div class="dh-label">Total Project Value</div>
+            <div class="dh-val">₹9,01,756</div>
+            <div class="dh-sub">Sharma 3BHK Renovation · incl. GST</div>
+            <div class="dh-row">
+              <div class="dh-stat"><div class="dhs-val">₹5,40,000</div><div class="dhs-lbl">Received</div></div>
+              <div class="dh-stat"><div class="dhs-val" style="color:#FCD34D;">₹4,32,000</div><div class="dhs-lbl">Pending</div></div>
+              <div class="dh-stat"><div class="dhs-val" style="color:rgba(255,255,255,.5);">₹29,756</div><div class="dhs-lbl">Upcoming</div></div>
+            </div>
+          </div>
+
+          <!-- Collection progress -->
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;color:var(--mut);">₹5.4L of ₹9.0L collected</span><span style="font-size:10px;font-weight:700;color:var(--g);">60%</span></div>
+            <div class="pbar"><div class="pfill" style="width:60%;"></div></div>
+          </div>
+
+          <!-- Payment timeline -->
+          <div class="sh"><div class="sht">Payment Timeline</div></div>
+          <div class="tl-wrap">
+            <div class="tl-item"><div class="tl-dot paid"></div><div class="tl-lbl">Advance</div><div class="tl-amt" style="color:var(--g);">₹2.7L ✓</div></div>
+            <div class="tl-item"><div class="tl-dot paid"></div><div class="tl-lbl">M1</div><div class="tl-amt" style="color:var(--g);">₹2.7L ✓</div></div>
+            <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-lbl">M2</div><div class="tl-amt" style="color:var(--or);">₹2.2L ⏳</div></div>
+            <div class="tl-item"><div class="tl-dot upcoming"></div><div class="tl-lbl">Final</div><div class="tl-amt" style="color:var(--lgt);">₹0.9L</div></div>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="stat-row">
+            <div class="stat-box sg"><div class="sv">₹3.58L</div><div class="sl">Expenses</div></div>
+            <div class="stat-box sp"><div class="sv">₹1.82L</div><div class="sl">Net profit</div></div>
+            <div class="stat-box so"><div class="sv">33.7%</div><div class="sl">Margin</div></div>
+          </div>
+
+          <!-- Nav to sections -->
+          <div class="tabs">
+            <div class="tb2 active" id="d-t-inv" onclick="dSetDash('inv')">Invoices</div>
+            <div class="tb2" id="d-t-exp" onclick="dSetDash('exp')">Expenses</div>
+          </div>
+
+          <!-- INVOICES -->
+          <div class="pnl active" id="d-p-inv">
+            <div class="inv-card pp">
+              <div class="inv-top"><div class="inv-nm">INV-001 — Advance (30%)</div><div class="inv-amt">₹2,70,527</div></div>
+              <div class="inv-meta">Raised: 1 Jun 2025 · Paid: 3 Jun 2025 · NEFT</div>
+              <div class="inv-foot"><span class="pill pp">✓ Paid</span><span class="inv-act" onclick="dToast('Receipt downloaded!')">↓ Receipt</span></div>
+            </div>
+            <div class="inv-card pp">
+              <div class="inv-top"><div class="inv-nm">INV-002 — Milestone 1 (30%)</div><div class="inv-amt">₹2,70,527</div></div>
+              <div class="inv-meta">Raised: 15 Aug 2025 · Paid: 18 Aug 2025 · UPI</div>
+              <div class="inv-foot"><span class="pill pp">✓ Paid</span><span class="inv-act" onclick="dToast('Receipt downloaded!')">↓ Receipt</span></div>
+            </div>
+            <div class="inv-card pending">
+              <div class="inv-top"><div class="inv-nm">INV-003 — Milestone 2 (24%)</div><div class="inv-amt">₹2,16,421</div></div>
+              <div class="inv-meta">Raised: 20 Oct 2025 · Due: 30 Oct 2025</div>
+              <div class="inv-foot"><span class="pill ps">⏳ Sent</span><div style="display:flex;gap:8px;"><span class="inv-act" onclick="dSS('d-record')">Record payment</span><span class="inv-act" onclick="dToast('Reminder sent to Priya!')">Send reminder</span></div></div>
+            </div>
+            <div class="inv-card">
+              <div class="inv-top"><div class="inv-nm">INV-004 — Final (10%)</div><div class="inv-amt">₹90,176</div></div>
+              <div class="inv-meta">Not yet raised · On completion</div>
+              <div class="inv-foot"><span class="pill pu">Upcoming</span><span class="inv-act" onclick="dSS('d-new-inv')">Raise now</span></div>
+            </div>
+            <button class="btn-o" style="margin-top:6px;" onclick="dSS('d-new-inv')">+ New Invoice</button>
+            <div style="height:10px;"></div>
+          </div>
+
+          <!-- EXPENSES -->
+          <div class="pnl" id="d-p-exp">
+            <div class="stat-row" style="margin-bottom:10px;">
+              <div class="stat-box" style="background:#EEF2FF;"><div class="sv" style="color:var(--blue);">₹2.20L</div><div class="sl">Vendors</div></div>
+              <div class="stat-box" style="background:var(--amberl);"><div class="sv" style="color:var(--amber);">₹45K</div><div class="sl">Materials</div></div>
+              <div class="stat-box so"><div class="sv">₹80K</div><div class="sl">Labour</div></div>
+            </div>
+            <div style="border:1px solid var(--bor);border-radius:11px;overflow:hidden;">
+              <div class="exp-card" style="padding:10px 12px;">
+                <div class="exp-icon cat-vdr">🏭</div>
+                <div class="exp-info"><div class="exp-nm">Sleek Kitchens — Kitchen</div><div class="exp-meta">20 Sep 2025 · NEFT · <span class="pill" style="font-size:8px;background:#EEF2FF;color:var(--blue);">Vendor</span></div></div>
+                <div style="text-align:right;"><div class="exp-amt">₹1,50,000</div><div class="exp-receipt" onclick="dToast('Bill opened!')">📄 Bill</div></div>
+              </div>
+              <div class="exp-card" style="padding:10px 12px;">
+                <div class="exp-icon cat-mat">🪵</div>
+                <div class="exp-info"><div class="exp-nm">Tiles — Living + Bedrooms</div><div class="exp-meta">15 Aug 2025 · Cash · <span class="pill" style="font-size:8px;background:var(--amberl);color:var(--amber);">Material</span></div></div>
+                <div style="text-align:right;"><div class="exp-amt">₹28,500</div><div class="exp-receipt" onclick="dToast('Bill opened!')">📄 Bill</div></div>
+              </div>
+              <div class="exp-card" style="padding:10px 12px;">
+                <div class="exp-icon cat-lab">👷</div>
+                <div class="exp-info"><div class="exp-nm">Civil labour — Jul batch</div><div class="exp-meta">31 Jul 2025 · Cash · <span class="pill" style="font-size:8px;background:var(--orl);color:var(--or);">Labour</span></div></div>
+                <div style="text-align:right;"><div class="exp-amt">₹42,000</div><div class="exp-receipt" style="color:var(--lgt);">No bill</div></div>
+              </div>
+              <div class="exp-card" style="padding:10px 12px;">
+                <div class="exp-icon cat-trv">🚗</div>
+                <div class="exp-info"><div class="exp-nm">Site visits — Aug</div><div class="exp-meta">Aug 2025 · UPI · <span class="pill" style="font-size:8px;background:var(--purl);color:var(--pur);">Travel</span></div></div>
+                <div style="text-align:right;"><div class="exp-amt">₹3,200</div></div>
+              </div>
+            </div>
+            <button class="btn-o" style="margin-top:8px;" onclick="dSS('d-add-exp')">+ Log Expense</button>
+            <div style="height:10px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN: New Invoice -->
+      <div class="scr" id="d-new-inv">
+        <div class="topbar"><button class="bb" onclick="dSS('d-overview')">←</button><div class="tbt">New Invoice</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="ic"><div class="ici">✦</div><div class="ict">Creating from BOQ approved total ₹9,01,756. Payment structure: 30-30-24-10%.</div></div>
+
+          <!-- Method tabs -->
+          <div class="tabs">
+            <div class="tb2 active" id="ni-t1" onclick="niSetMethod('auto')">✦ From BOQ</div>
+            <div class="tb2" id="ni-t2" onclick="niSetMethod('manual')">Manual</div>
+            <div class="tb2" id="ni-t3" onclick="niSetMethod('scratch')">From scratch</div>
+          </div>
+
+          <!-- Auto from BOQ -->
+          <div class="pnl active" id="ni-auto">
+            <div style="border:1px solid var(--bor);border-radius:11px;overflow:hidden;margin-bottom:12px;">
+              <div style="background:var(--gp);padding:9px 12px;font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;">Invoice Schedule — 30-30-24-10%</div>
+              <div class="calc-row" style="padding:8px 12px;"><div class="calc-l">INV-001 · Advance (30%)</div><div class="calc-v">₹2,70,527</div></div>
+              <div class="calc-row" style="padding:8px 12px;"><div class="calc-l">INV-002 · Milestone 1 (30%)</div><div class="calc-v">₹2,70,527</div></div>
+              <div class="calc-row" style="padding:8px 12px;"><div class="calc-l">INV-003 · Milestone 2 (24%)</div><div class="calc-v">₹2,16,421</div></div>
+              <div class="calc-row" style="padding:8px 12px;border-bottom:none;"><div class="calc-l">INV-004 · Final (10%)</div><div class="calc-v">₹90,176</div></div>
+            </div>
+            <button class="btn-p" onclick="dToast('Invoice schedule created in Finance! ✓');dSS('d-overview')">Create All 4 Invoices →</button>
+            <div class="br"><button class="btn-g" onclick="dToast('Only advance created')">Create Advance only</button></div>
+          </div>
+
+          <!-- Manual -->
+          <div class="pnl" id="ni-manual">
+            <div class="fg"><label class="fl">Invoice Title</label><input class="fi" placeholder="e.g. Milestone 2 — Execution" id="ni-title"/></div>
+            <div class="fi-row">
+              <div class="fg" style="flex:1;"><label class="fl">Amount (₹)</label><input class="fi" placeholder="0.00" id="ni-amt" oninput="niCalc()"/></div>
+              <div class="fg" style="flex:1;"><label class="fl">GST %</label><select class="fi" id="ni-gst" onchange="niCalc()"><option value="18">18%</option><option value="12">12%</option><option value="5">5%</option><option value="0">0%</option></select></div>
+            </div>
+            <div style="border:1px solid var(--bor);border-radius:9px;padding:9px 12px;margin-bottom:10px;">
+              <div class="calc-row"><div class="calc-l">Subtotal</div><div class="calc-v" id="ni-sub">₹0</div></div>
+              <div class="calc-row"><div class="calc-l">GST 18%</div><div class="calc-v" id="ni-gst-amt">₹0</div></div>
+              <div class="calc-row" style="border-bottom:none;"><div style="font-size:11px;font-weight:700;">Total</div><div style="font-size:13px;font-weight:700;color:var(--g);" id="ni-total">₹0</div></div>
+            </div>
+            <div class="fg"><label class="fl">Due Date</label><input class="fi" type="date" id="ni-due"/></div>
+            <div class="fg"><label class="fl">Note to client</label><input class="fi" placeholder="Optional…" id="ni-note"/></div>
+            <button class="btn-p" onclick="dCreateInvoice()">Create & Send Invoice →</button>
+          </div>
+
+          <!-- From scratch -->
+          <div class="pnl" id="ni-scratch">
+            <div class="fg"><label class="fl">Client Name</label><input class="fi" value="Priya Sharma"/></div>
+            <div class="fg"><label class="fl">Invoice Title</label><input class="fi" placeholder="e.g. Design consultation"/></div>
+            <div class="fg"><label class="fl">Amount (₹)</label><input class="fi" placeholder="0.00"/></div>
+            <div class="fg"><label class="fl">GST %</label><select class="fi"><option>18%</option><option>12%</option><option>5%</option><option>0%</option></select></div>
+            <div class="fg"><label class="fl">Due Date</label><input class="fi" type="date"/></div>
+            <div class="fg"><label class="fl">Notes</label><input class="fi" placeholder="Optional…"/></div>
+            <button class="btn-p" onclick="dToast('Invoice created & sent!')">Create & Send Invoice →</button>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Record Payment -->
+      <div class="scr" id="d-record">
+        <div class="topbar"><button class="bb" onclick="dSS('d-overview')">←</button><div class="tbt">Record Payment</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--orl);border:1px solid #F5D5B8;border-radius:11px;padding:11px 13px;margin-bottom:12px;">
+            <div style="font-size:10px;font-weight:700;color:var(--or);margin-bottom:4px;">INV-003 — Milestone 2</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);">₹2,16,421</div>
+            <div style="font-size:9px;color:var(--lgt);margin-top:2px;">Due: 30 Oct 2025 · Priya Sharma</div>
+          </div>
+          <div class="fg"><label class="fl">Amount Received (₹)</label><input class="fi" value="2,16,421"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Date</label><input class="fi" type="date"/></div>
+            <div class="fg" style="flex:1;"><label class="fl">Mode</label><select class="fi"><option>NEFT</option><option>UPI</option><option>Cheque</option><option>Cash</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Reference / UTR</label><input class="fi" placeholder="Transaction ID (optional)"/></div>
+          <div style="background:var(--gl);border-radius:9px;padding:9px 12px;margin-bottom:12px;font-size:10px;color:var(--g);line-height:1.6;">✓ Receipt will be auto-generated and sent to Priya on WhatsApp.</div>
+          <button class="btn-p" onclick="dMarkPaid()">Mark as Paid ✓</button>
+          <div class="br"><button class="btn-g" onclick="dSS('d-overview')">Cancel</button></div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Add Expense -->
+      <div class="scr" id="d-add-exp">
+        <div class="topbar"><button class="bb" onclick="dSS('d-overview')">←</button><div class="tbt">Log Expense</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div class="fg"><label class="fl">Category</label>
+            <select class="fi" id="exp-cat">
+              <option>Vendor Payment</option>
+              <option>Materials</option>
+              <option>Labour</option>
+              <option>Travel</option>
+              <option>Miscellaneous</option>
+              <option>+ Add custom category</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Description</label><input class="fi" placeholder="e.g. Carpenter — Raj Furniture payment"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Amount (₹)</label><input class="fi" placeholder="0"/></div>
+            <div class="fg" style="flex:1;"><label class="fl">Date</label><input class="fi" type="date"/></div>
+          </div>
+          <div class="fg"><label class="fl">Vendor / Payee</label><input class="fi" placeholder="Optional"/></div>
+          <div class="fi-row">
+            <div class="fg" style="flex:1;"><label class="fl">Payment Mode</label><select class="fi"><option>NEFT</option><option>UPI</option><option>Cash</option><option>Cheque</option></select></div>
+            <div class="fg" style="flex:1;"><label class="fl">GST Paid</label><select class="fi"><option>None</option><option>5%</option><option>12%</option><option>18%</option><option>28%</option></select></div>
+          </div>
+          <div class="fg"><label class="fl">Notes</label><input class="fi" placeholder="Optional…"/></div>
+          <!-- Bill upload -->
+          <div class="upload-bill" onclick="dToast('Camera/gallery opened')">
+            <div class="ub-icon">📷</div>
+            <div class="ub-text">Upload bill photo (optional)</div>
+          </div>
+          <button class="btn-p" style="margin-top:12px;" onclick="dToast('Expense logged ✓');dSS('d-overview')">Save Expense</button>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: P&L Report -->
+      <div class="scr" id="d-report">
+        <div class="topbar"><button class="bb" onclick="dSS('d-overview')">←</button><div class="tbt">P&L Report</div><div style="display:flex;gap:5px;"><button class="ib" onclick="dToast('Exported to Excel!')">📊</button><button class="ib" onclick="dToast('PDF downloading…')">↓</button></div></div>
+        <div class="sc">
+          <div style="display:flex;gap:7px;margin-bottom:12px;">
+            <select style="flex:1;border:1.5px solid var(--bor);border-radius:9px;padding:8px 10px;font-size:11px;font-family:'Poppins',sans-serif;outline:none;color:var(--txt);">
+              <option>Full Project</option>
+              <option>This Month</option>
+              <option>This Quarter</option>
+            </select>
+            <button class="btn-g" style="width:auto;padding:8px 14px;font-size:11px;" onclick="dToast('PDF downloading…')">↓ Export</button>
+          </div>
+
+          <!-- Revenue -->
+          <div class="pl-section">
+            <div class="pl-hdr">Revenue</div>
+            <div class="pl-row"><div class="pl-l">Total invoiced</div><div class="pl-v">₹9,01,756</div></div>
+            <div class="pl-row"><div class="pl-l">Total received</div><div class="pl-v green">₹5,40,000</div></div>
+            <div class="pl-row"><div class="pl-l">Pending</div><div class="pl-v amber">₹2,16,421</div></div>
+            <div class="pl-row"><div class="pl-l">Upcoming</div><div class="pl-v" style="color:var(--lgt);">₹90,176</div></div>
+          </div>
+
+          <!-- Expenses -->
+          <div class="pl-section">
+            <div class="pl-hdr">Expenses</div>
+            <div class="pl-row"><div class="pl-l">Vendor payments</div><div class="pl-v red">₹2,20,000</div></div>
+            <div class="pl-row"><div class="pl-l">Materials</div><div class="pl-v red">₹45,000</div></div>
+            <div class="pl-row"><div class="pl-l">Labour</div><div class="pl-v red">₹80,000</div></div>
+            <div class="pl-row"><div class="pl-l">Travel</div><div class="pl-v red">₹8,000</div></div>
+            <div class="pl-row"><div class="pl-l">Miscellaneous</div><div class="pl-v red">₹5,000</div></div>
+            <div class="pl-total"><div class="pl-tl">Total Expenses</div><div class="pl-tv" style="color:var(--red);">₹3,58,000</div></div>
+          </div>
+
+          <!-- Profit -->
+          <div class="pl-section">
+            <div class="pl-hdr">Profit</div>
+            <div class="pl-row"><div class="pl-l">Gross profit (received - exp)</div><div class="pl-v green">₹1,82,000</div></div>
+            <div class="pl-row"><div class="pl-l">Projected profit (total - exp)</div><div class="pl-v green">₹5,43,756</div></div>
+            <div class="pl-row"><div class="pl-l">Current margin</div><div class="pl-v green">33.7%</div></div>
+            <div class="pl-row"><div class="pl-l">Projected margin</div><div class="pl-v green">60.3%</div></div>
+          </div>
+
+          <!-- GST -->
+          <div class="pl-section">
+            <div class="pl-hdr">GST Summary</div>
+            <table class="gst-table" style="border:1px solid var(--bor);border-radius:9px;overflow:hidden;">
+              <tr><th>Item</th><th>Amount</th></tr>
+              <tr><td>GST collected (invoices)</td><td style="color:var(--g);font-weight:700;">₹1,37,556</td></tr>
+              <tr><td>GST paid (expenses)</td><td style="color:var(--red);font-weight:700;">₹24,300</td></tr>
+              <tr><td style="font-weight:700;">Net GST payable</td><td style="color:var(--or);font-weight:700;">₹1,13,256</td></tr>
+            </table>
+          </div>
+
+          <!-- TDS -->
+          <div class="pl-section">
+            <div class="pl-hdr">TDS</div>
+            <div class="pl-row"><div class="pl-l">TDS deducted by client</div><div class="pl-v amber">₹0</div></div>
+            <div style="margin-top:6px;"><button class="btn-g" style="font-size:11px;" onclick="dToast('Log TDS')">+ Log TDS deduction</button></div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Payment marked success -->
+      <div class="scr" id="d-paid-success">
+        <div class="topbar"><button class="bb" onclick="dSS('d-overview')">←</button><div class="tbt">Finance</div></div>
+        <div class="sc" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;">
+          <div class="success-circle">✅</div>
+          <div style="font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px;">Payment Recorded!</div>
+          <div style="font-size:11px;color:var(--mut);line-height:1.6;max-width:260px;margin-bottom:16px;">INV-003 marked as paid. Receipt sent to Priya on WhatsApp.</div>
+          <div style="background:var(--gp);border-radius:11px;padding:12px 14px;width:100%;text-align:left;">
+            <div class="pl-row"><div class="pl-l">Invoice</div><div class="pl-v">INV-003 — M2</div></div>
+            <div class="pl-row"><div class="pl-l">Amount</div><div class="pl-v green">₹2,16,421</div></div>
+            <div class="pl-row"><div class="pl-l">Mode</div><div class="pl-v">NEFT</div></div>
+            <div class="pl-row" style="border:none;"><div class="pl-l">Receipt</div><div class="pl-v" style="color:var(--g);">Sent ✓</div></div>
+          </div>
+        </div>
+        <div class="bot-bar"><button class="btn-p" onclick="dSS('d-overview')">Back to Finance</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== CLIENT PHONE ===== -->
+<div class="pw">
+  <div class="plbl">👤 Client Side</div>
+  <div class="phone">
+    <div class="sb"><div class="tm" id="cc">9:41</div><div style="font-size:12px;">📶 🔋</div></div>
+    <div class="app">
+
+      <!-- SCREEN: Client payments overview -->
+      <div class="scr active" id="c-overview">
+        <div class="cl-header">
+          <div class="clh-t">My Payments</div>
+          <div class="clh-s">Sharma 3BHK · Riya Desai</div>
+          <div class="clh-b"><span class="clh-badge">₹5.4L paid</span><span class="clh-badge">₹3.6L due</span></div>
+        </div>
+        <div class="sc">
+          <!-- Summary -->
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:10px;color:var(--mut);">₹5.4L of ₹9.0L paid</span><span style="font-size:10px;font-weight:700;color:var(--g);">60%</span></div>
+            <div class="pbar"><div class="pfill" style="width:60%;"></div></div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-box sg"><div class="sv">₹5.4L</div><div class="sl">Paid</div></div>
+            <div class="stat-box so"><div class="sv">₹2.2L</div><div class="sl">Due now</div></div>
+            <div class="stat-box" style="background:#F0F0F0;"><div class="sv" style="color:#666;">₹0.9L</div><div class="sl">Upcoming</div></div>
+          </div>
+
+          <!-- Due now highlight -->
+          <div style="border:2px solid var(--or);border-radius:12px;padding:12px 13px;margin-bottom:12px;background:#FFFAF6;">
+            <div style="font-size:10px;font-weight:700;color:var(--or);margin-bottom:6px;">⚡ Payment Due</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;"><div style="font-size:12px;font-weight:700;">INV-003 — Milestone 2</div><div style="font-size:15px;font-weight:700;">₹2,16,421</div></div>
+            <div style="font-size:9px;color:var(--lgt);margin-bottom:10px;">Due: 30 Oct 2025 · incl. GST 18%</div>
+            <div class="pay-btn" onclick="cSS('c-pay')">Pay ₹2,16,421 →</div>
+            <div class="rzp-tag">🔒 Secured by Razorpay · UPI · Card · Net Banking</div>
+          </div>
+
+          <!-- Invoice history -->
+          <div class="sh"><div class="sht">Invoice History</div></div>
+          <div class="inv-card pp">
+            <div class="inv-top"><div class="inv-nm">INV-001 — Advance</div><div class="inv-amt">₹2,70,527</div></div>
+            <div class="inv-meta">Paid: 3 Jun 2025 · NEFT</div>
+            <div class="inv-foot"><span class="pill pp">✓ Paid</span><span class="inv-act" onclick="cToast('Receipt downloaded!')">↓ Receipt</span></div>
+          </div>
+          <div class="inv-card pp">
+            <div class="inv-top"><div class="inv-nm">INV-002 — Milestone 1</div><div class="inv-amt">₹2,70,527</div></div>
+            <div class="inv-meta">Paid: 18 Aug 2025 · UPI</div>
+            <div class="inv-foot"><span class="pill pp">✓ Paid</span><span class="inv-act" onclick="cToast('Receipt downloaded!')">↓ Receipt</span></div>
+          </div>
+          <div class="inv-card pending">
+            <div class="inv-top"><div class="inv-nm">INV-003 — Milestone 2</div><div class="inv-amt">₹2,16,421</div></div>
+            <div class="inv-meta">Due: 30 Oct 2025</div>
+            <div class="inv-foot"><span class="pill ps">⏳ Due</span><span class="inv-act" onclick="cSS('c-pay')">Pay now →</span></div>
+          </div>
+          <div class="inv-card">
+            <div class="inv-top"><div class="inv-nm">INV-004 — Final</div><div class="inv-amt">₹90,176</div></div>
+            <div class="inv-meta">On completion · Not yet raised</div>
+            <div class="inv-foot"><span class="pill pu">Upcoming</span></div>
+          </div>
+
+          <!-- Payment schedule -->
+          <div class="sh" style="margin-top:12px;"><div class="sht">Payment Schedule</div></div>
+          <div class="tl-wrap">
+            <div class="tl-item"><div class="tl-dot paid"></div><div class="tl-lbl">Advance</div><div class="tl-amt" style="color:var(--g);">✓ Paid</div></div>
+            <div class="tl-item"><div class="tl-dot paid"></div><div class="tl-lbl">M1</div><div class="tl-amt" style="color:var(--g);">✓ Paid</div></div>
+            <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-lbl">M2</div><div class="tl-amt" style="color:var(--or);">Due</div></div>
+            <div class="tl-item"><div class="tl-dot upcoming"></div><div class="tl-lbl">Final</div><div class="tl-amt" style="color:var(--lgt);">Later</div></div>
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Pay online (Razorpay) -->
+      <div class="scr" id="c-pay">
+        <div class="topbar"><button class="bb" onclick="cSS('c-overview')">←</button><div class="tbt">Pay Invoice</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center;">
+            <div style="font-size:11px;color:var(--mut);margin-bottom:4px;">INV-003 — Milestone 2</div>
+            <div style="font-size:28px;font-weight:700;color:var(--txt);letter-spacing:-.02em;">₹2,16,421</div>
+            <div style="font-size:10px;color:var(--lgt);margin-top:3px;">incl. GST 18% · Sharma 3BHK</div>
+          </div>
+          <!-- Payment methods -->
+          <div class="sh"><div class="sht">Choose Payment Method</div></div>
+          <div style="border:1px solid var(--bor);border-radius:11px;overflow:hidden;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--borl);cursor:pointer;" onclick="cSS('c-otp')">
+              <div style="font-size:22px;">📱</div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:700;">UPI</div><div style="font-size:9px;color:var(--lgt);">GPay · PhonePe · Paytm · any UPI</div></div>
+              <div style="font-size:14px;color:var(--lgt);">›</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;border-bottom:1px solid var(--borl);cursor:pointer;" onclick="cSS('c-otp')">
+              <div style="font-size:22px;">💳</div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:700;">Credit / Debit Card</div><div style="font-size:9px;color:var(--lgt);">Visa · Mastercard · RuPay</div></div>
+              <div style="font-size:14px;color:var(--lgt);">›</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;" onclick="cSS('c-otp')">
+              <div style="font-size:22px;">🏦</div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:700;">Net Banking</div><div style="font-size:9px;color:var(--lgt);">All major banks</div></div>
+              <div style="font-size:14px;color:var(--lgt);">›</div>
+            </div>
+          </div>
+          <div style="background:var(--gp);border-radius:9px;padding:10px 12px;font-size:10px;color:var(--mut);line-height:1.7;">
+            🔒 Payment secured by Razorpay<br/>
+            Amount goes to Hynt escrow · Released to designer<br/>
+            Receipt auto-sent on payment
+          </div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: OTP verification (simulated Razorpay) -->
+      <div class="scr" id="c-otp">
+        <div class="topbar"><button class="bb" onclick="cSS('c-pay')">←</button><div class="tbt">Verify Payment</div><div style="width:32px;"></div></div>
+        <div class="sc">
+          <div style="background:var(--gl);border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
+            <div style="font-size:32px;margin-bottom:8px;">📱</div>
+            <div style="font-size:14px;font-weight:700;color:var(--txt);">Verify your payment</div>
+            <div style="font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;">OTP sent to <strong>+91 98765 ××××</strong><br/>Enter to confirm ₹2,16,421 payment</div>
+          </div>
+          <div class="otp-inputs">
+            <input class="otp-d" maxlength="1" id="co1" oninput="cOtpNext(this,'co2')"/>
+            <input class="otp-d" maxlength="1" id="co2" oninput="cOtpNext(this,'co3')"/>
+            <input class="otp-d" maxlength="1" id="co3" oninput="cOtpNext(this,'co4')"/>
+            <input class="otp-d" maxlength="1" id="co4" oninput="cOtpNext(this,'co5')"/>
+            <input class="otp-d" maxlength="1" id="co5" oninput="cOtpNext(this,'co6')"/>
+            <input class="otp-d" maxlength="1" id="co6" oninput="cOtpPay()"/>
+          </div>
+          <div style="font-size:10px;color:var(--lgt);text-align:center;margin-bottom:16px;">OTP valid for 10 minutes</div>
+          <button class="btn-p" onclick="cOtpPay()">Confirm Payment →</button>
+          <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--g);font-weight:600;cursor:pointer;" onclick="cToast('New OTP sent!')">Resend OTP</div>
+          <div style="height:14px;"></div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Payment success -->
+      <div class="scr" id="c-success">
+        <div class="topbar"><button class="bb" onclick="cSS('c-overview')">←</button><div class="tbt">Payment</div></div>
+        <div class="sc" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;">
+          <div class="success-circle">✅</div>
+          <div style="font-size:18px;font-weight:700;color:var(--txt);margin-bottom:4px;">Payment Successful!</div>
+          <div style="font-size:28px;font-weight:800;color:var(--g);margin-bottom:4px;">₹2,16,421</div>
+          <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-bottom:20px;">INV-003 paid · 24 Oct 2025 · UPI<br/>Riya has been notified.</div>
+          <div style="background:var(--gp);border-radius:11px;padding:12px 14px;width:100%;text-align:left;">
+            <div class="pl-row"><div class="pl-l">Transaction ID</div><div class="pl-v">RZP24OCT8823</div></div>
+            <div class="pl-row"><div class="pl-l">Amount</div><div class="pl-v green">₹2,16,421</div></div>
+            <div class="pl-row"><div class="pl-l">Date & Time</div><div class="pl-v">24 Oct · 11:23 AM</div></div>
+            <div class="pl-row" style="border:none;"><div class="pl-l">Receipt</div><div class="pl-v" style="color:var(--g);">Sent on WhatsApp ✓</div></div>
+          </div>
+        </div>
+        <div class="bot-bar">
+          <button class="btn-p" onclick="cToast('Receipt PDF downloaded!')">↓ Download Receipt</button>
+          <div class="br"><button class="btn-g" onclick="cSS('c-overview')">Back to Payments</button></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// Clocks
+function tick(){const n=new Date();const t=n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0');['dc','cc'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});}
+tick();setInterval(tick,10000);
+
+// Nav
+function dSS(id){const p=document.querySelectorAll('.phone')[0];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+function cSS(id){const p=document.querySelectorAll('.phone')[1];p.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));p.querySelector('#'+id).classList.add('active');}
+
+// Dashboard tabs
+function dSetDash(t){
+  ['inv','exp'].forEach(x=>{document.getElementById('d-t-'+x).classList.toggle('active',x===t);document.getElementById('d-p-'+x).classList.toggle('active',x===t);});
+}
+
+// New invoice method
+function niSetMethod(m){
+  ['auto','manual','scratch'].forEach((x,i)=>{
+    document.getElementById('ni-t'+(i+1)).classList.toggle('active',x===m);
+    document.getElementById('ni-'+x).classList.toggle('active',x===m);
+  });
+}
+
+// Invoice calc
+function niCalc(){
+  const amt=parseFloat(document.getElementById('ni-amt').value.replace(/,/g,''))||0;
+  const gst=parseFloat(document.getElementById('ni-gst').value)||0;
+  const gstAmt=amt*(gst/100);
+  const total=amt+gstAmt;
+  document.getElementById('ni-sub').textContent='₹'+amt.toLocaleString('en-IN');
+  document.getElementById('ni-gst-amt').textContent='₹'+Math.round(gstAmt).toLocaleString('en-IN');
+  document.getElementById('ni-total').textContent='₹'+Math.round(total).toLocaleString('en-IN');
+}
+
+// Create invoice
+function dCreateInvoice(){dToast('Invoice created & sent to Priya!');setTimeout(()=>dSS('d-overview'),700);}
+
+// Mark paid
+function dMarkPaid(){
+  dToast('INV-003 marked as paid ✓ Receipt sent!');
+  setTimeout(()=>{
+    dSS('d-paid-success');
+    // Update client side
+    const p=document.querySelectorAll('.phone')[1];
+    const inv3=p.querySelectorAll('.inv-card')[2];
+    if(inv3){
+      inv3.classList.remove('pending');
+      inv3.querySelector('.inv-foot').innerHTML='<span class="pill pp">✓ Paid</span><span class="inv-act" onclick="cToast(\'Receipt downloaded!\')">↓ Receipt</span>';
+    }
+  },700);
+}
+
+// OTP
+function cOtpNext(el,nextId){if(el.value.length===1){document.getElementById(nextId)?.focus();}}
+function cOtpPay(){
+  const digits=['co1','co2','co3','co4','co5','co6'].map(id=>document.getElementById(id)?.value||'').join('');
+  if(digits.length<6){document.getElementById('co1').focus();return;}
+  cToast('Processing payment…');
+  setTimeout(()=>{
+    cSS('c-success');
+    // Notify designer
+    dSS('d-paid-success');
+  },800);
+}
+
+// Toasts
+function dToast(msg){showT(msg,0);}
+function cToast(msg){showT(msg,1);}
+function showT(msg,idx){
+  const p=document.querySelectorAll('.phone')[idx];
+  const ex=p.querySelector('.toast');if(ex)ex.remove();
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  p.appendChild(t);setTimeout(()=>t.remove(),2400);
+}
+</script>
+</body>
+</html>
