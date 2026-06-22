@@ -61,6 +61,14 @@ function HomeownerFinanceWorkspace({ onBack }) {
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(financeInvoices.find((invoice) => invoice.status === 'due')?.id || financeInvoices[0]?.id || null)
   const [selectedMethod, setSelectedMethod] = useState('UPI')
   const [otpDigits, setOtpDigits] = useState(Array(6).fill(''))
+  const [toastMessage, setToastMessage] = useState(null)
+
+  const triggerToast = (msg) => {
+    setToastMessage(msg)
+    setTimeout(() => {
+      setToastMessage(null)
+    }, 2500)
+  }
 
   const selectedInvoice = useMemo(
     () => financeInvoices.find((invoice) => invoice.id === selectedInvoiceId) || null,
@@ -101,7 +109,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
             subtitle={`${project.name} / ${selectedInvoice.stageLabel || selectedInvoice.title}`}
             onBack={() => setScreen('overview')}
             trailing={selectedInvoice.status === 'paid' ? (
-              <button type="button" className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white" aria-label="Download receipt">
+              <button type="button" onClick={() => triggerToast('Receipt downloaded!')} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white hover:bg-gray-50 transition-colors" aria-label="Download receipt">
                 <DownloadSimple size={17} />
               </button>
             ) : null}
@@ -168,6 +176,11 @@ function HomeownerFinanceWorkspace({ onBack }) {
             )}
           </div>
         </section>
+        {toastMessage ? (
+          <div className="fixed bottom-6 left-1/2 z-[150] -translate-x-1/2 rounded-full bg-black px-4 py-2 text-[11px] font-semibold text-white shadow-lg">
+            {toastMessage}
+          </div>
+        ) : null}
       </main>
     )
   }
@@ -283,11 +296,19 @@ function HomeownerFinanceWorkspace({ onBack }) {
               </div>
             </div>
 
-            <button type="button" onClick={() => setScreen('overview')} className="type-body-strong mt-6 h-12 w-full rounded-[20px] bg-[#173324] text-white">
+            <button type="button" onClick={() => triggerToast('Receipt PDF downloaded!')} className="type-body-strong mt-6 h-12 w-full rounded-[20px] bg-black text-white hover:bg-gray-800 transition-colors">
+              Download Receipt
+            </button>
+            <button type="button" onClick={() => setScreen('overview')} className="type-body-strong mt-2 h-12 w-full rounded-[20px] border border-[#d8e2db] bg-white text-[#173324] hover:bg-gray-50 transition-colors">
               Back to payments
             </button>
           </div>
         </section>
+        {toastMessage ? (
+          <div className="fixed bottom-6 left-1/2 z-[150] -translate-x-1/2 rounded-full bg-black px-4 py-2 text-[11px] font-semibold text-white shadow-lg">
+            {toastMessage}
+          </div>
+        ) : null}
       </main>
     )
   }
@@ -297,16 +318,33 @@ function HomeownerFinanceWorkspace({ onBack }) {
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header
           title="My payments"
-          subtitle={`${project.name} / ${project.designerName}`}
+          subtitle={(
+            <span className="flex items-center gap-1.5 flex-wrap">
+              <span>{project.name}</span>
+              <span className="inline-block h-2.5 w-px bg-gray-300" />
+              <span className="bg-[#eff3f0] text-[#173324] px-1.5 py-0.5 rounded-md font-bold text-[9px]">{formatLakhs(financeSummary.paidL)} Paid</span>
+              <span className="bg-[#fff7ee] text-[#a86a00] px-1.5 py-0.5 rounded-md font-bold text-[9px]">{formatLakhs(financeSummary.dueL)} Due</span>
+            </span>
+          )}
           onBack={onBack}
           trailing={(
-            <button type="button" className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white" aria-label="Download receipts">
+            <button type="button" onClick={() => triggerToast('All receipts PDF downloaded!')} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white hover:bg-gray-50 transition-colors" aria-label="Download receipts">
               <DownloadSimple size={17} />
             </button>
           )}
         />
 
         <div className="px-4 py-6">
+          <section className="mb-6">
+            <div className="flex justify-between items-center text-[11px] text-[#6f6f6f] font-semibold mb-1.5">
+              <span>{formatLakhs(financeSummary.paidL)} of {formatLakhs(financeSummary.totalL)} paid</span>
+              <span className="text-[#267449] font-bold">{financeSummary.totalL > 0 ? Math.round((financeSummary.paidL / financeSummary.totalL) * 100) : 0}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-[#ececec] rounded-full overflow-hidden">
+              <div className="h-full bg-[#5fc18a] rounded-full transition-all duration-300" style={{ width: `${financeSummary.totalL > 0 ? Math.round((financeSummary.paidL / financeSummary.totalL) * 100) : 0}%` }} />
+            </div>
+          </section>
+
           <section>
             <div className="flex items-end justify-between gap-3">
               <div>
@@ -350,6 +388,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
                   Pay now
                 </button>
               </div>
+              <p className="text-[10px] text-center text-[#7b7b7b] mt-4 flex items-center justify-center gap-1">🔒 Secured by Razorpay · UPI · Card · Net Banking</p>
             </section>
           ) : null}
 
@@ -376,6 +415,11 @@ function HomeownerFinanceWorkspace({ onBack }) {
           </section>
         </div>
       </section>
+      {toastMessage ? (
+        <div className="fixed bottom-6 left-1/2 z-[150] -translate-x-1/2 rounded-full bg-black px-4 py-2 text-[11px] font-semibold text-white shadow-lg">
+          {toastMessage}
+        </div>
+      ) : null}
     </main>
   )
 }

@@ -55,6 +55,11 @@ import HomeownerFinanceWorkspace from './features/finance/HomeownerFinanceWorksp
 import HomeownerBoqWorkspace from './features/homeowner/HomeownerBoqWorkspace'
 import HomeownerTimelineWorkspace from './features/timeline/HomeownerTimelineWorkspace'
 import HomeownerSiteDiaryWorkspace from './features/homeowner/HomeownerSiteDiaryWorkspace'
+import ProBoqWorkspace from './features/boq/ProBoqWorkspace'
+import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
+import ProSiteDiaryWorkspace from './features/siteDiary/ProSiteDiaryWorkspace'
+import ProTimelineWorkspace from './features/timeline/ProTimelineWorkspace'
+import ProArchiveWorkspace from './features/archive/ProArchiveWorkspace'
 
 
 const INR = '\u20b9'
@@ -246,11 +251,12 @@ const proProjects = [
 
 const projectDetailTools = [
   { label: 'SOW', icon: NotePencil },
-  { label: 'Mood board', icon: ImagesSquare },
+  { label: 'Archive', icon: ImagesSquare },
   { label: 'BOQ', icon: Scroll },
   { label: 'Tasks', icon: CheckSquareOffset },
   { label: 'Site diary', icon: PencilSimpleLine },
   { label: 'Finance', icon: CurrencyInr },
+  { label: 'Timeline', icon: CalendarDots },
   { label: 'Contract', icon: Handshake },
   { label: 'Team', icon: User },
   { label: 'Floor plan', icon: House },
@@ -594,7 +600,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   ])
   const [projectStatusFilter, setProjectStatusFilter] = useState('All')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
-  const { projects: sharedProjects, actions: sharedProjectActions } = useSharedProject(selectedProjectId)
+  const {
+    projects: sharedProjects,
+    projectTasks: sharedProjectTasksPro,
+    taskApprovals: sharedTaskApprovalsPro,
+    taskStepCompletion: sharedTaskStepCompletionPro,
+    actions: sharedProjectActions,
+  } = useSharedProject(selectedProjectId)
   const projects = sharedProjects
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
   const [projectQuickInfoTab, setProjectQuickInfoTab] = useState('progress')
@@ -673,7 +685,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       setIsProSowOpen(true)
       return
     }
-    if (alert.target === 'boq' || alert.target === 'tasks' || alert.target === 'finance' || alert.target === 'site-diary' || alert.target === 'team') {
+    if (alert.target === 'boq' || alert.target === 'tasks' || alert.target === 'finance' || alert.target === 'site-diary' || alert.target === 'team' || alert.target === 'archive' || alert.target === 'timeline') {
       setSelectedProjectPage(alert.target)
     }
   }
@@ -681,6 +693,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (toolLabel === 'SOW') {
       setProSowInitialView('draft')
       setIsProSowOpen(true)
+      return
+    }
+    if (toolLabel === 'Archive') {
+      setSelectedProjectPage('archive')
       return
     }
     if (toolLabel === 'BOQ') {
@@ -697,6 +713,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     }
     if (toolLabel === 'Site diary') {
       setSelectedProjectPage('site-diary')
+      return
+    }
+    if (toolLabel === 'Timeline') {
+      setSelectedProjectPage('timeline')
       return
     }
     if (toolLabel === 'Team') {
@@ -879,7 +899,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               type="button"
               onClick={() => {
                 if (!newProjectForm.client.trim() || !newProjectForm.scope.trim()) return
-                sharedProjectActions.createProject(newProjectForm)
+                const newProjectId = `p-${Date.now()}`
+                sharedProjectActions.createProject({ ...newProjectForm, id: newProjectId })
+                setSelectedProjectId(newProjectId)
+                setSelectedProjectPage('overview')
                 setNewProjectForm({
                   client: '',
                   phone: '',
@@ -949,7 +972,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       ]
       const selectedQuickInfo = projectQuickInfoItems.find((item) => item.key === projectQuickInfoTab) || projectQuickInfoItems[0]
       const dailyActionTools = projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label))
-      const primaryToolCards = projectDetailTools.filter((tool) => ['Mood board', 'BOQ', 'Site diary'].includes(tool.label))
+      const primaryToolCards = projectDetailTools.filter((tool) => ['Archive', 'BOQ', 'Site diary'].includes(tool.label))
       const manageProjectTools = projectDetailTools.filter((tool) => ['Contract', 'Team'].includes(tool.label))
 
       const shareBoq = async () => {
@@ -973,80 +996,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
       if (selectedProjectPage === 'boq') {
         return (
-          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
-              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                <div className="px-4 py-3">
-                  <div className="flex items-center justify-between py-1">
-                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
-                      <span className="grid size-6 place-items-center rounded">
-                        <CaretLeft size={24} />
-                      </span>
-                      <span className="text-left">
-                        <span className="type-section-title block text-black">Create BOQ</span>
-                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
-                      </span>
-                    </button>
-                    <div className="flex items-center gap-1">
-                      <button type="button" onClick={shareBoq} className="grid size-9 place-items-center" aria-label="Share BOQ">
-                        <PaperPlaneTilt size={18} weight="regular" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = boqItems.length + 1
-                          setBoqItems((prev) => [
-                            { id: `boq-${Date.now()}`, item: `New line item ${next}`, area: 1, rate: 1000, unit: 'unit' },
-                            ...prev,
-                          ])
-                        }}
-                        className="grid size-9 place-items-center"
-                        aria-label="Add line item"
-                      >
-                        <Plus size={18} weight="regular" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </header>
-
-              <div className="fixed left-1/2 top-16 z-[88] w-full max-w-[390px] -translate-x-1/2 bg-white px-4">
-                <div className="grid grid-cols-[2fr_0.8fr_1fr_1fr] border-b border-[#ececec] bg-white py-2">
-                  {['Item', 'Area', 'Rate', 'Amount'].map((head) => (
-                    <p key={head} className={`type-label uppercase text-[#26c485] ${head === 'Amount' ? 'text-right pr-2' : 'pl-2'}`}>{head}</p>
-                  ))}
-                </div>
-              </div>
-
-              <div className="px-4 pb-6 pt-24">
-                <section>
-                  <div>
-                    {boqItems.map((row) => (
-                      <div key={row.id} className="grid grid-cols-[2fr_0.8fr_1fr_1fr] items-center border-b border-[#f1f1f1] py-3 last:border-b-0">
-                        <p className="type-label pl-2 pr-2 text-black">{row.item}</p>
-                        <p className="type-meta pl-2 text-[#444]">{row.area}</p>
-                        <p className="type-meta pl-2 text-[#444]">{renderInrValue(`${formatRupees(row.rate)} /${row.unit || 'unit'}`, 'type-meta inline-flex items-start text-[#444]')}</p>
-                        <p className="type-label self-center pr-2 text-right text-black">{renderInrValue(formatRupees(rowAmount(row)), 'type-label inline-flex items-center justify-end text-black')}</p>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-
-              <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4">
-                <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#d9e9df] bg-[linear-gradient(145deg,#f7fff9,#eef7f1)] px-4 py-3 shadow-[0_8px_20px_rgba(22,35,29,0.08)]">
-                  <div>
-                    <p className="type-label uppercase text-[#5b7768]">Total estimate</p>
-                    <p className="type-caption mt-0.5 text-[#7e9187]">Inclusive of all listed BOQ line items</p>
-                  </div>
-                  <p className="type-page-title text-black">{renderInrValue(formatRupees(totalEstimate), 'type-page-title text-black')}</p>
-                </div>
-                <button type="button" className="type-body-strong w-full rounded-2xl bg-black px-4 py-3 text-white">
-                  Create invoice from BOQ
-                </button>
-              </div>
-            </section>
-          </main>
+          <ProBoqWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+            onOpenFinance={() => setSelectedProjectPage('finance')}
+          />
         )
       }
 
@@ -1055,315 +1009,72 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <ProjectTasksWorkspace
             mode="pro"
             selectedProject={selectedProject}
-            tasks={projectTasks}
-            setTasks={setProjectTasks}
+            tasks={sharedProjectTasksPro}
+            setTasks={sharedProjectActions.setProjectTasks}
+            approvals={sharedTaskApprovalsPro}
+            setApprovals={sharedProjectActions.setProjectTaskApprovals}
             selectedTaskId={selectedTaskId}
             setSelectedTaskId={setSelectedTaskId}
-            taskStepCompletion={taskStepCompletion}
-            setTaskStepCompletion={setTaskStepCompletion}
+            taskStepCompletion={sharedTaskStepCompletionPro}
+            setTaskStepCompletion={sharedProjectActions.setProjectTaskStepCompletion}
             onBack={() => setSelectedProjectPage('overview')}
           />
         )
       }
+
       if (selectedProjectPage === 'finance') {
-        const invoiceStatuses = ['Paid', 'Unpaid', 'In transit', 'In progress']
-        const statusTone = (status) => {
-          if (status === 'Paid') return 'bg-[#eaf9f1] text-[#2a9a64]'
-          if (status === 'Unpaid') return 'bg-[#fff0f0] text-[#c34545]'
-          if (status === 'In transit') return 'bg-[#eef3ff] text-[#3d68b8]'
-          return 'bg-[#f2f2f2] text-[#6a6a6a]'
-        }
-
         return (
-          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-6 pt-16">
-              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                <div className="px-4 py-3">
-                  <div className="flex items-center justify-between py-1">
-                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
-                      <span className="grid size-6 place-items-center rounded">
-                        <CaretLeft size={24} />
-                      </span>
-                      <span className="text-left">
-                        <span className="type-section-title block text-black">Finance</span>
-                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
-                      </span>
-                    </button>
-                    <span className="grid size-10 place-items-center opacity-0">
-                      <ChatsCircle size={24} />
-                    </span>
-                  </div>
-                </div>
-              </header>
-
-              <div className="px-4 py-6">
-                <section className="py-6">
-                  <p className="type-label uppercase text-[#7d7d7d]">Project total</p>
-                  <p className="type-page-title mt-1">{renderInrValue(formatLakhs(selectedProject.spentL), 'type-page-title', 27)}</p>
-                  <p className="type-meta mt-1 text-[#777]">Total money spent over this project</p>
-                </section>
-
-                <div className="-mx-4 h-2 bg-[#e0e0e0]" />
-
-                <section className="py-6">
-                  <div className="grid grid-cols-3 gap-2">
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="type-card-title">{renderInrValue(formatLakhs(selectedProject.receivedL))}</p>
-                      <p className="type-utility mt-1 text-[#7b7b7b]">Received</p>
-                    </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="type-card-title">{renderInrValue(formatLakhs(pendingL))}</p>
-                      <p className="type-utility mt-1 text-[#7b7b7b]">Pending</p>
-                    </div>
-                    <div className="flex min-h-[56px] flex-col items-center justify-center rounded-xl border border-[#e2e2e2] bg-white px-3 py-2 text-center">
-                      <p className="type-card-title">{renderInrValue(formatLakhs(Math.max(0, selectedProject.spentL - selectedProject.receivedL)))}</p>
-                      <p className="type-utility mt-1 text-[#7b7b7b]">Upcoming expense</p>
-                    </div>
-                  </div>
-                </section>
-
-                <div className="-mx-4 h-2 bg-[#e0e0e0]" />
-
-                <section className="py-6">
-                  <div className="mb-3 flex items-center justify-between">
-                    <p className="type-section-title">Invoices</p>
-                    <p className="type-meta text-[#7b7b7b]">{projectInvoicesList.length} total</p>
-                  </div>
-                  <div className="space-y-2">
-                    {projectInvoicesList.map((invoice) => (
-                      <article
-                        key={invoice.id}
-                        onClick={() => setSelectedInvoiceId(invoice.id)}
-                        className="cursor-pointer rounded-xl border border-[#e1e1e1] bg-white px-3 py-3"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="type-label text-[#7b7b7b]">{invoice.number}</p>
-                            <p className="type-body-strong mt-1 truncate text-black">{invoice.title}</p>
-                            <p className="type-meta mt-1 text-[#777]">{invoice.date}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="type-card-title">{renderInrValue(formatLakhs(invoice.amountL))}</p>
-                            <span className={`type-caption mt-1 inline-flex rounded-full px-2 py-1 ${statusTone(invoice.status)}`}>{invoice.status}</span>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            </section>
-
-            {selectedInvoice ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="type-label uppercase text-[#7b7b7b]">Update invoice status</p>
-                <p className="type-body-strong mt-1 truncate">{selectedInvoice.number} - {selectedInvoice.title}</p>
-                <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
-                  {invoiceStatuses.map((status) => {
-                    const active = selectedInvoice.status === status
-                    return (
-                      <TaskStatusChip
-                        key={status}
-                        label={status}
-                        selected={active}
-                        onClick={() => {
-                          setProjectInvoices((prev) => prev.map((invoice) => (
-                            invoice.id === selectedInvoice.id ? { ...invoice, status } : invoice
-                          )))
-                          setSelectedInvoiceId(null)
-                        }}
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            ) : null}
-          </main>
+          <ProFinanceWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+          />
         )
       }
 
       if (selectedProjectPage === 'site-diary') {
-        const diaryEntries = projectDiaryEntries
-          .filter((entry) => entry.projectId === selectedProject.id)
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        const selectedDiaryEntry = diaryEntries.find((entry) => entry.id === diaryActionEntryId) || null
-
-        const groupedEntries = diaryEntries.reduce((acc, entry) => {
-          const key = new Date(entry.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-          if (!acc[key]) acc[key] = []
-          acc[key].push(entry)
-          return acc
-        }, {})
-
-        const groupedDates = Object.keys(groupedEntries)
-
         return (
-          <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-            <section className="mx-auto w-full max-w-[390px] pb-6 pt-16">
-              <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-                <div className="px-4 py-3">
-                  <div className="flex items-center justify-between py-1">
-                    <button type="button" onClick={() => setSelectedProjectPage('overview')} className="flex items-center gap-4">
-                      <span className="grid size-6 place-items-center rounded">
-                        <CaretLeft size={24} />
-                      </span>
-                      <span className="text-left">
-                        <span className="type-section-title block text-black">Site diary</span>
-                        <span className="type-caption block text-[#999999]">{selectedProject.scope}</span>
-                      </span>
-                    </button>
-                    <button type="button" onClick={() => setIsDiaryComposerOpen(true)} className="grid size-9 place-items-center" aria-label="Create diary entry">
-                      <Plus size={22} />
-                    </button>
-                  </div>
-                </div>
-              </header>
-
-              <div className="px-4 pb-6 pt-8">
-                {groupedDates.length === 0 ? (
-                  <p className="type-body rounded-2xl border border-dashed border-[#d7d7d7] bg-white px-4 py-6 text-[#7a7a7a]">
-                    No entries yet. Tap + to create your first site diary update.
-                  </p>
-                ) : (
-                  <div className="space-y-8">
-                    {groupedDates.map((dateLabel) => (
-                      <section key={dateLabel}>
-                        <div className="mb-4 flex items-center justify-between">
-                          <p className="type-label uppercase text-[#7b7b7b]">{dateLabel}</p>
-                          <p className="type-meta text-[#7b7b7b]">
-                            Day {Math.max(1, Math.floor((new Date(groupedEntries[dateLabel][0].createdAt).setHours(0, 0, 0, 0) - new Date(selectedProject.kickoffDate).setHours(0, 0, 0, 0)) / 86400000) + 1)}
-                          </p>
-                        </div>
-                        <div className="space-y-3">
-                          {groupedEntries[dateLabel].map((entry) => {
-                            const timeLabel = new Date(entry.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
-                            return (
-                              <article key={entry.id} className="rounded-xl border border-[#e2e2e2] bg-white p-3">
-                                <div className="mb-2 flex items-center justify-between">
-                                  <p className="type-label text-[#7b7b7b]">{timeLabel}</p>
-                                  <button type="button" onClick={() => setDiaryActionEntryId(entry.id)} className="grid size-6 place-items-center rounded-md" aria-label="Entry actions">
-                                    <DotsThreeVertical size={14} weight="bold" />
-                                  </button>
-                                </div>
-                                {entry.note ? <p className="type-body text-[#212121]">{entry.note}</p> : null}
-                                {entry.photos.length > 0 ? (
-                                  <div className={`${entry.note ? 'mt-3' : ''} grid grid-cols-2 gap-2`}>
-                                    {entry.photos.map((photo) => (
-                                      <img key={`${entry.id}-${photo}`} src={photo} alt="Site diary" className="h-28 w-full rounded-lg border border-[#e0e0e0] object-cover" />
-                                    ))}
-                                  </div>
-                                ) : null}
-                              </article>
-                            )
-                          })}
-                        </div>
-                      </section>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </section>
-
-            {isDiaryComposerOpen ? (
-              <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="type-label uppercase text-[#7b7b7b]">{editingDiaryEntryId ? 'Edit diary entry' : 'New diary entry'}</p>
-                <textarea
-                  value={diaryDraftNote}
-                  onChange={(event) => setDiaryDraftNote(event.target.value)}
-                  placeholder="Add note (optional)"
-                  className="type-body mt-2 h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-2 outline-none"
-                />
-                <label className="type-label mt-2 flex h-10 w-full cursor-pointer items-center justify-center rounded-xl border border-[#d7d7d7] text-[#1d1d1d]">
-                  Attach photos
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={(event) => {
-                      const files = Array.from(event.target.files || [])
-                      const nextPhotos = files.map((file) => URL.createObjectURL(file))
-                      setDiaryDraftPhotos(nextPhotos)
-                    }}
-                  />
-                </label>
-                {diaryDraftPhotos.length > 0 ? (
-                  <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
-                    {diaryDraftPhotos.map((photo, index) => (
-                      <img key={`${photo}-${index}`} src={photo} alt="Attached" className="h-14 w-20 shrink-0 rounded-lg border border-[#dedede] object-cover" />
-                    ))}
-                  </div>
-                ) : null}
-                {diaryDraftPhotos.length > 0 ? <p className="type-meta mt-1 text-[#6f6f6f]">{diaryDraftPhotos.length} photo(s) selected</p> : null}
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => { setIsDiaryComposerOpen(false); setEditingDiaryEntryId(null); setDiaryDraftNote(''); setDiaryDraftPhotos([]) }} className="type-body-strong h-10 rounded-xl border border-[#d7d7d7]">Cancel</button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const cleanNote = diaryDraftNote.trim()
-                      if (!cleanNote && diaryDraftPhotos.length === 0) return
-                      if (editingDiaryEntryId) {
-                        setProjectDiaryEntries((prev) => prev.map((entry) => (
-                          entry.id === editingDiaryEntryId ? { ...entry, note: cleanNote, photos: diaryDraftPhotos } : entry
-                        )))
-                      } else {
-                        setProjectDiaryEntries((prev) => [
-                          {
-                            id: `diary-${Date.now()}`,
-                            projectId: selectedProject.id,
-                            createdAt: new Date().toISOString(),
-                            note: cleanNote,
-                            photos: diaryDraftPhotos,
-                          },
-                          ...prev,
-                        ])
-                      }
-                      setIsDiaryComposerOpen(false)
-                      setEditingDiaryEntryId(null)
-                      setDiaryDraftNote('')
-                      setDiaryDraftPhotos([])
-                    }}
-                    className="type-body-strong h-10 rounded-xl bg-black text-white disabled:opacity-40"
-                    disabled={!diaryDraftNote.trim() && diaryDraftPhotos.length === 0}
-                  >
-                    {editingDiaryEntryId ? 'Save changes' : 'Save entry'}
-                  </button>
-                </div>
-              </div>
-            ) : null}
-            {selectedDiaryEntry ? (
-              <div className="fixed bottom-0 left-1/2 z-[96] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-                <p className="type-label uppercase text-[#7b7b7b]">Entry actions</p>
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingDiaryEntryId(selectedDiaryEntry.id)
-                      setDiaryDraftNote(selectedDiaryEntry.note || '')
-                      setDiaryDraftPhotos(selectedDiaryEntry.photos || [])
-                      setDiaryActionEntryId(null)
-                      setIsDiaryComposerOpen(true)
-                    }}
-                    className="type-body-strong h-10 rounded-xl border border-[#d7d7d7]"
-                  >
-                    Edit entry
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setProjectDiaryEntries((prev) => prev.filter((entry) => entry.id !== selectedDiaryEntry.id))
-                      setDiaryActionEntryId(null)
-                    }}
-                    className="type-body-strong h-10 rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]"
-                  >
-                    Delete entry
-                  </button>
-                </div>
-              </div>
-            ) : null}
-          </main>
+          <ProSiteDiaryWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+            onCreateTask={(payload) => {
+              sharedProjectActions.setProjectTasks((prev) => [
+                {
+                  id: `t-${Date.now()}`,
+                  projectId: selectedProject.id,
+                  title: payload.title,
+                  assignee: 'Site supervisor',
+                  assignedBy: 'Riya Desai',
+                  due: 'Today',
+                  dueDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+                  dueTime: '06:00 PM',
+                  status: 'todo',
+                  steps: [payload.note || 'Resolve reported issue'],
+                },
+                ...prev,
+              ])
+            }}
+          />
         )
       }
+
+      if (selectedProjectPage === 'archive') {
+        return (
+          <ProArchiveWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+          />
+        )
+      }
+
+      if (selectedProjectPage === 'timeline') {
+        return (
+          <ProTimelineWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+          />
+        )
+      }
+
 
       if (selectedProjectPage === 'team-directory') {
         const currentTeamPhones = new Set(projectTeamMembers.filter((member) => member.projectId === selectedProject.id).map((member) => member.phone))
@@ -1652,7 +1363,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 <div className="mt-3 flex gap-2 overflow-hidden">
                   {primaryToolCards.map((tool) => {
                     const Icon = tool.icon
-                    const isMoodboard = tool.label === 'Mood board'
+                    const isArchive = tool.label === 'Archive'
                     const isBoq = tool.label === 'BOQ'
                     const isSiteDiary = tool.label === 'Site diary'
 
@@ -1670,10 +1381,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                             </span>
                             <CaretRight size={16} className="text-[#8fa098]" />
                           </div>
-                          <p className="type-body-strong truncate text-black">{isMoodboard ? 'Moodboard' : isSiteDiary ? 'Site Diary' : tool.label}</p>
+                          <p className="type-body-strong truncate text-black">{isArchive ? 'Archive' : isSiteDiary ? 'Site Diary' : tool.label}</p>
                         </div>
 
-                        {isMoodboard ? (
+                        {isArchive ? (
                           <div className="hynt-tool-preview-stack mt-2 flex h-12 items-center">
                             <img src="/hynt-home/idea-1.png" alt="" className="hynt-tool-preview-image z-[3]" />
                             <img src="/hynt-home/idea-2.png" alt="" className="hynt-tool-preview-image hynt-tool-preview-image--tilt-left z-[2]" />

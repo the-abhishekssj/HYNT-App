@@ -112,6 +112,28 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
           ) : null}
         </section>
 
+        <section className="border-t border-[#e5e5e5] pt-5">
+          <div className="flex w-full items-center justify-between py-1">
+            <span className="flex items-center gap-3">
+              <span className="grid size-9 place-items-center rounded-xl bg-slate-100 text-[#5fc18a]">
+                <Check size={18} weight="bold" />
+              </span>
+              <span>
+                <span className="type-body-strong block text-black">Visible to homeowner?</span>
+                <span className="type-caption block text-[#777]">Share this log update directly to their feed.</span>
+              </span>
+            </span>
+            <button
+              type="button"
+              onClick={() => onChange({ shareWithClient: draft.shareWithClient !== false ? false : true })}
+              className={`h-6 w-11 rounded-full p-1 transition-colors ${draft.shareWithClient !== false ? 'bg-black' : 'bg-[#dedede]'}`}
+              aria-label="Toggle visible to homeowner"
+            >
+              <span className={`block size-4 rounded-full bg-white transition-transform ${draft.shareWithClient !== false ? 'translate-x-5' : ''}`} />
+            </button>
+          </div>
+        </section>
+
         <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-3 bg-white py-3">
           <button type="button" onClick={onClose} className="type-body-strong h-12 rounded-xl border border-[#d7d7d7] px-5">Cancel</button>
           <button type="button" onClick={onSave} disabled={!draft.title.trim() && !draft.note.trim() && draft.photos.length === 0} className="type-body-strong h-12 rounded-xl bg-black px-5 text-white disabled:bg-[#d7d7d7]">Save site log</button>

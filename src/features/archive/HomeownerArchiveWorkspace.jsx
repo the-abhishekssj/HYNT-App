@@ -13,6 +13,8 @@ import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const folderTypeLabels = {
   moodboard: 'Moodboard',
+  sketches: 'Sketches',
+  renders: 'Renders',
   diagrams: 'Diagrams',
   'site-photos': 'Site photos',
   'vendor-docs': 'Vendor docs',
@@ -21,6 +23,8 @@ const folderTypeLabels = {
 
 const folderGuidance = {
   moodboard: 'Open items, comment on each direction, and approve or reject if needed.',
+  sketches: 'Review drawings/sketches, comment on specific options, and approve selections.',
+  renders: 'Check out 3D renders, post comments or feedback, and approve your favorite options.',
   'site-photos': 'Review progress images and leave comments tied to the latest update.',
   diagrams: 'Review drawings and mark up anything that needs clarification.',
   'vendor-docs': 'Check references, linked documents, and coordination notes.',
@@ -105,14 +109,27 @@ function ArchiveItemTile({ item, onOpen }) {
 }
 
 function CommentRow({ text, index }) {
+  const isObject = typeof text === 'object' && text !== null
+  const commentText = isObject ? text.text : text
+  const senderType = isObject ? text.sender : (index % 2 === 0 ? 'homeowner' : 'designer')
+  const rawSenderName = isObject ? text.senderName : (index % 2 === 0 ? 'Homeowner' : 'Designer')
+
+  const isSelf = senderType === 'homeowner'
+  const displaySenderName = isSelf ? 'You' : rawSenderName
+  const initials = isSelf ? 'YOU' : displaySenderName.split(' ').map((n) => n[0]).join('').toUpperCase().substring(0, 2)
+  const timeLabel = isObject ? text.sentAt : null
+
   return (
     <article className="flex gap-3 border-b border-[#ededed] py-4 last:border-b-0">
-      <span className="grid size-8 shrink-0 place-items-center rounded-[10px] bg-[#eff3f0] text-[10px] font-bold text-[#173324]">
-        {index === 0 ? 'PS' : 'You'}
+      <span className={`grid size-8 shrink-0 place-items-center rounded-[10px] text-[10px] font-bold ${isSelf ? 'bg-[#eff3f0] text-[#173324]' : 'bg-[#f0f4f8] text-[#1e3a5f]'}`}>
+        {initials}
       </span>
-      <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#7b7b7b]">{index === 0 ? 'Homeowner feedback' : 'Comment'}</p>
-        <p className="type-body mt-1 text-black">{text}</p>
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#7b7b7b]">{isSelf ? 'Homeowner feedback' : displaySenderName}</p>
+          {timeLabel ? <p className="text-[10px] text-[#999999]">{timeLabel}</p> : null}
+        </div>
+        <p className="type-body mt-1 text-black">{commentText}</p>
       </div>
     </article>
   )
@@ -139,7 +156,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
   }
 
   const sendComment = (itemId) => {
-    actions.addArchiveComment(itemId, commentDrafts[itemId] || '')
+    actions.addArchiveComment(itemId, commentDrafts[itemId] || '', 'homeowner')
     setCommentDrafts((current) => ({ ...current, [itemId]: '' }))
   }
 
@@ -196,7 +213,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
               <div className="mt-5 grid grid-cols-3 border-y border-[#e5e5e5]">
                 {[
                   ['Items', openFolderItems.length],
-                  ['Access', openFolder.type === 'moodboard' ? 'Comment + approve' : 'Comment only'],
+                  ['Access', ['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? 'Comment + approve' : 'Comment only'],
                   ['State', 'Live'],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
@@ -238,7 +255,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
                 {[
                   ['Status', statusLabel[openItem.status] || openItem.status],
                   ['Type', openItem.type === 'photo' ? 'Photo' : openItem.type === 'image' ? 'Reference' : 'Document'],
-                  ['Access', openFolder.type === 'moodboard' ? 'Approve' : 'Comment'],
+                  ['Access', ['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? 'Approve' : 'Comment'],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
                     <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
@@ -247,7 +264,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
                 ))}
               </div>
 
-              {openFolder.type === 'moodboard' ? (
+              {['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? (
                 <div className="mt-4 grid grid-cols-2 gap-2">
                   <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'approved')} className="flex h-10 items-center justify-center gap-2 rounded-[14px] bg-black text-[12px] font-semibold text-white">
                     <CheckCircle size={15} />

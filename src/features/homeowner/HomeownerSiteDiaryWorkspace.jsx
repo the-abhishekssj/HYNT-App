@@ -241,7 +241,11 @@ function EntryDetail({ entry, project, commentDraft, onChangeComment, onSendComm
 }
 
 function HomeownerSiteDiaryWorkspace({ onBack }) {
-  const { project, siteDiaryEntries, siteDiaryIssues, siteDiaryReferences, actions } = useSharedProject('p-1')
+  const { project, siteDiaryEntries: allSiteDiaryEntries, siteDiaryIssues, siteDiaryReferences, actions } = useSharedProject('p-1')
+  const siteDiaryEntries = useMemo(
+    () => allSiteDiaryEntries.filter((entry) => entry.shareWithClient !== false),
+    [allSiteDiaryEntries],
+  )
   const [selectedEntryId, setSelectedEntryId] = useState(null)
   const [activeView, setActiveView] = useState('home')
   const [commentDrafts, setCommentDrafts] = useState({})

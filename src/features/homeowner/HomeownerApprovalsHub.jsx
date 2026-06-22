@@ -61,13 +61,15 @@ function EmptyState() {
 }
 
 function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenArchive }) {
-  const { project, sow, archiveFolders, archiveItems } = useSharedProject('p-1')
+  const { project, sow, archiveFolders, archiveItems, taskApprovals = [] } = useSharedProject('p-1')
   const sharedFolderIds = new Set(
     archiveFolders.filter((folder) => folder.visibility === 'client-shared').map((folder) => folder.id),
   )
   const pendingArchiveItems = archiveItems.filter((item) => sharedFolderIds.has(item.folderId) && item.status === 'pending')
   const completedArchiveItems = archiveItems.filter((item) => sharedFolderIds.has(item.folderId) && ['approved', 'rejected'].includes(item.status))
   const openRemarks = sow?.remarks?.filter((remark) => remark.status === 'open') || []
+  const pendingTaskApprovals = taskApprovals.filter((approval) => ['pending', 'question'].includes(approval.status))
+  const completedTaskApprovals = taskApprovals.filter((approval) => ['approved', 'rejected'].includes(approval.status))
 
   const reviewRows = [
     sow
@@ -86,14 +88,16 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
           onClick: onOpenSow,
         }
       : null,
-    {
-      id: 'approval-tasks',
-      icon: ClipboardText,
-      title: 'Task approvals',
-      meta: 'Material choices, confirmations, and site decisions from the project team',
-      status: { label: '3 open', tone: 'review' },
-      onClick: onOpenTaskApprovals,
-    },
+    pendingTaskApprovals.length
+      ? {
+          id: 'approval-tasks',
+          icon: ClipboardText,
+          title: 'Task approvals',
+          meta: `${pendingTaskApprovals.length} decision${pendingTaskApprovals.length === 1 ? '' : 's'} waiting for feedback`,
+          status: { label: `${pendingTaskApprovals.length} open`, tone: 'review' },
+          onClick: onOpenTaskApprovals,
+        }
+      : null,
     pendingArchiveItems.length
       ? {
           id: 'approval-archive',
@@ -115,6 +119,16 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
           meta: `Signed by ${project.clientName} and ${project.designerName}`,
           status: { label: 'Done', tone: 'signed' },
           onClick: onOpenSow,
+        }
+      : null,
+    (!pendingTaskApprovals.length && taskApprovals.length > 0)
+      ? {
+          id: 'completed-tasks',
+          icon: ClipboardText,
+          title: 'Task approvals',
+          meta: `${completedTaskApprovals.length} decision${completedTaskApprovals.length === 1 ? '' : 's'} approved/completed`,
+          status: { label: 'Done', tone: 'signed' },
+          onClick: onOpenTaskApprovals,
         }
       : null,
     completedArchiveItems.length

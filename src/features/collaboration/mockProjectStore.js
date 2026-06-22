@@ -252,9 +252,8 @@ export const mockInitialState = {
   sows: {},
   archiveFolders: [
     { id: 'af-1', projectId: 'p-1', name: 'Moodboard', type: 'moodboard', visibility: 'client-shared', editAccess: 'team-can-add' },
-    { id: 'af-2', projectId: 'p-1', name: 'Diagrams', type: 'diagrams', visibility: 'team-only', editAccess: 'pro-only' },
-    { id: 'af-3', projectId: 'p-1', name: 'Site Photos', type: 'site-photos', visibility: 'client-shared', editAccess: 'team-can-edit' },
-    { id: 'af-4', projectId: 'p-1', name: 'Vendor Docs', type: 'vendor-docs', visibility: 'selected-team', editAccess: 'team-can-add' },
+    { id: 'af-2', projectId: 'p-1', name: 'Sketches', type: 'sketches', visibility: 'team-only', editAccess: 'pro-only' },
+    { id: 'af-3', projectId: 'p-1', name: 'Renders', type: 'renders', visibility: 'client-shared', editAccess: 'team-can-add' },
   ],
   archiveItems: [
     {
@@ -283,8 +282,8 @@ export const mockInitialState = {
       id: 'ai-3',
       projectId: 'p-1',
       folderId: 'af-2',
-      title: 'False ceiling wiring diagram',
-      type: 'diagram',
+      title: 'Ceiling wiring sketch',
+      type: 'note',
       src: null,
       status: 'internal',
       linkedTo: 'Tasks / Electrical coordination',
@@ -316,22 +315,22 @@ export const mockInitialState = {
       id: 'ai-4',
       projectId: 'p-1',
       folderId: 'af-3',
-      title: 'Living room site progress',
-      type: 'photo',
+      title: 'Living room 3D render',
+      type: 'image',
       src: '/hynt-home/idea-2.png',
       status: 'shared',
-      linkedTo: 'Site Diary / 24 May',
+      linkedTo: 'Concept / Common areas',
       comments: [],
     },
     {
       id: 'ai-7',
       projectId: 'p-1',
       folderId: 'af-3',
-      title: 'Ceiling channel progress',
-      type: 'photo',
+      title: 'Foyer ceiling render',
+      type: 'image',
       src: '/hynt-home/idea-1.png',
       status: 'shared',
-      linkedTo: 'Site Diary / 26 May',
+      linkedTo: 'Concept / Common areas',
       comments: ['Please confirm if this section is before the final gypsum layer.'],
     },
   ],
@@ -1093,6 +1092,7 @@ const normalizeState = (rawState = {}) => {
     linkedExpenseLabel: null,
     issueId: null,
     clientReviewedAt: null,
+    shareWithClient: true,
     ...entry,
     clientComments: (entry.clientComments || []).map((comment) => ({
       designerReply: '',
@@ -1373,7 +1373,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       setState(emptyState)
     },
     createProject: (projectForm) => update((current) => {
-      const newProjectId = `p-${Date.now()}`
+      const newProjectId = projectForm.id || `p-${Date.now()}`
       const clientVal = (projectForm.client || '').trim()
       const newProject = {
         id: newProjectId,
@@ -1410,9 +1410,8 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const nextArchiveFolders = [
         ...(current.archiveFolders || []),
         { id: `af-moodboard-${newProjectId}`, projectId: newProjectId, name: 'Moodboard', type: 'moodboard', visibility: 'client-shared', editAccess: 'team-can-add' },
-        { id: `af-diagrams-${newProjectId}`, projectId: newProjectId, name: 'Diagrams', type: 'diagrams', visibility: 'team-only', editAccess: 'pro-only' },
-        { id: `af-photos-${newProjectId}`, projectId: newProjectId, name: 'Site Photos', type: 'site-photos', visibility: 'client-shared', editAccess: 'team-can-edit' },
-        { id: `af-vendor-${newProjectId}`, projectId: newProjectId, name: 'Vendor Docs', type: 'vendor-docs', visibility: 'selected-team', editAccess: 'team-can-add' },
+        { id: `af-sketches-${newProjectId}`, projectId: newProjectId, name: 'Sketches', type: 'sketches', visibility: 'team-only', editAccess: 'pro-only' },
+        { id: `af-renders-${newProjectId}`, projectId: newProjectId, name: 'Renders', type: 'renders', visibility: 'client-shared', editAccess: 'team-can-add' },
       ]
 
       const nextBoqMeta = {
@@ -1432,12 +1431,68 @@ export function useSharedProject(rawProjectId = 'p-1') {
         }
       }
 
+      const defaultPhases = [
+        {
+          id: `phase-1-${newProjectId}`,
+          projectId: newProjectId,
+          name: 'Kickoff & Site Visit',
+          startDate: new Date().toISOString().slice(0, 10),
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: 'done',
+          progress: 100,
+          assignedTo: ['Riya Desai'],
+          note: 'Kickoff meeting and site measurements completed.',
+          clientNotified: false,
+          delay: null,
+        },
+        {
+          id: `phase-2-${newProjectId}`,
+          projectId: newProjectId,
+          name: 'Design & Approvals',
+          startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          endDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: 'active',
+          progress: 30,
+          assignedTo: ['Riya Desai', 'Aanya Rao'],
+          note: 'Space planning and concept designs in progress.',
+          clientNotified: false,
+          delay: null,
+        },
+        {
+          id: `phase-3-${newProjectId}`,
+          projectId: newProjectId,
+          name: 'Civil & Services',
+          startDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          endDate: new Date(Date.now() + 88 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: 'upcoming',
+          progress: 0,
+          assignedTo: ['Nisha Reddy'],
+          note: 'Civil alterations, electrical, and plumbing execution.',
+          clientNotified: false,
+          delay: null,
+        },
+        {
+          id: `phase-4-${newProjectId}`,
+          projectId: newProjectId,
+          name: 'Handover & Snagging',
+          startDate: new Date(Date.now() + 88 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          endDate: new Date(Date.now() + 103 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: 'upcoming',
+          progress: 0,
+          assignedTo: ['Riya Desai'],
+          note: 'Final walkthrough, cleaning, and keys handover.',
+          clientNotified: false,
+          delay: null,
+        }
+      ]
+
       const nextState = {
         ...current,
         projects: [...(current.projects || []), newProject],
         memberships: nextMemberships,
         archiveFolders: nextArchiveFolders,
         boqMeta: nextBoqMeta,
+        timelinePhases: [...(current.timelinePhases || []), ...defaultPhases],
         activeProjectId: newProjectId,
       }
 
@@ -1804,6 +1859,16 @@ export function useSharedProject(rawProjectId = 'p-1') {
         archiveFolders: (current.archiveFolders || []).map((folder) => (
           folder.id === folderId ? { ...folder, visibility } : folder
         )),
+        archiveItems: (current.archiveItems || []).map((item) => {
+          if (item.folderId !== folderId) return item
+          if (visibility === 'client-shared' && item.status === 'internal') {
+            return { ...item, status: 'pending' }
+          }
+          if (visibility !== 'client-shared' && ['pending', 'approved', 'rejected'].includes(item.status)) {
+            return { ...item, status: 'internal' }
+          }
+          return item
+        }),
       }
       return addActivity(next, projectId, project.designerName, 'Updated archive folder visibility')
     }),
@@ -1816,7 +1881,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.designerName, 'Updated archive folder contribution access')
     }),
-    addArchiveItem: (folderId, title) => update((current) => {
+    addArchiveItem: (folderId, title, src = null) => update((current) => {
       const cleanTitle = title.trim()
       if (!cleanTitle) return current
       const folder = (current.archiveFolders || []).find((item) => item.id === folderId)
@@ -1825,8 +1890,8 @@ export function useSharedProject(rawProjectId = 'p-1') {
         projectId,
         folderId,
         title: cleanTitle,
-        type: folder?.type === 'moodboard' ? 'image' : 'note',
-        src: folder?.type === 'moodboard' ? '/hynt-home/idea-1.png' : null,
+        type: src ? 'image' : (folder?.type === 'moodboard' || folder?.type === 'renders' || folder?.type === 'sketches' ? 'image' : 'note'),
+        src: src || (folder?.type === 'moodboard' || folder?.type === 'renders' || folder?.type === 'sketches' ? '/hynt-home/idea-1.png' : null),
         status: folder?.visibility === 'client-shared' ? 'pending' : 'internal',
         linkedTo: 'Unlinked',
         comments: [],
@@ -1846,16 +1911,23 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.homeownerName, `Marked archive item ${status}`)
     }),
-    addArchiveComment: (itemId, comment) => update((current) => {
+    addArchiveComment: (itemId, comment, sender = 'homeowner', senderName = null) => update((current) => {
       const cleanComment = comment.trim()
       if (!cleanComment) return current
+      const name = senderName || (sender === 'homeowner' ? project.homeownerName : project.designerName)
+      const commentObj = {
+        sender,
+        senderName: name,
+        text: cleanComment,
+        sentAt: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }),
+      }
       const next = {
         ...current,
         archiveItems: (current.archiveItems || []).map((item) => (
-          item.id === itemId ? { ...item, comments: [...(item.comments || []), cleanComment] } : item
+          item.id === itemId ? { ...item, comments: [...(item.comments || []), commentObj] } : item
         )),
       }
-      return addActivity(next, projectId, project.homeownerName, 'Commented on an archive item')
+      return addActivity(next, projectId, sender === 'homeowner' ? project.homeownerName : project.designerName, `Commented on archive item`)
     }),
     payFinanceInvoice: (invoiceId, method = 'UPI') => update((current) => {
       const invoice = (current.financeInvoices || []).find((item) => item.id === invoiceId)
@@ -2462,7 +2534,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
         ],
       }
     }),
-    addSiteDiaryEntry: ({ id = null, note = '', photos = [], title = '', type = 'daily-log', weather = 'Indoor', workerCount = 0, tags = [], linkedTaskLabel = null, linkedExpenseLabel = null, issue = null, createdBy = project.designerName }) => update((current) => {
+    addSiteDiaryEntry: ({ id = null, note = '', photos = [], title = '', type = 'daily-log', weather = 'Indoor', workerCount = 0, tags = [], linkedTaskLabel = null, linkedExpenseLabel = null, issue = null, createdBy = project.designerName, shareWithClient = true }) => update((current) => {
       const cleanNote = note.trim()
       const cleanTitle = title.trim()
       if (!cleanNote && !cleanTitle && photos.length === 0) return current
@@ -2486,6 +2558,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
         issueId,
         clientComments: [],
         clientReviewedAt: null,
+        shareWithClient,
       }
       const next = {
         ...current,

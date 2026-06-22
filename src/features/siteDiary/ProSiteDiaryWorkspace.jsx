@@ -263,6 +263,7 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
     issueNote: '',
     linkedTaskLabel: '',
     linkedExpenseLabel: '',
+    shareWithClient: true,
   })
 
   const sortedEntries = useMemo(
@@ -311,6 +312,7 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
       linkedExpenseLabel: draft.linkedExpenseLabel || null,
       issue: issuePayload,
       createdBy: project?.designerName || 'Riya Desai',
+      shareWithClient: draft.shareWithClient !== false,
     })
 
     if (issuePayload) {
@@ -336,6 +338,7 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
       issueNote: '',
       linkedTaskLabel: '',
       linkedExpenseLabel: '',
+      shareWithClient: true,
     })
     setIsComposerOpen(false)
   }

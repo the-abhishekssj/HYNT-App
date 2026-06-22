@@ -78,6 +78,7 @@ function formatStamp(value) {
 function HomeownerSowReview({ onBack }) {
   const { project, sow, activity, actions } = useSharedProject('p-1')
   const [view, setView] = useState('review')
+  const [showExecutedDetails, setShowExecutedDetails] = useState(false)
   const [remarkDraft, setRemarkDraft] = useState('')
   const [remarkTarget, setRemarkTarget] = useState(null)
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', ''])
@@ -542,6 +543,92 @@ function HomeownerSowReview({ onBack }) {
             </div>
           </section>
         ) : null}
+        {showExecutedDetails ? (
+          <div className="space-y-3 pt-2">
+            <ClientSection index="1" title="Project overview" open={openSections.overview} onToggle={() => toggleSection('overview')}>
+              <div className="space-y-3">
+                {[
+                  ['Project', document.projectName],
+                  ['Client', document.clientName],
+                  ['Location', document.location],
+                  ['Type', document.projectType],
+                  ['Handover', document.handoverMonth],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
+                    <span className="type-utility uppercase text-[#71837a]">{label}</span>
+                    <span className="type-data-value text-right text-black">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </ClientSection>
+
+            <ClientSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')}>
+              <div className="space-y-3">
+                {document.rooms.map((room) => (
+                  <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
+                    <p className="type-card-title text-black">{room.name}</p>
+                    <p className="type-body mt-1 text-[#5f7467]">{room.scope}</p>
+                  </article>
+                ))}
+              </div>
+            </ClientSection>
+
+            <ClientSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')}>
+              <div className="space-y-2">
+                {document.exclusions.map((item) => (
+                  <div key={item} className="type-body flex items-start gap-2 text-black">
+                    <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </ClientSection>
+
+            <ClientSection index="4" title="Timeline" open={openSections.timeline} onToggle={() => toggleSection('timeline')}>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  ['Start', document.startMonth],
+                  ['Duration', document.durationLabel],
+                  ['Handover', document.handoverMonth],
+                ].map(([label, value]) => (
+                  <article key={label} className="rounded-[18px] border border-[#e2e2e2] bg-white px-2 py-3 text-center">
+                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="type-label mt-2 text-black">{value}</p>
+                  </article>
+                ))}
+              </div>
+            </ClientSection>
+
+            <ClientSection index="5" title="Budget estimate" open={openSections.budget} onToggle={() => toggleSection('budget')}>
+              <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
+                <p className="type-caption uppercase text-[#73849d]">Total value</p>
+                <p className="type-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
+              </div>
+            </ClientSection>
+
+            <ClientSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')}>
+              <div className="space-y-3">
+                {document.stages.map((stage) => (
+                  <div key={stage.id} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
+                    <span className="type-body text-[#102418]">{stage.label}</span>
+                    <span className="type-body-strong text-black">{stage.percentage}%</span>
+                  </div>
+                ))}
+              </div>
+            </ClientSection>
+          </div>
+        ) : null}
+
+        <button
+          type="button"
+          onClick={() => setShowExecutedDetails(!showExecutedDetails)}
+          className="type-body-strong mt-4 flex w-full items-center justify-between rounded-[20px] border border-[#dbe6df] bg-[#f7fbf8] p-4 text-left text-black"
+        >
+          <span>View executed SOW details</span>
+          <span className="type-meta text-[#267449]">
+            {showExecutedDetails ? 'Hide details' : 'Show details'}
+          </span>
+        </button>
       </div>
     </section>
   )

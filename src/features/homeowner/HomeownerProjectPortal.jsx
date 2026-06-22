@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   Archive,
   CaretRight,
@@ -10,6 +11,7 @@ import {
   NotePencil,
   Camera,
   Wallet,
+  CalendarDots,
 } from '@phosphor-icons/react'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import ProjectWorkspaceToolCard from '../shared/ProjectWorkspaceToolCard'
@@ -137,9 +139,14 @@ function HomeownerProjectPortal({
     financeSummary,
     boqItems,
     timelinePhases,
-    siteDiaryEntries,
+    siteDiaryEntries: allSiteDiaryEntries,
     taskApprovals,
   } = useSharedProject('p-1')
+
+  const siteDiaryEntries = useMemo(
+    () => allSiteDiaryEntries.filter((entry) => entry.shareWithClient !== false),
+    [allSiteDiaryEntries],
+  )
 
   if (!project) {
     return (
@@ -190,6 +197,9 @@ function HomeownerProjectPortal({
   const activeTimelinePhase = timelinePhases.find((phase) => phase.status === 'active') || timelinePhases[0] || null
   const completedTimelineCount = timelinePhases.filter((phase) => phase.status === 'done').length
   const pendingTaskApprovals = taskApprovals.filter((approval) => ['pending', 'question'].includes(approval.status))
+
+  const timelineProgress = timelinePhases.length ? Math.round((completedTimelineCount / timelinePhases.length) * 100) : 0
+  const delayedPhase = timelinePhases.find((phase) => phase.status === 'active' && phase.delay)
 
   const quickTools = [
     {
@@ -255,6 +265,16 @@ function HomeownerProjectPortal({
         meta: `${formatLakhs(dueInvoice.amountL)} due by ${dueInvoice.dueDate}`,
         status: 'Due',
         onClick: onOpenFinance,
+      }
+      : null,
+    delayedPhase
+      ? {
+        id: 'attention-delay',
+        icon: CalendarDots,
+        title: 'Project delay logged',
+        meta: `${delayedPhase.name} is delayed by ${delayedPhase.delay.window}: ${delayedPhase.delay.reason}`,
+        status: 'Delay',
+        onClick: onOpenTimeline,
       }
       : null,
     {
@@ -371,14 +391,14 @@ function HomeownerProjectPortal({
 
         <div className="mt-5 grid grid-cols-4 border-y border-[#e5e5e5]">
           {[
-            ['Phase', 'Design freeze'],
-            ['Progress', '42%'],
+            ['Phase', activeTimelinePhase ? (activeTimelinePhase.status === 'done' ? 'Completed' : activeTimelinePhase.name) : 'Not started'],
+            ['Progress', `${timelineProgress}%`],
             ['Approvals', attentionRows.length],
             ['Next due', nextPaymentLabel],
           ].map(([label, value]) => (
             <div key={label} className="border-r border-[#e5e5e5] px-3 py-3 text-center last:border-r-0">
               <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-              <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black">{value}</p>
+              <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black truncate">{value}</p>
             </div>
           ))}
         </div>
