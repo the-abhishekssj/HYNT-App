@@ -1751,7 +1751,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.homeownerName, `Rejected amendment ${target.version}`)
     }),
-    createInvite: ({ phone, roleId, grants }) => update((current) => {
+    createInvite: ({ phone, roleId, roleLabel = '', grants }) => update((current) => {
       const cleanPhone = phone.trim()
       if (!cleanPhone) return current
       const inviteId = makeId('inv')
@@ -1760,6 +1760,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
         projectId,
         phone: cleanPhone,
         roleId,
+        roleLabel: roleLabel.trim() || roleTemplates.find((role) => role.id === roleId)?.label || 'Team member',
         grants,
         status: 'pending',
         inviteUrl: `https://hynt.local/invite/${inviteId}`,
@@ -1769,7 +1770,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
         ...current,
         invites: [invite, ...(current.invites || [])],
       }
-      return addActivity(next, projectId, project.designerName, `Invited ${cleanPhone} as ${roleTemplates.find((role) => role.id === roleId)?.label || 'Team member'}`)
+      return addActivity(next, projectId, project.designerName, `Invited ${cleanPhone} as ${invite.roleLabel}`)
     }),
     acceptInvite: (inviteId) => update((current) => {
       const invite = (current.invites || []).find((item) => item.id === inviteId)
@@ -1779,7 +1780,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const user = {
         id: userId,
         name: `Invited ${invite.phone.slice(-4)}`,
-        role: role?.label || 'Team member',
+        role: invite.roleLabel || role?.label || 'Team member',
         phone: invite.phone,
         avatar: '/hynt-home/pro-2.png',
       }
@@ -1792,6 +1793,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
             projectId,
             userId,
             roleId: invite.roleId,
+            roleLabel: invite.roleLabel || role?.label || 'Team member',
             status: 'accepted',
             grants: invite.grants || role?.grants || [],
           },
@@ -1813,7 +1815,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
         ...current,
         memberships: (current.memberships || []).map((membership) => (
           membership.id === membershipId
-            ? { ...membership, roleId, grants: role?.grants || [] }
+            ? { ...membership, roleId, roleLabel: role?.label || 'Custom role', grants: role?.grants || [] }
             : membership
         )),
       }, projectId, project.designerName, `Updated access role to ${role?.label || 'custom role'}`)

@@ -29,11 +29,8 @@ import {
   Plus,
   Crosshair,
   DotsThreeVertical,
-  Palette,
   Scroll,
-  MoneyWavy,
   NotePencil,
-  ReadCvLogo,
   SlidersHorizontal,
   User,
   Eye,
@@ -133,13 +130,6 @@ const homepageEvents = [
     interested: '64 interested',
     image: '/hynt-home/event-2.png',
   },
-]
-
-const proTools = [
-  { title: 'Moodboard', subtitle: 'AI + Manual', icon: Palette },
-  { title: 'BOQs', subtitle: 'Autogenerate', icon: Scroll },
-  { title: 'Finance', subtitle: 'Invoice and Track', icon: MoneyWavy },
-  { title: 'Contracts', subtitle: 'Legal Templates', icon: ReadCvLogo },
 ]
 
 const proProjects = [
@@ -598,7 +588,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [proAiMessages, setProAiMessages] = useState([
     { id: 'pro-ai-1', role: 'ai', text: 'What would you like to do?' },
   ])
-  const [projectStatusFilter, setProjectStatusFilter] = useState('All')
+  const [projectStatusFilter, setProjectStatusFilter] = useState('Active')
   const [selectedProjectId, setSelectedProjectId] = useState(null)
   const {
     projects: sharedProjects,
@@ -609,8 +599,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   } = useSharedProject(selectedProjectId)
   const projects = sharedProjects
   const [selectedProjectPage, setSelectedProjectPage] = useState('overview')
-  const [projectQuickInfoTab, setProjectQuickInfoTab] = useState('progress')
-  const [projectTodayMs] = useState(() => Date.now())
   const [boqItems, setBoqItems] = useState(initialBoqItems)
   const [projectTasks, setProjectTasks] = useState(initialProjectTasks)
   const [projectInvoices, setProjectInvoices] = useState(initialProjectInvoices)
@@ -637,16 +625,18 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     </span>
   )
 
-  const projectFilterChips = ['All', 'Active', 'Pending', 'Done']
-  const filteredProjects = projectStatusFilter === 'All'
-    ? projects
-    : projects.filter((project) => project.status === projectStatusFilter)
+  const projectFilterChips = ['Active', 'Completed']
+  const filteredProjects = projects.filter((project) => (
+    projectStatusFilter === 'Completed'
+      ? ['Completed', 'Done'].includes(project.status)
+      : project.status === 'Active'
+  ))
   const selectedProject = projects.find((project) => project.id === selectedProjectId) || null
-  const getProjectCount = (status) => (
-    status === 'All'
-      ? projects.length
-      : projects.filter((project) => project.status === status).length
-  )
+  const getProjectCount = (status) => projects.filter((project) => (
+    status === 'Completed'
+      ? ['Completed', 'Done'].includes(project.status)
+      : project.status === status
+  )).length
   const proAiOptions = [
     'Create BOQ from room measurements',
     'Generate site-visit checklist',
@@ -863,7 +853,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   ['phone', 'Mobile number', 'tel', '+91 98765 43210'],
                   ['email', 'Email', 'email', 'aarav@example.com'],
                   ['location', 'Location', 'text', 'Bengaluru'],
-                  ['scope', 'Project scope', 'text', '3BHK renovation'],
+                  ['scope', 'Project name', 'text', '3BHK Full Renovation'],
                   ['budgetL', 'Budget (L)', 'number', '28'],
                   ['dueDate', 'Due date', 'date', ''],
                 ].map(([key, label, type, placeholder]) => (
@@ -886,8 +876,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 outline-none"
                   >
                     <option>Active</option>
-                    <option>Pending</option>
-                    <option>Done</option>
+                    <option>Completed</option>
                   </select>
                 </label>
               </div>
@@ -937,40 +926,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       const totalEstimate = boqItems.reduce((acc, row) => acc + rowAmount(row), 0)
       const projectInvoicesList = projectInvoices.filter((invoice) => invoice.projectId === selectedProject.id)
       const selectedInvoice = projectInvoicesList.find((invoice) => invoice.id === selectedInvoiceId) || null
-      const dueTimestamp = Date.parse(selectedProject.dueDate)
-      const daysLeft = Number.isNaN(dueTimestamp)
-        ? null
-        : Math.max(0, Math.ceil((dueTimestamp - projectTodayMs) / 86400000))
-      const projectQuickInfoItems = [
-        {
-          key: 'progress',
-          label: 'Progress',
-          color: '#28805d',
-          tint: 'rgba(40,128,93,0.16)',
-          border: '#28805d',
-          value: `${selectedProject.progress}%`,
-          progress: selectedProject.progress,
-        },
-        {
-          key: 'budget',
-          label: 'Budget',
-          color: '#74829e',
-          tint: 'rgba(116,130,158,0.14)',
-          border: 'rgba(116,130,158,0.44)',
-          value: `${selectedProject.spentL.toFixed(1)} / ${selectedProject.budgetL.toFixed(0)}L`,
-          progress: Math.min(100, Math.round((selectedProject.spentL / selectedProject.budgetL) * 100)),
-        },
-        {
-          key: 'due',
-          label: 'Due',
-          color: '#bf935a',
-          tint: 'rgba(191,147,90,0.16)',
-          border: 'rgba(191,147,90,0.48)',
-          value: daysLeft === null ? selectedProject.dueDate : `${daysLeft} days left`,
-          progress: daysLeft === null ? 50 : Math.max(6, Math.min(100, 100 - Math.round((daysLeft / 120) * 100))),
-        },
-      ]
-      const selectedQuickInfo = projectQuickInfoItems.find((item) => item.key === projectQuickInfoTab) || projectQuickInfoItems[0]
       const dailyActionTools = projectDetailTools.filter((tool) => ['SOW', 'Tasks', 'Finance'].includes(tool.label))
       const primaryToolCards = projectDetailTools.filter((tool) => ['Archive', 'BOQ', 'Site diary'].includes(tool.label))
       const manageProjectTools = projectDetailTools.filter((tool) => ['Contract', 'Team'].includes(tool.label))
@@ -1297,41 +1252,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </div>
               </section>
 
-              <section className="border-b border-[#e0e0e0] px-4 py-6">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-start gap-2">
-                    {projectQuickInfoItems.map((item) => {
-                      const selected = item.key === selectedQuickInfo.key
-                      return (
-                        <button
-                          key={item.key}
-                          type="button"
-                          onClick={() => setProjectQuickInfoTab(item.key)}
-                          className={`type-body flex h-8 items-center justify-center rounded-full transition-all duration-300 ${
-                            selected ? 'gap-2 border px-3 font-semibold' : 'px-2'
-                          }`}
-                          style={{
-                            color: item.color,
-                            backgroundColor: selected ? item.tint : 'transparent',
-                            borderColor: selected ? item.border : 'transparent',
-                          }}
-                        >
-                          {selected ? <span className="size-1.5 rounded-full" style={{ backgroundColor: item.color }} /> : null}
-                          <span>{item.label}</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                  <div key={selectedQuickInfo.key} className="h-6 overflow-hidden text-right">
-                    <p className="type-section-title hynt-quick-info-value text-black">{selectedQuickInfo.value}</p>
-                  </div>
-                </div>
-                <div className="mt-4 h-4 w-full overflow-hidden rounded-lg bg-[rgba(198,198,198,0.32)]">
-                  <div
-                    className="h-full rounded-lg transition-[width,background-color] duration-500 ease-out"
-                    style={{ width: `${selectedQuickInfo.progress}%`, backgroundColor: selectedQuickInfo.color }}
-                  />
-                </div>
+              <section className="border-b border-[#e0e0e0] px-4 py-5">
+                <p className="type-body text-[#6f6f6f]">
+                  Due date: <span className="font-semibold text-black">{selectedProject.dueDate}</span>
+                </p>
               </section>
 
               <section className="border-b border-[#e0e0e0] px-4 py-6">
@@ -1526,22 +1450,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[16px] font-extrabold leading-6">{project.client}</p>
-                      <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">{project.location}</p>
+                      <p className="text-[16px] font-extrabold leading-6">{project.scope}</p>
+                      <p className="mt-1 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">{project.client} · {project.location}</p>
                     </div>
                     <span className={`rounded-full px-3 py-1 text-[12px] font-bold ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#2a9a64]' : project.status === 'Pending' ? 'bg-[#f2f2f2] text-[#777]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
-                  </div>
-
-                  <p className="mt-3 text-[14px] font-semibold leading-[21px]">{project.scope}</p>
-
-                  <div className="mt-3">
-                    <div className="mb-1 flex items-center justify-between text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">
-                      <span>Progress</span>
-                      <span>{project.progress}%</span>
-                    </div>
-                    <div className="h-2.5 w-full rounded-full bg-[#e4e4e4]">
-                      <div className="h-2.5 rounded-full bg-[#26c485]" style={{ width: `${project.progress}%` }} />
-                    </div>
                   </div>
 
                   <div className="mt-3 grid grid-cols-2 gap-2">
@@ -1550,12 +1462,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <p className="mt-1 text-[14px] font-extrabold leading-[19px]">{renderInrValue(`${project.budgetL}L`)}</p>
                     </div>
                     <div className="rounded-xl border border-[#e2e2e2] bg-white px-3 py-2">
-                      <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Current spend</p>
-                      <p className="mt-1 text-[14px] font-extrabold leading-[19px]">{renderInrValue(`${project.spentL}L`)}</p>
+                      <p className="text-[10px] font-bold leading-[14px] text-[#7b7b7b]">Due date</p>
+                      <p className="mt-1 text-[14px] font-extrabold leading-[19px]">{project.dueDate}</p>
                     </div>
                   </div>
-
-                  <p className="mt-3 text-[12px] font-semibold leading-[18px] text-[#6f6f6f]">Due date: <span className="font-bold text-black">{project.dueDate}</span></p>
                 </article>
               ))}
             </div>
@@ -1614,7 +1524,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         {proHomeTab === 'protools' ? (
           <>
             <div className="h-[6px] w-full bg-[#e0e0e0]" />
-            <ProToolsHome tools={proTools} />
+            <ProToolsHome />
           </>
         ) : null}
 

@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   CaretDown,
   CaretLeft,
   CheckCircle,
-  Eye,
   LinkSimple,
   PaperPlaneTilt,
   UserCirclePlus,
@@ -47,32 +46,29 @@ function PeopleAccessWorkspace({ project, onBack }) {
     invites,
     roleTemplates,
     permissionGroups,
-    activeViewer,
-    activeViewerRoleId,
     actions,
   } = useSharedProject(projectId)
   const [invitePhone, setInvitePhone] = useState('')
   const [inviteRoleId, setInviteRoleId] = useState('junior-designer')
+  const [isCustomRole, setIsCustomRole] = useState(false)
+  const [inviteCustomRole, setInviteCustomRole] = useState('')
   const [isInviteOpen, setIsInviteOpen] = useState(false)
   const [openMemberId, setOpenMemberId] = useState(memberships.find((membership) => membership.roleId !== 'principal-pro')?.id || null)
 
   const selectedInviteRole = roleTemplates.find((role) => role.id === inviteRoleId) || roleTemplates[0]
-  const activeViewerRole = activeViewer?.role || roleTemplates.find((role) => role.id === activeViewerRoleId) || roleTemplates[0]
   const acceptedMembers = memberships.filter((membership) => membership.status === 'accepted')
   const pendingInvites = invites.filter((invite) => invite.status === 'pending')
-
-  const viewerSummary = useMemo(() => {
-    if (activeViewer?.grants?.includes('all')) return 'Full project access'
-    return `${activeViewer?.grants?.length || 0} grants active`
-  }, [activeViewer])
 
   const sendInvite = () => {
     actions.createInvite({
       phone: invitePhone,
-      roleId: inviteRoleId,
-      grants: selectedInviteRole.grants,
+      roleId: isCustomRole ? 'custom' : inviteRoleId,
+      roleLabel: isCustomRole ? inviteCustomRole.trim() : selectedInviteRole.label,
+      grants: isCustomRole ? [] : selectedInviteRole.grants,
     })
     setInvitePhone('')
+    setInviteCustomRole('')
+    setIsCustomRole(false)
     setIsInviteOpen(false)
   }
 
@@ -105,27 +101,9 @@ function PeopleAccessWorkspace({ project, onBack }) {
 
         <div className="py-5">
           <section className="border-b border-[#e5e5e5] px-4 pb-5">
-            <div className="flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#dbe6df] bg-[#f7fbf8] text-black">
-                <Eye size={18} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="type-label uppercase text-[#5f7467]">Demo view as</p>
-                <p className="type-card-title mt-1 text-black">{activeViewerRole?.label}</p>
-                <p className="type-meta mt-1 text-[#5f7467]">{viewerSummary}</p>
-              </div>
-            </div>
-            <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
-              {roleTemplates.map((role) => (
-                <button
-                  key={role.id}
-                  type="button"
-                  onClick={() => actions.setActiveViewerRole(role.id)}
-                  className={`type-caption shrink-0 rounded-full border px-3 py-2 uppercase ${activeViewerRoleId === role.id ? 'border-black bg-black text-white' : 'border-[#dbe6df] bg-white text-[#5f7467]'}`}
-                >
-                  {role.label}
-                </button>
-              ))}
+            <div className="rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] p-4">
+              <p className="type-card-title text-black">Project-specific roles</p>
+              <p className="type-body mt-1 text-[#5f7467]">Role assignments and permissions apply to this project only. The same person can have a different role on another project.</p>
             </div>
           </section>
 
@@ -151,7 +129,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
                         </div>
                       </div>
                       <span className="flex shrink-0 items-center gap-2">
-                        <span className={`type-caption rounded-full px-2 py-1 uppercase ${roleTone[role?.id] || 'bg-[#f2f2f2] text-[#6f6f6f]'}`}>{role?.label}</span>
+                        <span className={`type-caption rounded-full px-2 py-1 uppercase ${roleTone[role?.id] || 'bg-[#f2f2f2] text-[#6f6f6f]'}`}>{membership.roleLabel || role?.label || 'Custom role'}</span>
                         <CaretDown size={14} className={`transition ${isOpen ? 'rotate-180' : ''}`} />
                       </span>
                     </button>
@@ -166,6 +144,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
                             className="type-body-strong mt-2 h-11 w-full rounded-xl border border-[#dbe6df] bg-[#f7fbf8] px-3 text-black outline-none"
                             disabled={membership.roleId === 'principal-pro'}
                           >
+                            {membership.roleId === 'custom' ? <option value="custom">{membership.roleLabel || 'Custom role'}</option> : null}
                             {roleTemplates.map((template) => (
                               <option key={template.id} value={template.id}>{template.label}</option>
                             ))}
@@ -209,7 +188,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="type-body-strong truncate text-black">{invite.phone}</p>
-                        <p className="type-meta mt-1 text-[#6f6f6f]">{role?.label} invite</p>
+                        <p className="type-meta mt-1 text-[#6f6f6f]">{invite.roleLabel || role?.label || 'Custom role'} invite</p>
                       </div>
                       <span className="type-caption rounded-full bg-[#fff9ef] px-2 py-1 uppercase text-[#9f8350]">Pending</span>
                     </div>
@@ -250,18 +229,24 @@ function PeopleAccessWorkspace({ project, onBack }) {
             </button>
           </div>
           <p className="type-label mt-4 uppercase text-[#7b7b7b]">Mobile number</p>
-          <div className="mt-2 flex items-center gap-2">
+          <div className="mt-2">
             <input
               value={invitePhone}
               onChange={(event) => setInvitePhone(event.target.value)}
               placeholder="+91 98765 43210"
-              className="type-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none"
+              className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
             />
+          </div>
+          <p className="type-label mt-4 uppercase text-[#7b7b7b]">Project role</p>
+          <div className="mt-2 flex items-center gap-2">
             <select
               value={inviteRoleId}
-              onChange={(event) => setInviteRoleId(event.target.value)}
+              onChange={(event) => {
+                setInviteRoleId(event.target.value)
+                setIsCustomRole(false)
+              }}
               aria-label="Invite role"
-              className="type-meta h-10 w-[132px] rounded-xl border border-[#d7d7d7] bg-white px-2 text-black outline-none"
+              className="type-body h-11 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] bg-white px-3 text-black outline-none"
             >
               {roleTemplates.filter((role) => role.id !== 'principal-pro').map((role) => (
                 <option key={role.id} value={role.id}>{role.label}</option>
@@ -269,15 +254,34 @@ function PeopleAccessWorkspace({ project, onBack }) {
             </select>
             <button
               type="button"
+              onClick={() => setIsCustomRole((current) => !current)}
+              className={`type-label h-11 shrink-0 rounded-xl border px-3 ${isCustomRole ? 'border-black bg-black text-white' : 'border-[#d7d7d7] bg-white text-black'}`}
+            >
+              Custom role
+            </button>
+          </div>
+          {isCustomRole ? (
+            <input
+              value={inviteCustomRole}
+              onChange={(event) => setInviteCustomRole(event.target.value)}
+              placeholder="Enter role title"
+              autoFocus
+              className="type-body mt-2 h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
+            />
+          ) : null}
+          <div className="mt-4 flex justify-end">
+            <button
+              type="button"
               onClick={sendInvite}
-              disabled={!invitePhone.trim()}
-              className="grid size-10 shrink-0 place-items-center rounded-xl bg-black text-white disabled:bg-[#d9d9d9]"
+              disabled={!invitePhone.trim() || (isCustomRole && !inviteCustomRole.trim())}
+              className="type-body-strong flex h-11 items-center justify-center gap-2 rounded-xl bg-black px-5 text-white disabled:bg-[#d9d9d9]"
               aria-label="Send invite"
             >
               <PaperPlaneTilt size={17} weight="fill" />
+              Send invite
             </button>
           </div>
-          <p className="type-meta mt-2 text-[#7b7b7b]">Invite links carry a role preset and feature permissions.</p>
+          <p className="type-meta mt-2 text-[#7b7b7b]">The selected role and permissions apply only to this project.</p>
         </div>
       </div>
     </main>
