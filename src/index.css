@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -22,82 +22,200 @@ body {
   background: #ffffff;
 }
 
-.type-display,
-.type-page-title,
-.type-section-title,
-.type-card-title,
-.type-body,
-.type-body-strong,
-.type-utility,
-.type-data-value,
-.type-label,
-.type-meta,
-.type-caption {
+.typo-display,
+.typo-page-title,
+.typo-title-20,
+.typo-section-title,
+.typo-card-title,
+.typo-body,
+.typo-body-strong,
+.typo-body-12,
+.typo-body-10,
+.typo-utility,
+.typo-badge,
+.typo-overline,
+.typo-nav-active,
+.typo-nav-idle,
+.typo-weight-medium,
+.typo-weight-semibold,
+.typo-weight-bold,
+.typo-weight-heavy,
+.typo-data-value,
+.typo-data-strong,
+.typo-input,
+.typo-title-16,
+.typo-title-16-strong,
+.typo-title-20-strong,
+.typo-stat-label,
+.typo-status-mini,
+.typo-label,
+.typo-meta,
+.typo-caption {
   font-family: 'Urbanist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   letter-spacing: 0;
 }
 
-.type-display {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 42px;
-}
-
-.type-page-title {
+.typo-display {
   font-size: 24px;
   font-weight: 700;
   line-height: 36px;
 }
 
-.type-section-title {
+.typo-page-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 36px;
+}
+
+.typo-title-20 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+.typo-section-title {
   font-size: 16px;
   font-weight: 700;
   line-height: 24px;
 }
 
-.type-card-title {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 21px;
-}
-
-.type-body {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 21px;
-}
-
-.type-body-strong {
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 21px;
-}
-
-.type-utility {
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-}
-
-.type-data-value {
-  font-size: 14px;
+.typo-title-16 {
+  font-size: 16px;
   font-weight: 500;
   line-height: 24px;
 }
 
-.type-label {
+.typo-title-16-strong {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.typo-title-20-strong {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 30px;
+}
+
+.typo-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+.typo-body {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+}
+
+.typo-body-strong {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+.typo-body-12 {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.typo-body-10 {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 15px;
+}
+
+.typo-utility {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.typo-badge {
   font-size: 12px;
   font-weight: 700;
   line-height: 18px;
 }
 
-.type-meta {
+.typo-overline {
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+}
+
+.typo-nav-active {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 18px;
 }
 
-.type-caption {
+.typo-nav-idle {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.typo-weight-medium {
+  font-weight: 500;
+}
+
+.typo-weight-semibold {
+  font-weight: 600;
+}
+
+.typo-weight-bold {
+  font-weight: 700;
+}
+
+.typo-weight-heavy {
+  font-weight: 800;
+}
+
+.typo-data-value {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.typo-data-strong {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 28px;
+}
+
+.typo-input {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.typo-stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.typo-status-mini {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 15px;
+}
+
+.typo-label {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.typo-meta {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.typo-caption {
   font-size: 10px;
   font-weight: 600;
   line-height: 15px;

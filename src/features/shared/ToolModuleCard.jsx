@@ -18,10 +18,10 @@ function ToolModuleCard({
         <span className="grid size-10 place-items-center rounded-xl border border-[#e2e2e2] bg-white text-black">
           <Icon size={18} weight="regular" />
         </span>
-        {badge ? <span className="type-caption rounded-full bg-white px-2 py-1 uppercase text-[#888888]">{badge}</span> : null}
+        {badge ? <span className="typo-caption rounded-full bg-white px-2 py-1 uppercase text-[#888888]">{badge}</span> : null}
       </div>
-      <p className="type-card-title mt-4 text-black">{title}</p>
-      <p className="type-meta mt-1 text-[#808080]">{subtitle}</p>
+      <p className="typo-card-title mt-4 text-black">{title}</p>
+      <p className="typo-meta mt-1 text-[#808080]">{subtitle}</p>
       {footer ? <div className="mt-4">{footer}</div> : null}
     </Tag>
   )

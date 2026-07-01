@@ -7,8 +7,8 @@ export function BoqRoomListSection({ title, rooms, items, onOpenRoom, onEditRoom
   return (
     <section className="border-t border-[#ececec]">
       <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <p className="type-section-title text-black">{title}</p>
-        {summaries.length ? <p className="type-meta text-[#7b7b7b]">{summaries.length} rooms</p> : null}
+        <p className="typo-section-title text-black">{title}</p>
+        {summaries.length ? <p className="typo-meta text-[#7b7b7b]">{summaries.length} rooms</p> : null}
       </div>
       {summaries.length ? (
         <div>
@@ -22,18 +22,18 @@ export function BoqRoomListSection({ title, rooms, items, onOpenRoom, onEditRoom
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="type-body-strong text-black">{room.name}</p>
+                      <p className="typo-body-strong text-black">{room.name}</p>
                       {room.openQuestionCount ? (
-                        <span className="type-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{room.openQuestionCount} notes</span>
+                        <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{room.openQuestionCount} notes</span>
                       ) : null}
                     </div>
-                    <p className="type-meta mt-1 text-[#7b7b7b]">{room.itemCount} particulars</p>
+                    <p className="typo-meta mt-1 text-[#7b7b7b]">{room.itemCount} particulars</p>
                     {room.openQuestionCount && emphasis === 'attention' ? (
-                      <p className="type-meta mt-1 text-[#a86a00]">{room.disputedItemCount} disputed particulars need review</p>
-                    ) : room.note ? <p className="type-meta mt-1 text-[#9a9a9a]">{room.note}</p> : null}
+                      <p className="typo-meta mt-1 text-[#a86a00]">{room.disputedItemCount} disputed particulars need review</p>
+                    ) : room.note ? <p className="typo-meta mt-1 text-[#9a9a9a]">{room.note}</p> : null}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <p className="type-body-strong text-[#267449]">{formatRupees(room.total)}</p>
+                    <p className="typo-body-strong text-[#267449]">{formatRupees(room.total)}</p>
                     <CaretRight size={14} className="text-[#9a9a9a]" />
                   </div>
                 </button>
@@ -52,7 +52,7 @@ export function BoqRoomListSection({ title, rooms, items, onOpenRoom, onEditRoom
           ))}
         </div>
       ) : (
-        <p className="type-body px-4 pb-4 text-[#7b7b7b]">{emptyLabel}</p>
+        <p className="typo-body px-4 pb-4 text-[#7b7b7b]">{emptyLabel}</p>
       )}
     </section>
   )
@@ -62,7 +62,7 @@ export function BoqParticularList({ items, onOpenItem, emptyLabel = 'No particul
   return (
     <section className="border-t border-[#ececec]">
       <div className="px-4 py-3">
-        <p className="type-section-title text-black">Particulars</p>
+        <p className="typo-section-title text-black">Particulars</p>
       </div>
       {items.length ? (
         <div>
@@ -76,18 +76,18 @@ export function BoqParticularList({ items, onOpenItem, emptyLabel = 'No particul
                 className="flex w-full items-start justify-between gap-3 border-t border-[#f2f2f2] px-4 py-3 text-left"
               >
                 <div className="min-w-0">
-                  <p className="type-body text-black">{item.item}</p>
-                  <p className="type-meta mt-1 text-[#7b7b7b]">
+                  <p className="typo-body text-black">{item.item}</p>
+                  <p className="typo-meta mt-1 text-[#7b7b7b]">
                     {item.quantity} {item.unit} / {item.category} / {formatRupees(item.rate)}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {item.vendor ? <span className="type-caption rounded-full bg-[#eef7f1] px-2 py-1 text-[#267449]">{item.vendor}</span> : null}
-                    <span className="type-caption rounded-full bg-[#f6f6f6] px-2 py-1 text-[#6e6e6e]">{item.markupPercent}% mkp</span>
-                    {openQuestions ? <span className="type-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{openQuestions} homeowner note{openQuestions > 1 ? 's' : ''}</span> : null}
+                    {item.vendor ? <span className="typo-caption rounded-full bg-[#eef7f1] px-2 py-1 text-[#267449]">{item.vendor}</span> : null}
+                    <span className="typo-caption rounded-full bg-[#f6f6f6] px-2 py-1 text-[#6e6e6e]">{item.markupPercent}% mkp</span>
+                    {openQuestions ? <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{openQuestions} homeowner note{openQuestions > 1 ? 's' : ''}</span> : null}
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <p className="type-body-strong text-black">{formatRupees(getBoqItemAmount(item))}</p>
+                  <p className="typo-body-strong text-black">{formatRupees(getBoqItemAmount(item))}</p>
                   <CaretRight size={14} className="text-[#9a9a9a]" />
                 </div>
               </button>
@@ -95,7 +95,7 @@ export function BoqParticularList({ items, onOpenItem, emptyLabel = 'No particul
           })}
         </div>
       ) : (
-        <p className="type-body px-4 pb-4 text-[#7b7b7b]">{emptyLabel}</p>
+        <p className="typo-body px-4 pb-4 text-[#7b7b7b]">{emptyLabel}</p>
       )}
     </section>
   )
@@ -105,30 +105,30 @@ export function BoqQuestionThread({ questions, title, emptyLabel = 'No remarks o
   return (
     <section className="border-t border-[#ececec] py-4">
       <div className="px-4">
-        <p className="type-section-title text-black">{title}</p>
+        <p className="typo-section-title text-black">{title}</p>
       </div>
       {questions.length ? (
         <div className="mt-3">
           {questions.map((question) => (
             <div key={question.id} className="border-t border-[#f2f2f2] px-4 py-3">
               <div className="flex items-center gap-2">
-                <p className="type-body-strong text-black">{question.createdBy || 'Homeowner'}</p>
-                <span className={`type-caption rounded-full px-2 py-1 ${question.status === 'resolved' ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>
+                <p className="typo-body-strong text-black">{question.createdBy || 'Homeowner'}</p>
+                <span className={`typo-caption rounded-full px-2 py-1 ${question.status === 'resolved' ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>
                   {question.status === 'resolved' ? 'Resolved' : 'Open'}
                 </span>
               </div>
-              <p className="type-body mt-2 text-[#5f7467]">{question.body}</p>
+              <p className="typo-body mt-2 text-[#5f7467]">{question.body}</p>
               {question.designerReply ? (
                 <div className="mt-3 border-l border-[#dbe6df] pl-3">
-                  <p className="type-label uppercase text-[#5f7467]">Designer reply</p>
-                  <p className="type-body mt-1 text-black">{question.designerReply}</p>
+                  <p className="typo-label uppercase text-[#5f7467]">Designer reply</p>
+                  <p className="typo-body mt-1 text-black">{question.designerReply}</p>
                 </div>
               ) : null}
             </div>
           ))}
         </div>
       ) : (
-        <p className="type-body px-4 pt-3 text-[#7b7b7b]">{emptyLabel}</p>
+        <p className="typo-body px-4 pt-3 text-[#7b7b7b]">{emptyLabel}</p>
       )}
     </section>
   )

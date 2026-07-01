@@ -23,8 +23,8 @@ function Header({ onBack }) {
             <CaretLeft size={24} />
           </span>
           <span className="min-w-0 text-left">
-            <span className="type-section-title block truncate text-black">Approvals</span>
-            <span className="type-caption block truncate text-[#999999]">Pending reviews and client decisions</span>
+            <span className="typo-section-title block truncate text-black">Approvals</span>
+            <span className="typo-caption block truncate text-[#999999]">Pending reviews and client decisions</span>
           </span>
         </button>
       </div>
@@ -40,12 +40,12 @@ function ApprovalRow({ icon: Icon, title, meta, status, onClick }) {
           <Icon size={18} />
         </span>
         <span className="min-w-0">
-          <span className="type-body-strong block truncate text-black">{title}</span>
-          <span className="type-meta mt-0.5 block text-[#6f6f6f]">{meta}</span>
+          <span className="typo-body-strong block truncate text-black">{title}</span>
+          <span className="typo-meta mt-0.5 block text-[#6f6f6f]">{meta}</span>
         </span>
       </span>
       <span className="flex shrink-0 items-center gap-2">
-        <span className={`type-caption rounded-full px-2 py-1 uppercase ${statusTone[status.tone] || statusTone.active}`}>{status.label}</span>
+        <span className={`typo-caption rounded-full px-2 py-1 uppercase ${statusTone[status.tone] || statusTone.active}`}>{status.label}</span>
         <CaretRight size={15} />
       </span>
     </button>
@@ -55,7 +55,7 @@ function ApprovalRow({ icon: Icon, title, meta, status, onClick }) {
 function EmptyState() {
   return (
     <div className="border-y border-[#e5e5e5] py-5">
-      <p className="type-body text-[#6f6f6f]">Nothing is waiting on you right now. New drafts, moodboard choices, and confirmations will show up here.</p>
+      <p className="typo-body text-[#6f6f6f]">Nothing is waiting on you right now. New drafts, moodboard choices, and confirmations will show up here.</p>
     </div>
   )
 }
@@ -149,15 +149,15 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
         <Header onBack={onBack} />
 
         <section className="border-b border-[#e5e5e5] px-4 py-5">
-          <p className="type-caption uppercase text-[#267449]">Project</p>
-          <h1 className="type-page-title mt-2 text-black">{project.name}</h1>
-          <p className="type-body mt-2 text-[#5f7467]">Everything that needs your sign-off, question, or confirmation shows up here first.</p>
+          <p className="typo-caption uppercase text-[#267449]">Project</p>
+          <h1 className="typo-page-title mt-2 text-black">{project.name}</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">Everything that needs your sign-off, question, or confirmation shows up here first.</p>
         </section>
 
         <section className="px-4 py-5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section-title text-black">Needs your response</h2>
-            <span className="type-caption uppercase text-[#8a8a8a]">{reviewRows.length}</span>
+            <h2 className="typo-section-title text-black">Needs your response</h2>
+            <span className="typo-caption uppercase text-[#8a8a8a]">{reviewRows.length}</span>
           </div>
           {reviewRows.length ? (
             <div className="border-y border-[#e5e5e5]">
@@ -173,8 +173,8 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
         {completedRows.length ? (
           <section className="px-4 py-1">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="type-section-title text-black">Completed</h2>
-              <span className="type-caption uppercase text-[#8a8a8a]">{completedRows.length}</span>
+              <h2 className="typo-section-title text-black">Completed</h2>
+              <span className="typo-caption uppercase text-[#8a8a8a]">{completedRows.length}</span>
             </div>
             <div className="border-y border-[#e5e5e5]">
               {completedRows.map((item) => (

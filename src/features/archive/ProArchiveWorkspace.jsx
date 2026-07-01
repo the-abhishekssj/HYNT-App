@@ -25,15 +25,15 @@ function CommentRow({ text, index }) {
 
   return (
     <article className="flex gap-3 border-b border-[#ededed] py-4 last:border-b-0">
-      <span className={`grid size-8 shrink-0 place-items-center rounded-[10px] text-[10px] font-bold ${isSelf ? 'bg-[#f0f4f8] text-[#1e3a5f]' : 'bg-[#eff3f0] text-[#173324]'}`}>
+      <span className={`typo-status-mini grid size-8 shrink-0 place-items-center rounded-[10px] ${isSelf ? 'bg-[#f0f4f8] text-[#1e3a5f]' : 'bg-[#eff3f0] text-[#173324]'}`}>
         {initials}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#7b7b7b]">{displaySenderName}</p>
-          {timeLabel ? <p className="text-[10px] text-[#999999]">{timeLabel}</p> : null}
+          <p className="typo-status-mini uppercase text-[#7b7b7b]">{displaySenderName}</p>
+          {timeLabel ? <p className="typo-body-10 text-[#999999]">{timeLabel}</p> : null}
         </div>
-        <p className="type-body mt-1 text-black">{commentText}</p>
+        <p className="typo-body mt-1 text-black">{commentText}</p>
       </div>
     </article>
   )
@@ -102,13 +102,13 @@ function FolderTile({ folder, onOpen }) {
         <span className="grid size-10 shrink-0 place-items-center rounded-2xl border border-[#e5e5e5] bg-[#fafafa]">
           <FolderSimple size={18} />
         </span>
-        <span className="type-caption shrink-0 uppercase text-[#8a8a8a]">{folder.itemCount} item{folder.itemCount === 1 ? '' : 's'}</span>
+        <span className="typo-caption shrink-0 uppercase text-[#8a8a8a]">{folder.itemCount} item{folder.itemCount === 1 ? '' : 's'}</span>
       </div>
       <div>
-        <p className="type-body-strong text-black">{folder.name}</p>
+        <p className="typo-body-strong text-black">{folder.name}</p>
         <div className="mt-2 space-y-1">
-          <p className="type-meta text-[#6f6f6f]">{folderTypeLabels[folder.type] || 'Archive folder'}</p>
-          <p className="type-caption uppercase text-[#267449]">{visibilityLabels[folder.visibility]}</p>
+          <p className="typo-meta text-[#6f6f6f]">{folderTypeLabels[folder.type] || 'Archive folder'}</p>
+          <p className="typo-caption uppercase text-[#267449]">{visibilityLabels[folder.visibility]}</p>
         </div>
       </div>
     </button>
@@ -126,11 +126,11 @@ function ArchiveItemRow({ item, onOpen }) {
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <p className="type-body-strong truncate text-black">{item.title}</p>
-        <p className="type-meta mt-0.5 truncate text-[#6f6f6f]">{item.linkedTo}</p>
-        {item.comments?.length ? <p className="type-caption mt-1 truncate text-[#267449]">{item.comments.length} comment(s)</p> : null}
+        <p className="typo-body-strong truncate text-black">{item.title}</p>
+        <p className="typo-meta mt-0.5 truncate text-[#6f6f6f]">{item.linkedTo}</p>
+        {item.comments?.length ? <p className="typo-caption mt-1 truncate text-[#267449]">{item.comments.length} comment(s)</p> : null}
       </div>
-      <span className="type-caption shrink-0 rounded-full bg-[#f2f2f2] px-2 py-1 uppercase text-[#6f6f6f]">{statusLabels[item.status] || item.status}</span>
+      <span className="typo-caption shrink-0 rounded-full bg-[#f2f2f2] px-2 py-1 uppercase text-[#6f6f6f]">{statusLabels[item.status] || item.status}</span>
     </button>
   )
 }
@@ -227,9 +227,9 @@ function ProArchiveWorkspace({ project, onBack }) {
         {!openFolder ? (
           <>
             <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="type-caption uppercase text-[#267449]">Project archive</p>
-              <h1 className="type-page-title mt-2 text-black">Open a folder to manage what is shared and who can work inside it.</h1>
-              <p className="type-meta mt-2 text-[#6f6f6f]">
+              <p className="typo-caption uppercase text-[#267449]">Project archive</p>
+              <h1 className="typo-page-title mt-2 text-black">Open a folder to manage what is shared and who can work inside it.</h1>
+              <p className="typo-meta mt-2 text-[#6f6f6f]">
                 Viewing as {activeViewer?.role?.label}. {!permissions.canViewInternalArchive ? 'Only homeowner-visible folders are shown here.' : 'Internal folders remain visible.'}
               </p>
               <div className="mt-5 grid grid-cols-3 border-y border-[#e5e5e5] text-center">
@@ -239,8 +239,8 @@ function ProArchiveWorkspace({ project, onBack }) {
                   ['Items', openFolder ? openFolderItems.length : archiveItems.filter((item) => visibleFolders.some((folder) => folder.id === item.folderId)).length],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 last:border-r-0">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="type-card-title mt-1 text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-card-title mt-1 text-black">{value}</p>
                   </div>
                 ))}
               </div>
@@ -248,8 +248,8 @@ function ProArchiveWorkspace({ project, onBack }) {
 
             <section className="px-4 py-5">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="type-section-title text-black">Folders</h2>
-                <span className="type-caption uppercase text-[#8a8a8a]">Tap to open</span>
+                <h2 className="typo-section-title text-black">Folders</h2>
+                <span className="typo-caption uppercase text-[#8a8a8a]">Tap to open</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {visibleFolders.map((folder) => (
@@ -269,9 +269,9 @@ function ProArchiveWorkspace({ project, onBack }) {
         ) : !openItem ? (
           <>
             <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="type-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Project folder'}</p>
-              <h1 className="type-page-title mt-2 text-black">{openFolder.name}</h1>
-              <p className="type-body mt-2 text-[#5f7467]">
+              <p className="typo-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Project folder'}</p>
+              <h1 className="typo-page-title mt-2 text-black">{openFolder.name}</h1>
+              <p className="typo-body mt-2 text-[#5f7467]">
                 {openFolder.type === 'moodboard'
                   ? 'Moodboard and inspirations shared with the homeowner.'
                   : openFolder.type === 'sketches'
@@ -287,8 +287,8 @@ function ProArchiveWorkspace({ project, onBack }) {
                   ['Access', editAccessLabels[openFolder.editAccess || 'team-can-add']],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="mt-1 text-[11px] font-bold leading-[1.4] text-black truncate">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-caption mt-1 truncate text-black">{value}</p>
                   </div>
                 ))}
               </div>
@@ -296,14 +296,14 @@ function ProArchiveWorkspace({ project, onBack }) {
 
             <section className="px-4 pb-5 pt-4">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="type-section-title text-black">Items</h2>
-                <span className="type-caption uppercase text-[#8a8a8a]">{openFolderItems.length} total</span>
+                <h2 className="typo-section-title text-black">Items</h2>
+                <span className="typo-caption uppercase text-[#8a8a8a]">{openFolderItems.length} total</span>
               </div>
               <div className="overflow-hidden rounded-[24px] border border-[#ededed] bg-white px-4">
                 {openFolderItems.length ? (
                   openFolderItems.map((item) => <ArchiveItemRow key={item.id} item={item} onOpen={setOpenItemId} />)
                 ) : (
-                  <p className="type-body py-4 text-[#6f6f6f]">No items in this folder yet.</p>
+                  <p className="typo-body py-4 text-[#6f6f6f]">No items in this folder yet.</p>
                 )}
               </div>
             </section>
@@ -321,8 +321,8 @@ function ProArchiveWorkspace({ project, onBack }) {
             </section>
 
             <section className="px-4 py-5">
-              <p className="type-body-strong text-black">{openItem.title}</p>
-              <p className="type-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
+              <p className="typo-body-strong text-black">{openItem.title}</p>
+              <p className="typo-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
               <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">
                 {[
                   ['Status', statusLabels[openItem.status] || openItem.status],
@@ -330,8 +330,8 @@ function ProArchiveWorkspace({ project, onBack }) {
                   ['Access', ['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? 'Approve' : 'Comment'],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-meta mt-1 text-black">{value}</p>
                   </div>
                 ))}
               </div>
@@ -339,8 +339,8 @@ function ProArchiveWorkspace({ project, onBack }) {
 
             <section className="px-4 py-1 pb-10">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="type-section-title text-black">Comments</h2>
-                <span className="type-caption text-[#7b7b7b]">Homeowner sees these instantly</span>
+                <h2 className="typo-section-title text-black">Comments</h2>
+                <span className="typo-caption text-[#7b7b7b]">Homeowner sees these instantly</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {(openItem.comments || []).length ? (
@@ -349,7 +349,7 @@ function ProArchiveWorkspace({ project, onBack }) {
                   ))
                 ) : (
                   <div className="py-4">
-                    <p className="type-body text-[#6f6f6f]">No comments yet. Reply to the homeowner here.</p>
+                    <p className="typo-body text-[#6f6f6f]">No comments yet. Reply to the homeowner here.</p>
                   </div>
                 )}
               </div>
@@ -358,7 +358,7 @@ function ProArchiveWorkspace({ project, onBack }) {
                   value={commentDrafts[openItem.id] || ''}
                   onChange={(event) => updateDraft(openItem.id, event.target.value)}
                   placeholder="Reply or add a comment"
-                  className="type-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none"
+                  className="typo-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none"
                 />
                 <button
                   type="button"
@@ -382,7 +382,7 @@ function ProArchiveWorkspace({ project, onBack }) {
               value={folderName}
               onChange={(event) => setFolderName(event.target.value)}
               placeholder="New folder"
-              className="type-body h-10 min-w-0 flex-1 rounded-2xl border border-[#d7d7d7] px-3 outline-none"
+              className="typo-body h-10 min-w-0 flex-1 rounded-2xl border border-[#d7d7d7] px-3 outline-none"
             />
             <button
               type="button"
@@ -406,13 +406,13 @@ function ProArchiveWorkspace({ project, onBack }) {
                 <button
                   type="button"
                   onClick={() => setUploadedPhoto(null)}
-                  className="absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-red-500 text-[11px] font-bold text-white shadow-sm"
+                  className="typo-status-mini absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm"
                   aria-label="Remove photo"
                 >
                   ×
                 </button>
               </div>
-              <p className="type-caption uppercase tracking-wider text-[#6f6f6f]">Ready to upload</p>
+              <p className="typo-caption uppercase tracking-wider text-[#6f6f6f]">Ready to upload</p>
             </div>
           ) : null}
           <div className="flex items-center gap-2">
@@ -429,7 +429,7 @@ function ProArchiveWorkspace({ project, onBack }) {
               value={itemTitle}
               onChange={(event) => setItemTitle(event.target.value)}
               placeholder={uploadedPhoto ? "Rename photo (optional)" : `Add item to ${openFolder.name}`}
-              className="type-body h-10 min-w-0 flex-1 rounded-2xl border border-[#d7d7d7] px-3 outline-none"
+              className="typo-body h-10 min-w-0 flex-1 rounded-2xl border border-[#d7d7d7] px-3 outline-none"
             />
             <button
               type="button"
@@ -453,8 +453,8 @@ function ProArchiveWorkspace({ project, onBack }) {
           <div className="fixed bottom-0 left-1/2 z-[101] w-full max-w-[390px] -translate-x-1/2 rounded-t-[30px] bg-white p-5 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
             <div className="flex items-center justify-between border-b border-[#e5e5e5] pb-3">
               <div>
-                <p className="type-caption uppercase text-[#267449]">Folder Settings</p>
-                <h3 className="type-section-title text-black">{openFolder.name}</h3>
+                <p className="typo-caption uppercase text-[#267449]">Folder Settings</p>
+                <h3 className="typo-section-title text-black">{openFolder.name}</h3>
               </div>
               <button
                 type="button"
@@ -471,44 +471,44 @@ function ProArchiveWorkspace({ project, onBack }) {
                 <>
                   <div>
                     <label className="block">
-                      <span className="type-label uppercase text-[#7b7b7b]">Visibility</span>
+                      <span className="typo-label uppercase text-[#7b7b7b]">Visibility</span>
                       <select
                         value={openFolder.visibility}
                         onChange={(event) => actions.updateArchiveFolderVisibility(openFolder.id, event.target.value)}
-                        className="type-body-strong mt-2 h-11 w-full rounded-2xl border border-[#d8d8d8] bg-white px-3 text-black outline-none"
+                        className="typo-body-strong mt-2 h-11 w-full rounded-2xl border border-[#d8d8d8] bg-white px-3 text-black outline-none"
                       >
                         <option value="team-only">Internal only</option>
                         <option value="selected-team">Selected team</option>
                         <option value="client-shared">Homeowner visible</option>
                       </select>
                     </label>
-                    <p className="type-caption mt-1.5 text-[#7b7b7b]">Shared folders appear in the homeowner portal archive.</p>
+                    <p className="typo-caption mt-1.5 text-[#7b7b7b]">Shared folders appear in the homeowner portal archive.</p>
                   </div>
 
                   <div>
                     <label className="block">
-                      <span className="type-label uppercase text-[#7b7b7b]">Modification access</span>
+                      <span className="typo-label uppercase text-[#7b7b7b]">Modification access</span>
                       <select
                         value={openFolder.editAccess || 'team-can-add'}
                         onChange={(event) => actions.updateArchiveFolderEditAccess(openFolder.id, event.target.value)}
-                        className="type-body-strong mt-2 h-11 w-full rounded-2xl border border-[#d8d8d8] bg-white px-3 text-black outline-none"
+                        className="typo-body-strong mt-2 h-11 w-full rounded-2xl border border-[#d8d8d8] bg-white px-3 text-black outline-none"
                       >
                         <option value="pro-only">Only principal edits</option>
                         <option value="team-can-add">Team can add</option>
                         <option value="team-can-edit">Team can edit</option>
                       </select>
                     </label>
-                    <p className="type-caption mt-1.5 text-[#7b7b7b]">
+                    <p className="typo-caption mt-1.5 text-[#7b7b7b]">
                       Current rule: {editAccessLabels[openFolder.editAccess || 'team-can-add']}. Homeowners can still comment on shared items.
                     </p>
                   </div>
                 </>
               ) : (
                 <div>
-                  <p className="type-label uppercase text-[#7b7b7b]">Access rule</p>
-                  <p className="type-body mt-2 text-black">{visibilityLabels[openFolder.visibility]}</p>
-                  <p className="type-body mt-1 text-black">{editAccessLabels[openFolder.editAccess || 'team-can-add']}</p>
-                  <p className="type-caption mt-2 text-[#7b7b7b]">Only the principal pro can change folder settings.</p>
+                  <p className="typo-label uppercase text-[#7b7b7b]">Access rule</p>
+                  <p className="typo-body mt-2 text-black">{visibilityLabels[openFolder.visibility]}</p>
+                  <p className="typo-body mt-1 text-black">{editAccessLabels[openFolder.editAccess || 'team-can-add']}</p>
+                  <p className="typo-caption mt-2 text-[#7b7b7b]">Only the principal pro can change folder settings.</p>
                 </div>
               )}
             </div>
@@ -516,7 +516,7 @@ function ProArchiveWorkspace({ project, onBack }) {
             <button
               type="button"
               onClick={() => setIsSettingsOpen(false)}
-              className="type-body-strong mt-6 h-11 w-full rounded-2xl bg-black text-white"
+              className="typo-body-strong mt-6 h-11 w-full rounded-2xl bg-black text-white"
             >
               Done
             </button>

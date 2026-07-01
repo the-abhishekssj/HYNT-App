@@ -51,42 +51,6 @@
   height: 0;
 }
 
-.hynt-ai-input,
-.hynt-ai-input::placeholder {
-  font-family: 'Urbanist', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-}
-
-.hynt-room-chip {
-  font-family: 'Urbanist', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 21px;
-}
-
-.hynt-section-link {
-  font-family: 'Urbanist', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-}
-
-.hynt-nav-home {
-  font-family: 'Urbanist', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 18px;
-}
-
-.hynt-nav-item {
-  font-family: 'Urbanist', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-}
-
 @keyframes thinkingBreathe {
   0%, 100% {
     opacity: 0.45;

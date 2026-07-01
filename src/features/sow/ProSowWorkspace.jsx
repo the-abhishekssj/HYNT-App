@@ -48,8 +48,8 @@ function StickyHeader({ title, subtitle, onBack, actions = null }) {
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="type-section-title block truncate text-black">{title}</span>
-              <span className="type-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title block truncate text-black">{title}</span>
+              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
             </span>
           </button>
           <div className="flex items-center gap-2">
@@ -66,11 +66,11 @@ function SOWSection({ index, title, open, onToggle, badge, children }) {
     <article className="overflow-hidden rounded-[20px] border border-[#dbe6df] bg-white">
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-4 py-3 text-left">
         <span className="flex min-w-0 items-center gap-3">
-          <span className="type-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
-          <span className="type-card-title truncate text-[#102418]">{title}</span>
+          <span className="typo-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
+          <span className="typo-card-title truncate text-[#102418]">{title}</span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
-          {badge ? <span className="type-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
+          {badge ? <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
           <CaretDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
         </span>
       </button>
@@ -82,11 +82,11 @@ function SOWSection({ index, title, open, onToggle, badge, children }) {
 function InlineField({ label, value, onChange }) {
   return (
     <label className="block border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
-      <span className="type-utility uppercase text-[#71837a]">{label}</span>
+      <span className="typo-utility uppercase text-[#71837a]">{label}</span>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="type-data-value mt-1 w-full rounded-[16px] border border-transparent bg-[#f7fbf8] px-3 py-2 text-black outline-none focus:border-[#dbe6df]"
+        className="typo-data-value mt-1 w-full rounded-[16px] border border-transparent bg-[#f7fbf8] px-3 py-2 text-black outline-none focus:border-[#dbe6df]"
       />
     </label>
   )
@@ -107,7 +107,7 @@ function OtpRow({ digits, setDigits }) {
           inputMode="numeric"
           maxLength={1}
           onChange={(event) => updateDigit(index, event.target.value)}
-          className="type-page-title h-12 rounded-[14px] border border-[#dfdfdf] bg-white text-center text-black outline-none focus:border-black"
+          className="typo-page-title h-12 rounded-[14px] border border-[#dfdfdf] bg-white text-center text-black outline-none focus:border-black"
         />
       ))}
     </div>
@@ -117,10 +117,10 @@ function OtpRow({ digits, setDigits }) {
 function SignatureCard({ label, name, state, stamp }) {
   return (
     <article className="rounded-[18px] border border-[#e2e2e2] bg-white p-3">
-      <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-      <p className="type-card-title mt-2 text-black">{name}</p>
-      <p className={`type-caption mt-3 ${state === 'Signed' ? 'text-[#267449]' : 'text-[#777777]'}`}>{state}</p>
-      <p className="type-meta mt-1 text-[#8a8a8a]">{stamp}</p>
+      <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+      <p className="typo-card-title mt-2 text-black">{name}</p>
+      <p className={`typo-caption mt-3 ${state === 'Signed' ? 'text-[#267449]' : 'text-[#777777]'}`}>{state}</p>
+      <p className="typo-meta mt-1 text-[#8a8a8a]">{stamp}</p>
     </article>
   )
 }
@@ -287,18 +287,18 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
           </div>
-          <h1 className="type-page-title mt-4 text-black">Create the first SOW</h1>
-          <p className="type-body mt-2 text-[#5f7467]">Start from a template, use the AI pass if you want, then send it into the homeowner review flow.</p>
+          <h1 className="typo-page-title mt-4 text-black">Create the first SOW</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">Start from a template, use the AI pass if you want, then send it into the homeowner review flow.</p>
         </section>
 
         <section className="mt-4 rounded-[20px] border border-[#e1e1e1] bg-white p-4">
-          <p className="type-label uppercase text-[#5f7467]">Shared demo behavior</p>
-          <p className="type-body mt-2 text-[#5f7467]">The homeowner flow will wait for this document and react to remarks, revisions, and signing in real time.</p>
+          <p className="typo-label uppercase text-[#5f7467]">Shared demo behavior</p>
+          <p className="typo-body mt-2 text-[#5f7467]">The homeowner flow will wait for this document and react to remarks, revisions, and signing in real time.</p>
         </section>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setView('template')} className="type-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
+        <button type="button" onClick={() => setView('template')} className="typo-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
           Create SOW
           <ArrowRight size={16} />
         </button>
@@ -312,9 +312,9 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
       <div className="px-4 py-5">
         <section className="pb-5">
-          <p className="type-caption uppercase text-[#6e907d]">Template picker</p>
-          <h1 className="type-page-title mt-2 text-black">Choose the structure you want to begin with.</h1>
-          <p className="type-body mt-2 text-[#6f6f6f]">This keeps the shared mock-state flow intact, but starts from the same HTML entry point.</p>
+          <p className="typo-caption uppercase text-[#6e907d]">Template picker</p>
+          <h1 className="typo-page-title mt-2 text-black">Choose the structure you want to begin with.</h1>
+          <p className="typo-body mt-2 text-[#6f6f6f]">This keeps the shared mock-state flow intact, but starts from the same HTML entry point.</p>
         </section>
 
         <div className="space-y-2">
@@ -332,15 +332,15 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   <span className="grid size-11 place-items-center rounded-[16px] border border-[#e0e0e0] bg-white text-black">
                     <Icon size={20} weight={selected ? 'fill' : 'regular'} />
                   </span>
-                  <span className="type-caption rounded-full bg-white px-2 py-1 uppercase text-[#777777]">
+                  <span className="typo-caption rounded-full bg-white px-2 py-1 uppercase text-[#777777]">
                     {template.id === 'residential' ? 'Homes' : template.id === 'commercial' ? 'Commercial' : 'Custom'}
                   </span>
                 </div>
-                <p className="type-section-title mt-4 text-black">{template.name}</p>
-                <p className="type-meta mt-1 text-[#808080]">{template.subtitle}</p>
+                <p className="typo-section-title mt-4 text-black">{template.name}</p>
+                <p className="typo-meta mt-1 text-[#808080]">{template.subtitle}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {template.tags.map((tag) => (
-                    <span key={tag} className="type-caption rounded-full border border-[#e1e1e1] bg-white px-3 py-1 uppercase text-[#6f6f6f]">
+                    <span key={tag} className="typo-caption rounded-full border border-[#e1e1e1] bg-white px-3 py-1 uppercase text-[#6f6f6f]">
                       {tag}
                     </span>
                   ))}
@@ -352,7 +352,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={createDraft} className="type-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
+        <button type="button" onClick={createDraft} className="typo-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white">
           Use {selectedTemplate.name} template
           <ArrowRight size={16} />
         </button>
@@ -371,7 +371,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             <button type="button" onClick={() => setView('ai')} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black" aria-label="AI generate SOW">
               <Sparkle size={15} />
             </button>
-            <button type="button" onClick={actions.resetDemo} className="type-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={actions.resetDemo} className="typo-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
               Reset
             </button>
           </>
@@ -382,28 +382,28 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         <section className="pb-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="type-section-title truncate text-[#102418]">{document.projectName}</p>
-              <p className="type-body mt-1 truncate text-[#5f7467]">{document.clientName} | {document.location}</p>
+              <p className="typo-section-title truncate text-[#102418]">{document.projectName}</p>
+              <p className="typo-body mt-1 truncate text-[#5f7467]">{document.clientName} | {document.location}</p>
             </div>
-            <span className="type-caption shrink-0 rounded-full bg-[#eef7f1] px-3 py-1 uppercase text-[#267449]">{sowStatusLabels[sow.status] || 'Draft'}</span>
+            <span className="typo-caption shrink-0 rounded-full bg-[#eef7f1] px-3 py-1 uppercase text-[#267449]">{sowStatusLabels[sow.status] || 'Draft'}</span>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2">
             <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-              <p className="type-utility text-[#73849d]">Value</p>
-              <p className="type-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
+              <p className="typo-utility text-[#73849d]">Value</p>
+              <p className="typo-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
             </div>
             <div className="rounded-[18px] border border-[#dbe6df] bg-white px-3 py-3">
-              <p className="type-utility text-[#73867c]">Duration</p>
-              <p className="type-card-title mt-2 text-[#102418]">{document.durationLabel}</p>
+              <p className="typo-utility text-[#73867c]">Duration</p>
+              <p className="typo-card-title mt-2 text-[#102418]">{document.durationLabel}</p>
             </div>
             <div className="rounded-[18px] border border-[#efe2c8] bg-white px-3 py-3">
-              <p className="type-utility text-[#987f53]">Open remarks</p>
-              <p className="type-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
+              <p className="typo-utility text-[#987f53]">Open remarks</p>
+              <p className="typo-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
             </div>
           </div>
           {sow.aiGeneratedAt ? (
-            <p className="type-meta mt-3 text-[#5f7467]">Last AI pass: {formatStamp(sow.aiGeneratedAt)}</p>
+            <p className="typo-meta mt-3 text-[#5f7467]">Last AI pass: {formatStamp(sow.aiGeneratedAt)}</p>
           ) : null}
         </section>
 
@@ -427,7 +427,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                     <input
                       value={room.name}
                       onChange={(event) => updateRoom(room.id, 'name', event.target.value)}
-                      className="type-card-title min-w-0 flex-1 bg-transparent text-black outline-none"
+                      className="typo-card-title min-w-0 flex-1 bg-transparent text-black outline-none"
                     />
                     <button type="button" onClick={() => removeRoom(room.id)} className="grid size-8 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove room">
                       <Trash size={15} />
@@ -436,11 +436,11 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   <textarea
                     value={room.scope}
                     onChange={(event) => actions.updateRoomScope(room.id, event.target.value)}
-                    className="type-body mt-3 min-h-20 w-full rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="typo-body mt-3 min-h-20 w-full rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
                 </article>
               ))}
-              <button type="button" onClick={addRoom} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+              <button type="button" onClick={addRoom} className="typo-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
                 <Plus size={15} />
                 Add room
               </button>
@@ -450,22 +450,22 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <SOWSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')} badge={openRemarks.some((remark) => remark.sectionKey === 'exclusions') ? 'Remark' : undefined}>
             <div className="space-y-3">
               <div className="rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-3">
-                <p className="type-caption uppercase text-[#9f8350]">Designer managed</p>
-                <p className="type-body mt-1 text-black">The homeowner can question exclusions, but the pro controls the boundary of scope.</p>
+                <p className="typo-caption uppercase text-[#9f8350]">Designer managed</p>
+                <p className="typo-body mt-1 text-black">The homeowner can question exclusions, but the pro controls the boundary of scope.</p>
               </div>
               {document.exclusions.map((item, index) => (
                 <div key={`${item}-${index}`} className="flex items-start gap-2">
                   <textarea
                     value={item}
                     onChange={(event) => updateListItem('exclusions', index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="typo-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
                   <button type="button" onClick={() => removeListItem('exclusions', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove exclusion">
                     <Trash size={16} />
                   </button>
                 </div>
               ))}
-              <button type="button" onClick={() => addListItem('exclusions', 'New designer-managed exclusion')} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+              <button type="button" onClick={() => addListItem('exclusions', 'New designer-managed exclusion')} className="typo-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
                 <Plus size={15} />
                 Add exclusion
               </button>
@@ -495,14 +495,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   <textarea
                     value={term}
                     onChange={(event) => updateListItem('paymentTerms', index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="typo-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
                   <button type="button" onClick={() => removeListItem('paymentTerms', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove payment term">
                     <Trash size={16} />
                   </button>
                 </div>
               ))}
-              <button type="button" onClick={() => addListItem('paymentTerms', 'New payment term')} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+              <button type="button" onClick={() => addListItem('paymentTerms', 'New payment term')} className="typo-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
                 <Plus size={15} />
                 Add payment term
               </button>
@@ -516,14 +516,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   <textarea
                     value={term}
                     onChange={(event) => updateListItem('termsNotes', index, event.target.value)}
-                    className="type-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
+                    className="typo-body min-h-16 flex-1 rounded-[16px] border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2 text-[#102418] outline-none"
                   />
                   <button type="button" onClick={() => removeListItem('termsNotes', index)} className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove term">
                     <Trash size={16} />
                   </button>
                 </div>
               ))}
-              <button type="button" onClick={() => addListItem('termsNotes', 'New term or execution note')} className="type-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
+              <button type="button" onClick={() => addListItem('termsNotes', 'New term or execution note')} className="typo-label flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#e0e0e0] bg-white text-black">
                 <Plus size={15} />
                 Add term or note
               </button>
@@ -532,8 +532,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           <SOWSection index="8" title="Signatures" open={openSections.signatures} onToggle={() => toggleSection('signatures')} badge={openRemarks.some((remark) => remark.sectionKey === 'signatures') ? 'Remark' : undefined}>
             <div className="mb-3 rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-3">
-              <p className="type-caption uppercase text-[#9f8350]">OTP verification</p>
-              <p className="type-body mt-1 text-black">Signatures are captured through the OTP step, not by typing into the document.</p>
+              <p className="typo-caption uppercase text-[#9f8350]">OTP verification</p>
+              <p className="typo-body mt-1 text-black">Signatures are captured through the OTP step, not by typing into the document.</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <SignatureCard label="Designer" name={project?.designerName || 'Riya Desai'} state={sow.designerSigned ? 'Signed' : 'Tap to sign'} stamp={formatStamp(sow.designerSignedAt)} />
@@ -543,10 +543,10 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           {activity.length ? (
             <section className="rounded-[20px] border border-[#e1e1e1] bg-white p-4">
-              <p className="type-label uppercase text-[#5f7467]">Project activity</p>
+              <p className="typo-label uppercase text-[#5f7467]">Project activity</p>
               <div className="mt-3 space-y-2">
                 {activity.slice(0, 4).map((item) => (
-                  <p key={item.id} className="type-meta text-[#5f7467]"><span className="font-bold text-black">{item.actor}</span> {item.text}</p>
+                  <p key={item.id} className="typo-meta text-[#5f7467]"><span className="typo-weight-bold text-black">{item.actor}</span> {item.text}</p>
                 ))}
               </div>
             </section>
@@ -564,14 +564,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             }
             actions.sendSow()
           }}
-          className="type-body-strong h-12 w-full rounded-[18px] bg-black px-4 text-white"
+          className="typo-body-strong h-12 w-full rounded-[18px] bg-black px-4 text-white"
         >
           {sow.designerSigned ? 'Send for review' : 'Verify and sign designer side'}
         </button>
         <div className="mt-2 grid grid-cols-3 gap-2">
-          <button type="button" onClick={() => setView('remarks')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Remarks</button>
-          <button type="button" onClick={() => setView('activity')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Activity</button>
-          <button type="button" onClick={() => setView('ai')} className="type-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">AI draft</button>
+          <button type="button" onClick={() => setView('remarks')} className="typo-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Remarks</button>
+          <button type="button" onClick={() => setView('activity')} className="typo-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">Activity</button>
+          <button type="button" onClick={() => setView('ai')} className="typo-body-strong h-10 rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">AI draft</button>
         </div>
       </div>
     </section>
@@ -585,7 +585,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
         <div className="px-4 py-5">
           <section className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-body text-[#5f7467]">AI already knows the client, location, and base project details. It will confirm the important choices, then build a refined SOW draft in the shared project state.</p>
+            <p className="typo-body text-[#5f7467]">AI already knows the client, location, and base project details. It will confirm the important choices, then build a refined SOW draft in the shared project state.</p>
           </section>
 
           <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
@@ -593,12 +593,12 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               {sowAiSteps.slice(0, Math.min(aiStepIndex + 1, sowAiSteps.length)).map((step) => (
                 <article key={step.id} className="space-y-2">
                   <div className="rounded-[16px] border border-[#e8efe9] bg-[#f8fbf9] p-3">
-                    <p className="type-caption uppercase text-[#6f8476]">{step.title}</p>
-                    <p className="type-body mt-2 text-black">{step.prompt}</p>
+                    <p className="typo-caption uppercase text-[#6f8476]">{step.title}</p>
+                    <p className="typo-body mt-2 text-black">{step.prompt}</p>
                   </div>
                   {aiAnswers[step.id] ? (
                     <div className="rounded-[16px] bg-black px-3 py-3 text-right text-white">
-                      <p className="type-body">{aiAnswers[step.id]}</p>
+                      <p className="typo-body">{aiAnswers[step.id]}</p>
                     </div>
                   ) : null}
                 </article>
@@ -608,17 +608,17 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           {aiComplete && aiPreviewDocument ? (
             <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-              <p className="type-section-title text-black">Generated preview</p>
-              <p className="type-body mt-2 text-[#5f7467]">Kitchen scope, exclusions, billing structure, and notes were refreshed from the guided answers.</p>
+              <p className="typo-section-title text-black">Generated preview</p>
+              <p className="typo-body mt-2 text-[#5f7467]">Kitchen scope, exclusions, billing structure, and notes were refreshed from the guided answers.</p>
               <div className="mt-4 space-y-3">
                 <div>
-                  <p className="type-label uppercase text-[#5f7467]">Kitchen</p>
-                  <p className="type-body mt-1 text-black">{aiPreviewDocument.rooms.find((room) => room.id === 'kitchen')?.scope || 'No kitchen scope'}</p>
+                  <p className="typo-label uppercase text-[#5f7467]">Kitchen</p>
+                  <p className="typo-body mt-1 text-black">{aiPreviewDocument.rooms.find((room) => room.id === 'kitchen')?.scope || 'No kitchen scope'}</p>
                 </div>
                 <div>
-                  <p className="type-label uppercase text-[#5f7467]">Payment terms</p>
+                  <p className="typo-label uppercase text-[#5f7467]">Payment terms</p>
                   <div className="mt-1 space-y-1">
-                    {aiPreviewDocument.paymentTerms.slice(0, 4).map((term) => <p key={term} className="type-body text-black">{term}</p>)}
+                    {aiPreviewDocument.paymentTerms.slice(0, 4).map((term) => <p key={term} className="typo-body text-black">{term}</p>)}
                   </div>
                 </div>
               </div>
@@ -628,7 +628,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
           {aiComplete ? (
-            <button type="button" onClick={applyAiDraft} className="type-body-strong h-11 w-full rounded-full bg-black text-white">
+            <button type="button" onClick={applyAiDraft} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
               Apply generated SOW
             </button>
           ) : (
@@ -637,9 +637,9 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                 value={aiReply}
                 onChange={(event) => setAiReply(event.target.value)}
                 placeholder={currentStep?.placeholder}
-                className="type-body min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+                className="typo-body min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
               />
-              <button type="button" onClick={submitAiReply} disabled={!aiReply.trim()} className="type-body-strong mt-3 h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+              <button type="button" onClick={submitAiReply} disabled={!aiReply.trim()} className="typo-body-strong mt-3 h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
                 Send answer
               </button>
             </>
@@ -658,17 +658,17 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
           </div>
-          <h2 className="type-page-title mt-4 text-black">Verify your identity</h2>
-          <p className="type-body mt-2 text-[#5f7467]">An OTP has been sent to the registered professional number. Verifying it signs the SOW before it is sent to the homeowner.</p>
+          <h2 className="typo-page-title mt-4 text-black">Verify your identity</h2>
+          <p className="typo-body mt-2 text-[#5f7467]">An OTP has been sent to the registered professional number. Verifying it signs the SOW before it is sent to the homeowner.</p>
           <div className="mt-5">
             <OtpRow digits={designerOtp} setDigits={setDesignerOtp} />
           </div>
-          <p className="type-meta mt-4 text-[#7b7b7b]">OTP valid for 10 minutes. This acts as an electronic signature for the professional side.</p>
+          <p className="typo-meta mt-4 text-[#7b7b7b]">OTP valid for 10 minutes. This acts as an electronic signature for the professional side.</p>
         </article>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={verifyDesignerOtp} disabled={designerOtp.some((digit) => !digit)} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <button type="button" onClick={verifyDesignerOtp} disabled={designerOtp.some((digit) => !digit)} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
           Verify and sign
         </button>
       </div>
@@ -683,8 +683,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
         <div className="px-4 py-5">
           <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-section-title text-black">Action every remark before resubmitting</p>
-            <p className="type-body mt-1 text-[#5f7467]">This follows the HTML review pattern: accept or reject each remark, then resubmit the revision.</p>
+            <p className="typo-section-title text-black">Action every remark before resubmitting</p>
+            <p className="typo-body mt-1 text-[#5f7467]">This follows the HTML review pattern: accept or reject each remark, then resubmit the revision.</p>
           </article>
 
           <div className="mt-4 space-y-3">
@@ -694,20 +694,20 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                 <article key={remark.id} className={`rounded-[20px] border p-4 ${remark.status === 'open' ? 'border-[#efe2c8] bg-white' : 'border-[#dbe6df] bg-white'}`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="type-label uppercase text-[#5f7467]">{remark.sectionTitle}</p>
-                      <p className="type-body mt-3 text-black">{remark.body}</p>
+                      <p className="typo-label uppercase text-[#5f7467]">{remark.sectionTitle}</p>
+                      <p className="typo-body mt-3 text-black">{remark.body}</p>
                     </div>
-                    <span className={`type-caption shrink-0 rounded-full px-2 py-1 uppercase ${remark.status === 'accepted' ? 'bg-[#eaf9f1] text-[#267449]' : remark.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{remark.status}</span>
+                    <span className={`typo-caption shrink-0 rounded-full px-2 py-1 uppercase ${remark.status === 'accepted' ? 'bg-[#eaf9f1] text-[#267449]' : remark.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{remark.status}</span>
                   </div>
                   {response ? (
                     <div className={`mt-3 rounded-[16px] p-3 ${response.decision === 'approve' ? 'bg-[#f4fbf7]' : 'bg-[#fff5f5]'}`}>
-                      <p className="type-caption uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
-                      <p className="type-body mt-2 text-black">{response.body}</p>
+                      <p className="typo-caption uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
+                      <p className="typo-body mt-2 text-black">{response.body}</p>
                     </div>
                   ) : (
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => approveRemark(remark)} className="type-label h-10 rounded-xl bg-black text-white">Accept</button>
-                      <button type="button" onClick={() => rejectRemark(remark)} className="type-label h-10 rounded-xl border border-[#e0e0e0] bg-white text-black">Reject</button>
+                      <button type="button" onClick={() => approveRemark(remark)} className="typo-label h-10 rounded-xl bg-black text-white">Accept</button>
+                      <button type="button" onClick={() => rejectRemark(remark)} className="typo-label h-10 rounded-xl border border-[#e0e0e0] bg-white text-black">Reject</button>
                     </div>
                   )}
                 </article>
@@ -715,18 +715,18 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             }) : (
               <article className="rounded-[20px] border border-[#e1e1e1] bg-white p-4 text-center">
                 <CheckCircle size={24} weight="fill" className="mx-auto text-[#267449]" />
-                <p className="type-card-title mt-3 text-black">No remarks yet</p>
-                <p className="type-body mt-1 text-[#5f7467]">When the homeowner comments in another tab, it will appear here.</p>
+                <p className="typo-card-title mt-3 text-black">No remarks yet</p>
+                <p className="typo-body mt-1 text-[#5f7467]">When the homeowner comments in another tab, it will appear here.</p>
               </article>
             )}
           </div>
         </div>
 
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-          <button type="button" onClick={() => { actions.sendSow(); setView('draft') }} disabled={!allActioned} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+          <button type="button" onClick={() => { actions.sendSow(); setView('draft') }} disabled={!allActioned} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
             {allActioned ? 'Resubmit to homeowner' : 'Action all remarks first'}
           </button>
-          <p className="type-meta mt-2 text-center text-[#7b7b7b]">{(sow.remarks || []).length - openRemarks.length} of {(sow.remarks || []).length} remarks actioned</p>
+          <p className="typo-meta mt-2 text-center text-[#7b7b7b]">{(sow.remarks || []).length - openRemarks.length} of {(sow.remarks || []).length} remarks actioned</p>
         </div>
       </section>
     )
@@ -738,8 +738,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
       <div className="space-y-3 px-4 py-5">
         {activity.map((item) => (
           <article key={item.id} className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-card-title text-black">{item.actor}</p>
-            <p className="type-body mt-1 text-[#5f7467]">{item.text}</p>
+            <p className="typo-card-title text-black">{item.actor}</p>
+            <p className="typo-body mt-1 text-[#5f7467]">{item.text}</p>
           </article>
         ))}
       </div>
@@ -760,9 +760,9 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
           </div>
-          <h1 className="type-page-title mt-4 text-black">SOW executed</h1>
-          <p className="type-body mt-2 text-[#5f7467]">Both parties have signed. The base document is locked, and any change now moves through a formal amendment.</p>
-          <p className="type-meta mt-3 text-[#7b7b7b]">Revision {sow.revision}</p>
+          <h1 className="typo-page-title mt-4 text-black">SOW executed</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">Both parties have signed. The base document is locked, and any change now moves through a formal amendment.</p>
+          <p className="typo-meta mt-3 text-[#7b7b7b]">Revision {sow.revision}</p>
         </section>
 
         <section className="mt-4 grid grid-cols-2 gap-3">
@@ -771,8 +771,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         </section>
 
         <section className="mt-4 rounded-[20px] border border-[#efe2c8] bg-[#fff9ef] p-4">
-          <p className="type-section-title text-black">Amendments</p>
-          <p className="type-body mt-1 text-[#5f7467]">Raise a formal amendment when the scope, budget, or terms change after execution.</p>
+          <p className="typo-section-title text-black">Amendments</p>
+          <p className="typo-body mt-1 text-[#5f7467]">Raise a formal amendment when the scope, budget, or terms change after execution.</p>
         </section>
 
         <section className="mt-4 space-y-3">
@@ -780,32 +780,32 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             <article key={amendment.id} className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="type-card-title text-black">Amendment v{amendment.version}</p>
-                  <p className="type-meta mt-1 text-[#7b7b7b]">{amendment.sectionTitle}</p>
+                  <p className="typo-card-title text-black">Amendment v{amendment.version}</p>
+                  <p className="typo-meta mt-1 text-[#7b7b7b]">{amendment.sectionTitle}</p>
                 </div>
-                <span className={`type-caption rounded-full px-2 py-1 uppercase ${amendment.status === 'approved' ? 'bg-[#eaf9f1] text-[#267449]' : amendment.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{amendment.status}</span>
+                <span className={`typo-caption rounded-full px-2 py-1 uppercase ${amendment.status === 'approved' ? 'bg-[#eaf9f1] text-[#267449]' : amendment.status === 'rejected' ? 'bg-[#fdecec] text-[#c34545]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>{amendment.status}</span>
               </div>
               <div className="mt-3 rounded-[16px] bg-[#fafafa] p-3">
-                <p className="type-caption uppercase text-[#7b7b7b]">From</p>
-                <p className="type-body mt-1 text-[#8a8a8a]">{amendment.oldValue}</p>
-                <p className="type-caption mt-3 uppercase text-[#7b7b7b]">To</p>
-                <p className="type-body mt-1 text-black">{amendment.newValue}</p>
+                <p className="typo-caption uppercase text-[#7b7b7b]">From</p>
+                <p className="typo-body mt-1 text-[#8a8a8a]">{amendment.oldValue}</p>
+                <p className="typo-caption mt-3 uppercase text-[#7b7b7b]">To</p>
+                <p className="typo-body mt-1 text-black">{amendment.newValue}</p>
               </div>
-              <p className="type-body mt-3 text-[#5f7467]">Reason: {amendment.reason}</p>
-              {amendment.responseText ? <p className="type-meta mt-2 text-[#7b7b7b]">{amendment.responseText}</p> : null}
+              <p className="typo-body mt-3 text-[#5f7467]">Reason: {amendment.reason}</p>
+              {amendment.responseText ? <p className="typo-meta mt-2 text-[#7b7b7b]">{amendment.responseText}</p> : null}
             </article>
           )) : (
             <article className="rounded-[20px] border border-[#e1e1e1] bg-white p-4 text-center">
-              <p className="type-card-title text-black">No amendments yet</p>
-              <p className="type-body mt-1 text-[#5f7467]">Raise one when the executed document needs a formal change.</p>
+              <p className="typo-card-title text-black">No amendments yet</p>
+              <p className="typo-body mt-1 text-[#5f7467]">Raise one when the executed document needs a formal change.</p>
             </article>
           )}
         </section>
 
         {pendingAmendments.length ? (
           <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-label uppercase text-[#5f7467]">Pending with homeowner</p>
-            <p className="type-body mt-1 text-[#5f7467]">{pendingAmendments.length} amendment{pendingAmendments.length > 1 ? 's are' : ' is'} waiting for homeowner approval.</p>
+            <p className="typo-label uppercase text-[#5f7467]">Pending with homeowner</p>
+            <p className="typo-body mt-1 text-[#5f7467]">{pendingAmendments.length} amendment{pendingAmendments.length > 1 ? 's are' : ' is'} waiting for homeowner approval.</p>
           </section>
         ) : null}
         {showExecutedDetails ? (
@@ -820,8 +820,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   ['Handover', document.handoverMonth],
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                    <span className="type-utility uppercase text-[#71837a]">{label}</span>
-                    <span className="type-data-value text-right text-black">{value}</span>
+                    <span className="typo-utility uppercase text-[#71837a]">{label}</span>
+                    <span className="typo-data-value text-right text-black">{value}</span>
                   </div>
                 ))}
               </div>
@@ -831,8 +831,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               <div className="space-y-3">
                 {document.rooms.map((room) => (
                   <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
-                    <p className="type-card-title text-black">{room.name}</p>
-                    <p className="type-body mt-1 text-[#5f7467]">{room.scope}</p>
+                    <p className="typo-card-title text-black">{room.name}</p>
+                    <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
                   </article>
                 ))}
               </div>
@@ -841,7 +841,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             <SOWSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')}>
               <div className="space-y-2">
                 {document.exclusions.map((item, index) => (
-                  <div key={`${item}-${index}`} className="type-body flex items-start gap-2 text-black">
+                  <div key={`${item}-${index}`} className="typo-body flex items-start gap-2 text-black">
                     <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                     <span>{item}</span>
                   </div>
@@ -857,8 +857,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                   ['Handover', document.handoverMonth],
                 ].map(([label, value]) => (
                   <article key={label} className="rounded-[18px] border border-[#e2e2e2] bg-white px-2 py-3 text-center">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="type-label mt-2 text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-label mt-2 text-black">{value}</p>
                   </article>
                 ))}
               </div>
@@ -866,8 +866,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
             <SOWSection index="5" title="Budget estimate" open={openSections.budget} onToggle={() => toggleSection('budget')}>
               <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-                <p className="type-caption uppercase text-[#73849d]">Total value</p>
-                <p className="type-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
+                <p className="typo-caption uppercase text-[#73849d]">Total value</p>
+                <p className="typo-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
               </div>
             </SOWSection>
 
@@ -875,8 +875,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               <div className="space-y-3">
                 {document.stages.map((stage) => (
                   <div key={stage.id} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                    <span className="type-body text-[#102418]">{stage.label}</span>
-                    <span className="type-body-strong text-black">{stage.percentage}%</span>
+                    <span className="typo-body text-[#102418]">{stage.label}</span>
+                    <span className="typo-body-strong text-black">{stage.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -887,17 +887,17 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         <button
           type="button"
           onClick={() => setShowExecutedDetails(!showExecutedDetails)}
-          className="type-body-strong mt-4 flex w-full items-center justify-between rounded-[20px] border border-[#dbe6df] bg-[#f7fbf8] p-4 text-left text-black"
+          className="typo-body-strong mt-4 flex w-full items-center justify-between rounded-[20px] border border-[#dbe6df] bg-[#f7fbf8] p-4 text-left text-black"
         >
           <span>View executed SOW details</span>
-          <span className="type-meta text-[#267449]">
+          <span className="typo-meta text-[#267449]">
             {showExecutedDetails ? 'Hide details' : 'Show details'}
           </span>
         </button>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={openAmendmentComposer} className="type-body-strong h-11 w-full rounded-full border border-black bg-white text-black">
+        <button type="button" onClick={openAmendmentComposer} className="typo-body-strong h-11 w-full rounded-full border border-black bg-white text-black">
           Raise amendment
         </button>
       </div>
@@ -910,13 +910,13 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
       <div className="px-4 py-5">
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-body text-[#5f7467]">This amendment will be visible to the homeowner in the shared review flow. It only takes effect once they approve it.</p>
+          <p className="typo-body text-[#5f7467]">This amendment will be visible to the homeowner in the shared review flow. It only takes effect once they approve it.</p>
         </article>
 
         <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
           <label className="block">
-            <span className="type-label uppercase text-[#5f7467]">What is changing</span>
-            <select value={amendmentDraft.optionId} onChange={(event) => setAmendmentOption(event.target.value)} className="type-body mt-2 h-11 w-full rounded-[16px] border border-[#dbe6df] bg-white px-3 text-black outline-none">
+            <span className="typo-label uppercase text-[#5f7467]">What is changing</span>
+            <select value={amendmentDraft.optionId} onChange={(event) => setAmendmentOption(event.target.value)} className="typo-body mt-2 h-11 w-full rounded-[16px] border border-[#dbe6df] bg-white px-3 text-black outline-none">
               {amendmentOptions.map((option) => (
                 <option key={option.id} value={option.id}>{option.label}</option>
               ))}
@@ -925,34 +925,34 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
           {selectedAmendmentOption ? (
             <div className="mt-4 rounded-[18px] bg-[#fafafa] p-3">
-              <p className="type-caption uppercase text-[#7b7b7b]">Current value</p>
-              <p className="type-body mt-2 text-[#7b7b7b] whitespace-pre-wrap">{selectedAmendmentOption.currentValue}</p>
+              <p className="typo-caption uppercase text-[#7b7b7b]">Current value</p>
+              <p className="typo-body mt-2 text-[#7b7b7b] whitespace-pre-wrap">{selectedAmendmentOption.currentValue}</p>
             </div>
           ) : null}
 
           <label className="mt-4 block">
-            <span className="type-label uppercase text-[#5f7467]">New value</span>
+            <span className="typo-label uppercase text-[#5f7467]">New value</span>
             <textarea
               value={amendmentDraft.newValue}
               onChange={(event) => setAmendmentDraft((current) => ({ ...current, newValue: event.target.value }))}
-              className="type-body mt-2 min-h-28 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+              className="typo-body mt-2 min-h-28 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
             />
           </label>
 
           <label className="mt-4 block">
-            <span className="type-label uppercase text-[#5f7467]">Reason for amendment</span>
+            <span className="typo-label uppercase text-[#5f7467]">Reason for amendment</span>
             <textarea
               value={amendmentDraft.reason}
               onChange={(event) => setAmendmentDraft((current) => ({ ...current, reason: event.target.value }))}
               placeholder="Describe why this amendment is needed."
-              className="type-body mt-2 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+              className="typo-body mt-2 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
             />
           </label>
         </section>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={submitAmendment} disabled={!amendmentDraft.newValue.trim() || !amendmentDraft.reason.trim()} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <button type="button" onClick={submitAmendment} disabled={!amendmentDraft.newValue.trim() || !amendmentDraft.reason.trim()} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
           Send for approval
         </button>
       </div>

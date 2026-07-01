@@ -10,8 +10,8 @@ export default function ProjectWorkspaceHeader({ title, subtitle, onBack, action
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="type-section-title block truncate text-black">{title}</span>
-              {subtitle ? <span className="type-caption block truncate text-[#999999]">{subtitle}</span> : null}
+              <span className="typo-section-title block truncate text-black">{title}</span>
+              {subtitle ? <span className="typo-caption block truncate text-[#999999]">{subtitle}</span> : null}
             </span>
           </button>
           {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}

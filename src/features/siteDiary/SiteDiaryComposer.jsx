@@ -4,7 +4,7 @@ import { SITE_DIARY_BUCKETS } from './siteDiaryUtils'
 const weatherOptions = ['Sunny', 'Cloudy', 'Indoor', 'Rainy']
 
 function FieldLabel({ children }) {
-  return <span className="type-label mb-2 block uppercase text-[#777]">{children}</span>
+  return <span className="typo-label mb-2 block uppercase text-[#777]">{children}</span>
 }
 
 function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
@@ -19,8 +19,8 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
         <button type="button" onClick={onClose} className="flex items-center gap-3 text-left">
           <CaretLeft size={22} />
           <span>
-            <span className="type-section-title block text-black">New site log</span>
-            <span className="type-caption block text-[#777]">Shared project record</span>
+            <span className="typo-section-title block text-black">New site log</span>
+            <span className="typo-caption block text-[#777]">Shared project record</span>
           </span>
         </button>
         <button type="button" onClick={onClose} className="grid size-9 place-items-center" aria-label="Close composer">
@@ -37,7 +37,7 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
                 key={bucket.id}
                 type="button"
                 onClick={() => onChange({ type: bucket.id })}
-                className={`type-caption rounded-full px-3 py-2 ${draft.type === bucket.id ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#4f4f4f]'}`}
+                className={`typo-caption rounded-full px-3 py-2 ${draft.type === bucket.id ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#4f4f4f]'}`}
               >
                 {bucket.label}
               </button>
@@ -48,27 +48,27 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
         <section className="space-y-4 border-t border-[#e5e5e5] pt-5">
           <label className="block">
             <FieldLabel>Title</FieldLabel>
-            <input value={draft.title} onChange={(event) => onChange({ title: event.target.value })} placeholder="What was completed today?" className="type-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
+            <input value={draft.title} onChange={(event) => onChange({ title: event.target.value })} placeholder="What was completed today?" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
           </label>
           <label className="block">
             <FieldLabel>Work completed and observations</FieldLabel>
-            <textarea value={draft.note} onChange={(event) => onChange({ note: event.target.value })} placeholder="Record progress, decisions, materials received, or blockers." className="type-body h-28 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none focus:border-black" />
+            <textarea value={draft.note} onChange={(event) => onChange({ note: event.target.value })} placeholder="Record progress, decisions, materials received, or blockers." className="typo-body h-28 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none focus:border-black" />
           </label>
           <div className="grid grid-cols-2 gap-3">
             <label>
               <FieldLabel>Weather</FieldLabel>
-              <select value={draft.weather} onChange={(event) => onChange({ weather: event.target.value })} className="type-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none">
+              <select value={draft.weather} onChange={(event) => onChange({ weather: event.target.value })} className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none">
                 {weatherOptions.map((weather) => <option key={weather}>{weather}</option>)}
               </select>
             </label>
             <label>
               <FieldLabel>Workers</FieldLabel>
-              <input value={draft.workerCount} onChange={(event) => onChange({ workerCount: event.target.value })} inputMode="numeric" placeholder="0" className="type-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+              <input value={draft.workerCount} onChange={(event) => onChange({ workerCount: event.target.value })} inputMode="numeric" placeholder="0" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
             </label>
           </div>
           <label className="block">
             <FieldLabel>Areas and trades</FieldLabel>
-            <input value={draft.tags} onChange={(event) => onChange({ tags: event.target.value })} placeholder="Master bedroom, False ceiling" className="type-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+            <input value={draft.tags} onChange={(event) => onChange({ tags: event.target.value })} placeholder="Master bedroom, False ceiling" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
           </label>
         </section>
 
@@ -76,7 +76,7 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
           <div className="mb-3 flex items-center justify-between">
             <div>
               <FieldLabel>Progress photos</FieldLabel>
-              <p className="type-caption text-[#777]">Select one or more images for this log.</p>
+              <p className="typo-caption text-[#777]">Select one or more images for this log.</p>
             </div>
             <Camera size={20} className="text-[#777]" />
           </div>
@@ -98,16 +98,16 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
             <span className="flex items-center gap-3">
               <WarningCircle size={20} className="text-[#d46f1f]" />
               <span>
-                <span className="type-body-strong block text-black">Flag an issue</span>
-                <span className="type-caption block text-[#777]">Also creates a linked task for the site team.</span>
+                <span className="typo-body-strong block text-black">Flag an issue</span>
+                <span className="typo-caption block text-[#777]">Also creates a linked task for the site team.</span>
               </span>
             </span>
             <span className={`h-6 w-11 rounded-full p-1 transition-colors ${draft.createIssue ? 'bg-black' : 'bg-[#dedede]'}`}><span className={`block size-4 rounded-full bg-white transition-transform ${draft.createIssue ? 'translate-x-5' : ''}`} /></span>
           </button>
           {draft.createIssue ? (
             <div className="mt-4 space-y-3 border-l-2 border-[#e8a66f] pl-4">
-              <input value={draft.issueTitle} onChange={(event) => onChange({ issueTitle: event.target.value })} placeholder="Issue title" className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
-              <textarea value={draft.issueNote} onChange={(event) => onChange({ issueNote: event.target.value })} placeholder="What needs to be corrected?" className="type-body h-20 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none" />
+              <input value={draft.issueTitle} onChange={(event) => onChange({ issueTitle: event.target.value })} placeholder="Issue title" className="typo-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+              <textarea value={draft.issueNote} onChange={(event) => onChange({ issueNote: event.target.value })} placeholder="What needs to be corrected?" className="typo-body h-20 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none" />
             </div>
           ) : null}
         </section>
@@ -119,8 +119,8 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
                 <Check size={18} weight="bold" />
               </span>
               <span>
-                <span className="type-body-strong block text-black">Visible to homeowner?</span>
-                <span className="type-caption block text-[#777]">Share this log update directly to their feed.</span>
+                <span className="typo-body-strong block text-black">Visible to homeowner?</span>
+                <span className="typo-caption block text-[#777]">Share this log update directly to their feed.</span>
               </span>
             </span>
             <button
@@ -135,8 +135,8 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
         </section>
 
         <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-3 bg-white py-3">
-          <button type="button" onClick={onClose} className="type-body-strong h-12 rounded-xl border border-[#d7d7d7] px-5">Cancel</button>
-          <button type="button" onClick={onSave} disabled={!draft.title.trim() && !draft.note.trim() && draft.photos.length === 0} className="type-body-strong h-12 rounded-xl bg-black px-5 text-white disabled:bg-[#d7d7d7]">Save site log</button>
+          <button type="button" onClick={onClose} className="typo-body-strong h-12 rounded-xl border border-[#d7d7d7] px-5">Cancel</button>
+          <button type="button" onClick={onSave} disabled={!draft.title.trim() && !draft.note.trim() && draft.photos.length === 0} className="typo-body-strong h-12 rounded-xl bg-black px-5 text-white disabled:bg-[#d7d7d7]">Save site log</button>
         </div>
       </div>
     </aside>

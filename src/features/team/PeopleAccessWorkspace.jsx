@@ -33,8 +33,8 @@ function AccessToggle({ enabled, disabled, onClick }) {
 function SectionHeader({ title, meta }) {
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="type-section-title text-black">{title}</h2>
-      {meta ? <span className="type-caption shrink-0 rounded-full border border-[#e0e0e0] bg-white px-3 py-1 uppercase text-[#6f6f6f]">{meta}</span> : null}
+      <h2 className="typo-section-title text-black">{title}</h2>
+      {meta ? <span className="typo-caption shrink-0 rounded-full border border-[#e0e0e0] bg-white px-3 py-1 uppercase text-[#6f6f6f]">{meta}</span> : null}
     </div>
   )
 }
@@ -88,8 +88,8 @@ function PeopleAccessWorkspace({ project, onBack }) {
                   <CaretLeft size={24} />
                 </span>
                 <span className="min-w-0 text-left">
-                  <span className="type-section-title block truncate text-black">People & Access</span>
-                  <span className="type-caption block truncate text-[#999999]">{project?.scope || 'Project workspace'}</span>
+                  <span className="typo-section-title block truncate text-black">People & Access</span>
+                  <span className="typo-caption block truncate text-[#999999]">{project?.scope || 'Project workspace'}</span>
                 </span>
               </button>
               <button type="button" onClick={() => setIsInviteOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white" aria-label="Invite people">
@@ -102,8 +102,8 @@ function PeopleAccessWorkspace({ project, onBack }) {
         <div className="py-5">
           <section className="border-b border-[#e5e5e5] px-4 pb-5">
             <div className="rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] p-4">
-              <p className="type-card-title text-black">Project-specific roles</p>
-              <p className="type-body mt-1 text-[#5f7467]">Role assignments and permissions apply to this project only. The same person can have a different role on another project.</p>
+              <p className="typo-card-title text-black">Project-specific roles</p>
+              <p className="typo-body mt-1 text-[#5f7467]">Role assignments and permissions apply to this project only. The same person can have a different role on another project.</p>
             </div>
           </section>
 
@@ -124,12 +124,12 @@ function PeopleAccessWorkspace({ project, onBack }) {
                       <div className="flex min-w-0 items-center gap-3">
                         <img src={membership.user?.avatar || '/hynt-home/pro-2.png'} alt={membership.user?.name || 'Team member'} className="size-11 rounded-full border border-[#e0e0e0] object-cover" />
                         <div className="min-w-0">
-                          <p className="type-body-strong truncate text-black">{membership.user?.name || 'Team member'}</p>
-                          <p className="type-meta truncate text-[#6f6f6f]">{membership.user?.phone}</p>
+                          <p className="typo-body-strong truncate text-black">{membership.user?.name || 'Team member'}</p>
+                          <p className="typo-meta truncate text-[#6f6f6f]">{membership.user?.phone}</p>
                         </div>
                       </div>
                       <span className="flex shrink-0 items-center gap-2">
-                        <span className={`type-caption rounded-full px-2 py-1 uppercase ${roleTone[role?.id] || 'bg-[#f2f2f2] text-[#6f6f6f]'}`}>{membership.roleLabel || role?.label || 'Custom role'}</span>
+                        <span className={`typo-caption rounded-full px-2 py-1 uppercase ${roleTone[role?.id] || 'bg-[#f2f2f2] text-[#6f6f6f]'}`}>{membership.roleLabel || role?.label || 'Custom role'}</span>
                         <CaretDown size={14} className={`transition ${isOpen ? 'rotate-180' : ''}`} />
                       </span>
                     </button>
@@ -137,11 +137,11 @@ function PeopleAccessWorkspace({ project, onBack }) {
                     {isOpen ? (
                       <div className="pb-5">
                         <label className="block">
-                          <span className="type-label uppercase text-[#7b7b7b]">Role preset</span>
+                          <span className="typo-label uppercase text-[#7b7b7b]">Role preset</span>
                           <select
                             value={membership.roleId}
                             onChange={(event) => actions.updateMembershipRole(membership.id, event.target.value)}
-                            className="type-body-strong mt-2 h-11 w-full rounded-xl border border-[#dbe6df] bg-[#f7fbf8] px-3 text-black outline-none"
+                            className="typo-body-strong mt-2 h-11 w-full rounded-xl border border-[#dbe6df] bg-[#f7fbf8] px-3 text-black outline-none"
                             disabled={membership.roleId === 'principal-pro'}
                           >
                             {membership.roleId === 'custom' ? <option value="custom">{membership.roleLabel || 'Custom role'}</option> : null}
@@ -154,11 +154,11 @@ function PeopleAccessWorkspace({ project, onBack }) {
                         <div className="mt-4 space-y-4">
                           {permissionGroups.map((group) => (
                             <section key={group.id}>
-                              <p className="type-label uppercase text-[#5f7467]">{group.label}</p>
+                              <p className="typo-label uppercase text-[#5f7467]">{group.label}</p>
                               <div className="mt-2 space-y-2">
                                 {group.grants.map(([grant, label]) => (
                                   <div key={grant} className="flex items-center justify-between gap-3 rounded-xl border border-[#ededed] bg-[#fbfbfb] px-3 py-2">
-                                    <span className="type-body text-black">{label}</span>
+                                    <span className="typo-body text-black">{label}</span>
                                     <AccessToggle
                                       enabled={hasGrant(membership, grant)}
                                       disabled={!canEditGrants}
@@ -187,21 +187,21 @@ function PeopleAccessWorkspace({ project, onBack }) {
                   <article key={invite.id} className="border-b border-[#e5e5e5] py-4 last:border-b-0">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="type-body-strong truncate text-black">{invite.phone}</p>
-                        <p className="type-meta mt-1 text-[#6f6f6f]">{invite.roleLabel || role?.label || 'Custom role'} invite</p>
+                        <p className="typo-body-strong truncate text-black">{invite.phone}</p>
+                        <p className="typo-meta mt-1 text-[#6f6f6f]">{invite.roleLabel || role?.label || 'Custom role'} invite</p>
                       </div>
-                      <span className="type-caption rounded-full bg-[#fff9ef] px-2 py-1 uppercase text-[#9f8350]">Pending</span>
+                      <span className="typo-caption rounded-full bg-[#fff9ef] px-2 py-1 uppercase text-[#9f8350]">Pending</span>
                     </div>
                     <div className="mt-3 flex items-center gap-2 rounded-xl border border-[#dbe6df] bg-[#f7fbf8] px-3 py-2">
                       <LinkSimple size={15} className="shrink-0" />
-                      <p className="type-meta min-w-0 flex-1 truncate text-[#5f7467]">{invite.inviteUrl}</p>
+                      <p className="typo-meta min-w-0 flex-1 truncate text-[#5f7467]">{invite.inviteUrl}</p>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => actions.acceptInvite(invite.id)} className="type-label flex h-10 items-center justify-center gap-2 rounded-xl bg-black text-white">
+                      <button type="button" onClick={() => actions.acceptInvite(invite.id)} className="typo-label flex h-10 items-center justify-center gap-2 rounded-xl bg-black text-white">
                         <CheckCircle size={15} />
                         Mock accept
                       </button>
-                      <button type="button" onClick={() => actions.cancelInvite(invite.id)} className="type-label flex h-10 items-center justify-center gap-2 rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]">
+                      <button type="button" onClick={() => actions.cancelInvite(invite.id)} className="typo-label flex h-10 items-center justify-center gap-2 rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]">
                         <XCircle size={15} />
                         Cancel
                       </button>
@@ -211,8 +211,8 @@ function PeopleAccessWorkspace({ project, onBack }) {
               }) : (
                 <article className="py-6 text-center">
                   <UserCirclePlus size={24} className="mx-auto text-[#5f7467]" />
-                  <p className="type-card-title mt-3 text-black">No pending invites</p>
-                  <p className="type-body mt-1 text-[#5f7467]">New invite links will appear here for demo approval.</p>
+                  <p className="typo-card-title mt-3 text-black">No pending invites</p>
+                  <p className="typo-body mt-1 text-[#5f7467]">New invite links will appear here for demo approval.</p>
                 </article>
               )}
             </div>
@@ -223,21 +223,21 @@ function PeopleAccessWorkspace({ project, onBack }) {
       <div className={`fixed inset-0 z-[110] flex items-end justify-center bg-black/30 transition-opacity ${isInviteOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
         <div className={`w-full max-w-[390px] border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] transition-transform ${isInviteOpen ? 'translate-y-0' : 'translate-y-full'}`}>
           <div className="flex items-center justify-between gap-3">
-            <p className="type-section-title text-black">Invite person</p>
+            <p className="typo-section-title text-black">Invite person</p>
             <button type="button" onClick={() => setIsInviteOpen(false)} className="grid size-8 place-items-center rounded-full bg-[#f2f2f2]" aria-label="Close invite">
               <XCircle size={17} />
             </button>
           </div>
-          <p className="type-label mt-4 uppercase text-[#7b7b7b]">Mobile number</p>
+          <p className="typo-label mt-4 uppercase text-[#7b7b7b]">Mobile number</p>
           <div className="mt-2">
             <input
               value={invitePhone}
               onChange={(event) => setInvitePhone(event.target.value)}
               placeholder="+91 98765 43210"
-              className="type-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
+              className="typo-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
             />
           </div>
-          <p className="type-label mt-4 uppercase text-[#7b7b7b]">Project role</p>
+          <p className="typo-label mt-4 uppercase text-[#7b7b7b]">Project role</p>
           <div className="mt-2 flex items-center gap-2">
             <select
               value={inviteRoleId}
@@ -246,7 +246,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
                 setIsCustomRole(false)
               }}
               aria-label="Invite role"
-              className="type-body h-11 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] bg-white px-3 text-black outline-none"
+              className="typo-body h-11 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] bg-white px-3 text-black outline-none"
             >
               {roleTemplates.filter((role) => role.id !== 'principal-pro').map((role) => (
                 <option key={role.id} value={role.id}>{role.label}</option>
@@ -255,7 +255,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
             <button
               type="button"
               onClick={() => setIsCustomRole((current) => !current)}
-              className={`type-label h-11 shrink-0 rounded-xl border px-3 ${isCustomRole ? 'border-black bg-black text-white' : 'border-[#d7d7d7] bg-white text-black'}`}
+              className={`typo-label h-11 shrink-0 rounded-xl border px-3 ${isCustomRole ? 'border-black bg-black text-white' : 'border-[#d7d7d7] bg-white text-black'}`}
             >
               Custom role
             </button>
@@ -266,7 +266,7 @@ function PeopleAccessWorkspace({ project, onBack }) {
               onChange={(event) => setInviteCustomRole(event.target.value)}
               placeholder="Enter role title"
               autoFocus
-              className="type-body mt-2 h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
+              className="typo-body mt-2 h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
             />
           ) : null}
           <div className="mt-4 flex justify-end">
@@ -274,14 +274,14 @@ function PeopleAccessWorkspace({ project, onBack }) {
               type="button"
               onClick={sendInvite}
               disabled={!invitePhone.trim() || (isCustomRole && !inviteCustomRole.trim())}
-              className="type-body-strong flex h-11 items-center justify-center gap-2 rounded-xl bg-black px-5 text-white disabled:bg-[#d9d9d9]"
+              className="typo-body-strong flex h-11 items-center justify-center gap-2 rounded-xl bg-black px-5 text-white disabled:bg-[#d9d9d9]"
               aria-label="Send invite"
             >
               <PaperPlaneTilt size={17} weight="fill" />
               Send invite
             </button>
           </div>
-          <p className="type-meta mt-2 text-[#7b7b7b]">The selected role and permissions apply only to this project.</p>
+          <p className="typo-meta mt-2 text-[#7b7b7b]">The selected role and permissions apply only to this project.</p>
         </div>
       </div>
     </main>

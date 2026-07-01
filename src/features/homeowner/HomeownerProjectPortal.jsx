@@ -27,8 +27,8 @@ const parseAreaValue = (area) => {
 function SectionTitle({ title, count }) {
   return (
     <div className="flex items-center justify-between gap-3 px-4 pb-3">
-      <h2 className="type-section-title text-black">{title}</h2>
-      {count ? <span className="type-caption uppercase text-[#7b7b7b]">{count}</span> : null}
+      <h2 className="typo-section-title text-black">{title}</h2>
+      {count ? <span className="typo-caption uppercase text-[#7b7b7b]">{count}</span> : null}
     </div>
   )
 }
@@ -41,12 +41,12 @@ function RowButton({ icon: Icon, title, meta, status, onClick }) {
           <Icon size={18} />
         </span>
         <span className="min-w-0">
-          <span className="type-body-strong block truncate text-black">{title}</span>
-          <span className="type-meta mt-0.5 block truncate text-[#6f6f6f]">{meta}</span>
+          <span className="typo-body-strong block truncate text-black">{title}</span>
+          <span className="typo-meta mt-0.5 block truncate text-[#6f6f6f]">{meta}</span>
         </span>
       </span>
       <span className="flex shrink-0 items-center gap-2">
-        {status ? <span className="type-caption rounded-full bg-[#f2f2f2] px-2 py-1 uppercase text-[#6f6f6f]">{status}</span> : null}
+        {status ? <span className="typo-caption rounded-full bg-[#f2f2f2] px-2 py-1 uppercase text-[#6f6f6f]">{status}</span> : null}
         <CaretRight size={15} />
       </span>
     </button>
@@ -86,31 +86,31 @@ function TimelinePreviewButton({ phase, completedCount, totalCount, onClick }) {
       <div className="min-w-0 flex-1 border-b border-[#e5e5e5] pb-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="type-body-strong text-black">{phase?.name || 'Timeline not set up yet'}</p>
-            <p className="type-meta mt-1 text-[#6f6f6f]">
+            <p className="typo-body-strong text-black">{phase?.name || 'Timeline not set up yet'}</p>
+            <p className="typo-meta mt-1 text-[#6f6f6f]">
               {phase ? `${phase.startDate ? new Date(phase.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''} - ${phase.endDate ? new Date(phase.endDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}` : 'Waiting for your professional to start the schedule'}
             </p>
           </div>
-          <span className={`type-caption whitespace-nowrap rounded-full px-2 py-1 ${badgeTone}`}>
+          <span className={`typo-caption whitespace-nowrap rounded-full px-2 py-1 ${badgeTone}`}>
             {timelineStatusLabel(phase)}
           </span>
         </div>
 
-        <p className="type-body mt-2 text-[#202020]">
+        <p className="typo-body mt-2 text-[#202020]">
           {phase?.note || 'The current live stage will appear here once the project timeline has been shared.'}
         </p>
 
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[#6f6f6f]">
-          <span className="type-caption rounded-full border border-[#e5e5e5] px-2 py-1">
+          <span className="typo-caption rounded-full border border-[#e5e5e5] px-2 py-1">
             {phase ? `${completedCount}/${totalCount} phases complete` : 'No live phase'}
           </span>
           {phase?.assignedTo?.length ? (
-            <span className="type-caption rounded-full border border-[#e5e5e5] px-2 py-1">
+            <span className="typo-caption rounded-full border border-[#e5e5e5] px-2 py-1">
               {phase.assignedTo.join(', ')}
             </span>
           ) : null}
           {phase?.delay ? (
-            <span className="type-caption rounded-full border border-[#f3d4ad] px-2 py-1 text-[#a86a00]">
+            <span className="typo-caption rounded-full border border-[#f3d4ad] px-2 py-1 text-[#a86a00]">
               {phase.delay.window} delay: {phase.delay.reason}
             </span>
           ) : null}
@@ -155,14 +155,14 @@ function HomeownerProjectPortal({
           <div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[#f4fbf7] text-[#267449] border border-[#dbe6df] shadow-sm animate-pulse">
             <ClipboardText size={42} weight="regular" />
           </div>
-          <p className="type-caption uppercase tracking-[0.16em] text-[#267449] font-extrabold">Awaiting Project Setup</p>
-          <h1 className="text-[28px] font-black leading-tight text-slate-900 mt-3 max-w-[420px] tracking-tight">Your designer is preparing your project space</h1>
-          <p className="type-body text-[#5f7467] mt-3 max-w-[440px] leading-relaxed">
+          <p className="typo-caption uppercase text-[#267449]">Awaiting Project Setup</p>
+          <h1 className="typo-page-title mt-3 max-w-[420px] text-slate-900">Your designer is preparing your project space</h1>
+          <p className="typo-body mt-3 max-w-[440px] text-[#5f7467]">
             Welcome to HYNT! Once your designer finishes setting up your project, your Scope of Work, timeline, BOQs, site diaries, and payments will appear here in real-time.
           </p>
           <div className="mt-8 rounded-2xl border border-dashed border-[#dce8e1] bg-[#fcfdfe] p-4 text-left max-w-[400px]">
-            <p className="type-caption uppercase tracking-[0.12em] text-[#5f7467] font-bold">What to expect next:</p>
-            <ul className="mt-2.5 space-y-2 text-[14px] text-slate-700">
+            <p className="typo-caption uppercase text-[#5f7467]">What to expect next:</p>
+            <ul className="typo-body mt-2.5 space-y-2 text-slate-700">
               <li className="flex items-start gap-2">
                 <span className="mt-1 block size-1.5 shrink-0 rounded-full bg-[#5fc18a]" />
                 <span>Scope of Work sent for review and sign-off</span>
@@ -385,9 +385,9 @@ function HomeownerProjectPortal({
   return (
     <section className="hynt-desktop-page mx-auto w-full max-w-[760px] bg-white pb-12 pt-4">
       <header className="px-4 pb-5">
-        <p className="type-caption uppercase text-[#267449]">Project</p>
-        <h1 className="type-page-title mt-2 text-black">{project.name}</h1>
-        <p className="type-body mt-1 text-[#5f7467]">{project.designerName} / {project.location}</p>
+        <p className="typo-caption uppercase text-[#267449]">Project</p>
+        <h1 className="typo-page-title mt-2 text-black">{project.name}</h1>
+        <p className="typo-body mt-1 text-[#5f7467]">{project.designerName} / {project.location}</p>
 
         <div className="mt-5 grid grid-cols-4 border-y border-[#e5e5e5]">
           {[
@@ -397,8 +397,8 @@ function HomeownerProjectPortal({
             ['Next due', nextPaymentLabel],
           ].map(([label, value]) => (
             <div key={label} className="border-r border-[#e5e5e5] px-3 py-3 text-center last:border-r-0">
-              <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-              <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black truncate">{value}</p>
+              <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+              <p className="typo-meta mt-1 truncate text-black">{value}</p>
             </div>
           ))}
         </div>

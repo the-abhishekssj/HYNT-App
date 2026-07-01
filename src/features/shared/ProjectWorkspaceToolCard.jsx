@@ -21,8 +21,8 @@ function ProjectWorkspaceToolCard({
           <CaretRight size={16} className="text-[#8fa098]" />
         </div>
         <div>
-          <p className="type-body-strong truncate text-black">{title}</p>
-          {meta ? <p className="type-meta mt-1 text-[#6f6f6f]">{meta}</p> : null}
+          <p className="typo-body-strong truncate text-black">{title}</p>
+          {meta ? <p className="typo-meta mt-1 text-[#6f6f6f]">{meta}</p> : null}
         </div>
       </div>
 

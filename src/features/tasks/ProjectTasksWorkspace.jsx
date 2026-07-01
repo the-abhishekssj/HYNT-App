@@ -97,8 +97,8 @@ function TaskStatusChip({ label, selected, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`type-body inline-flex h-10 items-center rounded-full border px-4 transition ${
-        selected ? 'border-[#173324] bg-[#173324] font-semibold text-white' : 'border-[#d8e0da] bg-white text-[#355244]'
+      className={`typo-body inline-flex h-10 items-center rounded-full border px-4 transition ${
+        selected ? 'border-[#173324] bg-[#173324] typo-weight-semibold text-white' : 'border-[#d8e0da] bg-white text-[#355244]'
       }`}
     >
       {label}
@@ -109,8 +109,8 @@ function TaskStatusChip({ label, selected, onClick }) {
 function SectionHeader({ title, meta, tone = 'text-[#6f7d74]' }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <p className={`type-label uppercase ${tone}`}>{title}</p>
-      {meta ? <span className="type-meta text-[#8a948f]">{meta}</span> : null}
+      <p className={`typo-label uppercase ${tone}`}>{title}</p>
+      {meta ? <span className="typo-meta text-[#8a948f]">{meta}</span> : null}
     </div>
   )
 }
@@ -143,11 +143,11 @@ function TaskRow({
         </button>
 
         <button type="button" onClick={() => onOpen(task.id)} className="min-w-0 flex-1 text-left">
-          <p className={`type-card-title ${task.status === 'done' ? 'text-[#8c9891] line-through' : 'text-[#1c1c1c]'}`}>{task.title}</p>
+          <p className={`typo-card-title ${task.status === 'done' ? 'text-[#8c9891] line-through' : 'text-[#1c1c1c]'}`}>{task.title}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="type-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{assigneeLabel}</span>
-            <span className={`type-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-            <span className={`type-caption rounded-md px-2 py-1 ${
+            <span className="typo-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{assigneeLabel}</span>
+            <span className={`typo-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+            <span className={`typo-caption rounded-md px-2 py-1 ${
               task.status === 'done'
                 ? 'bg-[#eaf8ef] text-[#267449]'
                 : task.status === 'inprogress'
@@ -157,7 +157,7 @@ function TaskRow({
               {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
             </span>
             {task.priority ? (
-              <span className={`type-caption rounded-md px-2 py-1 ${
+              <span className={`typo-caption rounded-md px-2 py-1 ${
                 task.priority === 'High'
                   ? 'bg-[#fff0f0] text-[#c34545]'
                   : task.priority === 'Medium'
@@ -167,7 +167,7 @@ function TaskRow({
                 {task.priority}
               </span>
             ) : null}
-            {task.linkedTo ? <span className="type-caption rounded-md bg-[#f2f4f3] px-2 py-1 text-[#6b7670]">Source: {task.linkedTo}</span> : null}
+            {task.linkedTo ? <span className="typo-caption rounded-md bg-[#f2f4f3] px-2 py-1 text-[#6b7670]">Source: {task.linkedTo}</span> : null}
           </div>
         </button>
 
@@ -199,10 +199,10 @@ function ApprovalCard({ item, onOpen, compact = false }) {
       <button type="button" onClick={() => onOpen(item.id)} className="w-full text-left">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="type-section-title text-[#121212]">{item.title}</p>
-            <p className="type-meta mt-1 text-[#7b8780]">{item.type}</p>
+            <p className="typo-section-title text-[#121212]">{item.title}</p>
+            <p className="typo-meta mt-1 text-[#7b8780]">{item.type}</p>
           </div>
-          <span className={`type-caption shrink-0 rounded-full px-3 py-1 uppercase ${tone}`}>
+          <span className={`typo-caption shrink-0 rounded-full px-3 py-1 uppercase ${tone}`}>
             {approvalLabel[item.status]}
           </span>
         </div>
@@ -210,9 +210,9 @@ function ApprovalCard({ item, onOpen, compact = false }) {
           <div className="h-16 w-16 overflow-hidden rounded-2xl bg-white">
             <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
           </div>
-          <p className="type-body mt-3 text-[#355244]">{item.description}</p>
+          <p className="typo-body mt-3 text-[#355244]">{item.description}</p>
         </div>
-        <p className="type-meta mt-3 text-[#8a948f]">Sent {item.sentAt} / Due {item.dueDate}</p>
+        <p className="typo-meta mt-3 text-[#8a948f]">Sent {item.sentAt} / Due {item.dueDate}</p>
       </button>
     </article>
   )
@@ -234,12 +234,12 @@ function ProTaskDetail({
           title="Task details"
           subtitle={selectedProject.scope}
           onBack={onBack}
-          actions={<span className={`type-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>}
+          actions={<span className={`typo-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>}
         />
 
         <div className="px-4 pt-6">
           <section className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
-            <p className="type-page-title text-[#102418]">{task.title}</p>
+            <p className="typo-page-title text-[#102418]">{task.title}</p>
             <div className="mt-5 grid grid-cols-2 gap-4">
               {[
                 ['Assigned to', task.assignee],
@@ -248,8 +248,8 @@ function ProTaskDetail({
                 ['Due time', task.dueTime],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <p className="type-caption uppercase text-[#91a097]">{label}</p>
-                  <p className="type-body mt-1 text-[#1d1d1d]">{value}</p>
+                  <p className="typo-caption uppercase text-[#91a097]">{label}</p>
+                  <p className="typo-body mt-1 text-[#1d1d1d]">{value}</p>
                 </div>
               ))}
             </div>
@@ -260,15 +260,15 @@ function ProTaskDetail({
                 ...(task.sourceLabel ? [['Diary update', task.sourceLabel]] : []),
               ].map(([label, value]) => (
                 <div key={label} className="flex items-start justify-between gap-4 border-b border-[#edf1ee] py-3 last:border-b-0">
-                  <p className="type-caption uppercase text-[#91a097]">{label}</p>
-                  <p className="type-body max-w-[62%] text-right text-[#1d1d1d]">{value}</p>
+                  <p className="typo-caption uppercase text-[#91a097]">{label}</p>
+                  <p className="typo-body max-w-[62%] text-right text-[#1d1d1d]">{value}</p>
                 </div>
               ))}
             </div>
             {task.note ? (
               <div className="mt-4 border-l-2 border-[#d46f1f] pl-3">
-                <p className="type-caption uppercase text-[#a85d22]">Issue note</p>
-                <p className="type-body mt-1 text-[#46544c]">{task.note}</p>
+                <p className="typo-caption uppercase text-[#a85d22]">Issue note</p>
+                <p className="typo-body mt-1 text-[#46544c]">{task.note}</p>
               </div>
             ) : null}
           </section>
@@ -288,8 +288,8 @@ function ProTaskDetail({
                     {completedByIndex[index] ? <CheckCircle size={18} weight="fill" className="text-[#26c485]" /> : <Circle size={18} />}
                   </span>
                   <span className="min-w-0">
-                    <p className={`type-body ${completedByIndex[index] ? 'text-[#92a097] line-through' : 'text-[#1d1d1d]'}`}>{index + 1}. {step}</p>
-                    {completedByIndex[index] ? <p className="type-meta mt-1 text-[#8a948f]">Completed at {completedByIndex[index]}</p> : null}
+                    <p className={`typo-body ${completedByIndex[index] ? 'text-[#92a097] line-through' : 'text-[#1d1d1d]'}`}>{index + 1}. {step}</p>
+                    {completedByIndex[index] ? <p className="typo-meta mt-1 text-[#8a948f]">Completed at {completedByIndex[index]}</p> : null}
                   </span>
                 </button>
               ))}
@@ -300,7 +300,7 @@ function ProTaskDetail({
 
       {canMoveTask ? (
         <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <p className="type-label mb-3 uppercase text-[#7a8780]">Move task to</p>
+          <p className="typo-label mb-3 uppercase text-[#7a8780]">Move task to</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
             <TaskStatusChip label="To do" selected={task.status === 'todo'} onClick={() => onMoveTask('todo')} />
             <TaskStatusChip label="In progress" selected={task.status === 'inprogress'} onClick={() => onMoveTask('inprogress')} />
@@ -309,7 +309,7 @@ function ProTaskDetail({
         </div>
       ) : (
         <div className="fixed bottom-0 left-1/2 z-[85] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <p className="type-body text-[#6f7c74]">This role can review task details, but only assigned contributors or the principal pro can move statuses.</p>
+          <p className="typo-body text-[#6f7c74]">This role can review task details, but only assigned contributors or the principal pro can move statuses.</p>
         </div>
       )}
     </main>
@@ -530,33 +530,33 @@ export default function ProjectTasksWorkspace({
               title="Approval task"
               subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`}
               onBack={() => setSelectedApprovalId(null)}
-              actions={<span className={`type-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>{approvalLabel[selectedApproval.status]}</span>}
+              actions={<span className={`typo-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>{approvalLabel[selectedApproval.status]}</span>}
             />
 
             <div className="px-4 pt-5">
               <article className="rounded-[20px] border border-[#e2e9e4] bg-white p-5 shadow-[0_12px_32px_rgba(17,24,20,0.06)]">
                 <div className="flex items-center justify-between gap-3">
-                  <span className={`type-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>
+                  <span className={`typo-caption rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>
                     {approvalLabel[selectedApproval.status]}
                   </span>
-                  <span className="type-meta text-[#7b8780]">Due {selectedApproval.dueDate}</span>
+                  <span className="typo-meta text-[#7b8780]">Due {selectedApproval.dueDate}</span>
                 </div>
-                <p className="type-page-title mt-4 text-[#102418]">{selectedApproval.title}</p>
-                <p className="type-body mt-1 text-[#708078]">{selectedApproval.type}</p>
+                <p className="typo-page-title mt-4 text-[#102418]">{selectedApproval.title}</p>
+                <p className="typo-body mt-1 text-[#708078]">{selectedApproval.type}</p>
 
                 <div className="mt-5 rounded-[20px] bg-[#f2f7f4] px-4 py-5">
                   <div className="h-20 w-20 overflow-hidden rounded-2xl bg-white">
                     <img src={selectedApproval.image} alt={selectedApproval.title} className="h-full w-full object-cover" />
                   </div>
-                  <p className="type-body mt-4 text-[#24362d]">{selectedApproval.description}</p>
+                  <p className="typo-body mt-4 text-[#24362d]">{selectedApproval.description}</p>
                 </div>
 
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-5 rounded-[20px] px-4 py-4 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`type-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`typo-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Reason shared' : 'Question raised'}
                     </p>
-                    <p className="type-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
+                    <p className="typo-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
                   </div>
                 ) : null}
 
@@ -565,17 +565,17 @@ export default function ProjectTasksWorkspace({
                   onChange={(event) => setClientResponse(event.target.value)}
                   rows={3}
                   placeholder="Add a note if you want to ask a question or explain your choice"
-                  className="type-body mt-5 w-full rounded-[20px] border border-[#d7e2db] px-4 py-3 text-[#24362d] outline-none placeholder:text-[#98a39d]"
+                  className="typo-body mt-5 w-full rounded-[20px] border border-[#d7e2db] px-4 py-3 text-[#24362d] outline-none placeholder:text-[#98a39d]"
                 />
 
                 <div className="mt-5 grid grid-cols-3 gap-3">
-                  <button type="button" onClick={() => handleApprovalResponse('approved')} className="type-body-strong rounded-2xl bg-[#173324] px-4 py-3 text-white">
+                  <button type="button" onClick={() => handleApprovalResponse('approved')} className="typo-body-strong rounded-2xl bg-[#173324] px-4 py-3 text-white">
                     Approve
                   </button>
-                  <button type="button" onClick={() => handleApprovalResponse('rejected')} className="type-body-strong rounded-2xl border border-[#efcaca] bg-[#fff4f4] px-4 py-3 text-[#c34545]">
+                  <button type="button" onClick={() => handleApprovalResponse('rejected')} className="typo-body-strong rounded-2xl border border-[#efcaca] bg-[#fff4f4] px-4 py-3 text-[#c34545]">
                     Reject
                   </button>
-                  <button type="button" onClick={() => handleApprovalResponse('question')} className="type-body-strong rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 py-3 text-[#6844d8]">
+                  <button type="button" onClick={() => handleApprovalResponse('question')} className="typo-body-strong rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 py-3 text-[#6844d8]">
                     Ask
                   </button>
                 </div>
@@ -592,7 +592,7 @@ export default function ProjectTasksWorkspace({
           <ProjectWorkspaceHeader title="Tasks" subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`} onBack={onBack} />
 
           <div className="px-4 pt-5">
-            <div className="type-body-strong rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[#267449]">
+            <div className="typo-body-strong rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[#267449]">
               {homeownerDesignerName} has sent these items for your approval. Open each task to review and respond.
             </div>
 
@@ -626,9 +626,9 @@ export default function ProjectTasksWorkspace({
           <ProjectWorkspaceHeader title="Tasks" subtitle={selectedProject?.scope || homeownerProjectName} onBack={onBack} />
           <div className="px-4 pt-8">
             <section className="rounded-[24px] border border-[#e3ebe5] bg-[#fbfcfb] px-5 py-6">
-              <p className="type-label uppercase text-[#7a8780]">Restricted access</p>
-              <h1 className="type-page-title mt-2 text-[#102418]">{viewerRoleLabel} cannot open project tasks.</h1>
-              <p className="type-body mt-3 text-[#5f6f66]">Switch to a role with task visibility, or grant this member access from People & Access.</p>
+              <p className="typo-label uppercase text-[#7a8780]">Restricted access</p>
+              <h1 className="typo-page-title mt-2 text-[#102418]">{viewerRoleLabel} cannot open project tasks.</h1>
+              <p className="typo-body mt-3 text-[#5f6f66]">Switch to a role with task visibility, or grant this member access from People & Access.</p>
             </section>
           </div>
         </section>
@@ -703,7 +703,7 @@ export default function ProjectTasksWorkspace({
                   className={`rounded-2xl px-3 py-3 text-left transition ${active ? 'bg-[#173324] text-white shadow-[0_10px_24px_rgba(23,51,36,0.16)]' : 'text-[#6f7c74]'}`}
                 >
                   <Icon size={16} weight={active ? 'fill' : 'regular'} />
-                  <p className={`type-meta mt-2 ${active ? 'font-semibold' : ''}`}>{tab.label}</p>
+                  <p className={`typo-body-strong mt-2 ${active ? 'text-white' : 'text-[#6f7c74]'}`}>{tab.label}</p>
                 </button>
               )
             })}
@@ -717,10 +717,10 @@ export default function ProjectTasksWorkspace({
                     key={filter}
                     type="button"
                     onClick={() => setTaskFilter(filter)}
-                    className={`type-body-strong flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
+                    className={`typo-body-strong flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
                   >
                     {filter}
-                    <span className={`type-label grid size-6 place-items-center rounded-xl ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
+                    <span className={`typo-badge grid size-6 place-items-center rounded-xl ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
                       {String(getTaskCount(filter)).padStart(2, '0')}
                     </span>
                   </button>
@@ -730,7 +730,7 @@ export default function ProjectTasksWorkspace({
               <div className="mt-6 space-y-6">
                 {filteredTasks.length === 0 ? (
                   <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
-                    <p className="type-body text-[#6f7c74]">No tasks match the current filter for this role.</p>
+                    <p className="typo-body text-[#6f7c74]">No tasks match the current filter for this role.</p>
                   </div>
                 ) : null}
                 {[
@@ -776,7 +776,7 @@ export default function ProjectTasksWorkspace({
             <section className="mt-6 space-y-6">
               {teamGroups.length === 0 ? (
                 <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
-                  <p className="type-body text-[#6f7c74]">No team tasks are visible for this role yet.</p>
+                  <p className="typo-body text-[#6f7c74]">No team tasks are visible for this role yet.</p>
                 </div>
               ) : null}
               {teamGroups.map(([assignee, assigneeTasks]) => (
@@ -802,7 +802,7 @@ export default function ProjectTasksWorkspace({
 
           {currentTab === 'approvals' ? (
             <section className="mt-6 space-y-6">
-              <div className="type-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
+              <div className="typo-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
                 Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
               </div>
 
@@ -834,9 +834,9 @@ export default function ProjectTasksWorkspace({
           <aside className="absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col border-l border-[#e3e9e5] bg-white shadow-[-18px_0_48px_rgba(16,36,24,0.14)]">
             <header className="flex items-start justify-between border-b border-[#e6ece8] px-5 py-5">
               <div>
-                <p className="type-label uppercase text-[#7a8780]">{composerMode === 'task' ? 'Project task' : 'Homeowner decision'}</p>
-                <h2 className="type-page-title mt-1 text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
-                <p className="type-meta mt-1 text-[#7a8780]">{selectedProject?.scope || homeownerProjectName}</p>
+                <p className="typo-label uppercase text-[#7a8780]">{composerMode === 'task' ? 'Project task' : 'Homeowner decision'}</p>
+                <h2 className="typo-page-title mt-1 text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
+                <p className="typo-meta mt-1 text-[#7a8780]">{selectedProject?.scope || homeownerProjectName}</p>
               </div>
               <button type="button" onClick={() => setComposerMode(null)} className="grid size-10 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
                 <XCircle size={20} weight="fill" />
@@ -847,67 +847,67 @@ export default function ProjectTasksWorkspace({
               {composerMode === 'task' ? (
                 <div className="space-y-5">
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Task title</p>
-                    <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="What needs to be done?" autoFocus className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Task title</p>
+                    <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="What needs to be done?" autoFocus className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <label className="block">
-                      <p className="type-label mb-2 uppercase text-[#7a8780]">Assign to</p>
-                      <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      <p className="typo-label mb-2 uppercase text-[#7a8780]">Assign to</p>
+                      <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
                         {['Me', 'Riya Desai', 'Aanya Rao', 'Nisha Reddy', 'Priya Sharma'].map((name) => <option key={name}>{name}</option>)}
                       </select>
                     </label>
                     <label className="block">
-                      <p className="type-label mb-2 uppercase text-[#7a8780]">Priority</p>
-                      <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      <p className="typo-label mb-2 uppercase text-[#7a8780]">Priority</p>
+                      <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
                         {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
                       </select>
                     </label>
                   </div>
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
-                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
+                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
                       {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
                     </select>
                   </label>
                   <div className="border-l-2 border-[#b7c8bd] pl-3">
-                    <p className="type-body text-[#5d6d64]">This is an internal project task. It will only appear to the assigned professional team.</p>
+                    <p className="typo-body text-[#5d6d64]">This is an internal project task. It will only appear to the assigned professional team.</p>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-5">
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Approval title</p>
-                    <input value={newApprovalTitle} onChange={(event) => setNewApprovalTitle(event.target.value)} placeholder="What should the homeowner decide?" autoFocus className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Approval title</p>
+                    <input value={newApprovalTitle} onChange={(event) => setNewApprovalTitle(event.target.value)} placeholder="What should the homeowner decide?" autoFocus className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
                   </label>
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Approval type</p>
-                    <select value={newApprovalType} onChange={(event) => setNewApprovalType(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Approval type</p>
+                    <select value={newApprovalType} onChange={(event) => setNewApprovalType(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
                       {['Material selection', 'Design approval', 'Design selection', 'Change request', 'Other'].map((type) => <option key={type}>{type}</option>)}
                     </select>
                   </label>
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Description for homeowner</p>
-                    <textarea value={newApprovalDescription} onChange={(event) => setNewApprovalDescription(event.target.value)} rows={5} placeholder="Explain the decision and the available options" className="type-body w-full resize-none rounded-xl border border-[#d8e2db] bg-white px-4 py-3 outline-none placeholder:text-[#99a39d]" />
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Description for homeowner</p>
+                    <textarea value={newApprovalDescription} onChange={(event) => setNewApprovalDescription(event.target.value)} rows={5} placeholder="Explain the decision and the available options" className="typo-body w-full resize-none rounded-xl border border-[#d8e2db] bg-white px-4 py-3 outline-none placeholder:text-[#99a39d]" />
                   </label>
                   <label className="block">
-                    <p className="type-label mb-2 uppercase text-[#7a8780]">Response needed by</p>
-                    <input type="date" value={newApprovalDueDate} onChange={(event) => setNewApprovalDueDate(event.target.value)} className="type-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none" />
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Response needed by</p>
+                    <input type="date" value={newApprovalDueDate} onChange={(event) => setNewApprovalDueDate(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none" />
                   </label>
                   <div className="border-l-2 border-[#6844d8] pl-3">
-                    <p className="type-body text-[#5d566f]">This will appear immediately in {selectedProject?.client || homeownerClientName}&apos;s Tasks list.</p>
+                    <p className="typo-body text-[#5d566f]">This will appear immediately in {selectedProject?.client || homeownerClientName}&apos;s Tasks list.</p>
                   </div>
                 </div>
               )}
             </div>
 
             <footer className="grid grid-cols-[auto_1fr] gap-3 border-t border-[#e6ece8] bg-white px-5 pb-6 pt-4">
-              <button type="button" onClick={() => setComposerMode(null)} className="type-body-strong h-12 rounded-xl border border-[#d8e2db] px-5 text-[#4f5d55]">Cancel</button>
+              <button type="button" onClick={() => setComposerMode(null)} className="typo-body-strong h-12 rounded-xl border border-[#d8e2db] px-5 text-[#4f5d55]">Cancel</button>
               <button
                 type="button"
                 onClick={composerMode === 'task' ? createTask : createApproval}
                 disabled={composerMode === 'task' ? !newTaskTitle.trim() : !newApprovalTitle.trim() || !newApprovalDescription.trim()}
-                className="type-body-strong h-12 rounded-xl bg-[#173324] px-5 text-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="typo-body-strong h-12 rounded-xl bg-[#173324] px-5 text-white disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {composerMode === 'task' ? 'Create task' : 'Send to homeowner'}
               </button>
@@ -918,7 +918,7 @@ export default function ProjectTasksWorkspace({
 
       {taskActionTargetId && resolvedPermissions.canUpdateTasks ? (
         <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-          <p className="type-label mb-3 uppercase text-[#7a8780]">Task actions</p>
+          <p className="typo-label mb-3 uppercase text-[#7a8780]">Task actions</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
             <TaskStatusChip label="To do" selected={scopedTasks.find((task) => task.id === taskActionTargetId)?.status === 'todo'} onClick={() => { moveTaskStatus(taskActionTargetId, 'todo'); setTaskActionTargetId(null) }} />
             <TaskStatusChip label="In progress" selected={scopedTasks.find((task) => task.id === taskActionTargetId)?.status === 'inprogress'} onClick={() => { moveTaskStatus(taskActionTargetId, 'inprogress'); setTaskActionTargetId(null) }} />
@@ -930,7 +930,7 @@ export default function ProjectTasksWorkspace({
               setTasks((prev) => prev.filter((task) => task.id !== taskActionTargetId))
               setTaskActionTargetId(null)
             }}
-            className="type-body-strong mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#efcaca] bg-[#fff4f4] text-[#c34545]"
+            className="typo-body-strong mt-3 flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#efcaca] bg-[#fff4f4] text-[#c34545]"
           >
             <Trash size={16} />
             Delete task
@@ -944,8 +944,8 @@ export default function ProjectTasksWorkspace({
             <section className="w-full rounded-t-[32px] bg-white p-5 shadow-2xl">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="type-label uppercase text-[#7a8780]">Approval item</p>
-                  <p className="type-page-title mt-2 text-[#102418]">{selectedApproval.title}</p>
+                  <p className="typo-label uppercase text-[#7a8780]">Approval item</p>
+                  <p className="typo-page-title mt-2 text-[#102418]">{selectedApproval.title}</p>
                 </div>
                 <button type="button" onClick={() => setSelectedApprovalId(null)} className="grid size-10 place-items-center rounded-full bg-[#f4f6f5] text-[#607169]">
                   <XCircle size={20} weight="fill" />
@@ -953,27 +953,27 @@ export default function ProjectTasksWorkspace({
               </div>
 
               <div className="mt-5 rounded-[20px] bg-[#f3f7f4] px-4 py-4">
-                <p className="type-body text-[#2a3b32]">{selectedApproval.description}</p>
+                <p className="typo-body text-[#2a3b32]">{selectedApproval.description}</p>
                 {selectedApproval.clientQuestion ? (
                   <div className={`mt-4 rounded-2xl px-4 py-3 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`type-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    <p className={`typo-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
                       {selectedApproval.status === 'rejected' ? 'Client feedback' : 'Client question'}
                     </p>
-                    <p className="type-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
+                    <p className="typo-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
                   </div>
                 ) : null}
               </div>
 
               <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#355244]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#355244]">
                   Edit item
                   <PencilSimple size={16} />
                 </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#eadcb2] bg-[#fff9ee] px-4 text-[#a86a00]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#eadcb2] bg-[#fff9ee] px-4 text-[#a86a00]">
                   Send reminder
                   <PaperPlaneTilt size={16} />
                 </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="type-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 text-[#6844d8]">
+                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 text-[#6844d8]">
                   Reply to client
                   <ChatCircleDots size={16} />
                 </button>

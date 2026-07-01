@@ -31,8 +31,8 @@ function Header({ subtitle, onBack, onAdd }) {
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="type-section-title block truncate text-black">Timeline</span>
-              <span className="type-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title block truncate text-black">Timeline</span>
+              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
             </span>
           </button>
           <button type="button" onClick={onAdd} className="grid size-9 place-items-center rounded-xl bg-black text-white" aria-label="Add timeline phase">
@@ -83,9 +83,9 @@ function ProTimelineWorkspace({ project, onBack }) {
         />
 
         <section className="border-b border-[#e5e5e5] px-4 py-5">
-          <p className="type-caption uppercase text-[#267449]">Project progress</p>
-          <h1 className="type-page-title mt-2 text-black">{progress}% complete</h1>
-          <p className="type-body mt-2 text-[#5f7467]">
+          <p className="typo-caption uppercase text-[#267449]">Project progress</p>
+          <h1 className="typo-page-title mt-2 text-black">{progress}% complete</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">
             {completedCount} of {timelinePhases.length} phases done. {activePhase ? `${activePhase.name} is currently active.` : 'No active phase yet.'}
           </p>
           <div className="mt-4 h-2 rounded-full bg-[#ececec]">
@@ -98,45 +98,45 @@ function ProTimelineWorkspace({ project, onBack }) {
               ['Delayed', delayedPhases.length],
             ].map(([label, value]) => (
               <div key={label} className="border-r border-[#e5e5e5] px-3 py-3 text-center last:border-r-0">
-                <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black">{value}</p>
+                <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                <p className="typo-meta mt-1 text-black">{value}</p>
               </div>
             ))}
           </div>
         </section>
 
         <section className="border-b border-[#e0e0e0] px-4 py-6">
-          <h2 className="type-section-title text-black">Daily actions</h2>
+          <h2 className="typo-section-title text-black">Daily actions</h2>
           <div className="mt-3 flex items-start justify-between gap-2 overflow-hidden">
             <button type="button" onClick={() => activePhase && actions.markTimelinePhaseDone(activePhase.id)} className="flex min-w-0 items-center gap-2 py-2 text-left">
               <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[rgba(217,217,217,0.24)]">
                 <CheckCircle size={20} />
               </span>
-              <span className="type-body-strong truncate text-black">Mark active done</span>
+              <span className="typo-body-strong truncate text-black">Mark active done</span>
             </button>
             <button type="button" onClick={() => activePhase && setDelayTargetId(activePhase.id)} className="flex min-w-0 items-center gap-2 py-2 text-left">
               <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[rgba(217,217,217,0.24)]">
                 <CalendarDots size={20} />
               </span>
-              <span className="type-body-strong truncate text-black">Log delay</span>
+              <span className="typo-body-strong truncate text-black">Log delay</span>
             </button>
           </div>
         </section>
 
         <section className="px-4 py-5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section-title text-black">Phases</h2>
-            <span className="type-caption text-[#7b7b7b]">{sortedPhases.length} total</span>
+            <h2 className="typo-section-title text-black">Phases</h2>
+            <span className="typo-caption text-[#7b7b7b]">{sortedPhases.length} total</span>
           </div>
           <div className="space-y-3">
             {sortedPhases.map((phase) => (
               <article key={phase.id} className={`rounded-[20px] border px-4 py-4 ${phaseTone[phase.status] || phaseTone.upcoming}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="type-body-strong text-black">{phase.name}</p>
-                    <p className="type-meta mt-1 text-[#6f6f6f]">{formatDate(phase.startDate)} - {formatDate(phase.endDate)}</p>
+                    <p className="typo-body-strong text-black">{phase.name}</p>
+                    <p className="typo-meta mt-1 text-[#6f6f6f]">{formatDate(phase.startDate)} - {formatDate(phase.endDate)}</p>
                   </div>
-                  <span className={`type-caption rounded-full px-2 py-1 uppercase ${badgeTone[phase.status] || badgeTone.upcoming}`}>
+                  <span className={`typo-caption rounded-full px-2 py-1 uppercase ${badgeTone[phase.status] || badgeTone.upcoming}`}>
                     {phase.status}
                   </span>
                 </div>
@@ -145,9 +145,9 @@ function ProTimelineWorkspace({ project, onBack }) {
                     <div className="h-2 rounded-full bg-[#f0a34d]" style={{ width: `${phase.progress}%` }} />
                   </div>
                 ) : null}
-                <p className="type-body mt-3 text-[#202020]">{phase.note}</p>
-                <p className="type-meta mt-2 text-[#6f6f6f]">Assigned: {phase.assignedTo.join(', ')}</p>
-                {phase.delay ? <p className="type-caption mt-2 text-[#a86a00]">Delayed by {phase.delay.window} / {phase.delay.reason}{phase.clientNotified ? ' / homeowner notified' : ''}</p> : null}
+                <p className="typo-body mt-3 text-[#202020]">{phase.note}</p>
+                <p className="typo-meta mt-2 text-[#6f6f6f]">Assigned: {phase.assignedTo.join(', ')}</p>
+                {phase.delay ? <p className="typo-caption mt-2 text-[#a86a00]">Delayed by {phase.delay.window} / {phase.delay.reason}{phase.clientNotified ? ' / homeowner notified' : ''}</p> : null}
               </article>
             ))}
           </div>
@@ -157,10 +157,10 @@ function ProTimelineWorkspace({ project, onBack }) {
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4">
         {delayTargetId ? (
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => { actions.delayTimelinePhase(delayTargetId, { window: '2 weeks', reason: 'Material delay', notifyClient: true }); setDelayTargetId(null) }} className="type-body-strong h-10 rounded-xl bg-black text-white">
+            <button type="button" onClick={() => { actions.delayTimelinePhase(delayTargetId, { window: '2 weeks', reason: 'Material delay', notifyClient: true }); setDelayTargetId(null) }} className="typo-body-strong h-10 rounded-xl bg-black text-white">
               Delay + notify
             </button>
-            <button type="button" onClick={() => setDelayTargetId(null)} className="type-body-strong h-10 rounded-xl border border-[#d7d7d7]">
+            <button type="button" onClick={() => setDelayTargetId(null)} className="typo-body-strong h-10 rounded-xl border border-[#d7d7d7]">
               Cancel
             </button>
           </div>
@@ -171,7 +171,7 @@ function ProTimelineWorkspace({ project, onBack }) {
               value={phaseName}
               onChange={(event) => setPhaseName(event.target.value)}
               placeholder="Add custom phase"
-              className="type-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none"
+              className="typo-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none"
             />
             <button type="button" onClick={addPhase} disabled={!phaseName.trim()} className="grid size-10 shrink-0 place-items-center rounded-xl bg-black text-white disabled:bg-[#d9d9d9]" aria-label="Add phase">
               <Plus size={17} />

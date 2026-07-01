@@ -68,12 +68,12 @@ function FolderTile({ folder, onOpen }) {
         <span className="grid size-10 shrink-0 place-items-center rounded-[14px] border border-[#e5e5e5] bg-[#fafafa]">
           <FolderTypeIcon type={folder.type} />
         </span>
-        <span className="type-caption uppercase text-[#8a8a8a]">{folder.itemCount} item{folder.itemCount === 1 ? '' : 's'}</span>
+        <span className="typo-caption uppercase text-[#8a8a8a]">{folder.itemCount} item{folder.itemCount === 1 ? '' : 's'}</span>
       </div>
       <div>
-        <p className="type-body-strong text-black">{folder.name}</p>
-        <p className="type-meta mt-1 text-[#6f6f6f]">{folderTypeLabels[folder.type] || 'Shared folder'}</p>
-        <p className="type-caption mt-2 uppercase text-[#267449]">Comment enabled</p>
+        <p className="typo-body-strong text-black">{folder.name}</p>
+        <p className="typo-meta mt-1 text-[#6f6f6f]">{folderTypeLabels[folder.type] || 'Shared folder'}</p>
+        <p className="typo-caption mt-2 uppercase text-[#267449]">Comment enabled</p>
       </div>
     </button>
   )
@@ -94,12 +94,12 @@ function ArchiveItemTile({ item, onOpen }) {
         </div>
       )}
       <div className="px-3 py-3">
-        <p className="line-clamp-2 text-[13px] font-semibold leading-[1.4] text-black">{item.title}</p>
+        <p className="typo-body-strong line-clamp-2 text-black">{item.title}</p>
         <div className="mt-2 flex items-center justify-between gap-2">
-          <span className={`rounded-full px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.04em] ${statusTone[item.status] || statusTone.shared}`}>
+          <span className={`typo-status-mini rounded-full px-2 py-1 uppercase ${statusTone[item.status] || statusTone.shared}`}>
             {statusLabel[item.status] || item.status}
           </span>
-          <span className="text-[10px] font-medium text-[#7b7b7b]">
+          <span className="typo-body-10 text-[#7b7b7b]">
             {item.comments?.length ? `${item.comments.length} comment${item.comments.length === 1 ? '' : 's'}` : 'Open'}
           </span>
         </div>
@@ -121,15 +121,15 @@ function CommentRow({ text, index }) {
 
   return (
     <article className="flex gap-3 border-b border-[#ededed] py-4 last:border-b-0">
-      <span className={`grid size-8 shrink-0 place-items-center rounded-[10px] text-[10px] font-bold ${isSelf ? 'bg-[#eff3f0] text-[#173324]' : 'bg-[#f0f4f8] text-[#1e3a5f]'}`}>
+      <span className={`typo-status-mini grid size-8 shrink-0 place-items-center rounded-[10px] ${isSelf ? 'bg-[#eff3f0] text-[#173324]' : 'bg-[#f0f4f8] text-[#1e3a5f]'}`}>
         {initials}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#7b7b7b]">{isSelf ? 'Homeowner feedback' : displaySenderName}</p>
-          {timeLabel ? <p className="text-[10px] text-[#999999]">{timeLabel}</p> : null}
+          <p className="typo-status-mini uppercase text-[#7b7b7b]">{isSelf ? 'Homeowner feedback' : displaySenderName}</p>
+          {timeLabel ? <p className="typo-body-10 text-[#999999]">{timeLabel}</p> : null}
         </div>
-        <p className="type-body mt-1 text-black">{commentText}</p>
+        <p className="typo-body mt-1 text-black">{commentText}</p>
       </div>
     </article>
   )
@@ -184,14 +184,14 @@ function HomeownerArchiveWorkspace({ onBack }) {
         {!openFolder ? (
           <>
             <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="type-caption uppercase text-[#267449]">References</p>
-              <h1 className="type-page-title mt-2 text-black">Open a folder to review files and comment on specific items.</h1>
+              <p className="typo-caption uppercase text-[#267449]">References</p>
+              <h1 className="typo-page-title mt-2 text-black">Open a folder to review files and comment on specific items.</h1>
             </section>
 
             <section className="px-4 py-5">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="type-section-title text-black">Folders</h2>
-                <span className="type-caption uppercase text-[#8a8a8a]">{sharedFolders.length} shared</span>
+                <h2 className="typo-section-title text-black">Folders</h2>
+                <span className="typo-caption uppercase text-[#8a8a8a]">{sharedFolders.length} shared</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {sharedFolders.map((folder) => (
@@ -207,9 +207,9 @@ function HomeownerArchiveWorkspace({ onBack }) {
         ) : !openItem ? (
           <>
             <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="type-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Shared folder'}</p>
-              <h1 className="type-page-title mt-2 text-black">{openFolder.name}</h1>
-              <p className="type-body mt-2 text-[#5f7467]">{folderGuidance[openFolder.type] || folderGuidance.custom}</p>
+              <p className="typo-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Shared folder'}</p>
+              <h1 className="typo-page-title mt-2 text-black">{openFolder.name}</h1>
+              <p className="typo-body mt-2 text-[#5f7467]">{folderGuidance[openFolder.type] || folderGuidance.custom}</p>
               <div className="mt-5 grid grid-cols-3 border-y border-[#e5e5e5]">
                 {[
                   ['Items', openFolderItems.length],
@@ -217,8 +217,8 @@ function HomeownerArchiveWorkspace({ onBack }) {
                   ['State', 'Live'],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-meta mt-1 text-black">{value}</p>
                   </div>
                 ))}
               </div>
@@ -226,8 +226,8 @@ function HomeownerArchiveWorkspace({ onBack }) {
 
             <section className="px-4 py-5">
               <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="type-section-title text-black">Items</h2>
-                <span className="type-caption text-[#7b7b7b]">Tap any item</span>
+                <h2 className="typo-section-title text-black">Items</h2>
+                <span className="typo-caption text-[#7b7b7b]">Tap any item</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {openFolderItems.map((item) => (
@@ -249,8 +249,8 @@ function HomeownerArchiveWorkspace({ onBack }) {
             </section>
 
             <section className="px-4 py-5">
-              <p className="type-body-strong text-black">{openItem.title}</p>
-              <p className="type-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
+              <p className="typo-body-strong text-black">{openItem.title}</p>
+              <p className="typo-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
               <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">
                 {[
                   ['Status', statusLabel[openItem.status] || openItem.status],
@@ -258,19 +258,19 @@ function HomeownerArchiveWorkspace({ onBack }) {
                   ['Access', ['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? 'Approve' : 'Comment'],
                 ].map(([label, value]) => (
                   <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="mt-1 text-[12px] font-semibold leading-[1.4] text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-meta mt-1 text-black">{value}</p>
                   </div>
                 ))}
               </div>
 
               {['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? (
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'approved')} className="flex h-10 items-center justify-center gap-2 rounded-[14px] bg-black text-[12px] font-semibold text-white">
+                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'approved')} className="typo-meta flex h-10 items-center justify-center gap-2 rounded-[14px] bg-black text-white">
                     <CheckCircle size={15} />
                     Approve
                   </button>
-                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'rejected')} className="flex h-10 items-center justify-center gap-2 rounded-[14px] border border-[#e1b8b8] bg-white text-[12px] font-semibold text-[#c34545]">
+                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'rejected')} className="typo-meta flex h-10 items-center justify-center gap-2 rounded-[14px] border border-[#e1b8b8] bg-white text-[#c34545]">
                     <XCircle size={15} />
                     Reject
                   </button>
@@ -280,8 +280,8 @@ function HomeownerArchiveWorkspace({ onBack }) {
 
             <section className="px-4 py-1">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="type-section-title text-black">Comments</h2>
-                <span className="type-caption text-[#7b7b7b]">Designer sees these instantly</span>
+                <h2 className="typo-section-title text-black">Comments</h2>
+                <span className="typo-caption text-[#7b7b7b]">Designer sees these instantly</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {(openItem.comments || []).length ? (
@@ -290,7 +290,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
                   ))
                 ) : (
                   <div className="py-4">
-                    <p className="type-body text-[#6f6f6f]">No comments yet. Add feedback on this item.</p>
+                    <p className="typo-body text-[#6f6f6f]">No comments yet. Add feedback on this item.</p>
                   </div>
                 )}
               </div>
@@ -299,7 +299,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
                   value={commentDrafts[openItem.id] || ''}
                   onChange={(event) => updateDraft(openItem.id, event.target.value)}
                   placeholder="Comment on this item"
-                  className="type-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none"
+                  className="typo-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none"
                 />
                 <button
                   type="button"

@@ -49,10 +49,10 @@ function PaymentMilestoneTimeline({ invoices, selectedInvoiceId = null, onSelect
               className="flex min-w-0 flex-col items-center text-center"
             >
               <span className={`size-5 rounded-full border-2 ${tone.dot} ${tone.halo}`} />
-              <span className={`mt-4 block text-[11px] font-semibold leading-[1.35] ${tone.label}`}>
+              <span className={`typo-body-10 mt-4 block ${tone.label}`}>
                 {invoice.title}
               </span>
-              <span className={`mt-1 block text-[10px] font-medium leading-[1.35] ${tone.date}`}>
+              <span className={`typo-body-10 mt-1 block ${tone.date}`}>
                 {milestoneDate(invoice)}
               </span>
             </button>

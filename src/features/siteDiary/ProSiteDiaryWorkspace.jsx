@@ -43,8 +43,8 @@ function Header({ title = 'Site diary', subtitle, onBack, onCompose }) {
 function Metric({ value, label, tone = 'text-black' }) {
   return (
     <div className="border-r border-[#e5e5e5] px-3 text-left last:border-r-0 first:pl-0">
-      <p className={`type-card-title ${tone}`}>{value}</p>
-      <p className="type-caption mt-1 text-[#7b7b7b]">{label}</p>
+      <p className={`typo-card-title ${tone}`}>{value}</p>
+      <p className="typo-caption mt-1 text-[#7b7b7b]">{label}</p>
     </div>
   )
 }
@@ -58,8 +58,8 @@ function FolderCard({ id, label, count, onClick }) {
         <CaretRight size={16} className="mt-2 text-[#8a9a90]" />
       </div>
       <div>
-        <p className="type-body-strong">{label}</p>
-        <p className="type-caption mt-1 text-[#7b7b7b]">{count}</p>
+        <p className="typo-body-strong">{label}</p>
+        <p className="typo-caption mt-1 text-[#7b7b7b]">{count}</p>
       </div>
     </button>
   )
@@ -71,20 +71,20 @@ function EntryCard({ entry, onOpen }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <p className="type-body-strong text-black">{entry.title}</p>
+            <p className="typo-body-strong text-black">{entry.title}</p>
             {entry.issueId ? <WarningCircle size={14} weight="fill" className="text-[#e07a2f]" /> : null}
           </div>
-          <p className="type-meta mt-1 text-[#777]">{formatDiaryDateLabel(entry.createdAt)} / {formatDiaryTimeLabel(entry.createdAt)} / {entry.createdBy}</p>
-          <p className="type-body mt-2 text-[#202020]">{entry.note || 'Photo update shared from site.'}</p>
+          <p className="typo-meta mt-1 text-[#777]">{formatDiaryDateLabel(entry.createdAt)} / {formatDiaryTimeLabel(entry.createdAt)} / {entry.createdBy}</p>
+          <p className="typo-body mt-2 text-[#202020]">{entry.note || 'Photo update shared from site.'}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {(entry.tags || []).slice(0, 3).map((tag) => (
-              <span key={tag} className="type-caption rounded-full border border-[#e5e5e5] px-2 py-1 text-[#6f6f6f]">{tag}</span>
+              <span key={tag} className="typo-caption rounded-full border border-[#e5e5e5] px-2 py-1 text-[#6f6f6f]">{tag}</span>
             ))}
           </div>
         </div>
         <div className="shrink-0 text-right">
-          <p className="type-caption text-[#7b7b7b]">{entry.photos.length} photo{entry.photos.length === 1 ? '' : 's'}</p>
-          <p className="type-caption mt-2 text-[#7b7b7b]">{entry.workerCount} workers</p>
+          <p className="typo-caption text-[#7b7b7b]">{entry.photos.length} photo{entry.photos.length === 1 ? '' : 's'}</p>
+          <p className="typo-caption mt-2 text-[#7b7b7b]">{entry.workerCount} workers</p>
         </div>
       </div>
     </button>
@@ -104,7 +104,7 @@ function ProgressPhotoGrid({ entries, onOpen }) {
   ))
 
   if (!photoItems.length) {
-    return <p className="type-body px-1 py-4 text-[#6f6f6f]">No progress photos yet.</p>
+    return <p className="typo-body px-1 py-4 text-[#6f6f6f]">No progress photos yet.</p>
   }
 
   return (
@@ -118,8 +118,8 @@ function ProgressPhotoGrid({ entries, onOpen }) {
         >
           <img src={item.photo} alt={item.title} className="size-full object-cover" />
           <div className="absolute inset-x-0 bottom-0 bg-[rgba(0,0,0,0.52)] px-2 py-1.5 text-white">
-            <p className="type-caption truncate">{formatDiaryDateLabel(item.createdAt)}</p>
-            <p className="type-caption truncate text-white/80">{item.createdBy}</p>
+            <p className="typo-caption truncate">{formatDiaryDateLabel(item.createdAt)}</p>
+            <p className="typo-caption truncate text-white/80">{item.createdBy}</p>
           </div>
         </button>
       ))}
@@ -137,12 +137,12 @@ function SourcingRow({ entry, onOpen }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="type-body-strong truncate text-black">{entry.title}</p>
-            <p className="type-meta mt-1 text-[#777]">{entry.createdBy} / {formatDiaryDateLabel(entry.createdAt)}</p>
+            <p className="typo-body-strong truncate text-black">{entry.title}</p>
+            <p className="typo-meta mt-1 text-[#777]">{entry.createdBy} / {formatDiaryDateLabel(entry.createdAt)}</p>
           </div>
-          <span className="type-caption shrink-0 rounded-full bg-[#fff5e9] px-2 py-1 text-[#a86a00]">{category}</span>
+          <span className="typo-caption shrink-0 rounded-full bg-[#fff5e9] px-2 py-1 text-[#a86a00]">{category}</span>
         </div>
-        <p className="type-body mt-2 line-clamp-2 text-[#202020]">{entry.note || 'Sourcing note shared from the field.'}</p>
+        <p className="typo-body mt-2 line-clamp-2 text-[#202020]">{entry.note || 'Sourcing note shared from the field.'}</p>
       </div>
     </button>
   )
@@ -153,12 +153,12 @@ function IssueCard({ issue, onUpdateStatus }) {
     <article className="border-b border-[#e5e5e5] py-4 last:border-b-0">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="type-body-strong text-black">{issue.title}</p>
-          <p className="type-meta mt-1 text-[#777]">{issue.reportedBy} / {formatDiaryDateLabel(issue.createdAt)}</p>
-          <p className="type-body mt-2 text-[#202020]">{issue.note}</p>
-          {issue.linkedTaskLabel ? <p className="type-caption mt-2 text-[#267449]">Linked task: {issue.linkedTaskLabel}</p> : null}
+          <p className="typo-body-strong text-black">{issue.title}</p>
+          <p className="typo-meta mt-1 text-[#777]">{issue.reportedBy} / {formatDiaryDateLabel(issue.createdAt)}</p>
+          <p className="typo-body mt-2 text-[#202020]">{issue.note}</p>
+          {issue.linkedTaskLabel ? <p className="typo-caption mt-2 text-[#267449]">Linked task: {issue.linkedTaskLabel}</p> : null}
         </div>
-        <span className={`type-caption rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
+        <span className={`typo-caption rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {['open', 'in-progress', 'resolved'].map((status) => (
@@ -166,7 +166,7 @@ function IssueCard({ issue, onUpdateStatus }) {
             key={status}
             type="button"
             onClick={() => onUpdateStatus(issue.id, status)}
-            className={`type-caption rounded-full px-3 py-2 ${issue.status === status ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#6f6f6f]'}`}
+            className={`typo-caption rounded-full px-3 py-2 ${issue.status === status ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#6f6f6f]'}`}
           >
             {ISSUE_STATUS_LABEL[status]}
           </button>
@@ -184,16 +184,16 @@ function ReferenceCard({ reference, replyDraft, onChangeReply, onReply }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="type-body-strong text-black">{reference.title}</p>
-              <p className="type-meta mt-1 text-[#777]">{reference.createdBy} / {formatDiaryDateLabel(reference.createdAt)}</p>
+              <p className="typo-body-strong text-black">{reference.title}</p>
+              <p className="typo-meta mt-1 text-[#777]">{reference.createdBy} / {formatDiaryDateLabel(reference.createdAt)}</p>
             </div>
-            <span className={`type-caption rounded-full px-2 py-1 ${REFERENCE_STATUS_TONE[reference.status]}`}>{REFERENCE_STATUS_LABEL[reference.status]}</span>
+            <span className={`typo-caption rounded-full px-2 py-1 ${REFERENCE_STATUS_TONE[reference.status]}`}>{REFERENCE_STATUS_LABEL[reference.status]}</span>
           </div>
-          <p className="type-body mt-2 text-[#202020]">{reference.note}</p>
-          {reference.designerReply ? <p className="type-caption mt-2 text-[#267449]">Reply: {reference.designerReply}</p> : null}
+          <p className="typo-body mt-2 text-[#202020]">{reference.note}</p>
+          {reference.designerReply ? <p className="typo-caption mt-2 text-[#267449]">Reply: {reference.designerReply}</p> : null}
           <div className="mt-3 flex items-center gap-2">
-            <input value={replyDraft} onChange={(event) => onChangeReply(event.target.value)} placeholder="Reply to homeowner" className="type-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none" />
-            <button type="button" onClick={onReply} disabled={!replyDraft.trim()} className="type-body-strong h-10 rounded-[14px] bg-black px-4 text-white disabled:bg-[#d9d9d9]">
+            <input value={replyDraft} onChange={(event) => onChangeReply(event.target.value)} placeholder="Reply to homeowner" className="typo-body h-10 min-w-0 flex-1 rounded-[14px] border border-[#d7d7d7] px-3 outline-none" />
+            <button type="button" onClick={onReply} disabled={!replyDraft.trim()} className="typo-body-strong h-10 rounded-[14px] bg-black px-4 text-white disabled:bg-[#d9d9d9]">
               Reply
             </button>
           </div>
@@ -208,35 +208,35 @@ function EntryDetailSheet({ entry, issue, replyDrafts, onChangeReply, onReply, o
 
   return (
     <div className="fixed bottom-0 left-1/2 z-[100] w-full max-w-[390px] -translate-x-1/2 rounded-t-[28px] border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-      <p className="type-label uppercase text-[#7b7b7b]">Entry detail</p>
-      <p className="type-body-strong mt-1 text-black">{entry.title}</p>
-      <p className="type-meta mt-1 text-[#777]">{formatDiaryDateLabel(entry.createdAt)} / {formatDiaryTimeLabel(entry.createdAt)} / {entry.createdBy}</p>
-      <p className="type-body mt-3 text-[#202020]">{entry.note || 'Photo update shared from site.'}</p>
+      <p className="typo-label uppercase text-[#7b7b7b]">Entry detail</p>
+      <p className="typo-body-strong mt-1 text-black">{entry.title}</p>
+      <p className="typo-meta mt-1 text-[#777]">{formatDiaryDateLabel(entry.createdAt)} / {formatDiaryTimeLabel(entry.createdAt)} / {entry.createdBy}</p>
+      <p className="typo-body mt-3 text-[#202020]">{entry.note || 'Photo update shared from site.'}</p>
       {entry.photos.length ? (
         <div className="mt-4 grid grid-cols-3 gap-2">
           {entry.photos.map((photo, index) => <img key={`${photo}-${index}`} src={photo} alt="" className="aspect-square rounded-[14px] object-cover" />)}
         </div>
       ) : null}
-      {issue ? <p className="type-caption mt-4 text-[#e07a2f]">Issue: {issue.title}</p> : null}
+      {issue ? <p className="typo-caption mt-4 text-[#e07a2f]">Issue: {issue.title}</p> : null}
       {(entry.clientComments || []).length ? (
         <div className="mt-4 border-t border-[#e5e5e5] pt-3">
-          <p className="type-label uppercase text-[#777]">Homeowner questions</p>
+          <p className="typo-label uppercase text-[#777]">Homeowner questions</p>
           {(entry.clientComments || []).map((comment) => (
             <div key={comment.id} className="border-b border-[#ededed] py-3 last:border-b-0">
-              <p className="type-body text-black">{comment.body}</p>
+              <p className="typo-body text-black">{comment.body}</p>
               {comment.designerReply ? (
-                <p className="type-caption mt-2 border-l-2 border-[#70b58d] pl-2 text-[#267449]">Your reply: {comment.designerReply}</p>
+                <p className="typo-caption mt-2 border-l-2 border-[#70b58d] pl-2 text-[#267449]">Your reply: {comment.designerReply}</p>
               ) : (
                 <div className="mt-2 flex gap-2">
-                  <input value={replyDrafts[comment.id] || ''} onChange={(event) => onChangeReply(comment.id, event.target.value)} placeholder="Reply to homeowner" className="type-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none" />
-                  <button type="button" onClick={() => onReply(comment.id)} disabled={!(replyDrafts[comment.id] || '').trim()} className="type-body-strong rounded-xl bg-black px-4 text-white disabled:bg-[#d7d7d7]">Reply</button>
+                  <input value={replyDrafts[comment.id] || ''} onChange={(event) => onChangeReply(comment.id, event.target.value)} placeholder="Reply to homeowner" className="typo-body h-10 min-w-0 flex-1 rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+                  <button type="button" onClick={() => onReply(comment.id)} disabled={!(replyDrafts[comment.id] || '').trim()} className="typo-body-strong rounded-xl bg-black px-4 text-white disabled:bg-[#d7d7d7]">Reply</button>
                 </div>
               )}
             </div>
           ))}
         </div>
       ) : null}
-      <button type="button" onClick={onClose} className="type-body-strong mt-5 h-11 w-full rounded-[18px] border border-[#d8e2db] text-[#173324]">
+      <button type="button" onClick={onClose} className="typo-body-strong mt-5 h-11 w-full rounded-[18px] border border-[#d8e2db] text-[#173324]">
         Close
       </button>
     </div>
@@ -367,8 +367,8 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
 
           <section className="border-b border-[#e5e5e5] py-5">
             <div className="mb-4 flex items-center justify-between">
-              <p className="type-section-title text-black">Folders</p>
-              <span className="type-caption text-[#7b7b7b]">Module home</span>
+              <p className="typo-section-title text-black">Folders</p>
+              <span className="typo-caption text-[#7b7b7b]">Module home</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {SITE_DIARY_BUCKETS.map((bucket) => (
@@ -391,14 +391,14 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
 
             <section className="border-b border-[#e5e5e5] py-5">
               <button type="button" onClick={() => setActiveFolder('issues')} className="mb-4 flex w-full items-center justify-between text-left">
-                <p className="type-section-title text-black">Open issues</p>
-                <span className="flex items-center gap-1 type-caption text-[#7b7b7b]">View all <CaretRight size={14} /></span>
+                <p className="typo-section-title text-black">Open issues</p>
+                <span className="flex items-center gap-1 typo-caption text-[#7b7b7b]">View all <CaretRight size={14} /></span>
               </button>
               <div className="border-y border-[#e5e5e5]">
                 {siteDiaryIssues.filter((issue) => issue.status !== 'resolved').length ? siteDiaryIssues.filter((issue) => issue.status !== 'resolved').slice(0, 2).map((issue) => (
                   <IssueCard key={issue.id} issue={issue} onUpdateStatus={actions.updateSiteDiaryIssueStatus} />
                 )) : (
-                  <p className="type-body px-1 py-4 text-[#6f6f6f]">No active issues right now.</p>
+                  <p className="typo-body px-1 py-4 text-[#6f6f6f]">No active issues right now.</p>
                 )}
               </div>
             </section>
@@ -406,8 +406,8 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
           ) : activeFolder === 'issues' ? (
             <section>
               <div className="mb-4 flex items-center justify-between">
-                <p className="type-section-title text-black">Tracked issues</p>
-                <span className="type-caption text-[#7b7b7b]">{siteDiaryIssues.length} total</span>
+                <p className="typo-section-title text-black">Tracked issues</p>
+                <span className="typo-caption text-[#7b7b7b]">{siteDiaryIssues.length} total</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {siteDiaryIssues.map((issue) => <IssueCard key={issue.id} issue={issue} onUpdateStatus={actions.updateSiteDiaryIssueStatus} />)}
@@ -418,8 +418,8 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
           {activeFolder !== 'home' && activeFolder !== 'issues' && (activeFolder === 'references' ? (
             <section className="py-5">
               <div className="mb-4 flex items-center justify-between">
-                <p className="type-section-title text-black">Client references</p>
-                <span className="type-caption text-[#7b7b7b]">{siteDiaryReferences.length} total</span>
+                <p className="typo-section-title text-black">Client references</p>
+                <span className="typo-caption text-[#7b7b7b]">{siteDiaryReferences.length} total</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {siteDiaryReferences.map((reference) => (
@@ -439,36 +439,36 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
           ) : activeFolder === 'progress-photo' ? (
             <section className="py-5">
               <div className="mb-4 flex items-center justify-between">
-                <p className="type-section-title text-black">Progress photos</p>
-                <span className="type-caption text-[#7b7b7b]">{activeFolderPhotoCount} photos</span>
+                <p className="typo-section-title text-black">Progress photos</p>
+                <span className="typo-caption text-[#7b7b7b]">{activeFolderPhotoCount} photos</span>
               </div>
               <ProgressPhotoGrid entries={filteredEntries} onOpen={setSelectedEntryId} />
             </section>
           ) : activeFolder === 'sourcing' ? (
             <section className="py-5">
               <div className="mb-4 flex items-center justify-between">
-                <p className="type-section-title text-black">Sourcing</p>
-                <span className="type-caption text-[#7b7b7b]">{filteredEntries.length} notes</span>
+                <p className="typo-section-title text-black">Sourcing</p>
+                <span className="typo-caption text-[#7b7b7b]">{filteredEntries.length} notes</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {filteredEntries.length ? filteredEntries.map((entry) => (
                   <SourcingRow key={entry.id} entry={entry} onOpen={setSelectedEntryId} />
                 )) : (
-                  <p className="type-body px-1 py-4 text-[#6f6f6f]">No sourcing updates yet.</p>
+                  <p className="typo-body px-1 py-4 text-[#6f6f6f]">No sourcing updates yet.</p>
                 )}
               </div>
             </section>
           ) : (
             <section className="py-5">
               <div className="mb-4 flex items-center justify-between">
-                <p className="type-section-title text-black">{SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeFolder)?.label || 'Entries'}</p>
-                <span className="type-caption text-[#7b7b7b]">{filteredEntries.length} items</span>
+                <p className="typo-section-title text-black">{SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeFolder)?.label || 'Entries'}</p>
+                <span className="typo-caption text-[#7b7b7b]">{filteredEntries.length} items</span>
               </div>
               <div className="border-y border-[#e5e5e5]">
                 {filteredEntries.length ? filteredEntries.map((entry) => (
                   <EntryCard key={entry.id} entry={entry} onOpen={setSelectedEntryId} />
                 )) : (
-                  <p className="type-body px-1 py-4 text-[#6f6f6f]">{SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeFolder)?.empty}</p>
+                  <p className="typo-body px-1 py-4 text-[#6f6f6f]">{SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeFolder)?.empty}</p>
                 )}
               </div>
             </section>

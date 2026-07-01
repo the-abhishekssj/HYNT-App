@@ -16,8 +16,8 @@ function Header({ subtitle, onBack }) {
             <CaretLeft size={24} />
           </span>
           <span className="min-w-0 text-left">
-            <span className="type-section-title block truncate text-black">Project timeline</span>
-            <span className="type-caption block truncate text-[#999999]">{subtitle}</span>
+            <span className="typo-section-title block truncate text-black">Project timeline</span>
+            <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
           </span>
         </button>
       </div>
@@ -50,14 +50,14 @@ function HomeownerTimelineWorkspace({ onBack }) {
         <section className="border-b border-[#e5e5e5] px-4 py-5">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="type-caption uppercase text-[#267449]">Timeline progress</p>
-              <h1 className="type-page-title mt-2 text-black">{progress}% complete</h1>
+              <p className="typo-caption uppercase text-[#267449]">Timeline progress</p>
+              <h1 className="typo-page-title mt-2 text-black">{progress}% complete</h1>
             </div>
-            <span className="type-caption rounded-full border border-[#dbe6df] px-3 py-2 text-[#5f7467]">
+            <span className="typo-caption rounded-full border border-[#dbe6df] px-3 py-2 text-[#5f7467]">
               {completedCount} / {sortedPhases.length} done
             </span>
           </div>
-          <p className="type-body mt-3 text-[#5f7467]">
+          <p className="typo-body mt-3 text-[#5f7467]">
             {activePhase ? `${activePhase.name} is the current live stage.` : 'The next active stage will appear here once work begins.'}
           </p>
           <div className="mt-4 h-1.5 rounded-full bg-[#ececec]">
@@ -67,8 +67,8 @@ function HomeownerTimelineWorkspace({ onBack }) {
 
         <section className="px-4 py-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="type-section-title text-black">Track progress</h2>
-            <span className="type-caption text-[#7b7b7b]">Updated by your pro</span>
+            <h2 className="typo-section-title text-black">Track progress</h2>
+            <span className="typo-caption text-[#7b7b7b]">Updated by your pro</span>
           </div>
 
           <div>
@@ -95,22 +95,22 @@ function HomeownerTimelineWorkspace({ onBack }) {
                   <div className="flex-1 border-b border-[#e5e5e5] pb-5 last:border-b-0">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="type-body-strong text-black">{phase.name}</p>
-                        <p className="type-meta mt-1 text-[#6f6f6f]">{formatDate(phase.startDate)} - {formatDate(phase.endDate)}</p>
+                        <p className="typo-body-strong text-black">{phase.name}</p>
+                        <p className="typo-meta mt-1 text-[#6f6f6f]">{formatDate(phase.startDate)} - {formatDate(phase.endDate)}</p>
                       </div>
-                      <span className={`type-caption whitespace-nowrap rounded-full px-2 py-1 ${isDone ? 'bg-[#eaf8ef] text-[#267449]' : isActive ? 'bg-[#fff1df] text-[#a86a00]' : 'bg-[#f2f2f2] text-[#6a6a6a]'}`}>
+                      <span className={`typo-caption whitespace-nowrap rounded-full px-2 py-1 ${isDone ? 'bg-[#eaf8ef] text-[#267449]' : isActive ? 'bg-[#fff1df] text-[#a86a00]' : 'bg-[#f2f2f2] text-[#6a6a6a]'}`}>
                         {statusLabel(phase)}
                       </span>
                     </div>
 
-                    <p className="type-body mt-2 text-[#202020]">{phase.note}</p>
+                    <p className="typo-body mt-2 text-[#202020]">{phase.note}</p>
 
                     <div className="mt-2 flex flex-wrap gap-2 text-[#6f6f6f]">
-                      <span className="type-caption rounded-full border border-[#e5e5e5] px-2 py-1">
+                      <span className="typo-caption rounded-full border border-[#e5e5e5] px-2 py-1">
                         {phase.assignedTo.join(', ')}
                       </span>
                       {phase.delay ? (
-                        <span className="type-caption rounded-full border border-[#f3d4ad] px-2 py-1 text-[#a86a00]">
+                        <span className="typo-caption rounded-full border border-[#f3d4ad] px-2 py-1 text-[#a86a00]">
                           {phase.delay.window} delay: {phase.delay.reason}
                         </span>
                       ) : null}

@@ -12,8 +12,8 @@ function ReviewHeader({ title, subtitle, onBack }) {
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="type-section-title block truncate text-black">{title}</span>
-              <span className="type-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title block truncate text-black">{title}</span>
+              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
             </span>
           </button>
           <button type="button" className="grid size-8 shrink-0 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
@@ -30,11 +30,11 @@ function ClientSection({ index, title, open, onToggle, badge, children }) {
     <article className="overflow-hidden rounded-[20px] border border-[#dbe6df] bg-white">
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-4 py-3 text-left">
         <span className="flex min-w-0 items-center gap-3">
-          <span className="type-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
-          <span className="type-card-title truncate text-[#102418]">{title}</span>
+          <span className="typo-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
+          <span className="typo-card-title truncate text-[#102418]">{title}</span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
-          {badge ? <span className="type-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
+          {badge ? <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
           <CaretDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
         </span>
       </button>
@@ -58,7 +58,7 @@ function OtpRow({ digits, setDigits }) {
           inputMode="numeric"
           maxLength={1}
           onChange={(event) => updateDigit(index, event.target.value)}
-          className="type-page-title h-12 rounded-[14px] border border-[#dfdfdf] bg-white text-center text-black outline-none focus:border-black"
+          className="typo-page-title h-12 rounded-[14px] border border-[#dfdfdf] bg-white text-center text-black outline-none focus:border-black"
         />
       ))}
     </div>
@@ -133,16 +133,16 @@ function HomeownerSowReview({ onBack }) {
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
           </div>
-          <h1 className="type-page-title mt-4 text-black">No SOW shared yet</h1>
-          <p className="type-body mt-2 text-[#5f7467]">When the professional creates and sends a Scope of Work, it will appear here automatically.</p>
+          <h1 className="typo-page-title mt-4 text-black">No SOW shared yet</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">When the professional creates and sends a Scope of Work, it will appear here automatically.</p>
         </article>
 
         {activity.length ? (
           <section className="mt-4 rounded-[20px] border border-[#e1e1e1] bg-white p-4">
-            <p className="type-label uppercase text-[#5f7467]">Latest activity</p>
+            <p className="typo-label uppercase text-[#5f7467]">Latest activity</p>
             <div className="mt-3 space-y-2">
               {activity.slice(0, 3).map((item) => (
-                <p key={item.id} className="type-meta text-[#5f7467]"><span className="font-bold text-black">{item.actor}</span> {item.text}</p>
+                <p key={item.id} className="typo-meta text-[#5f7467]"><span className="typo-weight-bold text-black">{item.actor}</span> {item.text}</p>
               ))}
             </div>
           </section>
@@ -160,8 +160,8 @@ function HomeownerSowReview({ onBack }) {
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
           </div>
-          <h1 className="type-page-title mt-4 text-black">Designer is preparing the SOW</h1>
-          <p className="type-body mt-2 text-[#5f7467]">The document exists, but it has not been sent to you yet. This screen will switch once it is shared for review.</p>
+          <h1 className="typo-page-title mt-4 text-black">Designer is preparing the SOW</h1>
+          <p className="typo-body mt-2 text-[#5f7467]">The document exists, but it has not been sent to you yet. This screen will switch once it is shared for review.</p>
         </article>
       </div>
     </section>
@@ -175,26 +175,26 @@ function HomeownerSowReview({ onBack }) {
         <section className="pb-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="type-section-title truncate text-[#102418]">{document.projectName}</p>
-              <p className="type-body mt-1 truncate text-[#5f7467]">From {project.designerName} | {document.location}</p>
+              <p className="typo-section-title truncate text-[#102418]">{document.projectName}</p>
+              <p className="typo-body mt-1 truncate text-[#5f7467]">From {project.designerName} | {document.location}</p>
             </div>
-            <span className={`type-caption shrink-0 rounded-full px-3 py-1 uppercase ${sow.status === 'revision-ready' ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#f2f5ff] text-[#4d5fb3]'}`}>
+            <span className={`typo-caption shrink-0 rounded-full px-3 py-1 uppercase ${sow.status === 'revision-ready' ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#f2f5ff] text-[#4d5fb3]'}`}>
               {sow.status === 'revision-ready' ? 'Revised' : 'For review'}
             </span>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2">
             <div className="rounded-[18px] border border-[#dbe6df] bg-white px-3 py-3">
-              <p className="type-utility text-[#73867c]">Type</p>
-              <p className="type-card-title mt-2 text-[#102418]">{document.projectType}</p>
+              <p className="typo-utility text-[#73867c]">Type</p>
+              <p className="typo-card-title mt-2 text-[#102418]">{document.projectType}</p>
             </div>
             <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-              <p className="type-utility text-[#73849d]">Value</p>
-              <p className="type-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
+              <p className="typo-utility text-[#73849d]">Value</p>
+              <p className="typo-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
             </div>
             <div className="rounded-[18px] border border-[#efe2c8] bg-white px-3 py-3">
-              <p className="type-utility text-[#987f53]">Open remarks</p>
-              <p className="type-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
+              <p className="typo-utility text-[#987f53]">Open remarks</p>
+              <p className="typo-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
             </div>
           </div>
         </section>
@@ -205,9 +205,9 @@ function HomeownerSowReview({ onBack }) {
               const remark = sow.remarks.find((item) => item.id === response.remarkId)
               return (
                 <article key={response.id} className={`rounded-[18px] border p-4 ${response.decision === 'approve' ? 'border-[#dbe6df] bg-[#f4fbf7]' : 'border-[#f1d7d7] bg-[#fff7f7]'}`}>
-                  <p className="type-label uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
-                  <p className="type-body mt-2 text-black">{remark?.body}</p>
-                  <p className="type-meta mt-2 text-[#5f7467]">{response.body}</p>
+                  <p className="typo-label uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
+                  <p className="typo-body mt-2 text-black">{remark?.body}</p>
+                  <p className="typo-meta mt-2 text-[#5f7467]">{response.body}</p>
                 </article>
               )
             })}
@@ -225,8 +225,8 @@ function HomeownerSowReview({ onBack }) {
                 ['Handover', document.handoverMonth],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                  <span className="type-utility uppercase text-[#71837a]">{label}</span>
-                  <span className="type-data-value text-right text-black">{value}</span>
+                  <span className="typo-utility uppercase text-[#71837a]">{label}</span>
+                  <span className="typo-data-value text-right text-black">{value}</span>
                 </div>
               ))}
             </div>
@@ -236,12 +236,12 @@ function HomeownerSowReview({ onBack }) {
             <div className="space-y-3">
               {document.rooms.map((room) => (
                 <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
-                  <p className="type-card-title text-black">{room.name}</p>
-                  <p className="type-body mt-1 text-[#5f7467]">{room.scope}</p>
+                  <p className="typo-card-title text-black">{room.name}</p>
+                  <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
                   <button
                     type="button"
                     onClick={() => startRemark('rooms', `${room.name} scope`, room.id, room.id === 'kitchen' ? 'Please include granite countertop and chimney provision in the kitchen scope.' : '')}
-                    className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black"
+                    className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black"
                   >
                     <NotePencil size={14} />
                     Add remark
@@ -253,18 +253,18 @@ function HomeownerSowReview({ onBack }) {
 
           <ClientSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')} badge={openRemarks.some((remark) => remark.sectionKey === 'exclusions') ? 'Remarked' : undefined}>
             <div className="mb-3 rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-3">
-              <p className="type-caption uppercase text-[#9f8350]">Designer-managed scope boundary</p>
-              <p className="type-body mt-1 text-black">These stay outside scope unless your designer actively adds them.</p>
+              <p className="typo-caption uppercase text-[#9f8350]">Designer-managed scope boundary</p>
+              <p className="typo-body mt-1 text-black">These stay outside scope unless your designer actively adds them.</p>
             </div>
             <div className="space-y-2">
               {document.exclusions.map((item) => (
-                <div key={item} className="type-body flex items-start gap-2 text-black">
+                <div key={item} className="typo-body flex items-start gap-2 text-black">
                   <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                   <span>{item}</span>
                 </div>
               ))}
             </div>
-            <button type="button" onClick={() => startRemark('exclusions', 'Exclusions', null, 'Can you clarify whether one of these exclusions can be added to the scope?')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('exclusions', 'Exclusions', null, 'Can you clarify whether one of these exclusions can be added to the scope?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add exclusion remark
             </button>
@@ -278,12 +278,12 @@ function HomeownerSowReview({ onBack }) {
                 ['Handover', document.handoverMonth],
               ].map(([label, value]) => (
                 <article key={label} className="rounded-[18px] border border-[#e2e2e2] bg-white px-2 py-3 text-center">
-                  <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                  <p className="type-label mt-2 text-black">{value}</p>
+                  <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                  <p className="typo-label mt-2 text-black">{value}</p>
                 </article>
               ))}
             </div>
-            <button type="button" onClick={() => startRemark('timeline', 'Timeline', null, 'Can you clarify or adjust the project timeline?')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('timeline', 'Timeline', null, 'Can you clarify or adjust the project timeline?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add timeline remark
             </button>
@@ -291,30 +291,30 @@ function HomeownerSowReview({ onBack }) {
 
           <ClientSection index="5" title="Budget estimate" open={openSections.budget} onToggle={() => toggleSection('budget')} badge={openRemarks.some((remark) => remark.sectionKey === 'budget') ? 'Remarked' : undefined}>
             <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-              <p className="type-caption uppercase text-[#73849d]">Total value</p>
-              <p className="type-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
+              <p className="typo-caption uppercase text-[#73849d]">Total value</p>
+              <p className="typo-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
             </div>
-            <button type="button" onClick={() => startRemark('budget', 'Budget estimate', null, 'Can we discuss the overall estimate before I approve the SOW?')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('budget', 'Budget estimate', null, 'Can we discuss the overall estimate before I approve the SOW?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add budget remark
             </button>
           </ClientSection>
 
           <ClientSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')} badge={openRemarks.some((remark) => remark.sectionKey === 'payment') ? 'Remarked' : undefined}>
-            <div className="type-body space-y-2 text-[#5f7467]">
+            <div className="typo-body space-y-2 text-[#5f7467]">
               {document.paymentTerms.map((term) => <p key={term}>{term}</p>)}
             </div>
-            <button type="button" onClick={() => startRemark('payment', 'Payment terms', null, 'Can we discuss the payment milestones before I approve?')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('payment', 'Payment terms', null, 'Can we discuss the payment milestones before I approve?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add payment remark
             </button>
           </ClientSection>
 
           <ClientSection index="7" title="Terms & notes" open={openSections.terms} onToggle={() => toggleSection('terms')} badge={openRemarks.some((remark) => remark.sectionKey === 'terms') ? 'Remarked' : undefined}>
-            <div className="type-body space-y-2 text-[#5f7467]">
+            <div className="typo-body space-y-2 text-[#5f7467]">
               {document.termsNotes.map((term) => <p key={term}>{term}</p>)}
             </div>
-            <button type="button" onClick={() => startRemark('terms', 'Terms and notes', null, 'Please clarify this term before I approve the SOW.')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('terms', 'Terms and notes', null, 'Please clarify this term before I approve the SOW.')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add terms remark
             </button>
@@ -327,13 +327,13 @@ function HomeownerSowReview({ onBack }) {
                 ['Client', document.clientName, sow.clientSigned ? 'Signed' : 'Waiting'],
               ].map(([label, name, state]) => (
                 <article key={label} className="rounded-[18px] border border-[#e2e2e2] bg-white p-3">
-                  <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                  <p className="type-label mt-2 text-black">{name}</p>
-                  <p className="type-caption mt-2 text-[#6f6f6f]">{state}</p>
+                  <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                  <p className="typo-label mt-2 text-black">{name}</p>
+                  <p className="typo-caption mt-2 text-[#6f6f6f]">{state}</p>
                 </article>
               ))}
             </div>
-            <button type="button" onClick={() => startRemark('signatures', 'Signatures', null, 'Please verify the signer details before I complete the acceptance.')} className="type-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
+            <button type="button" onClick={() => startRemark('signatures', 'Signatures', null, 'Please verify the signer details before I complete the acceptance.')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
               Add signature remark
             </button>
@@ -342,10 +342,10 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setView('otp')} className="type-body-strong h-11 w-full rounded-full bg-black text-white">
+        <button type="button" onClick={() => setView('otp')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
           Looks good - sign and accept
         </button>
-        <button type="button" onClick={() => startRemark('general', 'General SOW feedback')} className="type-body-strong mt-2 h-10 w-full rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">
+        <button type="button" onClick={() => startRemark('general', 'General SOW feedback')} className="typo-body-strong mt-2 h-10 w-full rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">
           Add general remark
         </button>
       </div>
@@ -358,18 +358,18 @@ function HomeownerSowReview({ onBack }) {
 
       <div className="space-y-3 px-4 py-5">
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-label uppercase text-[#5f7467]">{remarkTarget?.sectionTitle}</p>
+          <p className="typo-label uppercase text-[#5f7467]">{remarkTarget?.sectionTitle}</p>
           <textarea
             value={remarkDraft}
             onChange={(event) => setRemarkDraft(event.target.value)}
             placeholder="Add a remark for the designer..."
-            className="type-body mt-3 min-h-32 w-full rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+            className="typo-body mt-3 min-h-32 w-full rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
           />
         </article>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={sendRemark} disabled={!remarkDraft.trim()} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <button type="button" onClick={sendRemark} disabled={!remarkDraft.trim()} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
           Send remark to designer
         </button>
       </div>
@@ -385,18 +385,18 @@ function HomeownerSowReview({ onBack }) {
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
           </div>
-          <h2 className="type-page-title mt-4 text-black">Remarks sent</h2>
-          <p className="type-body mt-2 text-[#5f7467]">Your designer can accept or reject each remark in the professional flow. This screen will update as soon as they respond.</p>
+          <h2 className="typo-page-title mt-4 text-black">Remarks sent</h2>
+          <p className="typo-body mt-2 text-[#5f7467]">Your designer can accept or reject each remark in the professional flow. This screen will update as soon as they respond.</p>
         </article>
 
         {openRemarks.length ? (
           <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-label uppercase text-[#5f7467]">Sent remarks</p>
+            <p className="typo-label uppercase text-[#5f7467]">Sent remarks</p>
             <div className="mt-3 space-y-2">
               {openRemarks.map((remark) => (
                 <article key={remark.id} className="rounded-[16px] bg-[#fafafa] p-3">
-                  <p className="type-card-title text-black">{remark.sectionTitle}</p>
-                  <p className="type-body mt-1 text-[#5f7467]">{remark.body}</p>
+                  <p className="typo-card-title text-black">{remark.sectionTitle}</p>
+                  <p className="typo-body mt-1 text-[#5f7467]">{remark.body}</p>
                 </article>
               ))}
             </div>
@@ -405,7 +405,7 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setView('review')} className="type-body-strong h-11 w-full rounded-full bg-black text-white">
+        <button type="button" onClick={() => setView('review')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
           Review current SOW
         </button>
       </div>
@@ -421,17 +421,17 @@ function HomeownerSowReview({ onBack }) {
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
           </div>
-          <h2 className="type-page-title mt-4 text-black">Verify your identity</h2>
-          <p className="type-body mt-2 text-[#5f7467]">An OTP was sent to your registered mobile number. Verifying it completes your acceptance of this Scope of Work.</p>
+          <h2 className="typo-page-title mt-4 text-black">Verify your identity</h2>
+          <p className="typo-body mt-2 text-[#5f7467]">An OTP was sent to your registered mobile number. Verifying it completes your acceptance of this Scope of Work.</p>
           <div className="mt-5">
             <OtpRow digits={otpDigits} setDigits={setOtpDigits} />
           </div>
-          <p className="type-meta mt-4 text-[#7b7b7b]">This acts as a valid electronic signature for the client side.</p>
+          <p className="typo-meta mt-4 text-[#7b7b7b]">This acts as a valid electronic signature for the client side.</p>
         </article>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={signSow} disabled={otpDigits.some((digit) => !digit)} className="type-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <button type="button" onClick={signSow} disabled={otpDigits.some((digit) => !digit)} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
           Verify and sign
         </button>
       </div>
@@ -444,36 +444,36 @@ function HomeownerSowReview({ onBack }) {
 
       <div className="px-4 py-5">
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-section-title text-black">{pendingAmendment.sectionTitle}</p>
-          <p className="type-body mt-2 text-[#5f7467]">Your designer has proposed a formal change to the executed SOW. Approving it will update the shared document revision.</p>
+          <p className="typo-section-title text-black">{pendingAmendment.sectionTitle}</p>
+          <p className="typo-body mt-2 text-[#5f7467]">Your designer has proposed a formal change to the executed SOW. Approving it will update the shared document revision.</p>
         </article>
 
         <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-caption uppercase text-[#7b7b7b]">Current</p>
-          <p className="type-body mt-2 text-[#8a8a8a] whitespace-pre-wrap">{pendingAmendment.oldValue}</p>
-          <p className="type-caption mt-4 uppercase text-[#7b7b7b]">Proposed</p>
-          <p className="type-body mt-2 text-black whitespace-pre-wrap">{pendingAmendment.newValue}</p>
-          <p className="type-caption mt-4 uppercase text-[#7b7b7b]">Reason</p>
-          <p className="type-body mt-2 text-black">{pendingAmendment.reason}</p>
+          <p className="typo-caption uppercase text-[#7b7b7b]">Current</p>
+          <p className="typo-body mt-2 text-[#8a8a8a] whitespace-pre-wrap">{pendingAmendment.oldValue}</p>
+          <p className="typo-caption mt-4 uppercase text-[#7b7b7b]">Proposed</p>
+          <p className="typo-body mt-2 text-black whitespace-pre-wrap">{pendingAmendment.newValue}</p>
+          <p className="typo-caption mt-4 uppercase text-[#7b7b7b]">Reason</p>
+          <p className="typo-body mt-2 text-black">{pendingAmendment.reason}</p>
         </section>
 
         <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-label uppercase text-[#5f7467]">Optional rejection note</p>
+          <p className="typo-label uppercase text-[#5f7467]">Optional rejection note</p>
           <textarea
             value={amendmentResponse}
             onChange={(event) => setAmendmentResponse(event.target.value)}
             placeholder="Add a reason if you want to reject this amendment."
-            className="type-body mt-2 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+            className="typo-body mt-2 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
           />
         </section>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <div className="grid grid-cols-2 gap-2">
-          <button type="button" onClick={() => { actions.approveSowAmendment(pendingAmendment.id); setAmendmentResponse(''); setView('executed') }} className="type-body-strong h-11 rounded-full bg-black text-white">
+          <button type="button" onClick={() => { actions.approveSowAmendment(pendingAmendment.id); setAmendmentResponse(''); setView('executed') }} className="typo-body-strong h-11 rounded-full bg-black text-white">
             Approve
           </button>
-          <button type="button" onClick={() => { actions.rejectSowAmendment(pendingAmendment.id, amendmentResponse); setAmendmentResponse(''); setView('executed') }} className="type-body-strong h-11 rounded-full border border-[#e0e0e0] bg-white text-black">
+          <button type="button" onClick={() => { actions.rejectSowAmendment(pendingAmendment.id, amendmentResponse); setAmendmentResponse(''); setView('executed') }} className="typo-body-strong h-11 rounded-full border border-[#e0e0e0] bg-white text-black">
             Reject
           </button>
         </div>
@@ -490,26 +490,26 @@ function HomeownerSowReview({ onBack }) {
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
           </div>
-          <h2 className="type-page-title mt-4 text-black">SOW signed</h2>
-          <p className="type-body mt-2 text-[#5f7467]">Your project is officially confirmed. Any change from here moves through a formal amendment.</p>
+          <h2 className="typo-page-title mt-4 text-black">SOW signed</h2>
+          <p className="typo-body mt-2 text-[#5f7467]">Your project is officially confirmed. Any change from here moves through a formal amendment.</p>
         </article>
 
         <div className="grid grid-cols-2 gap-2">
           <article className="rounded-[18px] border border-[#e2e2e2] bg-white p-3">
-            <p className="type-caption uppercase text-[#7b7b7b]">Designer</p>
-            <p className="type-label mt-2 text-black">{project.designerName}</p>
-            <p className="type-caption mt-2 text-[#6f6f6f]">{formatStamp(sow.designerSignedAt)}</p>
+            <p className="typo-caption uppercase text-[#7b7b7b]">Designer</p>
+            <p className="typo-label mt-2 text-black">{project.designerName}</p>
+            <p className="typo-caption mt-2 text-[#6f6f6f]">{formatStamp(sow.designerSignedAt)}</p>
           </article>
           <article className="rounded-[18px] border border-[#e2e2e2] bg-white p-3">
-            <p className="type-caption uppercase text-[#7b7b7b]">You</p>
-            <p className="type-label mt-2 text-black">{document.clientName}</p>
-            <p className="type-caption mt-2 text-[#6f6f6f]">{formatStamp(sow.clientSignedAt)}</p>
+            <p className="typo-caption uppercase text-[#7b7b7b]">You</p>
+            <p className="typo-label mt-2 text-black">{document.clientName}</p>
+            <p className="typo-caption mt-2 text-[#6f6f6f]">{formatStamp(sow.clientSignedAt)}</p>
           </article>
         </div>
 
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="type-section-title text-black">What happens next?</p>
-          <div className="type-body mt-3 space-y-2 text-[#5f7467]">
+          <p className="typo-section-title text-black">What happens next?</p>
+          <div className="typo-body mt-3 space-y-2 text-[#5f7467]">
             <p>Detailed drawings and execution planning can begin.</p>
             <p>Your first payment milestone follows the agreed payment structure.</p>
             <p>Any scope change now requires a formal amendment.</p>
@@ -518,9 +518,9 @@ function HomeownerSowReview({ onBack }) {
 
         {pendingAmendment ? (
           <article className="rounded-[20px] border border-[#efe2c8] bg-[#fff9ef] p-4">
-            <p className="type-section-title text-black">Amendment waiting</p>
-            <p className="type-body mt-2 text-[#5f7467]">A new formal amendment is waiting for your approval.</p>
-            <button type="button" onClick={() => setView('amendment')} className="type-body-strong mt-3 h-10 rounded-xl border border-black bg-white px-4 text-black">
+            <p className="typo-section-title text-black">Amendment waiting</p>
+            <p className="typo-body mt-2 text-[#5f7467]">A new formal amendment is waiting for your approval.</p>
+            <button type="button" onClick={() => setView('amendment')} className="typo-body-strong mt-3 h-10 rounded-xl border border-black bg-white px-4 text-black">
               Review amendment
             </button>
           </article>
@@ -528,16 +528,16 @@ function HomeownerSowReview({ onBack }) {
 
         {executedAmendments.length ? (
           <section className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
-            <p className="type-label uppercase text-[#5f7467]">Amendment history</p>
+            <p className="typo-label uppercase text-[#5f7467]">Amendment history</p>
             <div className="mt-3 space-y-3">
               {executedAmendments.map((amendment) => (
                 <article key={amendment.id} className="rounded-[16px] bg-[#fafafa] p-3">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="type-card-title text-black">Amendment v{amendment.version}</p>
-                    <span className={`type-caption rounded-full px-2 py-1 uppercase ${amendment.status === 'approved' ? 'bg-[#eaf9f1] text-[#267449]' : 'bg-[#fdecec] text-[#c34545]'}`}>{amendment.status}</span>
+                    <p className="typo-card-title text-black">Amendment v{amendment.version}</p>
+                    <span className={`typo-caption rounded-full px-2 py-1 uppercase ${amendment.status === 'approved' ? 'bg-[#eaf9f1] text-[#267449]' : 'bg-[#fdecec] text-[#c34545]'}`}>{amendment.status}</span>
                   </div>
-                  <p className="type-meta mt-1 text-[#7b7b7b]">{amendment.sectionTitle}</p>
-                  {amendment.responseText ? <p className="type-body mt-2 text-[#5f7467]">{amendment.responseText}</p> : null}
+                  <p className="typo-meta mt-1 text-[#7b7b7b]">{amendment.sectionTitle}</p>
+                  {amendment.responseText ? <p className="typo-body mt-2 text-[#5f7467]">{amendment.responseText}</p> : null}
                 </article>
               ))}
             </div>
@@ -555,8 +555,8 @@ function HomeownerSowReview({ onBack }) {
                   ['Handover', document.handoverMonth],
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                    <span className="type-utility uppercase text-[#71837a]">{label}</span>
-                    <span className="type-data-value text-right text-black">{value}</span>
+                    <span className="typo-utility uppercase text-[#71837a]">{label}</span>
+                    <span className="typo-data-value text-right text-black">{value}</span>
                   </div>
                 ))}
               </div>
@@ -566,8 +566,8 @@ function HomeownerSowReview({ onBack }) {
               <div className="space-y-3">
                 {document.rooms.map((room) => (
                   <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
-                    <p className="type-card-title text-black">{room.name}</p>
-                    <p className="type-body mt-1 text-[#5f7467]">{room.scope}</p>
+                    <p className="typo-card-title text-black">{room.name}</p>
+                    <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
                   </article>
                 ))}
               </div>
@@ -576,7 +576,7 @@ function HomeownerSowReview({ onBack }) {
             <ClientSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')}>
               <div className="space-y-2">
                 {document.exclusions.map((item) => (
-                  <div key={item} className="type-body flex items-start gap-2 text-black">
+                  <div key={item} className="typo-body flex items-start gap-2 text-black">
                     <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                     <span>{item}</span>
                   </div>
@@ -592,8 +592,8 @@ function HomeownerSowReview({ onBack }) {
                   ['Handover', document.handoverMonth],
                 ].map(([label, value]) => (
                   <article key={label} className="rounded-[18px] border border-[#e2e2e2] bg-white px-2 py-3 text-center">
-                    <p className="type-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="type-label mt-2 text-black">{value}</p>
+                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                    <p className="typo-label mt-2 text-black">{value}</p>
                   </article>
                 ))}
               </div>
@@ -601,8 +601,8 @@ function HomeownerSowReview({ onBack }) {
 
             <ClientSection index="5" title="Budget estimate" open={openSections.budget} onToggle={() => toggleSection('budget')}>
               <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-                <p className="type-caption uppercase text-[#73849d]">Total value</p>
-                <p className="type-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
+                <p className="typo-caption uppercase text-[#73849d]">Total value</p>
+                <p className="typo-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
               </div>
             </ClientSection>
 
@@ -610,8 +610,8 @@ function HomeownerSowReview({ onBack }) {
               <div className="space-y-3">
                 {document.stages.map((stage) => (
                   <div key={stage.id} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                    <span className="type-body text-[#102418]">{stage.label}</span>
-                    <span className="type-body-strong text-black">{stage.percentage}%</span>
+                    <span className="typo-body text-[#102418]">{stage.label}</span>
+                    <span className="typo-body-strong text-black">{stage.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -622,10 +622,10 @@ function HomeownerSowReview({ onBack }) {
         <button
           type="button"
           onClick={() => setShowExecutedDetails(!showExecutedDetails)}
-          className="type-body-strong mt-4 flex w-full items-center justify-between rounded-[20px] border border-[#dbe6df] bg-[#f7fbf8] p-4 text-left text-black"
+          className="typo-body-strong mt-4 flex w-full items-center justify-between rounded-[20px] border border-[#dbe6df] bg-[#f7fbf8] p-4 text-left text-black"
         >
           <span>View executed SOW details</span>
-          <span className="type-meta text-[#267449]">
+          <span className="typo-meta text-[#267449]">
             {showExecutedDetails ? 'Hide details' : 'Show details'}
           </span>
         </button>
