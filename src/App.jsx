@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   ArrowUp,
@@ -249,7 +249,6 @@ const projectDetailTools = [
   { label: 'Team', icon: User },
   { label: 'Floor plan', icon: House },
   { label: 'Site diary', icon: PencilSimpleLine },
-  { label: 'Timeline', icon: CalendarDots },
 ]
 
 const getDaysUntilDate = (value) => {
@@ -1002,11 +1001,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       const openTaskCount = sharedProjectTasksPro.filter((task) => task.status !== 'done').length
       const inProgressTaskCount = sharedProjectTasksPro.filter((task) => task.status === 'inprogress').length
       const pendingApprovalCount = sharedTaskApprovalsPro.filter((approval) => ['pending', 'question'].includes(approval.status)).length
-      const activeTimelinePhase = sharedTimelinePhases.find((phase) => phase.status === 'active')
-        || sharedTimelinePhases.find((phase) => phase.status === 'upcoming')
-        || sharedTimelinePhases[0]
       const teamMembers = sharedProjectMemberships.filter((membership) => membership.status !== 'rejected')
       const outstandingInvoiceCount = sharedFinanceInvoices.filter((invoice) => !['paid', 'Paid'].includes(invoice.status)).length
+      const workspaceAlerts = selectedProject.alerts.length >= 2
+        ? selectedProject.alerts.slice(0, 2)
+        : selectedProject.alerts.length === 1
+          ? [selectedProject.alerts[0], { ...selectedProject.alerts[0], id: `${selectedProject.alerts[0].id}-preview` }]
+          : []
       const sowStatusLabel = sharedProjectSow?.status
         ? sharedProjectSow.status.replace(/-/g, ' ')
         : 'Draft ready'
@@ -1342,14 +1343,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </p>
               </section>
 
-              <section className="border-b border-[#e0e0e0] px-4 py-6">
+              <section className="px-4 pb-6 pt-6">
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="typo-section-title text-black">Workspace</h2>
-                  <span className="typo-caption text-[#8a8a8a]">{workspaceToolCards.length} widgets</span>
+                  <span className="typo-caption text-[#8a8a8a]">{workspaceToolCards.length + 1} widgets</span>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
-                  {workspaceToolCards.map((tool) => {
+                  {workspaceToolCards.map((tool, index) => {
                     const Icon = tool.icon
                     const isArchive = tool.label === 'Archive'
                     const isBoq = tool.label === 'BOQ'
@@ -1357,27 +1358,26 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     const isSow = tool.label === 'SOW'
                     const isTasks = tool.label === 'Tasks'
                     const isFinance = tool.label === 'Finance'
-                    const isTimeline = tool.label === 'Timeline'
                     const isContract = tool.label === 'Contract'
                     const isTeam = tool.label === 'Team'
                     const isFloorPlan = tool.label === 'Floor plan'
-                    const isWideWidget = isSiteDiary || isTimeline
+                    const isWideWidget = isSiteDiary
 
                     return (
+                      <Fragment key={tool.label}>
                       <button
-                        key={tool.label}
                         type="button"
                         onClick={() => openProjectTool(tool.label)}
-                        className={`group flex min-w-0 flex-col overflow-hidden rounded-[20px] border p-4 text-left shadow-[0_12px_28px_rgba(16,36,24,0.05)] transition-transform active:scale-[0.985] ${
+                        className={`group flex h-[168px] min-w-0 flex-col overflow-hidden rounded-[20px] border p-[17px] text-left shadow-[0_18px_34px_rgba(16,36,24,0.12)] transition-transform active:scale-[0.985] ${
                           isWideWidget
-                            ? 'col-span-2 min-h-[168px] border-[rgba(95,193,138,0.28)] bg-[linear-gradient(135deg,#ffffff_0%,#f1fbf5_100%)]'
-                            : 'min-h-[176px] border-[#dce8df] bg-[linear-gradient(160deg,#ffffff_0%,#f6fbf8_100%)]'
+                            ? 'col-span-2 border-[#dce8df] bg-[#fbfffd]'
+                            : 'border-[#dce8df] bg-[#fbfffd]'
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="flex h-8 items-center justify-between gap-3">
                           <div className="flex min-w-0 items-center gap-2">
-                            <span className="grid size-9 shrink-0 place-items-center rounded-[12px] bg-[#e7f5ed] text-[#226342]">
-                              <Icon size={19} weight="regular" />
+                            <span className="grid size-8 shrink-0 place-items-center rounded-[12px] bg-[#e7f5ed] text-[#226342]">
+                              <Icon size={16} weight="regular" />
                             </span>
                             <p className="typo-body-strong truncate text-black">{isSiteDiary ? 'Site Diary' : tool.label}</p>
                           </div>
@@ -1385,46 +1385,59 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         </div>
 
                         {isArchive ? (
-                          <div className="mt-auto pt-3">
-                            <div className="hynt-tool-preview-stack flex h-14 items-center">
-                              <img src="/hynt-home/idea-1.png" alt="" className="hynt-tool-preview-image z-[3]" />
-                              <img src="/hynt-home/idea-2.png" alt="" className="hynt-tool-preview-image hynt-tool-preview-image--tilt-left z-[2]" />
-                              <img src="/hynt-home/product.png" alt="" className="hynt-tool-preview-image hynt-tool-preview-image--tilt-right z-[1]" />
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
+                            <div className="hynt-tool-preview-stack flex h-[46px] items-center overflow-visible">
+                              {[
+                                '/hynt-home/idea-1.png',
+                                '/hynt-home/idea-2.png',
+                                '/hynt-home/product.png',
+                                '/hynt-home/idea-1.png',
+                                '/hynt-home/idea-2.png',
+                                '/hynt-home/product.png',
+                                '/hynt-home/idea-1.png',
+                              ].map((image, imageIndex) => (
+                                <img
+                                  key={`${image}-${imageIndex}`}
+                                  src={image}
+                                  alt=""
+                                  style={{ zIndex: 8 - imageIndex }}
+                                  className={`hynt-tool-preview-image ${imageIndex % 2 === 0 ? 'hynt-tool-preview-image--tilt-left' : 'hynt-tool-preview-image--tilt-right'}`}
+                                />
+                              ))}
                             </div>
-                            <p className="typo-meta mt-2 text-[#64766c]">{sharedProjectArchiveItems.length || 3} files shared</p>
+                            <p className="typo-meta text-[#64766c]">{Math.min(sharedProjectArchiveItems.length || 5, 5)} folders</p>
                           </div>
                         ) : null}
 
                         {isBoq ? (
-                          <div className="mt-auto pt-4">
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
                             <p className="typo-data-strong inline-flex items-center text-[#173c2a]"><CurrencyInr size={17} weight="bold" />{formatRupees(totalEstimate)}</p>
-                            <div className="mt-3 flex items-center justify-between gap-2">
-                              <span className="typo-meta text-[#64766c]">{boqItems.length} line items</span>
-                              <span className="typo-meta rounded-full bg-[#fff0dc] px-2 py-1 text-[#a55b13]">2 pending</span>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="typo-meta text-[#64766c]">3 quotations</span>
+                              <span className="typo-meta rounded-full bg-[#fff0dc] px-2 py-1 text-[#a55b13]">1 unsent</span>
                             </div>
                           </div>
                         ) : null}
 
                         {isSow ? (
-                          <div className="mt-auto pt-4">
-                            <div className="flex items-end justify-between gap-2">
-                              <p className="typo-title-20 text-[#173c2a]">6</p>
-                              <span className="typo-meta rounded-full bg-[#e4f5eb] px-2 py-1 capitalize text-[#24754b]">{sowStatusLabel}</span>
-                            </div>
-                            <p className="typo-meta mt-1 text-[#64766c]">scope sections</p>
-                            <div className="mt-3 flex gap-1">
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
+                            <span className="typo-meta w-fit rounded-full bg-[#e4f5eb] px-2 py-1 capitalize text-[#24754b]">{sowStatusLabel}</span>
+                            <div>
+                              <p className="typo-meta text-[#64766c]">scope completion</p>
+                              <div className="mt-2 flex gap-1">
                               {[0, 1, 2, 3].map((step) => <span key={step} className={`h-1.5 flex-1 rounded-full ${step < 3 ? 'bg-[#5fc18a]' : 'bg-[#dce8df]'}`} />)}
+                              </div>
                             </div>
                           </div>
                         ) : null}
 
                         {isTasks ? (
-                          <div className="mt-auto pt-4">
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
                             <div className="flex items-end gap-2">
                               <p className="typo-title-20 text-[#173c2a]">{openTaskCount}</p>
                               <p className="typo-meta pb-0.5 text-[#64766c]">open tasks</p>
                             </div>
-                            <div className="mt-3 space-y-2">
+                            <div className="space-y-1">
                               <div className="flex items-center justify-between"><span className="typo-meta text-[#64766c]">In progress</span><span className="typo-meta text-black">{inProgressTaskCount}</span></div>
                               <div className="flex items-center justify-between"><span className="typo-meta text-[#64766c]">Approvals</span><span className="typo-meta text-black">{pendingApprovalCount}</span></div>
                             </div>
@@ -1432,57 +1445,47 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                         ) : null}
 
                         {isFinance ? (
-                          <div className="mt-auto pt-4">
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
                             <p className="typo-data-strong inline-flex items-center text-[#173c2a]"><CurrencyInr size={17} weight="bold" />{formatLakhs(selectedProject.spentL)}</p>
-                            <p className="typo-meta mt-1 text-[#64766c]">spent of {formatLakhs(selectedProject.budgetL)}</p>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#e2ebe6]"><span className="block h-full rounded-full bg-[#5fc18a]" style={{ width: `${budgetUsage}%` }} /></div>
-                            <p className="typo-meta mt-2 text-[#64766c]">{outstandingInvoiceCount} payment{outstandingInvoiceCount === 1 ? '' : 's'} due</p>
+                            <div>
+                              <p className="typo-meta text-[#64766c]">spent of {formatLakhs(selectedProject.budgetL)}</p>
+                              <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#e2ebe6]"><span className="block h-full rounded-full bg-[#5fc18a]" style={{ width: `${budgetUsage}%` }} /></div>
+                            </div>
+                            <p className="typo-meta text-[#64766c]">{outstandingInvoiceCount} payment{outstandingInvoiceCount === 1 ? '' : 's'} due</p>
                           </div>
                         ) : null}
 
                         {isSiteDiary ? (
-                          <div className="hynt-site-diary-preview mt-3 h-[68px] overflow-hidden">
-                            <div className="flex h-[68px] items-center gap-3 py-1">
-                              <img src="/hynt-home/idea-2.png" alt="" className="size-14 rounded-[16px] border-2 border-[#ebebeb] object-cover" />
+                          <div className="hynt-site-diary-preview mt-2 h-[94px] overflow-hidden">
+                            <div className="flex h-[47px] items-center gap-3">
+                              <img src="/hynt-home/idea-2.png" alt="" className="size-9 rounded-[10px] border border-[#ebebeb] object-cover" />
                               <div className="min-w-0">
                                 <p className="typo-body-strong text-black">Kitchen ceiling update</p>
                                 <p className="typo-meta text-[#7b8f84]">Progress image shared from site</p>
                               </div>
                             </div>
-                            <div className="flex h-[68px] items-center gap-3 py-1">
-                              <img src="/hynt-home/idea-1.png" alt="" className="size-14 rounded-[16px] border-2 border-[#ebebeb] object-cover" />
+                            <div className="flex h-[47px] items-center gap-3">
+                              <img src="/hynt-home/idea-1.png" alt="" className="size-9 rounded-[10px] border border-[#ebebeb] object-cover" />
                               <div className="min-w-0">
-                                <p className="typo-body-strong text-black">Living room wall prep</p>
-                                <p className="typo-meta text-[#7b8f84]">Latest annotated diary entry</p>
+                                <p className="typo-body-strong text-black">Kitchen ceiling update</p>
+                                <p className="typo-meta text-[#7b8f84]">Progress image shared from site</p>
                               </div>
                             </div>
-                          </div>
-                        ) : null}
-
-                        {isTimeline ? (
-                          <div className="mt-4 rounded-[16px] bg-white/80 p-3 ring-1 ring-[#e1ece5]">
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="min-w-0">
-                                <p className="typo-meta text-[#648071]">Current phase</p>
-                                <p className="typo-body-strong mt-1 truncate text-black">{activeTimelinePhase?.name || 'Project kickoff'}</p>
-                              </div>
-                              <span className="typo-body-strong text-[#24754b]">{activeTimelinePhase?.progress || selectedProject.progress}%</span>
-                            </div>
-                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#e1ebe5]"><span className="block h-full rounded-full bg-[linear-gradient(90deg,#30c884,#8bd5aa)]" style={{ width: `${activeTimelinePhase?.progress || selectedProject.progress}%` }} /></div>
                           </div>
                         ) : null}
 
                         {isContract ? (
-                          <div className="mt-auto pt-4">
-                            <div className="rounded-[16px] border border-[#dce8df] bg-white/80 p-3">
-                              <div className="flex items-center gap-2"><CheckCircle size={18} weight="fill" className="text-[#5fc18a]" /><span className="typo-body-strong text-[#173c2a]">Agreement ready</span></div>
-                              <p className="typo-meta mt-2 text-[#64766c]">Linked to latest SOW</p>
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle size={16} weight="fill" className="text-[#102418]" />
+                              <span className="typo-body-strong text-[#173c2a]">Agreement ready</span>
                             </div>
+                            <p className="typo-meta text-[#64766c]">Linked to latest SOW</p>
                           </div>
                         ) : null}
 
                         {isTeam ? (
-                          <div className="mt-auto pt-4">
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
                             <div className="flex -space-x-2">
                               {teamMembers.slice(0, 3).map((member, index) => (
                                 member.user?.avatar || member.user?.image
@@ -1490,46 +1493,51 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                                   : <span key={member.id || index} className="typo-meta grid size-10 place-items-center rounded-full border-2 border-white bg-[#dff2e7] text-[#245e3f]">{member.user?.name?.slice(0, 1) || 'H'}</span>
                               ))}
                             </div>
-                            <p className="typo-meta mt-3 text-[#64766c]">{teamMembers.length || 3} collaborators</p>
+                            <p className="typo-meta text-[#64766c]">{teamMembers.length || 3} collaborators</p>
                           </div>
                         ) : null}
 
                         {isFloorPlan ? (
-                          <div className="mt-auto grid h-[76px] grid-cols-[1.15fr_0.85fr] gap-1 rounded-[16px] border border-[#cfe3d7] bg-white p-2 pt-4">
-                            <div className="grid grid-rows-2 gap-1"><span className="rounded-[6px] bg-[#e7f5ed]" /><span className="rounded-[6px] border border-[#dbe8df]" /></div>
-                            <div className="grid grid-cols-2 gap-1"><span className="rounded-[6px] border border-[#dbe8df]" /><span className="rounded-[6px] bg-[#f4eadb]" /></div>
-                            <span className="typo-meta pointer-events-none absolute opacity-0">Floor plan preview</span>
+                          <div className="mt-2 flex h-[94px] flex-col justify-between">
+                            <div className="grid h-[68px] grid-cols-[38px_1fr_38px] gap-1 rounded-[12px] border border-[#cfe3d7] bg-white p-2">
+                              <div className="grid grid-rows-2 gap-1"><span className="rounded-[6px] bg-[#e7f5ed]" /><span className="rounded-[6px] border border-[#dbe8df]" /></div>
+                              <span className="rounded-[6px] border border-[#dbe8df]" />
+                              <span className="rounded-[6px] bg-[#f4eadb]" />
+                            </div>
+                            <p className="typo-meta text-[#8a9a91]">Not uploaded</p>
                           </div>
                         ) : null}
                       </button>
+
+                      {index === 1 ? (
+                        <section id="project-updates" className="col-span-2 h-[168px] overflow-hidden rounded-[20px] border border-[#dce8df] bg-[#fbfffd] p-[17px] shadow-[0_18px_34px_rgba(16,36,24,0.12)]">
+                          <div className="flex items-center justify-between">
+                            <h2 className="typo-section-title text-black">Updates</h2>
+                          </div>
+                          <div className="mt-3 flex h-[92px] flex-col overflow-hidden">
+                            {workspaceAlerts.length ? workspaceAlerts.map((alert, alertIndex) => (
+                              <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="h-[42px] w-full text-left">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-1">
+                                    <p className="typo-body-strong text-black">{alertIndex === 0 ? 'Kitchen' : 'Living Room'}</p>
+                                    {alertIndex === 0 ? <span className="size-1 rounded-full bg-[#26c485]" /> : null}
+                                  </div>
+                                  <DotsThreeVertical size={16} className="text-[#8a8a8a]" />
+                                </div>
+                                <div className="mt-1 flex items-center gap-4">
+                                  <p className="typo-body min-w-0 flex-1 truncate text-[#525252]">{alert.detail || alert.title}</p>
+                                  <span className="typo-meta shrink-0 text-[#828282]">{alert.time}</span>
+                                </div>
+                              </button>
+                            )) : (
+                              <p className="typo-body py-2 text-[#525252]">No new project updates.</p>
+                            )}
+                          </div>
+                        </section>
+                      ) : null}
+                      </Fragment>
                     )
                   })}
-
-                  <section id="project-updates" className="col-span-2 overflow-hidden rounded-[20px] border border-[#dce8df] bg-[linear-gradient(180deg,#ffffff_0%,#f6fbf8_100%)] p-4 shadow-[0_12px_28px_rgba(16,36,24,0.05)]">
-                    <div className="flex items-center justify-between">
-                      <h2 className="typo-section-title text-black">Updates</h2>
-                      <span className="typo-caption text-[#8a8a8a]">{selectedProject.alerts.length} items</span>
-                    </div>
-                    <div className="mt-3 flex flex-col overflow-hidden">
-                      {selectedProject.alerts.length ? selectedProject.alerts.slice(0, 2).map((alert, index) => (
-                        <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="w-full border-b border-[rgba(0,0,0,0.12)] py-2 text-left last:border-b-0">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <p className="typo-body-strong text-black">{index === 0 ? 'Kitchen' : 'Living Room'}</p>
-                              {index === 0 ? <span className="size-1 rounded-full bg-[#26c485]" /> : null}
-                            </div>
-                            <DotsThreeVertical size={16} className="text-[#8a8a8a]" />
-                          </div>
-                          <div className="mt-1 flex items-center gap-4">
-                            <p className="typo-body min-w-0 flex-1 truncate text-[#525252]">{alert.detail || alert.title}</p>
-                            <span className="typo-meta shrink-0 text-[#828282]">{alert.time}</span>
-                          </div>
-                        </button>
-                      )) : (
-                        <p className="typo-body py-2 text-[#525252]">No new project updates.</p>
-                      )}
-                    </div>
-                  </section>
                 </div>
               </section>
             </div>
@@ -1599,49 +1607,28 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
                 return (
                   <article
-                  key={project.id}
-                  className="cursor-pointer rounded-[24px] border border-[#d8e1db] bg-[linear-gradient(180deg,#ffffff_0%,#f7faf8_100%)] p-4 shadow-[0_12px_28px_rgba(16,36,24,0.06)]"
-                  onClick={() => {
-                    setSelectedProjectId(project.id)
-                    setSelectedProjectPage('overview')
-                  }}
-                >
-                  <div className="flex items-start justify-between gap-3">
+                    key={project.id}
+                    className="-mx-4 cursor-pointer border-b border-[#e0e0e0] bg-white px-4 py-4 transition-colors active:bg-[#f6faf8]"
+                    onClick={() => {
+                      setSelectedProjectId(project.id)
+                      setSelectedProjectPage('overview')
+                    }}
+                  >
                     <div>
-                      <p className="typo-section-title text-[#102418]">{project.scope}</p>
-                      <p className="typo-body-strong mt-1 text-[#6f7b74]">{project.client} · {project.location}</p>
-                    </div>
-                    <span className={`typo-badge rounded-full px-3 py-1 ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#2a9a64]' : project.status === 'Pending' ? 'bg-[#f2f2f2] text-[#777]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-[120px,1fr] gap-3">
-                    <div className="rounded-[20px] border border-[#dde4df] bg-white p-3">
-                      <p className="typo-overline text-[#7b7b7b]">Budget</p>
-                      <p className="mt-2 text-[#102418]">{renderInrValue(`${project.budgetL}L`, 'typo-data-strong', 18)}</p>
-                    </div>
-                    <div className={`rounded-[20px] border p-3 ${deadlineTone.shell}`}>
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="typo-overline text-[#7b7b7b]">Deadline</p>
-                          <p className="typo-section-title mt-1 text-[#102418]">{project.dueDate}</p>
-                          <span className={`typo-badge mt-2 inline-flex rounded-full px-2 py-1 ${deadlineTone.badge}`}>
-                            {deadlineTone.helper}
-                          </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className={`size-2 shrink-0 rounded-full ${project.status === 'Active' ? 'bg-[#5fc18a]' : project.status === 'Pending' ? 'bg-[#efb24d]' : 'bg-[#6ea8ff]'}`} />
+                          <p className="typo-section-title min-w-0 flex-1 truncate text-[#102418]">{project.scope}</p>
+                          <span className={`typo-badge shrink-0 rounded-full px-2 py-1 ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#24754b]' : project.status === 'Pending' ? 'bg-[#fff3d9] text-[#9b6a00]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
+                          <CaretRight size={16} className="shrink-0 text-[#6f8178]" />
                         </div>
-                        <div className="flex flex-col items-center gap-2">
-                          <div
-                            className="grid size-14 place-items-center rounded-full"
-                            style={{ background: `conic-gradient(${deadlineTone.ring[0]} ${Math.round(progress * 360)}deg, ${deadlineTone.ring[1]} 0deg)` }}
-                          >
-                            <div className="grid size-10 place-items-center rounded-full bg-white">
-                                <span className={`typo-badge ${deadlineTone.accent}`}>{daysLeft === null ? '--' : Math.max(daysLeft, 0)}</span>
-                            </div>
-                          </div>
-                          <p className={`typo-badge text-center ${deadlineTone.accent}`}>{dueLabel}</p>
-                        </div>
+                        <p className="typo-body mt-1 truncate text-[#607269]">{project.client} {'\u00b7'} {project.location}</p>
+                        <span className={`typo-body-strong mt-3 inline-flex h-9 max-w-full items-center rounded-full px-3 ${deadlineTone.badge}`}>
+                          <span className="mr-1 opacity-75">Due</span>
+                          <span className="truncate">{project.dueDate}</span>
+                        </span>
                       </div>
                     </div>
-                  </div>
                   </article>
                 )
               })}
@@ -2515,7 +2502,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
     if (message.selector === 'budget') {
       const value = message.value?.range || ''
-      const budgetMatch = value.match(/₹(\d+)L\s+–\s+₹(\d+)L/)
+      const budgetMatch = value.match(/ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹(\d+)L\s+ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã¢â‚¬Å“\s+ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¹(\d+)L/)
       const min = budgetMatch?.[1] || '2'
       const max = budgetMatch?.[2] || '5'
       return (
@@ -2828,7 +2815,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="typo-label uppercase text-[#267449]">Events</p>
-          <h1 className="typo-page-title mt-2 text-[#102418]">What’s coming up near you.</h1>
+          <h1 className="typo-page-title mt-2 text-[#102418]">WhatÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s coming up near you.</h1>
         </div>
         <button type="button" className="typo-body-strong rounded-full border border-[#cfe0d7] bg-white px-5 py-3 text-[#173324] shadow-sm">Filter by city</button>
       </header>
@@ -2857,7 +2844,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           <img src="/hynt-home/pro-1.png" alt="Profile" className="size-20 rounded-[28px] object-cover" />
           <div>
             <p className="typo-label uppercase text-[#267449]">Profile</p>
-            <h1 className="typo-page-title mt-2 text-[#102418]">Aarav’s workspace</h1>
+            <h1 className="typo-page-title mt-2 text-[#102418]">AaravÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢s workspace</h1>
             <p className="typo-title-16 mt-2 text-[#5f6a63]">Saved ideas, preferences, and live requirement shortcuts.</p>
           </div>
         </div>
@@ -3351,5 +3338,3 @@ function App() {
 }
 
 export default App
-
-

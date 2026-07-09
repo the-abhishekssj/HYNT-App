@@ -91,7 +91,7 @@
     transform: translateY(0);
   }
   50%, 92% {
-    transform: translateY(-48px);
+    transform: translateY(-47px);
   }
   100% {
     transform: translateY(0);
@@ -103,11 +103,11 @@
 }
 
 .hynt-tool-preview-image {
-  width: 40px;
-  height: 40px;
-  margin-right: -24px;
+  width: 45px;
+  height: 45px;
+  margin-right: -26px;
   border: 2px solid #ebebeb;
-  border-radius: 16px;
+  border-radius: 14px;
   object-fit: cover;
   animation: hyntToolPreviewFloat 2200ms ease-in-out infinite;
 }
