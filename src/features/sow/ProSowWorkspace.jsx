@@ -10,7 +10,7 @@ import {
   NotePencil,
   PencilSimpleLine,
   Plus,
-  Sparkle,
+  ArrowCounterClockwise,
   Trash,
 } from '@phosphor-icons/react'
 import { useSharedProject } from '../collaboration/mockProjectStore'
@@ -132,14 +132,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
   const [showExecutedDetails, setShowExecutedDetails] = useState(false)
   const [selectedTemplateId, setSelectedTemplateId] = useState('residential')
   const [openSections, setOpenSections] = useState({
-    overview: true,
-    scope: true,
+    overview: false,
+    scope: false,
     exclusions: false,
     timeline: false,
     budget: false,
     payment: false,
     terms: false,
-    signatures: true,
+    signatures: false,
   })
   const [designerOtp, setDesignerOtp] = useState(['', '', '', '', '', ''])
   const [aiStepIndex, setAiStepIndex] = useState(0)
@@ -288,12 +288,30 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             <NotePencil size={22} />
           </div>
           <h1 className="typo-page-title mt-4 text-black">Create the first SOW</h1>
-          <p className="typo-body mt-2 text-[#5f7467]">Start from a template, use the AI pass if you want, then send it into the homeowner review flow.</p>
+          <p className="typo-body mt-2 text-[#5f7467]">Choose a template to start. Standard clauses are pre-filled; customize anything after.</p>
         </section>
 
-        <section className="mt-4 rounded-[20px] border border-[#e1e1e1] bg-white p-4">
-          <p className="typo-label uppercase text-[#5f7467]">Shared demo behavior</p>
-          <p className="typo-body mt-2 text-[#5f7467]">The homeowner flow will wait for this document and react to remarks, revisions, and signing in real time.</p>
+        <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
+          <p className="typo-label uppercase text-[#5f7467]">Template selector</p>
+          <div className="mt-3 grid gap-2">
+            {sowTemplates.slice(0, 3).map((template) => (
+              <button
+                key={template.id}
+                type="button"
+                onClick={() => {
+                  setSelectedTemplateId(template.id)
+                  setView('template')
+                }}
+                className="flex items-center justify-between rounded-2xl border border-[#e4ebe6] bg-[#fbfcfb] px-3 py-3 text-left"
+              >
+                <span>
+                  <span className="typo-body-strong block text-black">{template.name}</span>
+                  <span className="typo-meta mt-1 block text-[#6f7c74]">{template.subtitle}</span>
+                </span>
+                <ArrowRight size={16} />
+              </button>
+            ))}
+          </div>
         </section>
       </div>
 
@@ -368,11 +386,11 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         onBack={onBack}
         actions={(
           <>
-            <button type="button" onClick={() => setView('ai')} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black" aria-label="AI generate SOW">
-              <Sparkle size={15} />
+            <button type="button" onClick={actions.resetDemo} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black" aria-label="Reset SOW">
+              <ArrowCounterClockwise size={15} />
             </button>
-            <button type="button" onClick={actions.resetDemo} className="typo-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
-              Reset
+            <button type="button" onClick={() => setOpenSections((current) => ({ ...current, overview: true, scope: true }))} className="typo-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
+              Edit
             </button>
           </>
         )}
@@ -540,6 +558,11 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
               <SignatureCard label="Client" name={document.clientName} state={sow.clientSigned ? 'Signed' : 'Awaiting'} stamp={formatStamp(sow.clientSignedAt)} />
             </div>
           </SOWSection>
+
+          <button type="button" onClick={() => addListItem('termsNotes', 'Custom SOW field - describe the additional clause or deliverable here.')} className="typo-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-[16px] border border-dashed border-[#b8c9be] bg-[#fbfffd] text-[#173324]">
+            <Plus size={15} />
+            Add custom SOW field
+          </button>
 
           {activity.length ? (
             <section className="rounded-[20px] border border-[#e1e1e1] bg-white p-4">

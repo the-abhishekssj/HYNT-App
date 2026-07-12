@@ -6,6 +6,7 @@ import {
   Circle,
   ClockCountdown,
   DotsThree,
+  Kanban,
   ListBullets,
   PaperPlaneTilt,
   PencilSimple,
@@ -345,6 +346,7 @@ export default function ProjectTasksWorkspace({
   }
   const [activeTab, setActiveTab] = useState('my')
   const [taskFilter, setTaskFilter] = useState('All')
+  const [viewMode, setViewMode] = useState('list')
   const [taskActionTargetId, setTaskActionTargetId] = useState(null)
   const [composerMode, setComposerMode] = useState(null)
   const [newTaskTitle, setNewTaskTitle] = useState('')
@@ -691,7 +693,7 @@ export default function ProjectTasksWorkspace({
         />
 
         <div className="px-4 pt-5">
-          <div className={`grid gap-2 rounded-[20px] border border-[#e4ebe6] bg-[#fbfcfb] p-2 ${visibleTabGridClass}`}>
+          <div className="no-scrollbar flex gap-2 overflow-x-auto">
             {visibleTabs.map((tab) => {
               const Icon = tab.icon
               const active = currentTab === tab.key
@@ -700,10 +702,10 @@ export default function ProjectTasksWorkspace({
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveTab(tab.key)}
-                  className={`rounded-2xl px-3 py-3 text-left transition ${active ? 'bg-[#173324] text-white shadow-[0_10px_24px_rgba(23,51,36,0.16)]' : 'text-[#6f7c74]'}`}
+                  className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 transition ${active ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
                 >
                   <Icon size={16} weight={active ? 'fill' : 'regular'} />
-                  <p className={`typo-body-strong mt-2 ${active ? 'text-white' : 'text-[#6f7c74]'}`}>{tab.label}</p>
+                  <p className="typo-body-strong">{tab.label}</p>
                 </button>
               )
             })}
@@ -711,6 +713,19 @@ export default function ProjectTasksWorkspace({
 
           {currentTab === 'my' ? (
             <section className="mt-6">
+              <div className="grid grid-cols-2 rounded-full bg-[#f3f7f4] p-1">
+                {[
+                  ['list', 'List', ListBullets],
+                  ['kanban', 'Kanban', Kanban],
+                ].map(([key, label, Icon]) => (
+                  <button key={key} type="button" onClick={() => setViewMode(key)} className={`typo-body-strong flex h-10 items-center justify-center gap-2 rounded-full ${viewMode === key ? 'bg-white text-[#173324] shadow-[0_8px_18px_rgba(16,36,24,0.08)]' : 'text-[#6f7c74]'}`}>
+                    <Icon size={16} />
+                    {label}
+                  </button>
+                ))}
+              </div>
+              {viewMode === 'list' ? (
+                <>
               <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
                 {taskFilters.map((filter) => (
                   <button
@@ -769,6 +784,34 @@ export default function ProjectTasksWorkspace({
                   )
                 })}
               </div>
+                </>
+              ) : (
+                <div className="mt-6 grid grid-cols-[240px_240px_240px] gap-3 overflow-x-auto pb-2">
+                  {[
+                    ['To do', scopedTasks.filter((task) => task.status === 'todo')],
+                    ['In progress', scopedTasks.filter((task) => task.status === 'inprogress')],
+                    ['Done', scopedTasks.filter((task) => task.status === 'done')],
+                  ].map(([label, columnTasks]) => (
+                    <section key={label} className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-3">
+                      <div className="mb-3 flex items-center justify-between">
+                        <p className="typo-body-strong text-black">{label}</p>
+                        <span className="typo-badge grid size-6 place-items-center rounded-full bg-white text-[#5f6f66]">{String(columnTasks.length).padStart(2, '0')}</span>
+                      </div>
+                      <div className="space-y-2">
+                        {columnTasks.map((task) => (
+                          <button key={task.id} type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full rounded-2xl border border-[#edf1ee] bg-white p-3 text-left">
+                            <p className="typo-body-strong text-black">{task.title}</p>
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              <span className="typo-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{task.assignee}</span>
+                              <span className={`typo-caption rounded-md px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+              )}
             </section>
           ) : null}
 
@@ -832,13 +875,12 @@ export default function ProjectTasksWorkspace({
         <div className="fixed inset-0 z-[100] bg-black/30">
           <button type="button" onClick={() => setComposerMode(null)} className="absolute inset-0 cursor-default" aria-label="Close composer" />
           <aside className="absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col border-l border-[#e3e9e5] bg-white shadow-[-18px_0_48px_rgba(16,36,24,0.14)]">
-            <header className="flex items-start justify-between border-b border-[#e6ece8] px-5 py-5">
+            <header className="flex items-center justify-between border-b border-[#e6ece8] px-4 py-3">
               <div>
-                <p className="typo-label uppercase text-[#7a8780]">{composerMode === 'task' ? 'Project task' : 'Homeowner decision'}</p>
-                <h2 className="typo-page-title mt-1 text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
-                <p className="typo-meta mt-1 text-[#7a8780]">{selectedProject?.scope || homeownerProjectName}</p>
+                <h2 className="typo-section-title text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
+                <p className="typo-caption mt-1 text-[#999999]">{selectedProject?.scope || homeownerProjectName}</p>
               </div>
-              <button type="button" onClick={() => setComposerMode(null)} className="grid size-10 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
+              <button type="button" onClick={() => setComposerMode(null)} className="grid size-9 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
                 <XCircle size={20} weight="fill" />
               </button>
             </header>

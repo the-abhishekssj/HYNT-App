@@ -26,11 +26,13 @@ import {
   MagnifyingGlass,
   PaperPlaneTilt,
   PencilSimpleLine,
+  Phone,
   Plus,
   Crosshair,
   DotsThreeVertical,
   Scroll,
   NotePencil,
+  ChatCircleText,
   SlidersHorizontal,
   User,
   Eye,
@@ -646,6 +648,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     email: '',
     location: '',
     scope: '',
+    projectType: 'Full renovation',
     status: 'Active',
     budgetL: '',
     dueDate: '',
@@ -721,11 +724,11 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     ['explore', 'Explore', Kanban, 'icon'],
     ['ai', 'HYNT AI', null, 'hynt-ai'],
     ['leads', 'Leads', Crosshair, 'icon'],
-    ['protools', 'Pro tools', SlidersHorizontal, 'icon'],
+    ['protools', 'Projects', SlidersHorizontal, 'icon'],
   ]
   const handleProNavSelect = (key) => {
     if (key === 'protools') {
-      setProHomeTab('protools')
+      setIsProjectsViewOpen(true)
       return
     }
     if (key === 'ai') {
@@ -736,7 +739,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   }
   const isProNavSelected = (key) => {
     if (key === 'ai') return proHomeTab === 'ai'
-    if (key === 'protools') return proHomeTab === 'protools'
+    if (key === 'protools') return isProjectsViewOpen
     return proHomeTab === 'home' && key === 'home'
   }
   const openProjectAlert = (alert) => {
@@ -917,40 +920,75 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               </div>
             </header>
 
-            <div className="px-4 py-6">
-              <div className="space-y-3">
-                {[
-                  ['client', 'Client name', 'text', 'Aarav Mehta'],
-                  ['phone', 'Mobile number', 'tel', '+91 98765 43210'],
-                  ['email', 'Email', 'email', 'aarav@example.com'],
-                  ['location', 'Location', 'text', 'Bengaluru'],
-                  ['scope', 'Project name', 'text', '3BHK Full Renovation'],
-                  ['budgetL', 'Budget (L)', 'number', '28'],
-                  ['dueDate', 'Due date', 'date', ''],
-                ].map(([key, label, type, placeholder]) => (
-                  <label key={key} className="block">
-                    <p className="typo-label mb-1 uppercase text-[#7b7b7b]">{label}</p>
-                    <input
-                      type={type}
-                      value={newProjectForm[key]}
-                      placeholder={placeholder}
-                      onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
-                      className="typo-body h-11 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none"
-                    />
+            <div className="space-y-5 px-4 py-6">
+              <section className="rounded-[20px] border border-[#e0e0e0] bg-white p-4">
+                <h2 className="typo-section-title text-black">Client details</h2>
+                <div className="mt-4 space-y-3">
+                  {[
+                    ['client', 'Client name', 'text', 'Aarav Mehta'],
+                    ['phone', 'Mobile number', 'tel', '+91 98765 43210'],
+                    ['email', 'Email', 'email', 'aarav@example.com'],
+                    ['location', 'Location', 'text', 'Bengaluru'],
+                  ].map(([key, label, type, placeholder]) => (
+                    <label key={key} className="block">
+                      <p className="typo-label mb-1 uppercase text-[#7b7b7b]">{label}</p>
+                      <input
+                        type={type}
+                        value={newProjectForm[key]}
+                        placeholder={placeholder}
+                        onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
+                        className="typo-body h-11 w-full rounded-2xl border border-[#d7d7d7] px-3 outline-none"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </section>
+
+              <section className="rounded-[20px] border border-[#e0e0e0] bg-white p-4">
+                <h2 className="typo-section-title text-black">Project details</h2>
+                <div className="mt-4 space-y-3">
+                  {[
+                    ['scope', 'Project name', 'text', '3BHK Full Renovation'],
+                    ['budgetL', 'Budget (L)', 'number', '28'],
+                    ['dueDate', 'Due date', 'date', ''],
+                  ].map(([key, label, type, placeholder]) => (
+                    <label key={key} className="block">
+                      <p className="typo-label mb-1 uppercase text-[#7b7b7b]">{label}</p>
+                      <input
+                        type={type}
+                        value={newProjectForm[key]}
+                        placeholder={placeholder}
+                        onChange={(event) => setNewProjectForm((prev) => ({ ...prev, [key]: event.target.value }))}
+                        className="typo-body h-11 w-full rounded-2xl border border-[#d7d7d7] px-3 outline-none"
+                      />
+                    </label>
+                  ))}
+                  <label className="block">
+                    <p className="typo-label mb-1 uppercase text-[#7b7b7b]">Project type</p>
+                    <select
+                      value={newProjectForm.projectType}
+                      onChange={(event) => setNewProjectForm((prev) => ({ ...prev, projectType: event.target.value }))}
+                      className="typo-body h-11 w-full rounded-2xl border border-[#d7d7d7] bg-white px-3 outline-none"
+                    >
+                      <option>Full renovation</option>
+                      <option>Furniture only</option>
+                      <option>Design consultation</option>
+                      <option>Turnkey execution</option>
+                    </select>
                   </label>
-                ))}
-                <label className="block">
-                  <p className="typo-label mb-1 uppercase text-[#7b7b7b]">Status</p>
-                  <select
-                    value={newProjectForm.status}
-                    onChange={(event) => setNewProjectForm((prev) => ({ ...prev, status: event.target.value }))}
-                    className="typo-body h-11 w-full rounded-xl border border-[#d7d7d7] bg-white px-3 outline-none"
-                  >
-                    <option>Active</option>
-                    <option>Completed</option>
-                  </select>
-                </label>
-              </div>
+                  <label className="block">
+                    <p className="typo-label mb-1 uppercase text-[#7b7b7b]">Status</p>
+                    <select
+                      value={newProjectForm.status}
+                      onChange={(event) => setNewProjectForm((prev) => ({ ...prev, status: event.target.value }))}
+                      className="typo-body h-11 w-full rounded-2xl border border-[#d7d7d7] bg-white px-3 outline-none"
+                    >
+                      <option>Active</option>
+                      <option>Completed</option>
+                    </select>
+                  </label>
+                </div>
+              </section>
             </div>
           </section>
 
@@ -969,6 +1007,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                   email: '',
                   location: '',
                   scope: '',
+                  projectType: 'Full renovation',
                   status: 'Active',
                   budgetL: '',
                   dueDate: '',
@@ -1003,17 +1042,19 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       const pendingApprovalCount = sharedTaskApprovalsPro.filter((approval) => ['pending', 'question'].includes(approval.status)).length
       const teamMembers = sharedProjectMemberships.filter((membership) => membership.status !== 'rejected')
       const outstandingInvoiceCount = sharedFinanceInvoices.filter((invoice) => !['paid', 'Paid'].includes(invoice.status)).length
-      const workspaceAlerts = selectedProject.alerts.length >= 2
-        ? selectedProject.alerts.slice(0, 2)
-        : selectedProject.alerts.length === 1
-          ? [selectedProject.alerts[0], { ...selectedProject.alerts[0], id: `${selectedProject.alerts[0].id}-preview` }]
-          : []
       const sowStatusLabel = sharedProjectSow?.status
         ? sharedProjectSow.status.replace(/-/g, ' ')
         : 'Draft ready'
       const budgetUsage = selectedProject.budgetL > 0
         ? Math.min(Math.round((selectedProject.spentL / selectedProject.budgetL) * 100), 100)
         : 0
+      const projectDeadline = getDeadlineProgress(selectedProject)
+      const projectDeadlineTone = getDeadlineTone(projectDeadline.daysLeft)
+      const projectDueLabel = projectDeadline.daysLeft === null
+        ? 'Schedule pending'
+        : projectDeadline.daysLeft < 0
+          ? `${Math.abs(projectDeadline.daysLeft)} day${Math.abs(projectDeadline.daysLeft) === 1 ? '' : 's'} overdue`
+          : `${projectDeadline.daysLeft} day${projectDeadline.daysLeft === 1 ? '' : 's'} left`
 
       const shareBoq = async () => {
         const shareText = boqItems
@@ -1306,8 +1347,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                       <span className="typo-caption block text-[#999999]">Back to projects</span>
                     </span>
                   </button>
-                  <button type="button" className="grid size-10 place-items-center" aria-label="Search project">
-                    <MagnifyingGlass size={24} />
+                  <button type="button" onClick={() => setSelectedProjectPage('updates')} className="relative grid size-10 place-items-center" aria-label="Project updates">
+                    <Bell size={22} />
+                    {selectedProject.alerts.length ? (
+                      <span className="typo-status-mini absolute right-0 top-0 grid min-h-4 min-w-4 place-items-center rounded-full bg-[#26c485] px-1 text-white">
+                        {selectedProject.alerts.length}
+                      </span>
+                    ) : null}
                   </button>
                 </div>
               </div>
@@ -1315,38 +1361,52 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
             <div className="pb-20">
               <section className="px-4 py-5">
-                <div className="flex flex-col gap-2">
-                  <span className="typo-meta inline-flex h-[26px] w-fit items-center rounded-xl bg-black px-2 py-1 text-[#26c485]">
-                    {selectedProject.status}
-                  </span>
-                  <h1 className="typo-page-title text-black">{selectedProject.scope}</h1>
-                </div>
-
-                <div className="mt-4 flex flex-col gap-3">
-                  <div className="typo-card-title flex items-center gap-1 text-black">
-                    <span>{selectedProject.client}</span>
-                    <span className="grid size-4 place-items-center">
-                      <span className="size-1 rounded-full bg-[#26c485]" />
-                    </span>
-                    <span>{selectedProject.location}</span>
+                <article className="rounded-[24px] border border-[#dce8df] bg-[#fbfffd] p-4 shadow-[0_18px_34px_rgba(16,36,24,0.08)]">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <span className="typo-meta inline-flex h-[26px] w-fit items-center rounded-full bg-black px-2 py-1 text-[#26c485]">
+                        {selectedProject.status}
+                      </span>
+                      <h1 className="typo-page-title mt-3 text-black">{selectedProject.scope}</h1>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <a href={`tel:${selectedProject.phone}`} aria-label="Call homeowner" className="grid size-10 place-items-center rounded-full bg-[#e7f5ed] text-[#123d28]">
+                        <Phone size={18} weight="bold" />
+                      </a>
+                      <a href={`sms:${selectedProject.phone}`} aria-label="Text homeowner" className="grid size-10 place-items-center rounded-full bg-[#e7f5ed] text-[#123d28]">
+                        <ChatCircleText size={18} weight="bold" />
+                      </a>
+                    </div>
                   </div>
-                  <div className="typo-label flex flex-col gap-1 text-[#525252]">
-                    <span>{selectedProject.phone}</span>
-                    <span className="truncate">{selectedProject.email}</span>
-                  </div>
-                </div>
-              </section>
 
-              <section className="border-b border-[#e0e0e0] px-4 py-5">
-                <p className="typo-body text-[#6f6f6f]">
-                  Due date: <span className="typo-body-strong text-black">{selectedProject.dueDate}</span>
-                </p>
+                  <div className="mt-4 flex items-center gap-3">
+                    <img src="/hynt-home/pro-1.png" alt="" className="size-14 rounded-2xl border border-[#dce8df] object-cover" />
+                    <div className="min-w-0">
+                      <p className="typo-card-title truncate text-black">{selectedProject.client}</p>
+                      <p className="typo-body mt-1 truncate text-[#607269]">{selectedProject.location}</p>
+                      <p className="typo-label mt-1 truncate text-[#525252]">{selectedProject.phone}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 rounded-[20px] border border-[#dce8df] bg-white p-3">
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
+                        <p className="typo-label uppercase text-[#7a8f84]">Due date</p>
+                        <p className="typo-body-strong mt-1 text-black">{selectedProject.dueDate}</p>
+                      </div>
+                      <span className={`typo-label rounded-full px-2 py-1 ${projectDeadlineTone.badge}`}>{projectDueLabel}</span>
+                    </div>
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#e2ebe6]">
+                      <span className="block h-full rounded-full bg-[#5fc18a]" style={{ width: `${Math.max(6, Math.round(projectDeadline.progress * 100))}%` }} />
+                    </div>
+                  </div>
+                </article>
               </section>
 
               <section className="px-4 pb-6 pt-6">
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="typo-section-title text-black">Workspace</h2>
-                  <span className="typo-caption text-[#8a8a8a]">{workspaceToolCards.length + 1} widgets</span>
+                  <span className="typo-caption text-[#8a8a8a]">{workspaceToolCards.length} widgets</span>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
@@ -1508,33 +1568,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           </div>
                         ) : null}
                       </button>
-
-                      {index === 1 ? (
-                        <section id="project-updates" className="col-span-2 h-[168px] overflow-hidden rounded-[20px] border border-[#dce8df] bg-[#fbfffd] p-[17px] shadow-[0_18px_34px_rgba(16,36,24,0.12)]">
-                          <div className="flex items-center justify-between">
-                            <h2 className="typo-section-title text-black">Updates</h2>
-                          </div>
-                          <div className="mt-3 flex h-[92px] flex-col overflow-hidden">
-                            {workspaceAlerts.length ? workspaceAlerts.map((alert, alertIndex) => (
-                              <button key={alert.id} type="button" onClick={() => openProjectAlert(alert)} className="h-[42px] w-full text-left">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-1">
-                                    <p className="typo-body-strong text-black">{alertIndex === 0 ? 'Kitchen' : 'Living Room'}</p>
-                                    {alertIndex === 0 ? <span className="size-1 rounded-full bg-[#26c485]" /> : null}
-                                  </div>
-                                  <DotsThreeVertical size={16} className="text-[#8a8a8a]" />
-                                </div>
-                                <div className="mt-1 flex items-center gap-4">
-                                  <p className="typo-body min-w-0 flex-1 truncate text-[#525252]">{alert.detail || alert.title}</p>
-                                  <span className="typo-meta shrink-0 text-[#828282]">{alert.time}</span>
-                                </div>
-                              </button>
-                            )) : (
-                              <p className="typo-body py-2 text-[#525252]">No new project updates.</p>
-                            )}
-                          </div>
-                        </section>
-                      ) : null}
                       </Fragment>
                     )
                   })}

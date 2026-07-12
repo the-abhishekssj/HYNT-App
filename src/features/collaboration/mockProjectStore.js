@@ -2128,6 +2128,8 @@ export function useSharedProject(rawProjectId = 'p-1') {
         rate: payload.rate ?? 1000,
         unit: payload.unit || 'unit',
         vendor: payload.vendor || '',
+        vendorQuantity: payload.vendorQuantity ?? payload.quantity ?? payload.area ?? 1,
+        vendorUnit: payload.vendorUnit || payload.unit || 'unit',
         vendorRate: payload.vendorRate ?? payload.rate ?? 1000,
         markupPercent: payload.markupPercent ?? 0,
         type: payload.type || 'Custom',
@@ -2179,6 +2181,15 @@ export function useSharedProject(rawProjectId = 'p-1') {
         )),
       }
       return addActivity(next, projectId, project.designerName, 'Updated a BOQ line item')
+    }),
+    deleteBoqItem: (itemId) => update((current) => {
+      const targetItem = (current.boqItems || []).find((item) => item.id === itemId && item.projectId === projectId)
+      if (!targetItem) return current
+      const next = {
+        ...current,
+        boqItems: (current.boqItems || []).filter((item) => item.id !== itemId),
+      }
+      return addActivity(next, projectId, project.designerName, `Deleted BOQ line item: ${targetItem.item}`)
     }),
     stageBoqImport: ({ fileName = 'BOQ_Sharma_v2.xlsx', rows = boqImportPreviewRows } = {}) => update((current) => ({
       ...current,
