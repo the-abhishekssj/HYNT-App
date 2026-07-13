@@ -213,7 +213,7 @@ function ProFinanceWorkspace({ project, onBack }) {
 
   if (!canViewTotals && !canAddExpenses) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-6 pt-16">
           <Header subtitle={project?.scope || 'Project finance'} onBack={onBack} onToggleReport={() => {}} onToggleComposer={() => {}} />
           <div className="px-4 pt-8">
@@ -230,10 +230,10 @@ function ProFinanceWorkspace({ project, onBack }) {
 
   if (!canViewTotals && canAddExpenses) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
           <Header subtitle={project?.scope || 'Project finance'} onBack={onBack} onToggleReport={() => {}} onToggleComposer={() => setShowExpenseComposer((prev) => !prev)} />
-          <div className="px-4 py-6">
+          <div className="ui-screen-content">
             <section className="border-b border-[#e5e5e5] pb-5">
               <p className="typo-label uppercase text-[#7a8780]">Viewing as</p>
               <p className="typo-body-strong mt-1 text-[#102418]">{viewerRoleLabel}</p>
@@ -305,7 +305,7 @@ function ProFinanceWorkspace({ project, onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header
           subtitle={project?.scope || 'Project finance'}
@@ -314,7 +314,7 @@ function ProFinanceWorkspace({ project, onBack }) {
           onToggleComposer={() => activeTab === 'expenses' ? setShowExpenseComposer((prev) => !prev) : setShowInvoiceComposer((prev) => !prev)}
         />
 
-        <div className="px-4 py-6">
+        <div className="ui-screen-content">
           <section className="border-b border-[#e5e5e5] pb-5">
             <div className="flex items-end justify-between gap-3">
               <div>

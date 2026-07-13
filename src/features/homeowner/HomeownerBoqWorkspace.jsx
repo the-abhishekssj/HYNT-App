@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { CaretLeft, FileArrowDown } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import { BoqHistoryDetailBody, BoqHistoryList } from '../boq/BoqHistoryViews'
 import { BoqParticularList, BoqQuestionThread, BoqRoomListSection } from '../boq/BoqRoomSections'
@@ -8,16 +9,16 @@ import { buildBoqRoomSummaries, boqStatusLabels, formatRupees, getBoqItemAmount 
 
 function Header({ title, subtitle, onBack }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <div className="flex items-center justify-between py-1">
           <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
             <span className="grid size-6 shrink-0 place-items-center rounded">
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="typo-section-title block truncate text-black">{title}</span>
-              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title ui-section-title block truncate">{title}</span>
+              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
             </span>
           </button>
           <button type="button" className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
@@ -69,7 +70,7 @@ function HomeownerBoqWorkspace({ onBack }) {
   const renderHome = (title) => (
     <section className="mx-auto w-full max-w-[390px] pb-[144px] pt-[56px]">
       <Header title={title} subtitle={`${project.name} / ${project.designerName}`} onBack={onBack} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4">
           <p className="typo-caption uppercase text-[#5f7467]">{boqStatusLabels[boqMeta.status] || 'For approval'}</p>
           <p className="typo-page-title mt-2 text-black">{formatRupees(grandTotal)}</p>
@@ -95,17 +96,19 @@ function HomeownerBoqWorkspace({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => actions.approveBoqQuotation()} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => actions.approveBoqQuotation()}>
           {boqMeta.status === 'revised' ? 'Approve revised quotation' : 'Approve quotation'}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="outline"
+          fullWidth
           onClick={() => actions.requestBoqChangesFromQuestions()}
           disabled={!openQuestionCount}
-          className="typo-body-strong mt-2 h-10 w-full rounded-xl border border-[#e0e0e0] bg-white text-black disabled:border-[#ececec] disabled:text-[#9a9a9a]"
+          className="mt-2 border-[#e0e0e0] text-black"
         >
           {openQuestionCount ? `Send ${openQuestionCount} marked particular${openQuestionCount > 1 ? 's' : ''}` : 'Mark particulars to request changes'}
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -113,7 +116,7 @@ function HomeownerBoqWorkspace({ onBack }) {
   const renderRoom = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[96px] pt-[56px]">
       <Header title={selectedRoom?.name || 'Room BOQ'} subtitle={selectedRoom?.note || 'Quotation particulars'} onBack={() => setScreen('home')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4">
           <p className="typo-caption uppercase text-[#5f7467]">Room total</p>
           <p className="typo-page-title mt-2 text-black">{formatRupees(selectedRoom?.total || 0)}</p>
@@ -127,7 +130,7 @@ function HomeownerBoqWorkspace({ onBack }) {
   const renderItem = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title={selectedItem?.item || 'Particular'} subtitle={selectedRoom?.name || 'Room BOQ'} onBack={() => setScreen('room')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4">
           <p className="typo-page-title text-black">{formatRupees(selectedItem ? getBoqItemAmount(selectedItem) : 0)}</p>
           <p className="typo-body mt-2 text-[#5f7467]">
@@ -144,27 +147,41 @@ function HomeownerBoqWorkspace({ onBack }) {
             <textarea
               value={questionDraft}
               onChange={(event) => setQuestionDraft(event.target.value)}
-              className="typo-body mt-3 min-h-24 w-full resize-none rounded-[18px] border border-[#dbe6df] px-4 py-3 text-black outline-none"
+              className="ui-textarea-base typo-body mt-3 min-h-24 w-full resize-none border border-[#dbe6df] text-black outline-none"
             />
-            <button
+            <Button
               type="button"
               onClick={() => {
                 actions.addBoqQuestion(selectedItem.id, questionDraft)
                 setQuestionDraft('')
               }}
               disabled={!questionDraft.trim()}
-              className="typo-body-strong mt-3 h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]"
+              fullWidth
+              className="mt-3"
             >
               Save remark on this particular
-            </button>
+            </Button>
           </div>
         </section>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setScreen('room')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => setScreen('room')}>
           Done
-        </button>
+        </Button>
+      </div>
+    </section>
+  )
+
+  const renderNotShared = () => (
+    <section className="mx-auto w-full max-w-[390px] pb-[120px] pt-[56px]">
+      <Header title="Quotation" subtitle={`${project.name} / ${project.designerName}`} onBack={onBack} />
+      <div className="px-4 py-10 text-center">
+        <p className="typo-caption uppercase text-[#5f7467]">Not shared yet</p>
+        <p className="typo-page-title mt-2 text-black">Quotation is being prepared</p>
+        <p className="typo-body mt-3 text-[#5f7467]">
+          Your professional is still preparing this BOQ. Once it is sent for approval, the room-wise quotation and remark tools will appear here.
+        </p>
       </div>
     </section>
   )
@@ -189,7 +206,7 @@ function HomeownerBoqWorkspace({ onBack }) {
   const renderApproved = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[120px] pt-[56px]">
       <Header title="Quotation" subtitle="Approved" onBack={onBack} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4 text-center">
           <p className="typo-page-title text-black">Quotation approved</p>
           <p className="typo-body mt-2 text-[#5f7467]">The room-wise BOQ is now approved and signed for the project.</p>
@@ -212,7 +229,7 @@ function HomeownerBoqWorkspace({ onBack }) {
         subtitle={selectedHistory ? `Signed ${formatBoqHistoryDate(selectedHistory.approvedAt)}` : 'Read only'}
         onBack={() => setSelectedHistoryId(null)}
       />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <p className="typo-body text-[#5f7467]">This is a previously signed quotation kept for reference during the project.</p>
       </div>
       <BoqHistoryDetailBody snapshot={selectedHistory} />
@@ -220,27 +237,31 @@ function HomeownerBoqWorkspace({ onBack }) {
   )
 
   if (selectedHistory) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderSignedHistory()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderSignedHistory()}</main>
   }
 
   if (screen === 'room' && selectedRoom) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderRoom()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderRoom()}</main>
   }
 
   if (screen === 'item' && selectedItem) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderItem()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderItem()}</main>
   }
 
   if (boqMeta.status === 'changesRequested') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderWaiting()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderWaiting()}</main>
   }
 
   if (boqMeta.status === 'approved') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderApproved()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderApproved()}</main>
+  }
+
+  if (['draft', 'ready'].includes(boqMeta.status)) {
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderNotShared()}</main>
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       {renderHome(boqMeta.status === 'revised' ? 'Revised quotation' : 'Your quotation')}
     </main>
   )

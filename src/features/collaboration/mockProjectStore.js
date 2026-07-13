@@ -99,6 +99,19 @@ const buildBoqHistoryEntry = ({ projectId, meta, items, approvedAt }) => normali
   itemsSnapshot: (items || []).map((item) => cloneBoqItemSnapshot(item)),
 })
 
+const markBoqDirty = (meta = {}) => {
+  const shouldReturnToDraft = ['ready', 'shared', 'revised', 'approved'].includes(meta.status)
+  return {
+    ...meta,
+    status: shouldReturnToDraft ? 'draft' : meta.status,
+    readyAt: null,
+    readyBy: null,
+    sharedAt: shouldReturnToDraft ? null : meta.sharedAt,
+    approvedAt: shouldReturnToDraft ? null : meta.approvedAt,
+    financeScheduleCreated: shouldReturnToDraft ? false : meta.financeScheduleCreated,
+  }
+}
+
 const demoProject = {
   id: 'p-1',
   name: 'Sharma 3BHK Renovation',
@@ -482,6 +495,9 @@ export const mockInitialState = {
       clientFeedback: null,
       financeScheduleMode: 'auto',
       financeScheduleCreated: false,
+      readyAt: null,
+      readyBy: null,
+      sharedAt: null,
       approvedAt: null,
       history: [
         normalizeBoqHistoryEntry('p-1', {
@@ -1022,6 +1038,9 @@ const normalizeState = (rawState = {}) => {
       clientFeedback: null,
       financeScheduleMode: 'auto',
       financeScheduleCreated: false,
+      readyAt: null,
+      readyBy: null,
+      sharedAt: null,
       approvedAt: null,
       ...meta,
       history: (meta?.history || []).map((entry) => normalizeBoqHistoryEntry(key, entry)),
@@ -1224,6 +1243,63 @@ const createSowDraft = (project, templateId = 'residential') => ({
   amendments: [],
 })
 
+const buildSowAwareBoqRooms = ({ sow, boqRooms = [], projectId }) => {
+  const mergedRooms = new Map()
+  const roomIdByName = new Map()
+  const sowRooms = sow?.document?.rooms || []
+
+  sowRooms.forEach((room, index) => {
+    const name = room.name?.trim()
+    if (!name) return
+    const id = toBoqRoomId(name)
+    const normalized = {
+      id,
+      projectId,
+      name,
+      note: room.scope || '',
+      order: index,
+      source: 'sow',
+      sourceSowRoomId: room.id,
+      sowScope: room.scope || '',
+    }
+    mergedRooms.set(id, normalized)
+    roomIdByName.set(name.toLowerCase(), id)
+  })
+
+  boqRooms
+    .filter((room) => room.projectId === projectId)
+    .sort((left, right) => (left.order ?? 0) - (right.order ?? 0))
+    .forEach((room, index) => {
+      const matchedSowRoomId = mergedRooms.has(room.id)
+        ? room.id
+        : roomIdByName.get(String(room.name || '').toLowerCase())
+
+      if (matchedSowRoomId) {
+        const sowRoom = mergedRooms.get(matchedSowRoomId)
+        mergedRooms.set(matchedSowRoomId, {
+          ...sowRoom,
+          ...room,
+          id: matchedSowRoomId,
+          name: room.name || sowRoom.name,
+          note: room.note || sowRoom.note,
+          source: 'sow',
+          sourceSowRoomId: sowRoom.sourceSowRoomId,
+          sowScope: sowRoom.sowScope,
+          order: sowRoom.order,
+        })
+        return
+      }
+
+      mergedRooms.set(room.id, {
+        ...room,
+        order: sowRooms.length + index,
+        source: room.source || 'boq',
+      })
+    })
+
+  return Array.from(mergedRooms.values()).sort((left, right) => (left.order ?? 0) - (right.order ?? 0))
+}
+
 const includesGrant = (grants = [], grant) => grants.includes('all') || grants.includes(grant)
 const includesAnyGrant = (grants = [], candidates = []) => grants.includes('all') || candidates.some((grant) => grants.includes(grant))
 
@@ -1315,7 +1391,11 @@ export function useSharedProject(rawProjectId = 'p-1') {
   const projectFinanceInvoices = (state.financeInvoices || []).filter((invoice) => invoice.projectId === projectId)
   const projectFinanceExpenses = (state.financeExpenses || []).filter((expense) => expense.projectId === projectId)
   const projectBoqMeta = state.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
-  const projectBoqRooms = (state.boqRooms || []).filter((room) => room.projectId === projectId)
+  const projectBoqRooms = buildSowAwareBoqRooms({
+    sow,
+    boqRooms: state.boqRooms || [],
+    projectId,
+  })
   const projectBoqItems = (state.boqItems || []).filter((item) => item.projectId === projectId)
   const projectTasks = (state.projectTasks || []).filter((task) => task.projectId === projectId)
   const projectTaskApprovals = (state.taskApprovals || []).filter((approval) => approval.projectId === projectId)
@@ -2053,6 +2133,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
     addBoqRoom: (payload = {}) => update((current) => {
       const name = payload.name?.trim()
       if (!name) return current
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const projectRooms = (current.boqRooms || []).filter((room) => room.projectId === projectId)
       const room = {
         id: makeId('boq-room'),
@@ -2064,12 +2145,17 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const next = {
         ...current,
         boqRooms: [...(current.boqRooms || []), room],
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Added room BOQ: ${room.name}`)
     }),
     duplicateBoqRoom: (roomId) => update((current) => {
       const targetRoom = (current.boqRooms || []).find((room) => room.id === roomId)
       if (!targetRoom) return current
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const projectRooms = (current.boqRooms || []).filter((room) => room.projectId === projectId)
       const duplicateRoomId = makeId('boq-room')
       const duplicateRoom = {
@@ -2091,6 +2177,10 @@ export function useSharedProject(rawProjectId = 'p-1') {
         ...current,
         boqRooms: [...(current.boqRooms || []), duplicateRoom],
         boqItems: [...duplicatedItems, ...(current.boqItems || [])],
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Duplicated room BOQ: ${targetRoom.name}`)
     }),
@@ -2102,6 +2192,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       if (currentIndex === -1) return current
       const nextIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
       if (nextIndex < 0 || nextIndex >= projectRooms.length) return current
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const reordered = [...projectRooms]
       const [movedRoom] = reordered.splice(currentIndex, 1)
       reordered.splice(nextIndex, 0, movedRoom)
@@ -2110,10 +2201,15 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const next = {
         ...current,
         boqRooms: [...otherRooms, ...reorderedWithOrder],
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Reordered room BOQ: ${movedRoom.name}`)
     }),
     addBoqItem: (payload = {}) => update((current) => {
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const matchedRoom = (current.boqRooms || []).find((room) => room.id === payload.roomId)
       const roomName = matchedRoom?.name || payload.space || 'General'
       const nextItem = {
@@ -2139,12 +2235,17 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const next = {
         ...current,
         boqItems: [nextItem, ...(current.boqItems || [])],
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Added BOQ line item: ${nextItem.item}`)
     }),
     updateBoqRoom: (roomId, patch = {}) => update((current) => {
       const targetRoom = (current.boqRooms || []).find((room) => room.id === roomId)
       if (!targetRoom) return current
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const nextName = patch.name?.trim() || targetRoom.name
       const nextRoom = {
         ...targetRoom,
@@ -2160,10 +2261,15 @@ export function useSharedProject(rawProjectId = 'p-1') {
         boqItems: (current.boqItems || []).map((item) => (
           item.roomId === roomId ? { ...item, space: nextName } : item
         )),
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Updated room BOQ: ${nextName}`)
     }),
     updateBoqItem: (itemId, patch = {}) => update((current) => {
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
       const nextRoom = patch.roomId
         ? (current.boqRooms || []).find((room) => room.id === patch.roomId)
         : null
@@ -2179,6 +2285,10 @@ export function useSharedProject(rawProjectId = 'p-1') {
               }
             : item
         )),
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(meta),
+        },
       }
       return addActivity(next, projectId, project.designerName, 'Updated a BOQ line item')
     }),
@@ -2188,6 +2298,10 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const next = {
         ...current,
         boqItems: (current.boqItems || []).filter((item) => item.id !== itemId),
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: markBoqDirty(current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]),
+        },
       }
       return addActivity(next, projectId, project.designerName, `Deleted BOQ line item: ${targetItem.item}`)
     }),
@@ -2257,6 +2371,9 @@ export function useSharedProject(rawProjectId = 'p-1') {
             importFileName: meta.importFileName,
             pendingImportRows: [],
             importedAt: nowIso(),
+            readyAt: null,
+            readyBy: null,
+            sharedAt: null,
             approvedAt: null,
             clientFeedback: null,
             financeScheduleCreated: false,
@@ -2265,8 +2382,31 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.designerName, `Imported ${nextItems.length} BOQ rows from Excel`)
     }),
+    markBoqReady: () => update((current) => {
+      const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
+      const projectItems = (current.boqItems || []).filter((item) => item.projectId === projectId)
+      if (!projectItems.length) return current
+      const readyAt = nowIso()
+      const next = {
+        ...current,
+        boqMeta: {
+          ...(current.boqMeta || {}),
+          [projectId]: {
+            ...meta,
+            status: 'ready',
+            readyAt,
+            readyBy: project.designerName,
+            sharedAt: null,
+            approvedAt: null,
+            clientFeedback: null,
+          },
+        },
+      }
+      return addActivity(next, projectId, project.designerName, 'Marked BOQ quotation ready to send')
+    }),
     shareBoqQuotation: () => update((current) => {
       const meta = current.boqMeta?.[projectId] || mockInitialState.boqMeta[projectId]
+      const sharedAt = nowIso()
       const next = {
         ...current,
         boqMeta: {
@@ -2274,6 +2414,10 @@ export function useSharedProject(rawProjectId = 'p-1') {
           [projectId]: {
             ...meta,
             status: 'shared',
+            readyAt: meta.readyAt || sharedAt,
+            readyBy: meta.readyBy || project.designerName,
+            sharedAt,
+            approvedAt: null,
             clientFeedback: null,
           },
         },

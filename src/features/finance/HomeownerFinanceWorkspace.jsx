@@ -102,7 +102,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
 
   if (screen === 'detail' && selectedInvoice) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
           <Header
             title={selectedInvoice.number}
@@ -115,7 +115,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
             ) : null}
           />
 
-          <div className="px-4 py-6">
+          <div className="ui-screen-content">
             <section className="border-b border-[#e5e5e5] pb-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -187,11 +187,11 @@ function HomeownerFinanceWorkspace({ onBack }) {
 
   if (screen === 'pay' && selectedInvoice) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
           <Header title="Pay invoice" subtitle={`${project.name} / ${project.designerName}`} onBack={() => setScreen('detail')} />
 
-          <div className="px-4 py-6">
+          <div className="ui-screen-content">
             <section className="border-y border-[#e5e5e5] py-4 text-center">
               <p className="typo-meta text-[#5f7467]">{selectedInvoice.number} - {selectedInvoice.title}</p>
               <p className="typo-page-title mt-2 text-black">{formatLakhs(selectedInvoice.amountL)}</p>
@@ -235,11 +235,11 @@ function HomeownerFinanceWorkspace({ onBack }) {
 
   if (screen === 'otp' && selectedInvoice) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
           <Header title="Verify payment" subtitle={selectedMethod} onBack={() => setScreen('pay')} />
 
-          <div className="px-4 py-6">
+          <div className="ui-screen-content">
             <section className="border-y border-[#e5e5e5] px-3 py-6 text-center">
               <p className="typo-card-title text-black">Confirm {formatLakhs(selectedInvoice.amountL)}</p>
               <p className="typo-body mt-2 text-[#5f7467]">OTP sent to your registered number. Enter it below to complete payment for {selectedInvoice.number}.</p>
@@ -269,7 +269,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
 
   if (screen === 'success' && selectedInvoice) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
           <Header title="Payment" subtitle={project.name} onBack={onBack} />
 
@@ -314,7 +314,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header
           title="My payments"
@@ -334,7 +334,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
           )}
         />
 
-        <div className="px-4 py-6">
+        <div className="ui-screen-content">
           <section className="mb-6">
             <div className="typo-body-10 mb-1.5 flex items-center justify-between text-[#6f6f6f]">
               <span>{formatLakhs(financeSummary.paidL)} of {formatLakhs(financeSummary.totalL)} paid</span>

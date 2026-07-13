@@ -161,6 +161,7 @@ export const boqImportPreviewRows = [
 
 export const boqStatusLabels = {
   draft: 'In progress',
+  ready: 'Ready to send',
   shared: 'For approval',
   changesRequested: 'Changes requested',
   revised: 'Revised',

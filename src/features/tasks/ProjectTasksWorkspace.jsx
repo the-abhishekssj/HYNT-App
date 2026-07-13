@@ -11,20 +11,18 @@ import {
   PaperPlaneTilt,
   PencilSimple,
   Plus,
-  SealQuestion,
   Trash,
-  UsersThree,
   XCircle,
 } from '@phosphor-icons/react'
 import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const tabs = [
-  { key: 'my', label: 'My Tasks', icon: ListBullets },
-  { key: 'team', label: 'Team', icon: UsersThree },
-  { key: 'approvals', label: 'Approvals', icon: SealQuestion },
+  { key: 'my', label: 'My Tasks' },
+  { key: 'team', label: 'Team' },
+  { key: 'approvals', label: 'Approvals' },
 ]
 
-const taskFilters = ['All', 'To do', 'In progress', 'Done']
+const taskFilters = ['To do', 'In progress', 'Done']
 
 const approvalSeed = [
   {
@@ -145,30 +143,21 @@ function TaskRow({
 
         <button type="button" onClick={() => onOpen(task.id)} className="min-w-0 flex-1 text-left">
           <p className={`typo-card-title ${task.status === 'done' ? 'text-[#8c9891] line-through' : 'text-[#1c1c1c]'}`}>{task.title}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="typo-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{assigneeLabel}</span>
-            <span className={`typo-caption rounded-full px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-            <span className={`typo-caption rounded-md px-2 py-1 ${
-              task.status === 'done'
-                ? 'bg-[#eaf8ef] text-[#267449]'
-                : task.status === 'inprogress'
-                  ? 'bg-[#fff1e3] text-[#b66d29]'
-                  : 'bg-[#eef2ff] text-[#4868c7]'
-            }`}>
-              {task.status === 'todo' ? 'To do' : task.status === 'inprogress' ? 'In progress' : 'Done'}
-            </span>
+          <div className="typo-caption mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[#6b7670]">
             {task.priority ? (
-              <span className={`typo-caption rounded-md px-2 py-1 ${
-                task.priority === 'High'
-                  ? 'bg-[#fff0f0] text-[#c34545]'
-                  : task.priority === 'Medium'
-                    ? 'bg-[#fff4e8] text-[#b66d29]'
-                    : 'bg-[#eef7f1] text-[#267449]'
-              }`}>
+              <span className="inline-flex items-center gap-1">
+                <span className={`size-1.5 rounded-full ${
+                  task.priority === 'High'
+                    ? 'bg-[#c34545]'
+                    : task.priority === 'Medium'
+                      ? 'bg-[#d18c33]'
+                      : 'bg-[#5fa87a]'
+                }`} />
                 {task.priority}
               </span>
             ) : null}
-            {task.linkedTo ? <span className="typo-caption rounded-md bg-[#f2f4f3] px-2 py-1 text-[#6b7670]">Source: {task.linkedTo}</span> : null}
+            <span className="text-[#4d5b53]">{assigneeLabel}</span>
+            {task.linkedTo ? <span className="text-[#8b978f]">/ {task.linkedTo}</span> : null}
           </div>
         </button>
 
@@ -229,7 +218,7 @@ function ProTaskDetail({
   onToggleStep,
 }) {
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
         <ProjectWorkspaceHeader
           title="Task details"
@@ -238,7 +227,7 @@ function ProTaskDetail({
           actions={<span className={`typo-caption rounded-full px-3 py-1 uppercase ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>}
         />
 
-        <div className="px-4 pt-6">
+        <div className="ui-screen-content pt-6">
           <section className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-5">
             <p className="typo-page-title text-[#102418]">{task.title}</p>
             <div className="mt-5 grid grid-cols-2 gap-4">
@@ -384,7 +373,6 @@ export default function ProjectTasksWorkspace({
   }, [mode, resolvedPermissions.canApproveTasks, resolvedPermissions.canViewTasks, resolvedPermissions.canViewTeamTasks])
 
   const currentTab = visibleTabs.some((tab) => tab.key === activeTab) ? activeTab : (visibleTabs[0]?.key || 'my')
-  const visibleTabGridClass = visibleTabs.length === 1 ? 'grid-cols-1' : visibleTabs.length === 2 ? 'grid-cols-2' : 'grid-cols-3'
   const selectedTask = scopedTasks.find((task) => task.id === selectedTaskId) || null
   const selectedApproval = approvalItems.find((item) => item.id === selectedApprovalId) || null
 
@@ -526,7 +514,7 @@ export default function ProjectTasksWorkspace({
   if (mode === 'homeowner') {
     if (selectedApproval) {
       return (
-        <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
+        <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] text-black">
           <section className="mx-auto w-full max-w-[390px] pb-8 pt-16">
             <ProjectWorkspaceHeader
               title="Approval task"
@@ -589,7 +577,7 @@ export default function ProjectTasksWorkspace({
     }
 
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-[#f7faf8] text-black">
         <section className="mx-auto w-full max-w-[390px] pb-8 pt-16">
           <ProjectWorkspaceHeader title="Tasks" subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`} onBack={onBack} />
 
@@ -623,7 +611,7 @@ export default function ProjectTasksWorkspace({
 
   if (!resolvedPermissions.canViewTasks) {
     return (
-      <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-12 pt-16">
           <ProjectWorkspaceHeader title="Tasks" subtitle={selectedProject?.scope || homeownerProjectName} onBack={onBack} />
           <div className="px-4 pt-8">
@@ -670,8 +658,8 @@ export default function ProjectTasksWorkspace({
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-      <section className="mx-auto w-full max-w-[390px] pb-24 pt-16">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
+      <section className="mx-auto w-full max-w-[390px] pb-24 pt-[120px]">
         <ProjectWorkspaceHeader
           title="Tasks"
           subtitle={selectedProject?.scope || homeownerProjectName}
@@ -690,85 +678,94 @@ export default function ProjectTasksWorkspace({
               ) : null}
             </>
           )}
+          below={visibleTabs.length ? (
+            <div className="no-scrollbar flex gap-2 overflow-x-auto" role="tablist" aria-label="Task workspace">
+              {visibleTabs.map((tab) => {
+                const active = currentTab === tab.key
+                const count = tab.key === 'my'
+                  ? scopedTasks.length
+                  : tab.key === 'team'
+                    ? teamGroups.length
+                    : approvalSections.pending.length
+                return (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-full py-2 pl-3 pr-2 ${active ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
+                  >
+                    <span className={`typo-body ${active ? 'typo-weight-semibold text-white' : 'text-black'}`}>{tab.label}</span>
+                    <span className="typo-badge grid size-6 place-items-center rounded-full bg-black text-white">
+                      {String(count).padStart(2, '0')}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          ) : null}
         />
 
         <div className="px-4 pt-5">
-          <div className="no-scrollbar flex gap-2 overflow-x-auto">
-            {visibleTabs.map((tab) => {
-              const Icon = tab.icon
-              const active = currentTab === tab.key
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 transition ${active ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
-                >
-                  <Icon size={16} weight={active ? 'fill' : 'regular'} />
-                  <p className="typo-body-strong">{tab.label}</p>
-                </button>
-              )
-            })}
-          </div>
-
           {currentTab === 'my' ? (
-            <section className="mt-6">
-              <div className="grid grid-cols-2 rounded-full bg-[#f3f7f4] p-1">
-                {[
-                  ['list', 'List', ListBullets],
-                  ['kanban', 'Kanban', Kanban],
-                ].map(([key, label, Icon]) => (
-                  <button key={key} type="button" onClick={() => setViewMode(key)} className={`typo-body-strong flex h-10 items-center justify-center gap-2 rounded-full ${viewMode === key ? 'bg-white text-[#173324] shadow-[0_8px_18px_rgba(16,36,24,0.08)]' : 'text-[#6f7c74]'}`}>
-                    <Icon size={16} />
-                    {label}
-                  </button>
-                ))}
+            <section>
+              <div className="flex justify-end">
+                <div className="inline-flex rounded-full border border-[#dbe6df] bg-[#f2f6f3] p-0.5" role="group" aria-label="Task view">
+                  {[
+                    ['list', 'List', ListBullets],
+                    ['kanban', 'Kanban', Kanban],
+                  ].map(([key, label, Icon]) => {
+                    const active = viewMode === key
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setViewMode(key)}
+                        className={`typo-label inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors ${active ? 'bg-white text-[#102418] shadow-[0_1px_2px_rgba(16,36,24,0.08)]' : 'text-[#6f7d74]'}`}
+                      >
+                        <Icon size={14} />
+                        {label}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
               {viewMode === 'list' ? (
                 <>
-              <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto">
-                {taskFilters.map((filter) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    onClick={() => setTaskFilter(filter)}
-                    className={`typo-body-strong flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-[20px] py-2 pl-3 pr-2 ${taskFilter === filter ? 'bg-[#5fc18a] text-white' : 'border border-[#d1d1d1] bg-white text-black'}`}
-                  >
-                    {filter}
-                    <span className={`typo-badge grid size-6 place-items-center rounded-xl ${taskFilter === filter ? 'bg-black text-white' : 'bg-[#f2f4f3] text-[#5f6f66]'}`}>
-                      {String(getTaskCount(filter)).padStart(2, '0')}
-                    </span>
-                  </button>
-                ))}
+              <div className="no-scrollbar mt-4 flex gap-1.5 overflow-x-auto">
+                {taskFilters.map((filter) => {
+                  const active = taskFilter === filter
+                  const dotColor = filter === 'To do'
+                    ? 'bg-[#94a096]'
+                    : filter === 'In progress'
+                      ? 'bg-[#d18c33]'
+                      : 'bg-[#5fa87a]'
+                  return (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setTaskFilter(active ? 'All' : filter)}
+                      className={`typo-body inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors ${active ? 'bg-[#ececec] text-black' : 'text-[#6f7d74] hover:bg-[#f2f2f2]'}`}
+                    >
+                      <span className={`size-1.5 rounded-full ${dotColor}`} />
+                      {filter}
+                      <span className={`typo-caption ${active ? 'text-[#5a5a5a]' : 'text-[#9b9b9b]'}`}>
+                        {getTaskCount(filter)}
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
 
               <div className="mt-6 space-y-6">
-                {filteredTasks.length === 0 ? (
-                  <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
-                    <p className="typo-body text-[#6f7c74]">No tasks match the current filter for this role.</p>
-                  </div>
-                ) : null}
-                {[
-                  ['Overdue', groupedTasks.overdue, 'text-[#c34545]'],
-                  ['Today', groupedTasks.today, 'text-[#c66f19]'],
-                  ['This week', groupedTasks.week, 'text-[#6f7d74]'],
-                  ['Done', groupedTasks.done, 'text-[#96a39c]'],
-                ].map(([label, sectionTasks, tone]) => {
-                  const visibleTasks = sectionTasks.filter((task) => (
-                    taskFilter === 'All'
-                      ? true
-                      : taskFilter === 'To do'
-                        ? task.status === 'todo'
-                        : taskFilter === 'In progress'
-                          ? task.status === 'inprogress'
-                          : task.status === 'done'
-                  ))
-                  if (!visibleTasks.length) return null
-                  return (
-                    <section key={label}>
-                      <SectionHeader title={label} meta={String(visibleTasks.length)} tone={tone} />
-                      <div className={`overflow-hidden rounded-[20px] border ${label === 'Done' ? 'border-[#e7ece9] bg-[#fbfcfb]' : 'border-[#e3ebe5] bg-white'} px-4`}>
-                        {visibleTasks.map((task) => (
+                {taskFilter === 'Done' ? (
+                  groupedTasks.done.length ? (
+                    <section>
+                      <SectionHeader title="Completed" meta={String(groupedTasks.done.length)} tone="text-[#96a39c]" />
+                      <div className="overflow-hidden rounded-[20px] border border-[#e7ece9] bg-[#fbfcfb] px-4">
+                        {groupedTasks.done.map((task) => (
                           <TaskRow
                             key={task.id}
                             task={task}
@@ -781,32 +778,116 @@ export default function ProjectTasksWorkspace({
                         ))}
                       </div>
                     </section>
+                  ) : (
+                    <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
+                      <p className="typo-body text-[#6f7c74]">Nothing completed yet.</p>
+                    </div>
                   )
-                })}
+                ) : (() => {
+                  const sections = [
+                    ['Overdue', groupedTasks.overdue, 'text-[#c34545]'],
+                    ['Today', groupedTasks.today, 'text-[#c66f19]'],
+                    ['This week', groupedTasks.week, 'text-[#6f7d74]'],
+                  ].map(([label, sectionTasks, tone]) => {
+                    const visibleTasks = sectionTasks.filter((task) => {
+                      if (task.status === 'done') return false
+                      if (taskFilter === 'To do') return task.status === 'todo'
+                      if (taskFilter === 'In progress') return task.status === 'inprogress'
+                      return true
+                    })
+                    return { label, tone, visibleTasks }
+                  })
+                  const totalVisible = sections.reduce((n, s) => n + s.visibleTasks.length, 0)
+                  if (totalVisible === 0) {
+                    return (
+                      <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
+                        <p className="typo-body text-[#6f7c74]">Nothing on the plate right now.</p>
+                      </div>
+                    )
+                  }
+                  return sections.map(({ label, tone, visibleTasks }) => {
+                    if (!visibleTasks.length) return null
+                    return (
+                      <section key={label}>
+                        <SectionHeader title={label} meta={String(visibleTasks.length)} tone={tone} />
+                        <div className="overflow-hidden rounded-[20px] border border-[#e3ebe5] bg-white px-4">
+                          {visibleTasks.map((task) => (
+                            <TaskRow
+                              key={task.id}
+                              task={task}
+                              onOpen={setSelectedTaskId}
+                              onToggleStatus={cycleTaskStatus}
+                              onOpenActions={setTaskActionTargetId}
+                              assigneeLabel={task.assignee}
+                              canUpdate={resolvedPermissions.canUpdateTasks}
+                            />
+                          ))}
+                        </div>
+                      </section>
+                    )
+                  })
+                })()}
               </div>
                 </>
               ) : (
-                <div className="mt-6 grid grid-cols-[240px_240px_240px] gap-3 overflow-x-auto pb-2">
+                <div className="mt-4 grid grid-cols-[260px_260px_260px] gap-3 overflow-x-auto pb-2">
                   {[
-                    ['To do', scopedTasks.filter((task) => task.status === 'todo')],
-                    ['In progress', scopedTasks.filter((task) => task.status === 'inprogress')],
-                    ['Done', scopedTasks.filter((task) => task.status === 'done')],
-                  ].map(([label, columnTasks]) => (
-                    <section key={label} className="rounded-[20px] border border-[#e3ebe5] bg-[#fbfcfb] p-3">
-                      <div className="mb-3 flex items-center justify-between">
-                        <p className="typo-body-strong text-black">{label}</p>
-                        <span className="typo-badge grid size-6 place-items-center rounded-full bg-white text-[#5f6f66]">{String(columnTasks.length).padStart(2, '0')}</span>
+                    { key: 'todo', label: 'To do', tasks: scopedTasks.filter((t) => t.status === 'todo'), dot: 'bg-[#94a096]' },
+                    { key: 'inprogress', label: 'In progress', tasks: scopedTasks.filter((t) => t.status === 'inprogress'), dot: 'bg-[#d18c33]' },
+                    { key: 'done', label: 'Done', tasks: scopedTasks.filter((t) => t.status === 'done'), dot: 'bg-[#5fa87a]' },
+                  ].map(({ key, label, tasks: columnTasks, dot }) => (
+                    <section key={key} className="flex flex-col rounded-[20px] bg-[#f2f5f3] p-2.5">
+                      <div className="mb-2.5 flex items-center gap-2 px-1.5 pt-0.5">
+                        <span className={`size-2 rounded-full ${dot}`} />
+                        <p className="typo-body-strong text-[#173324]">{label}</p>
+                        <span className="typo-badge ml-auto text-[#7c8a83]">{columnTasks.length}</span>
                       </div>
                       <div className="space-y-2">
-                        {columnTasks.map((task) => (
-                          <button key={task.id} type="button" onClick={() => setSelectedTaskId(task.id)} className="w-full rounded-2xl border border-[#edf1ee] bg-white p-3 text-left">
-                            <p className="typo-body-strong text-black">{task.title}</p>
-                            <div className="mt-2 flex flex-wrap gap-1">
-                              <span className="typo-caption rounded-md bg-[#ecf5ef] px-2 py-1 text-[#267449]">{task.assignee}</span>
-                              <span className={`typo-caption rounded-md px-2 py-1 ${dueTone[task.due] || 'bg-[#f2f4f3] text-[#6b7670]'}`}>{task.due}</span>
-                            </div>
-                          </button>
-                        ))}
+                        {columnTasks.length === 0 ? (
+                          <div className="grid place-items-center rounded-[14px] border border-dashed border-[#dbe3dd] bg-white/50 py-6">
+                            <p className="typo-caption text-[#8b978f]">Nothing here</p>
+                          </div>
+                        ) : null}
+                        {columnTasks.map((task) => {
+                          const priority = task.priority
+                          const priorityTone = priority === 'High'
+                            ? 'bg-[#fbecec] text-[#a83636]'
+                            : priority === 'Medium'
+                              ? 'bg-[#fcf1e3] text-[#a06520]'
+                              : priority === 'Low'
+                                ? 'bg-[#eaf3ed] text-[#3f7a55]'
+                                : ''
+                          const initials = (task.assignee || '')
+                            .split(' ')
+                            .map((part) => part[0])
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .join('')
+                            .toUpperCase()
+                          return (
+                            <button
+                              key={task.id}
+                              type="button"
+                              onClick={() => setSelectedTaskId(task.id)}
+                              className="w-full rounded-[14px] border border-[#e6ece8] bg-white px-3 py-3 text-left shadow-[0_1px_2px_rgba(16,36,24,0.04)]"
+                            >
+                              {priority ? (
+                                <span className={`typo-badge inline-block rounded-full px-2 py-0.5 ${priorityTone}`}>{priority}</span>
+                              ) : null}
+                              <p className={`typo-body-strong mt-2 line-clamp-2 ${task.status === 'done' ? 'text-[#8c9891] line-through' : 'text-[#173324]'}`}>{task.title}</p>
+                              <div className="mt-3 flex items-center justify-between gap-2">
+                                <span className="typo-caption text-[#7c8a83]">{task.due}</span>
+                                <span
+                                  className="typo-badge grid size-6 place-items-center rounded-full bg-[#173324] text-white"
+                                  title={task.assignee}
+                                  aria-label={task.assignee}
+                                >
+                                  {initials}
+                                </span>
+                              </div>
+                            </button>
+                          )
+                        })}
                       </div>
                     </section>
                   ))}
@@ -816,7 +897,7 @@ export default function ProjectTasksWorkspace({
           ) : null}
 
           {currentTab === 'team' ? (
-            <section className="mt-6 space-y-6">
+            <section className="space-y-6">
               {teamGroups.length === 0 ? (
                 <div className="rounded-[20px] border border-dashed border-[#d8e2db] bg-white px-4 py-6">
                   <p className="typo-body text-[#6f7c74]">No team tasks are visible for this role yet.</p>
@@ -844,7 +925,7 @@ export default function ProjectTasksWorkspace({
           ) : null}
 
           {currentTab === 'approvals' ? (
-            <section className="mt-6 space-y-6">
+            <section className="space-y-6">
               <div className="typo-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
                 Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
               </div>
@@ -878,7 +959,7 @@ export default function ProjectTasksWorkspace({
             <header className="flex items-center justify-between border-b border-[#e6ece8] px-4 py-3">
               <div>
                 <h2 className="typo-section-title text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
-                <p className="typo-caption mt-1 text-[#999999]">{selectedProject?.scope || homeownerProjectName}</p>
+                <p className="typo-caption ui-muted mt-1">{selectedProject?.scope || homeownerProjectName}</p>
               </div>
               <button type="button" onClick={() => setComposerMode(null)} className="grid size-9 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
                 <XCircle size={20} weight="fill" />

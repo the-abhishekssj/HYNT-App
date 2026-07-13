@@ -16,15 +16,15 @@ const statusTone = {
 
 function Header({ onBack }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4 py-1">
           <span className="grid size-6 shrink-0 place-items-center">
             <CaretLeft size={24} />
           </span>
           <span className="min-w-0 text-left">
-            <span className="typo-section-title block truncate text-black">Approvals</span>
-            <span className="typo-caption block truncate text-[#999999]">Pending reviews and client decisions</span>
+            <span className="typo-section-title ui-section-title block truncate">Approvals</span>
+            <span className="typo-caption ui-muted block truncate">Pending reviews and client decisions</span>
           </span>
         </button>
       </div>
@@ -144,17 +144,17 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
   ].filter(Boolean)
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header onBack={onBack} />
 
-        <section className="border-b border-[#e5e5e5] px-4 py-5">
-          <p className="typo-caption uppercase text-[#267449]">Project</p>
+        <section className="ui-page-summary px-4 py-5">
+          <p className="typo-caption ui-kicker">Project</p>
           <h1 className="typo-page-title mt-2 text-black">{project.name}</h1>
           <p className="typo-body mt-2 text-[#5f7467]">Everything that needs your sign-off, question, or confirmation shows up here first.</p>
         </section>
 
-        <section className="px-4 py-5">
+        <section className="ui-screen-content">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="typo-section-title text-black">Needs your response</h2>
             <span className="typo-caption uppercase text-[#8a8a8a]">{reviewRows.length}</span>
@@ -171,7 +171,7 @@ function HomeownerApprovalsHub({ onBack, onOpenSow, onOpenTaskApprovals, onOpenA
         </section>
 
         {completedRows.length ? (
-          <section className="px-4 py-1">
+          <section className="ui-section-block px-4 py-1">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="typo-section-title text-black">Completed</h2>
               <span className="typo-caption uppercase text-[#8a8a8a]">{completedRows.length}</span>

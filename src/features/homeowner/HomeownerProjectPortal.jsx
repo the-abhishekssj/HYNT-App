@@ -150,7 +150,7 @@ function HomeownerProjectPortal({
 
   if (!project) {
     return (
-      <section className="hynt-desktop-page mx-auto w-full max-w-[760px] bg-white pb-12 pt-16 px-6 text-center font-['Urbanist']">
+      <section className="ui-screen-base ui-feature-surface hynt-desktop-page mx-auto w-full max-w-[760px] bg-white px-6 pb-12 pt-16 text-center">
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
           <div className="relative mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[#f4fbf7] text-[#267449] border border-[#dbe6df] shadow-sm animate-pulse">
             <ClipboardText size={42} weight="regular" />

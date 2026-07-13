@@ -127,7 +127,7 @@ function CommentRow({ text, index }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <p className="typo-status-mini uppercase text-[#7b7b7b]">{isSelf ? 'Homeowner feedback' : displaySenderName}</p>
-          {timeLabel ? <p className="typo-body-10 text-[#999999]">{timeLabel}</p> : null}
+          {timeLabel ? <p className="typo-body-10 ui-muted">{timeLabel}</p> : null}
         </div>
         <p className="typo-body mt-1 text-black">{commentText}</p>
       </div>
@@ -173,7 +173,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header
           title={openItem ? openItem.title : openFolder ? openFolder.name : 'Shared archive'}
@@ -183,12 +183,12 @@ function HomeownerArchiveWorkspace({ onBack }) {
 
         {!openFolder ? (
           <>
-            <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="typo-caption uppercase text-[#267449]">References</p>
+            <section className="ui-page-summary px-4 py-5">
+              <p className="typo-caption ui-kicker">References</p>
               <h1 className="typo-page-title mt-2 text-black">Open a folder to review files and comment on specific items.</h1>
             </section>
 
-            <section className="px-4 py-5">
+            <section className="ui-screen-content">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="typo-section-title text-black">Folders</h2>
                 <span className="typo-caption uppercase text-[#8a8a8a]">{sharedFolders.length} shared</span>
@@ -206,8 +206,8 @@ function HomeownerArchiveWorkspace({ onBack }) {
           </>
         ) : !openItem ? (
           <>
-            <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="typo-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Shared folder'}</p>
+            <section className="ui-page-summary px-4 py-5">
+              <p className="typo-caption ui-kicker">{folderTypeLabels[openFolder.type] || 'Shared folder'}</p>
               <h1 className="typo-page-title mt-2 text-black">{openFolder.name}</h1>
               <p className="typo-body mt-2 text-[#5f7467]">{folderGuidance[openFolder.type] || folderGuidance.custom}</p>
               <div className="mt-5 grid grid-cols-3 border-y border-[#e5e5e5]">
@@ -224,7 +224,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
               </div>
             </section>
 
-            <section className="px-4 py-5">
+            <section className="ui-screen-content">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="typo-section-title text-black">Items</h2>
                 <span className="typo-caption text-[#7b7b7b]">Tap any item</span>
@@ -248,7 +248,7 @@ function HomeownerArchiveWorkspace({ onBack }) {
               )}
             </section>
 
-            <section className="px-4 py-5">
+            <section className="ui-screen-content">
               <p className="typo-body-strong text-black">{openItem.title}</p>
               <p className="typo-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
               <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">

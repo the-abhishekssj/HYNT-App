@@ -1,6 +1,6 @@
 function FlowSelection({ onSelectFlow, onResetToEmpty, onResetDemo }) {
   return (
-    <main className="h-dvh w-full overflow-hidden bg-[#eef3f0] font-['Urbanist'] text-slate-950">
+    <main className="ui-screen-base ui-feature-surface h-dvh w-full overflow-hidden bg-[#eef3f0] text-slate-950">
       <section className="mx-auto flex h-dvh w-full max-w-[480px] flex-col px-5 pb-8 pt-10">
         <header className="mb-8">
           <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-12 w-auto object-contain" />

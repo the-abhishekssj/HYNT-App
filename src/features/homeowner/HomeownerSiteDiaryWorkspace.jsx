@@ -17,6 +17,7 @@ import {
   formatDiaryDateLabel,
   formatDiaryTimeLabel,
 } from '../siteDiary/siteDiaryUtils'
+import Button from '../../components/ui/Button'
 
 const referenceImageOptions = ['/hynt-home/idea-1.png', '/hynt-home/idea-2.png', '/hynt-home/product.png']
 
@@ -153,14 +154,14 @@ function EntryDetail({ entry, project, commentDraft, onChangeComment, onSendComm
   const entryComments = entry.clientComments || []
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header title="Diary update" subtitle={formatDiaryDateLabel(entry.createdAt)} onBack={onBack} />
 
-        <section className="border-b border-[#e5e5e5] px-4 py-5">
+        <section className="ui-page-summary px-4 py-5">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="typo-caption uppercase text-[#267449]">Shared from site</p>
+              <p className="typo-caption ui-kicker">Shared from site</p>
               <p className="typo-body mt-2 text-[#5f7467]">{formatDiaryTimeLabel(entry.createdAt)} by {entry.createdBy || `${project.designerName}'s team`}</p>
             </div>
             <button
@@ -180,7 +181,7 @@ function EntryDetail({ entry, project, commentDraft, onChangeComment, onSendComm
         </section>
 
         {entry.photos.length ? (
-          <section className="px-4 py-5">
+          <section className="ui-screen-content">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="typo-section-title text-black">Photos</h2>
               <span className="typo-caption text-[#7b7b7b]">{entry.photos.length} shared</span>
@@ -193,7 +194,7 @@ function EntryDetail({ entry, project, commentDraft, onChangeComment, onSendComm
           </section>
         ) : null}
 
-        <section className="px-4 py-1">
+        <section className="ui-section-block px-4 py-1">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="typo-section-title text-black">Questions and notes</h2>
             <span className="typo-caption text-[#7b7b7b]">{entryComments.length} sent</span>
@@ -287,7 +288,7 @@ function HomeownerSiteDiaryWorkspace({ onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-10 pt-16">
         <Header
           title={activeView === 'home' ? 'Site diary' : activeView === 'references' ? 'My references' : SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeView)?.label || 'Site diary'}
@@ -295,15 +296,15 @@ function HomeownerSiteDiaryWorkspace({ onBack }) {
           onBack={activeView === 'home' ? onBack : () => setActiveView('home')}
         />
 
-        {activeView === 'home' ? <section className="border-b border-[#e5e5e5] px-4 py-5">
-          <p className="typo-caption uppercase text-[#267449]">Project updates</p>
+        {activeView === 'home' ? <section className="ui-page-summary px-4 py-5">
+          <p className="typo-caption ui-kicker">Project updates</p>
           <h1 className="typo-page-title mt-2 text-black">{siteDiaryEntries.length} entries shared</h1>
           <p className="typo-body mt-2 text-[#5f7467]">
             {latestEntry ? `Latest update: ${latestEntry.title} on ${formatDiaryDateLabel(latestEntry.createdAt)}.` : 'New site updates from the team will appear here.'}
           </p>
         </section> : null}
 
-        <div className="px-4 py-6">
+        <div className="ui-screen-content">
           {activeView === 'home' ? <section className="border-b border-[#e5e5e5] pb-5">
             <div className="grid grid-cols-4">
               <Metric value={siteDiaryEntries.length} label="Logs" tone="text-[#267449]" />
@@ -353,8 +354,8 @@ function HomeownerSiteDiaryWorkspace({ onBack }) {
                   <UploadSimple size={18} className="text-[#7b7b7b]" />
                 </div>
                 <div className="space-y-3">
-                  <input value={referenceDraft.title} onChange={(event) => setReferenceDraft((prev) => ({ ...prev, title: event.target.value }))} placeholder="Reference title" className="typo-body h-11 w-full rounded-[16px] border border-[#d7d7d7] px-3 outline-none" />
-                  <textarea value={referenceDraft.note} onChange={(event) => setReferenceDraft((prev) => ({ ...prev, note: event.target.value }))} placeholder="Why are you sharing this?" className="typo-body h-20 w-full resize-none rounded-[16px] border border-[#d7d7d7] px-3 py-3 outline-none" />
+                  <input value={referenceDraft.title} onChange={(event) => setReferenceDraft((prev) => ({ ...prev, title: event.target.value }))} placeholder="Reference title" className="ui-input-base typo-body w-full border border-[#d7d7d7] outline-none" />
+                  <textarea value={referenceDraft.note} onChange={(event) => setReferenceDraft((prev) => ({ ...prev, note: event.target.value }))} placeholder="Why are you sharing this?" className="ui-textarea-base typo-body h-20 w-full resize-none border border-[#d7d7d7] outline-none" />
                   <div className="flex gap-2">
                     {referenceImageOptions.map((image) => (
                       <button key={image} type="button" onClick={() => setReferenceDraft((prev) => ({ ...prev, image }))} className={`overflow-hidden rounded-[14px] border ${referenceDraft.image === image ? 'border-black' : 'border-[#d7d7d7]'}`}>
@@ -362,16 +363,16 @@ function HomeownerSiteDiaryWorkspace({ onBack }) {
                       </button>
                     ))}
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       actions.addSiteDiaryReference(referenceDraft)
                       setReferenceDraft({ title: '', note: '', image: referenceImageOptions[0] })
                     }}
-                    className="typo-body-strong h-11 w-full rounded-[18px] bg-black text-white"
+                    fullWidth
                   >
                     Share reference
-                  </button>
+                  </Button>
                 </div>
               </section>
 

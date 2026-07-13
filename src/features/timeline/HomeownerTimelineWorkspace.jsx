@@ -9,15 +9,15 @@ const formatDate = (value) => new Date(value).toLocaleDateString('en-IN', { day:
 
 function Header({ subtitle, onBack }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4 py-1">
           <span className="grid size-6 shrink-0 place-items-center">
             <CaretLeft size={24} />
           </span>
           <span className="min-w-0 text-left">
-            <span className="typo-section-title block truncate text-black">Project timeline</span>
-            <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
+            <span className="typo-section-title ui-section-title block truncate">Project timeline</span>
+            <span className="typo-caption ui-muted block truncate">{subtitle}</span>
           </span>
         </button>
       </div>
@@ -43,14 +43,14 @@ function HomeownerTimelineWorkspace({ onBack }) {
   const activePhase = sortedPhases.find((phase) => phase.status === 'active') || null
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-12 pt-16">
         <Header subtitle={`${project.name} / ${project.designerName}`} onBack={onBack} />
 
-        <section className="border-b border-[#e5e5e5] px-4 py-5">
+        <section className="ui-page-summary px-4 py-5">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="typo-caption uppercase text-[#267449]">Timeline progress</p>
+              <p className="typo-caption ui-kicker">Timeline progress</p>
               <h1 className="typo-page-title mt-2 text-black">{progress}% complete</h1>
             </div>
             <span className="typo-caption rounded-full border border-[#dbe6df] px-3 py-2 text-[#5f7467]">
@@ -65,7 +65,7 @@ function HomeownerTimelineWorkspace({ onBack }) {
           </div>
         </section>
 
-        <section className="px-4 py-5">
+        <section className="ui-section-block ui-screen-content">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="typo-section-title text-black">Track progress</h2>
             <span className="typo-caption text-[#7b7b7b]">Updated by your pro</span>

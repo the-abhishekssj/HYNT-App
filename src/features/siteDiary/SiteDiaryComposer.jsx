@@ -28,7 +28,7 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
         </button>
       </header>
 
-      <div className="space-y-6 px-4 py-5">
+      <div className="ui-screen-content space-y-6">
         <section>
           <FieldLabel>Update type</FieldLabel>
           <div className="flex flex-wrap gap-2">

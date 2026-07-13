@@ -344,7 +344,7 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
         <Header
           title={activeFolder === 'home' ? 'Site diary' : activeFolder === 'issues' ? 'Site issues' : activeFolder === 'references' ? 'Client references' : SITE_DIARY_BUCKETS.find((bucket) => bucket.id === activeFolder)?.label}
@@ -353,7 +353,7 @@ function ProSiteDiaryWorkspace({ project, onBack, onCreateTask }) {
           onCompose={() => setIsComposerOpen(true)}
         />
 
-        <div className="px-4 py-6">
+        <div className="ui-screen-content">
           {activeFolder === 'home' ? (
             <>
           <section className="border-b border-[#e5e5e5] pb-5">

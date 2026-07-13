@@ -1,19 +1,20 @@
 import { useState } from 'react'
 import { CaretDown, CaretLeft, CheckCircle, FileArrowDown, NotePencil } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 
 function ReviewHeader({ title, subtitle, onBack }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <div className="flex items-center justify-between py-1">
           <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
             <span className="grid size-6 shrink-0 place-items-center rounded">
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="typo-section-title block truncate text-black">{title}</span>
-              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title ui-section-title block truncate">{title}</span>
+              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
             </span>
           </button>
           <button type="button" className="grid size-8 shrink-0 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
@@ -27,11 +28,11 @@ function ReviewHeader({ title, subtitle, onBack }) {
 
 function ClientSection({ index, title, open, onToggle, badge, children }) {
   return (
-    <article className="overflow-hidden rounded-[20px] border border-[#dbe6df] bg-white">
+    <article className="ui-card overflow-hidden">
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-4 py-3 text-left">
         <span className="flex min-w-0 items-center gap-3">
           <span className="typo-caption grid size-6 shrink-0 place-items-center rounded-lg bg-[#f4fbf7] text-[#267449]">{index}</span>
-          <span className="typo-card-title truncate text-[#102418]">{title}</span>
+          <span className="typo-card-title ui-section-title truncate">{title}</span>
         </span>
         <span className="flex shrink-0 items-center gap-2">
           {badge ? <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 uppercase text-[#a86a00]">{badge}</span> : null}
@@ -128,7 +129,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="Scope of Work" subtitle="Waiting for designer" onBack={onBack} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
@@ -155,7 +156,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="Scope of Work" subtitle="Draft in progress" onBack={onBack} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
@@ -171,7 +172,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[148px] pt-[56px]">
       <ReviewHeader title={sow.status === 'revision-ready' ? 'Revised SOW' : 'Scope of Work'} subtitle={`Revision ${sow.revision}`} onBack={onBack} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <section className="pb-5">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
@@ -342,12 +343,12 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setView('otp')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => setView('otp')}>
           Looks good - sign and accept
-        </button>
-        <button type="button" onClick={() => startRemark('general', 'General SOW feedback')} className="typo-body-strong mt-2 h-10 w-full rounded-xl border border-[#e0e0e0] bg-white text-[#4b4b4b]">
+        </Button>
+        <Button type="button" variant="outline" fullWidth onClick={() => startRemark('general', 'General SOW feedback')} className="mt-2 border-[#e0e0e0] text-[#4b4b4b]">
           Add general remark
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -356,22 +357,22 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="Add remark" subtitle={remarkTarget?.sectionTitle || 'SOW feedback'} onBack={() => setView('review')} />
 
-      <div className="space-y-3 px-4 py-5">
+      <div className="ui-screen-content space-y-3">
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
           <p className="typo-label uppercase text-[#5f7467]">{remarkTarget?.sectionTitle}</p>
           <textarea
             value={remarkDraft}
             onChange={(event) => setRemarkDraft(event.target.value)}
             placeholder="Add a remark for the designer..."
-            className="typo-body mt-3 min-h-32 w-full rounded-[18px] border border-[#dbe6df] bg-white px-4 py-3 text-black outline-none"
+            className="ui-textarea-base typo-body mt-3 min-h-32 w-full border border-[#dbe6df] bg-white text-black outline-none"
           />
         </article>
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={sendRemark} disabled={!remarkDraft.trim()} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <Button type="button" fullWidth onClick={sendRemark} disabled={!remarkDraft.trim()}>
           Send remark to designer
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -380,7 +381,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="Remarks sent" subtitle="Waiting for revision" onBack={() => setView('review')} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
           <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
             <NotePencil size={22} />
@@ -405,9 +406,9 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setView('review')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => setView('review')}>
           Review current SOW
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -416,7 +417,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="Verify to sign" subtitle="Client approval" onBack={() => setView('review')} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
@@ -431,9 +432,9 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={signSow} disabled={otpDigits.some((digit) => !digit)} className="typo-body-strong h-11 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]">
+        <Button type="button" fullWidth onClick={signSow} disabled={otpDigits.some((digit) => !digit)}>
           Verify and sign
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -442,7 +443,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title={`Amendment v${pendingAmendment.version}`} subtitle="Review change request" onBack={() => setView('executed')} />
 
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
           <p className="typo-section-title text-black">{pendingAmendment.sectionTitle}</p>
           <p className="typo-body mt-2 text-[#5f7467]">Your designer has proposed a formal change to the executed SOW. Approving it will update the shared document revision.</p>
@@ -470,12 +471,12 @@ function HomeownerSowReview({ onBack }) {
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <div className="grid grid-cols-2 gap-2">
-          <button type="button" onClick={() => { actions.approveSowAmendment(pendingAmendment.id); setAmendmentResponse(''); setView('executed') }} className="typo-body-strong h-11 rounded-full bg-black text-white">
+          <Button type="button" fullWidth onClick={() => { actions.approveSowAmendment(pendingAmendment.id); setAmendmentResponse(''); setView('executed') }}>
             Approve
-          </button>
-          <button type="button" onClick={() => { actions.rejectSowAmendment(pendingAmendment.id, amendmentResponse); setAmendmentResponse(''); setView('executed') }} className="typo-body-strong h-11 rounded-full border border-[#e0e0e0] bg-white text-black">
+          </Button>
+          <Button type="button" variant="outline" fullWidth onClick={() => { actions.rejectSowAmendment(pendingAmendment.id, amendmentResponse); setAmendmentResponse(''); setView('executed') }} className="border-[#e0e0e0] text-black">
             Reject
-          </button>
+          </Button>
         </div>
       </div>
     </section>
@@ -485,7 +486,7 @@ function HomeownerSowReview({ onBack }) {
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <ReviewHeader title="SOW signed" subtitle="Executed document" onBack={onBack} />
 
-      <div className="space-y-3 px-4 py-5">
+      <div className="ui-screen-content space-y-3">
         <article className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
           <div className="mx-auto grid size-16 place-items-center rounded-[20px] bg-[#f4fbf7] text-black">
             <CheckCircle size={28} weight="fill" />
@@ -634,23 +635,23 @@ function HomeownerSowReview({ onBack }) {
   )
 
   if (!sow) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderEmpty()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderEmpty()}</main>
   }
 
   if (sow.status === 'draft') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderWaitingForSend()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderWaitingForSend()}</main>
   }
 
   if (sow.status === 'executed' && effectiveView === 'amendment' && pendingAmendment) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderAmendmentReview()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderAmendmentReview()}</main>
   }
 
   if (sow.status === 'executed' || effectiveView === 'executed') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderExecuted()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderExecuted()}</main>
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       {effectiveView === 'review' ? renderReview() : null}
       {effectiveView === 'remark' ? renderRemark() : null}
       {effectiveView === 'waiting' ? renderWaiting() : null}

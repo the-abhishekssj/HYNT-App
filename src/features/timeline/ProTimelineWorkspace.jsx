@@ -23,16 +23,16 @@ const formatDate = (value) => new Date(value).toLocaleDateString('en-IN', { day:
 
 function Header({ subtitle, onBack, onAdd }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <div className="flex items-center justify-between py-1">
           <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
             <span className="grid size-6 shrink-0 place-items-center">
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="typo-section-title block truncate text-black">Timeline</span>
-              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title ui-section-title block truncate">Timeline</span>
+              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
             </span>
           </button>
           <button type="button" onClick={onAdd} className="grid size-9 place-items-center rounded-xl bg-black text-white" aria-label="Add timeline phase">
@@ -74,7 +74,7 @@ function ProTimelineWorkspace({ project, onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
         <Header
           subtitle={project?.scope || 'Project schedule'}
@@ -82,8 +82,8 @@ function ProTimelineWorkspace({ project, onBack }) {
           onAdd={() => phaseInputRef.current?.focus()}
         />
 
-        <section className="border-b border-[#e5e5e5] px-4 py-5">
-          <p className="typo-caption uppercase text-[#267449]">Project progress</p>
+        <section className="ui-page-summary px-4 py-5">
+          <p className="typo-caption ui-kicker">Project progress</p>
           <h1 className="typo-page-title mt-2 text-black">{progress}% complete</h1>
           <p className="typo-body mt-2 text-[#5f7467]">
             {completedCount} of {timelinePhases.length} phases done. {activePhase ? `${activePhase.name} is currently active.` : 'No active phase yet.'}
@@ -105,7 +105,7 @@ function ProTimelineWorkspace({ project, onBack }) {
           </div>
         </section>
 
-        <section className="border-b border-[#e0e0e0] px-4 py-6">
+        <section className="ui-section-block px-4 py-6">
           <h2 className="typo-section-title text-black">Daily actions</h2>
           <div className="mt-3 flex items-start justify-between gap-2 overflow-hidden">
             <button type="button" onClick={() => activePhase && actions.markTimelinePhaseDone(activePhase.id)} className="flex min-w-0 items-center gap-2 py-2 text-left">
@@ -123,7 +123,7 @@ function ProTimelineWorkspace({ project, onBack }) {
           </div>
         </section>
 
-        <section className="px-4 py-5">
+        <section className="ui-section-block ui-screen-content">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="typo-section-title text-black">Phases</h2>
             <span className="typo-caption text-[#7b7b7b]">{sortedPhases.length} total</span>

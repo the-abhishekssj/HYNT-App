@@ -32,8 +32,8 @@ function AccessToggle({ enabled, disabled, onClick }) {
 
 function SectionHeader({ title, meta }) {
   return (
-    <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="typo-section-title text-black">{title}</h2>
+    <div className="ui-section-header mb-3">
+      <h2 className="typo-section-title ui-section-title">{title}</h2>
       {meta ? <span className="typo-caption shrink-0 rounded-full border border-[#e0e0e0] bg-white px-3 py-1 uppercase text-[#6f6f6f]">{meta}</span> : null}
     </div>
   )
@@ -78,18 +78,18 @@ function PeopleAccessWorkspace({ project, onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-32 pt-16">
-        <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-          <div className="px-4 py-3">
+        <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+          <div className="ui-workspace-header-inner">
             <div className="flex items-center justify-between py-1">
               <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
                 <span className="grid size-6 shrink-0 place-items-center rounded">
                   <CaretLeft size={24} />
                 </span>
                 <span className="min-w-0 text-left">
-                  <span className="typo-section-title block truncate text-black">People & Access</span>
-                  <span className="typo-caption block truncate text-[#999999]">{project?.scope || 'Project workspace'}</span>
+                  <span className="typo-section-title ui-section-title block truncate">People & Access</span>
+                  <span className="typo-caption ui-muted block truncate">{project?.scope || 'Project workspace'}</span>
                 </span>
               </button>
               <button type="button" onClick={() => setIsInviteOpen(true)} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white" aria-label="Invite people">
@@ -101,13 +101,13 @@ function PeopleAccessWorkspace({ project, onBack }) {
 
         <div className="py-5">
           <section className="border-b border-[#e5e5e5] px-4 pb-5">
-            <div className="rounded-2xl border border-[#dbe6df] bg-[#f7fbf8] p-4">
-              <p className="typo-card-title text-black">Project-specific roles</p>
-              <p className="typo-body mt-1 text-[#5f7467]">Role assignments and permissions apply to this project only. The same person can have a different role on another project.</p>
+            <div className="ui-soft-card p-4">
+              <p className="typo-card-title ui-section-title">Project-specific roles</p>
+              <p className="typo-body ui-muted mt-1">Role assignments and permissions apply to this project only. The same person can have a different role on another project.</p>
             </div>
           </section>
 
-          <section className="px-4 py-5">
+          <section className="ui-screen-content">
             <SectionHeader title="Current people" meta={`${acceptedMembers.length} active`} />
             <div className="border-y border-[#e5e5e5]">
               {acceptedMembers.map((membership) => {

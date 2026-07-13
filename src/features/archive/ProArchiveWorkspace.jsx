@@ -31,7 +31,7 @@ function CommentRow({ text, index }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <p className="typo-status-mini uppercase text-[#7b7b7b]">{displaySenderName}</p>
-          {timeLabel ? <p className="typo-body-10 text-[#999999]">{timeLabel}</p> : null}
+          {timeLabel ? <p className="typo-body-10 ui-muted">{timeLabel}</p> : null}
         </div>
         <p className="typo-body mt-1 text-black">{commentText}</p>
       </div>
@@ -206,7 +206,7 @@ function ProArchiveWorkspace({ project, onBack }) {
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
         <Header
           project={project}
@@ -226,8 +226,8 @@ function ProArchiveWorkspace({ project, onBack }) {
 
         {!openFolder ? (
           <>
-            <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="typo-caption uppercase text-[#267449]">Project archive</p>
+            <section className="ui-page-summary px-4 py-5">
+              <p className="typo-caption ui-kicker">Project archive</p>
               <h1 className="typo-page-title mt-2 text-black">Open a folder to manage what is shared and who can work inside it.</h1>
               <p className="typo-meta mt-2 text-[#6f6f6f]">
                 Viewing as {activeViewer?.role?.label}. {!permissions.canViewInternalArchive ? 'Only homeowner-visible folders are shown here.' : 'Internal folders remain visible.'}
@@ -246,7 +246,7 @@ function ProArchiveWorkspace({ project, onBack }) {
               </div>
             </section>
 
-            <section className="px-4 py-5">
+            <section className="ui-screen-content">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="typo-section-title text-black">Folders</h2>
                 <span className="typo-caption uppercase text-[#8a8a8a]">Tap to open</span>
@@ -268,8 +268,8 @@ function ProArchiveWorkspace({ project, onBack }) {
           </>
         ) : !openItem ? (
           <>
-            <section className="border-b border-[#e5e5e5] px-4 py-5">
-              <p className="typo-caption uppercase text-[#267449]">{folderTypeLabels[openFolder.type] || 'Project folder'}</p>
+            <section className="ui-page-summary px-4 py-5">
+              <p className="typo-caption ui-kicker">{folderTypeLabels[openFolder.type] || 'Project folder'}</p>
               <h1 className="typo-page-title mt-2 text-black">{openFolder.name}</h1>
               <p className="typo-body mt-2 text-[#5f7467]">
                 {openFolder.type === 'moodboard'
@@ -320,7 +320,7 @@ function ProArchiveWorkspace({ project, onBack }) {
               )}
             </section>
 
-            <section className="px-4 py-5">
+            <section className="ui-screen-content">
               <p className="typo-body-strong text-black">{openItem.title}</p>
               <p className="typo-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
               <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">

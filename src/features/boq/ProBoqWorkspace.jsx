@@ -8,6 +8,7 @@ import {
   Plus,
   Trash,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import { BoqHistoryDetailBody, BoqHistoryList } from './BoqHistoryViews'
 import { BoqParticularList, BoqQuestionThread, BoqRoomListSection } from './BoqRoomSections'
@@ -23,16 +24,16 @@ import {
 
 function Header({ title, subtitle, onBack, right }) {
   return (
-    <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.72)] backdrop-blur-[16px]">
-      <div className="px-4 py-3">
+    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
+      <div className="ui-workspace-header-inner">
         <div className="flex items-center justify-between py-1">
           <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
             <span className="grid size-6 shrink-0 place-items-center rounded">
               <CaretLeft size={24} />
             </span>
             <span className="min-w-0 text-left">
-              <span className="typo-section-title block truncate text-black">{title}</span>
-              <span className="typo-caption block truncate text-[#999999]">{subtitle}</span>
+              <span className="typo-section-title ui-section-title block truncate">{title}</span>
+              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
             </span>
           </button>
           <div className="flex items-center gap-2">{right}</div>
@@ -46,7 +47,7 @@ function Metric({ label, value, tone = 'text-black' }) {
   return (
     <div className="border-r border-[#ececec] px-3 py-4 text-left last:border-r-0">
       <p className={`typo-card-title ${tone}`}>{value}</p>
-      <p className="typo-caption mt-2 text-[#7b7b7b]">{label}</p>
+      <p className="typo-caption ui-muted mt-2">{label}</p>
     </div>
   )
 }
@@ -65,7 +66,6 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const [selectedHistoryId, setSelectedHistoryId] = useState(null)
   const [financeMode, setFinanceMode] = useState(boqMeta.financeScheduleMode || 'auto')
   const [replyDraft, setReplyDraft] = useState('')
-  const [boqActionState, setBoqActionState] = useState('draft')
   const [boqViewTab, setBoqViewTab] = useState('room')
   const [inlineEditingItemId, setInlineEditingItemId] = useState(null)
   const [inlineNewRoomId, setInlineNewRoomId] = useState(null)
@@ -103,15 +103,71 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
     : []
   const flaggedItems = boqItems.filter((item) => (item.clientQuestions || []).some((question) => question.status !== 'resolved'))
   const latestOpenQuestion = [...(selectedItem?.clientQuestions || [])].reverse().find((question) => question.status !== 'resolved') || null
+  const missingRateCount = boqItems.filter((item) => !(Number(item.rate) > 0)).length
+  const missingVendorCount = boqItems.filter((item) => !item.vendor?.trim()).length
+  const openRemarkCount = flaggedItems.reduce((count, item) => (
+    count + (item.clientQuestions || []).filter((question) => question.status !== 'resolved').length
+  ), 0)
+  const canMarkReady = Boolean(boqItems.length && roomSummaries.length && !missingRateCount)
+  const readyChecklist = [
+    {
+      label: 'Rooms structured',
+      detail: `${roomSummaries.length} room${roomSummaries.length === 1 ? '' : 's'} in this quotation`,
+      complete: roomSummaries.length > 0,
+    },
+    {
+      label: 'Line items priced',
+      detail: missingRateCount ? `${missingRateCount} item${missingRateCount === 1 ? '' : 's'} missing rates` : `${boqItems.length} priced item${boqItems.length === 1 ? '' : 's'}`,
+      complete: boqItems.length > 0 && missingRateCount === 0,
+    },
+    {
+      label: 'Vendor references',
+      detail: missingVendorCount ? `${missingVendorCount} item${missingVendorCount === 1 ? '' : 's'} without vendor` : 'Vendor costs captured',
+      complete: missingVendorCount === 0,
+      optional: true,
+    },
+  ]
+  const statusTone = {
+    draft: 'bg-[#eef7f1] text-[#267449]',
+    ready: 'bg-[#e9f2ff] text-[#2f5f9f]',
+    shared: 'bg-[#fff3dd] text-[#a86a00]',
+    changesRequested: 'bg-[#fff3dd] text-[#a86a00]',
+    revised: 'bg-[#e9f2ff] text-[#2f5f9f]',
+    approved: 'bg-[#eef7f1] text-[#267449]',
+  }[boqMeta.status] || 'bg-[#eef7f1] text-[#267449]'
+  const statusNarrative = {
+    draft: canMarkReady
+      ? 'The quotation is editable. Mark it ready when you want to lock the current version before sending.'
+      : 'Add priced room line items before this quotation can be marked ready.',
+    ready: `Ready to send${boqMeta.readyAt ? ` since ${formatBoqHistoryDate(boqMeta.readyAt)}` : ''}. The homeowner has not received this version yet.`,
+    shared: `Sent to homeowner${boqMeta.sharedAt ? ` on ${formatBoqHistoryDate(boqMeta.sharedAt)}` : ''}. Waiting for approval or remarks.`,
+    changesRequested: `${openRemarkCount || flaggedItems.length} homeowner remark${(openRemarkCount || flaggedItems.length) === 1 ? '' : 's'} need review before resubmitting.`,
+    revised: 'Revision is back with the homeowner. Keep the changed particulars visible until they approve.',
+    approved: 'Homeowner approved this quotation. Move it into Finance when you are ready.',
+  }[boqMeta.status] || 'Keep the quotation updated before sharing it with the homeowner.'
 
   const rightActions = (
     <>
-      <button type="button" onClick={() => setScreen('import')} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
+      <Button
+        type="button"
+        variant="outline"
+        size="small"
+        onClick={() => setScreen('import')}
+        className="size-8 rounded-[16px] border-[#dbe6df] px-0"
+        aria-label="Import BOQ"
+      >
         <FileArrowUp size={15} />
-      </button>
-      <button type="button" onClick={() => setScreen('history')} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        size="small"
+        onClick={() => setScreen('history')}
+        className="size-8 rounded-[16px] border-[#dbe6df] px-0"
+        aria-label="View BOQ history"
+      >
         <ClockCounterClockwise size={15} />
-      </button>
+      </Button>
     </>
   )
 
@@ -133,46 +189,84 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
     <section className="mx-auto w-full max-w-[390px] pb-[134px] pt-[56px]">
       <Header title="BOQ / Quotation" subtitle={project?.scope || 'Project quotation'} onBack={onBack} right={rightActions} />
 
-      <div className="px-4 py-5">
-        <div className="rounded-[20px] border border-[#dbe6df] bg-white p-4 shadow-[0_12px_28px_rgba(16,36,24,0.08)]">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="typo-caption inline-flex rounded-full bg-[#eef7f1] px-2 py-1 uppercase text-[#267449]">{boqStatusLabels[boqMeta.status] || 'Draft'}</p>
-            <p className="typo-section-title mt-2 text-black">{project?.name || 'Sharma 3BHK Renovation'}</p>
-            <p className="typo-body mt-1 text-[#5f7467]">{project?.clientName} | {project?.location}</p>
+      <div className="ui-screen-content">
+        <section className="space-y-3 border-b border-[#dce7df] pb-5">
+          <div className="rounded-[18px] border border-[#dbe6df] bg-white p-3 shadow-[0_10px_22px_rgba(16,36,24,0.06)]">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className={`typo-caption inline-flex rounded-full px-2 py-1 uppercase ${statusTone}`}>{boqStatusLabels[boqMeta.status] || 'Draft'}</p>
+                <p className="typo-section-title mt-2 text-black">{project?.name || 'Sharma 3BHK Renovation'}</p>
+                <p className="typo-meta mt-1 text-[#5f7467]">{project?.clientName} | {project?.location}</p>
+              </div>
+              <p className="typo-caption shrink-0 text-[#7b7b7b]">v{boqMeta.version}</p>
+            </div>
+            <p className="typo-body mt-3 text-[#5f7467]">{statusNarrative}</p>
           </div>
-          <p className="typo-caption shrink-0 text-[#7b7b7b]">v{boqMeta.version}</p>
-        </div>
-        </div>
 
-        <div className="mt-3 grid grid-cols-3 overflow-hidden rounded-[18px] border border-[#ececec] bg-white">
-          <Metric label="BOQ Total" value={formatLakhs(grandTotal / 100000)} tone="text-[#267449]" />
-          <Metric label="Line items" value={String(boqItems.length)} />
-          <Metric label="GST est." value={formatLakhs(gstAmount / 100000)} tone={boqMeta.gstEnabled ? 'text-[#a86a00]' : 'text-black'} />
-        </div>
+          <div className="grid grid-cols-3 overflow-hidden rounded-[18px] border border-[#ececec] bg-white">
+            <Metric label="BOQ Total" value={formatLakhs(grandTotal / 100000)} tone="text-[#267449]" />
+            <Metric label="Line items" value={String(boqItems.length)} />
+            <Metric label="GST est." value={formatLakhs(gstAmount / 100000)} tone={boqMeta.gstEnabled ? 'text-[#a86a00]' : 'text-black'} />
+          </div>
 
-        <div className="mt-4 grid grid-cols-3 rounded-full bg-[#f3f7f4] p-1">
+          {boqMeta.status !== 'approved' ? (
+            <div className="rounded-[18px] border border-[#e8efe9] bg-[#fbfffd] p-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="typo-section-title text-black">Readiness</p>
+                <span className={`typo-caption rounded-full px-2 py-1 ${canMarkReady ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>
+                  {canMarkReady ? 'Can mark ready' : 'Needs pricing'}
+                </span>
+              </div>
+              <div className="mt-2 space-y-1.5">
+                {readyChecklist.map((check) => (
+                  <div key={check.label} className="flex items-center gap-2">
+                    <span className={`size-2 shrink-0 rounded-full ${check.complete ? 'bg-[#5fc18a]' : check.optional ? 'bg-[#efb24d]' : 'bg-[#c34545]'}`} />
+                    <p className="typo-meta min-w-0 truncate text-black">
+                      <span className="typo-body-strong">{check.label}</span>
+                      <span className="text-[#6f7c74]"> · {check.detail}{check.optional && !check.complete ? ' / optional' : ''}</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </section>
+
+        <div role="tablist" aria-label="BOQ view selector" className="ui-view-tabs mt-5 grid grid-cols-3">
           {[
             ['room', 'By room'],
             ['activity', 'By activity'],
             ['summary', 'Summary'],
           ].map(([key, label]) => (
-            <button key={key} type="button" onClick={() => setBoqViewTab(key)} className={`typo-label h-9 rounded-full ${boqViewTab === key ? 'bg-black text-white' : 'text-[#5f7467]'}`}>
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={boqViewTab === key}
+              aria-controls={`boq-view-panel-${key}`}
+              id={`boq-view-tab-${key}`}
+              onClick={() => setBoqViewTab(key)}
+              className={`ui-view-tab typo-label w-full px-0 py-3 transition-colors ${
+                boqViewTab === key
+                  ? 'text-[#102418]'
+                  : 'text-[#6f7d74]'
+              }`}
+            >
               {label}
             </button>
           ))}
         </div>
 
         {boqViewTab === 'room' ? (
-          <section className="mt-3 border-t border-[#ececec]">
-            <div className="flex items-center justify-between gap-3 py-2">
+          <section id="boq-view-panel-room" role="tabpanel" aria-labelledby="boq-view-tab-room" className="mt-5">
+            <div className="flex items-center justify-between gap-3 border-b border-[#e6ece8] pb-3">
               <div>
                 <p className="typo-section-title text-black">Room BOQs</p>
-                <p className="typo-meta mt-0.5 text-[#7b7b7b]">Add a room, then add line items inside it.</p>
+                <p className="typo-meta mt-0.5 text-[#7b7b7b]">SOW rooms appear here automatically; add BOQ-only areas if pricing needs extra buckets.</p>
               </div>
-              <button type="button" onClick={startInlineNewRoom} className="typo-caption shrink-0 rounded-full bg-black px-3 py-2 text-white">
+              <Button type="button" variant="primary" size="small" onClick={startInlineNewRoom} className="typo-caption shrink-0">
                 Add room
-              </button>
+              </Button>
             </div>
 
             {inlineNewRoomOpen ? (
@@ -180,17 +274,20 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
             ) : null}
 
             {roomSummaries.length ? (
-              <div>
+              <div className="divide-y divide-[#eef2ef]">
                 {roomSummaries.map((room) => {
                   const expanded = selectedRoomId === room.id
                   const currentRoomItems = boqItems.filter((item) => item.roomId === room.id || item.space === room.name)
                   return (
-                    <article key={room.id} className="border-t border-[#f2f2f2] py-2">
+                    <article key={room.id} className="py-3">
                       <div className="flex items-start justify-between gap-2">
                         <button type="button" onClick={() => toggleInlineRoom(room)} className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
                               <p className="typo-body-strong text-black">{room.name}</p>
+                              {room.source === 'sow' ? (
+                                <span className="typo-caption rounded-full bg-[#e9f2ff] px-2 py-1 text-[#2f5f9f]">From SOW</span>
+                              ) : null}
                               {room.openQuestionCount ? (
                                 <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{room.openQuestionCount} notes</span>
                               ) : null}
@@ -245,31 +342,39 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
                 })}
               </div>
             ) : !inlineNewRoomOpen ? (
-              <button type="button" onClick={startInlineNewRoom} className="mt-2 flex w-full items-center justify-between rounded-[16px] border border-dashed border-[#9fc9b1] bg-[#f7fffa] px-3 py-3 text-left text-[#173324]">
-                <span>
-                  <span className="typo-body-strong block">Add first room</span>
-                  <span className="typo-meta mt-0.5 block text-[#5f7467]">Living room, kitchen, bedroom, foyer, or custom area.</span>
+              <Button
+                type="button"
+                variant="ghost"
+                fullWidth
+                onClick={startInlineNewRoom}
+                className="mt-2 h-auto justify-start rounded-[16px] border border-dashed border-[#9fc9b1] bg-[#f7fffa] px-3 py-3 text-left text-[#173324] hover:bg-[#f2fbf6]"
+              >
+                <span className="flex w-full items-center justify-between gap-3">
+                  <span className="min-w-0">
+                    <span className="typo-body-strong block">Add first room</span>
+                    <span className="typo-meta mt-0.5 block text-[#5f7467]">Living room, kitchen, bedroom, foyer, or custom area.</span>
+                  </span>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#173324] text-white">
+                    <Plus size={16} />
+                  </span>
                 </span>
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#173324] text-white">
-                  <Plus size={16} />
-                </span>
-              </button>
+              </Button>
             ) : null}
           </section>
         ) : null}
 
         {boqViewTab === 'activity' ? (
-          <section className="border-t border-[#ececec] py-4">
-            <div className="flex items-center justify-between px-4">
+          <section id="boq-view-panel-activity" role="tabpanel" aria-labelledby="boq-view-tab-activity" className="mt-5">
+            <div className="flex items-center justify-between border-b border-[#e6ece8] pb-3">
               <p className="typo-section-title text-black">By activity</p>
               <p className="typo-meta text-[#7b7b7b]">Category totals</p>
             </div>
-            <div className="mt-2">
+            <div className="divide-y divide-[#eef2ef]">
               {Object.entries(boqItems.reduce((acc, item) => {
                 acc[item.category || 'General'] = (acc[item.category || 'General'] || 0) + getBoqItemAmount(item)
                 return acc
               }, {})).map(([category, amount]) => (
-                <div key={category} className="flex items-center justify-between border-t border-[#f2f2f2] px-4 py-3">
+                <div key={category} className="flex items-center justify-between py-3">
                   <p className="typo-body-strong text-black">{category}</p>
                   <p className="typo-body-strong text-[#267449]">{formatRupees(amount)}</p>
                 </div>
@@ -279,7 +384,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         ) : null}
 
         {boqViewTab === 'summary' ? (
-          <section className="border-t border-[#ececec] px-4 py-4">
+          <section id="boq-view-panel-summary" role="tabpanel" aria-labelledby="boq-view-tab-summary" className="mt-5">
             <p className="typo-section-title text-black">Billing summary</p>
             <div className="mt-3 space-y-2 rounded-[18px] border border-[#e8efe9] bg-white p-3">
               <div className="flex justify-between"><span className="typo-body text-[#5f7467]">Subtotal</span><span className="typo-body-strong text-black">{formatRupees(totalAmount)}</span></div>
@@ -290,14 +395,14 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         ) : null}
 
         {flaggedItems.length ? (
-          <section className="border-t border-[#ececec] py-4">
-            <div className="flex items-center justify-between gap-3 px-4">
+          <section className="mt-7 border-t border-[#dce7df] pt-5">
+            <div className="flex items-center justify-between gap-3">
               <p className="typo-section-title text-black">Homeowner remarks</p>
               <button type="button" onClick={() => setScreen('changes')} className="typo-label uppercase text-[#267449]">Review all</button>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 divide-y divide-[#eef2ef] border-y border-[#eef2ef]">
               {flaggedItems.slice(0, 3).map((item) => (
-                <button key={item.id} type="button" onClick={() => openItem(item)} className="flex w-full items-start justify-between gap-3 border-t border-[#f2f2f2] px-4 py-3 text-left">
+                <button key={item.id} type="button" onClick={() => openItem(item)} className="flex w-full items-start justify-between gap-3 py-3 text-left">
                   <div className="min-w-0">
                     <p className="typo-body text-black">{item.item}</p>
                     <p className="typo-meta mt-1 text-[#7b7b7b]">{item.space}</p>
@@ -315,24 +420,34 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button
+        <Button
           type="button"
           onClick={() => {
             if (boqMeta.status === 'changesRequested') {
               setScreen('changes')
               return
             }
-            if (boqActionState === 'draft') {
-              setBoqActionState('ready')
+            if (boqMeta.status === 'ready' || boqMeta.status === 'shared' || boqMeta.status === 'revised') {
+              actions.shareBoqQuotation()
               return
             }
-            actions.shareBoqQuotation()
+            actions.markBoqReady()
           }}
-          className="typo-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white"
+          disabled={!canMarkReady && boqMeta.status === 'draft'}
+          fullWidth
+          trailingIcon={PaperPlaneTilt}
+          className="typo-body-strong"
         >
-          {boqMeta.status === 'changesRequested' ? 'Review client remarks' : boqActionState === 'draft' ? 'Mark ready' : 'Send quotation'}
-          <PaperPlaneTilt size={16} />
-        </button>
+          {boqMeta.status === 'changesRequested'
+            ? 'Review client remarks'
+            : boqMeta.status === 'ready'
+              ? 'Send quotation'
+              : boqMeta.status === 'shared'
+                ? 'Share again'
+                : boqMeta.status === 'revised'
+                  ? 'Send revised quotation'
+                  : 'Mark ready'}
+        </Button>
       </div>
     </section>
   )
@@ -340,7 +455,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderHistory = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[72px] pt-[56px]">
       <Header title="BOQ history" subtitle="Sent quotations" onBack={() => setScreen('home')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <BoqHistoryList title="Sent so far" entries={visibleHistoryEntries} onOpen={(entry) => setSelectedHistoryId(entry.id)} emptyLabel="No quotation history yet." />
       </div>
     </section>
@@ -349,7 +464,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderRoom = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title={selectedRoom?.name || 'Room BOQ'} subtitle={selectedRoom?.note || 'Particulars for this room'} onBack={() => setScreen('home')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4">
           <p className="typo-caption uppercase text-[#5f7467]">Room BOQ</p>
           <p className="typo-page-title mt-2 text-black">{formatRupees(selectedRoom?.total || 0)}</p>
@@ -390,15 +505,15 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
                         <input
                           value={item?.[key] ?? ''}
                           onChange={(event) => actions.updateBoqItem(item.id, {
-                            [key]: ['rate', 'vendorRate', 'markupPercent', 'vendorQuantity', 'quantity'].includes(key) ? Number(event.target.value) || 0 : event.target.value,
-                          })}
-                          className="typo-body mt-2 h-11 w-full rounded-[16px] border border-[#dbe6df] px-3 text-black outline-none"
+                              [key]: ['rate', 'vendorRate', 'markupPercent', 'vendorQuantity', 'quantity'].includes(key) ? Number(event.target.value) || 0 : event.target.value,
+                            })}
+                          className="ui-input-base typo-body mt-2 w-full border border-[#dbe6df] text-black outline-none"
                         />
                       </label>
                     ))}
                     <div className="grid grid-cols-2 gap-2">
-                      <button type="button" onClick={() => setSelectedItemId(null)} className="typo-body-strong h-10 rounded-full bg-black text-white">Save</button>
-                      <button type="button" onClick={() => setSelectedItemId(null)} className="typo-body-strong h-10 rounded-full border border-[#e0e0e0] bg-white text-black">Discard</button>
+                      <Button type="button" size="small" onClick={() => setSelectedItemId(null)}>Save</Button>
+                      <Button type="button" size="small" variant="outline" onClick={() => setSelectedItemId(null)} className="border-[#e0e0e0] text-black">Discard</Button>
                     </div>
                   </div>
                 ) : null}
@@ -408,8 +523,10 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         </div>
       </div>
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button
+        <Button
           type="button"
+          fullWidth
+          leadingIcon={Plus}
           onClick={() => {
             actions.addBoqItem({
               roomId: selectedRoom?.id,
@@ -421,11 +538,9 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
               unit: 'unit',
             })
           }}
-          className="typo-body-strong flex h-11 w-full items-center justify-center gap-2 rounded-full bg-black text-white"
         >
-          <Plus size={16} />
           Add line item
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -433,7 +548,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderItem = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title={selectedItem?.item || 'Particular'} subtitle={selectedRoom?.name || 'Room BOQ'} onBack={() => setScreen('room')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="space-y-3">
           {[
             ['Particular', 'item'],
@@ -452,7 +567,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
                 onChange={(event) => actions.updateBoqItem(selectedItem.id, {
                   [key]: ['rate', 'vendorRate', 'markupPercent'].includes(key) ? Number(event.target.value) || 0 : event.target.value,
                 })}
-                className="typo-body mt-2 h-11 w-full rounded-[16px] border border-[#dbe6df] px-3 text-black outline-none"
+                className="ui-input-base typo-body mt-2 w-full border border-[#dbe6df] text-black outline-none"
               />
             </label>
           ))}
@@ -461,7 +576,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
             <textarea
               value={selectedItem?.notes || ''}
               onChange={(event) => actions.updateBoqItem(selectedItem.id, { notes: event.target.value })}
-              className="typo-body mt-2 min-h-24 w-full resize-none rounded-[16px] border border-[#dbe6df] px-3 py-3 text-black outline-none"
+              className="ui-textarea-base typo-body mt-2 min-h-24 w-full resize-none border border-[#dbe6df] text-black outline-none"
             />
           </label>
         </div>
@@ -475,27 +590,28 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
               <textarea
                 value={replyDraft}
                 onChange={(event) => setReplyDraft(event.target.value)}
-                className="typo-body mt-3 min-h-20 w-full resize-none rounded-[16px] border border-[#dbe6df] px-3 py-3 text-black outline-none"
+                className="ui-textarea-base typo-body mt-3 min-h-20 w-full resize-none border border-[#dbe6df] text-black outline-none"
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   actions.replyBoqQuestion(selectedItem.id, latestOpenQuestion.id, replyDraft)
                   setReplyDraft('')
                 }}
                 disabled={!replyDraft.trim()}
-                className="typo-body-strong mt-3 h-10 w-full rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]"
+                fullWidth
+                className="mt-3"
               >
                 Save reply
-              </button>
+              </Button>
             </div>
           </section>
         ) : null}
       </div>
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => setScreen('room')} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => setScreen('room')}>
           Done editing particular
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -503,12 +619,12 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderImport = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title="Import BOQ" subtitle="Excel or CSV" onBack={() => setScreen('home')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <p className="typo-body text-[#5f7467]">Download the BOQ template, fill room-wise particulars with the same headers, then upload it back here.</p>
 
-        <button type="button" className="typo-body-strong mt-4 h-11 w-full rounded-full border border-black bg-white text-black">
+        <Button type="button" variant="outline" fullWidth className="mt-4 border-black text-black">
           Download BOQ template
-        </button>
+        </Button>
 
         <button
           type="button"
@@ -546,12 +662,12 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         {(boqMeta.pendingImportRows || []).length ? (
           <div className="grid grid-cols-[2fr_1fr] gap-2">
-            <button type="button" onClick={() => { actions.confirmBoqImport(); setScreen('home') }} className="typo-body-strong h-11 rounded-full bg-black text-white">
+            <Button type="button" fullWidth onClick={() => { actions.confirmBoqImport(); setScreen('home') }}>
               Confirm import
-            </button>
-            <button type="button" onClick={() => actions.clearBoqImport()} className="typo-body-strong h-11 rounded-full border border-[#e0e0e0] bg-white text-black">
+            </Button>
+            <Button type="button" variant="outline" fullWidth onClick={() => actions.clearBoqImport()} className="border-[#e0e0e0] text-black">
               Re-upload
-            </button>
+            </Button>
           </div>
         ) : null}
       </div>
@@ -561,7 +677,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderChanges = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title="Client feedback" subtitle="Flagged particulars" onBack={() => setScreen('home')} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <p className="typo-body text-[#5f7467]">The homeowner has marked individual particulars for review. Update those particulars, reply where needed, then resubmit the quotation.</p>
         {boqMeta.clientFeedback ? (
           <div className="mt-4 border-t border-[#ececec] pt-4">
@@ -572,9 +688,9 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
       </div>
       <BoqParticularList items={flaggedItems} onOpenItem={openItem} emptyLabel="No flagged particulars right now." />
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button type="button" onClick={() => { actions.resubmitBoqQuotation(); setScreen('home') }} className="typo-body-strong h-11 w-full rounded-full bg-black text-white">
+        <Button type="button" fullWidth onClick={() => { actions.resubmitBoqQuotation(); setScreen('home') }}>
           Resubmit quotation
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -582,7 +698,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   const renderApproved = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <Header title="BOQ / Quotation" subtitle="Approved quotation" onBack={onBack} />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <div className="border-b border-[#ececec] pb-4 text-center">
           <p className="typo-page-title text-black">Quotation approved</p>
           <p className="typo-body mt-2 text-[#5f7467]">The homeowner approved the room-wise quotation. You can now create the invoice schedule in Finance.</p>
@@ -623,16 +739,16 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         <BoqHistoryList title="Previously signed BOQs" entries={visibleHistoryEntries} onOpen={(entry) => setSelectedHistoryId(entry.id)} />
       </div>
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <button
+        <Button
           type="button"
+          fullWidth
           onClick={() => {
             actions.createFinanceScheduleFromBoq(financeMode)
             onOpenFinance?.()
           }}
-          className="typo-body-strong h-11 w-full rounded-full bg-black text-white"
         >
           {financeMode === 'auto' ? 'Create invoice schedule' : 'Open Finance'}
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -644,7 +760,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         subtitle={selectedHistory ? `Approved ${formatBoqHistoryDate(selectedHistory.approvedAt)}` : 'Read only'}
         onBack={() => setSelectedHistoryId(null)}
       />
-      <div className="px-4 py-5">
+      <div className="ui-screen-content">
         <p className="typo-body text-[#5f7467]">This signed version is kept as a read-only record for the team.</p>
       </div>
       <BoqHistoryDetailBody snapshot={selectedHistory} />
@@ -652,11 +768,11 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   )
 
   if (selectedHistory) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderHistoryDetail()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderHistoryDetail()}</main>
   }
 
   if (screen === 'import') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderImport()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderImport()}</main>
   }
 
   const resetInlineNewDraft = () => setInlineNewDraft({
@@ -729,7 +845,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
               value={inlineRoomDraft.name}
               onChange={(event) => setInlineRoomDraft((current) => ({ ...current, name: event.target.value }))}
               placeholder="Kitchen"
-              className="typo-meta mt-1 h-8 w-full rounded-[10px] border border-[#dbe6df] bg-white px-2 text-black outline-none focus:border-[#173324]"
+              className="ui-input-base typo-meta mt-1 w-full border border-[#dbe6df] bg-white text-black outline-none focus:border-[#173324]"
             />
           </label>
           <label className="block">
@@ -738,30 +854,34 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
               value={inlineRoomDraft.note}
               onChange={(event) => setInlineRoomDraft((current) => ({ ...current, note: event.target.value }))}
               placeholder="Optional scope note"
-              className="typo-meta mt-1 h-8 w-full rounded-[10px] border border-[#dbe6df] bg-white px-2 text-black outline-none focus:border-[#173324]"
+              className="ui-input-base typo-meta mt-1 w-full border border-[#dbe6df] bg-white text-black outline-none focus:border-[#173324]"
             />
           </label>
         </div>
 
         <div className="mt-2 grid grid-cols-2 gap-2">
-          <button
+          <Button
             type="button"
             onClick={saveInlineNewRoom}
             disabled={!inlineRoomDraft.name.trim()}
-            className="typo-body-strong h-9 rounded-full bg-black text-white disabled:bg-[#d9d9d9] disabled:text-[#777777]"
+            variant="primary"
+            size="small"
+            className="typo-body-strong w-full"
           >
             Save room
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="outline"
+            size="small"
             onClick={() => {
               setInlineNewRoomOpen(false)
               resetInlineRoomDraft()
             }}
-            className="typo-body-strong h-9 rounded-full border border-[#e0e0e0] bg-white text-black"
+            className="typo-body-strong w-full border-[#e0e0e0]"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -840,7 +960,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
     const Field = ({ label, field, className = '', type = 'text' }) => (
       <label className={`block ${className}`}>
         <span className="typo-caption text-[#5f7467]">{label}</span>
-        <input type={type} value={source?.[field] ?? ''} onChange={(event) => updateField(field, event.target.value)} className="typo-meta mt-1 h-8 w-full rounded-[10px] border border-[#dbe6df] bg-white px-2 text-black outline-none focus:border-[#173324]" />
+        <input type={type} value={source?.[field] ?? ''} onChange={(event) => updateField(field, event.target.value)} className="ui-input-base typo-meta mt-1 w-full border border-[#dbe6df] bg-white text-black outline-none focus:border-[#173324]" />
       </label>
     )
 
@@ -859,7 +979,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
             <Field label="Category" field="category" />
             <label className="block">
               <span className="typo-caption text-[#5f7467]">Type</span>
-              <select value={source.type || 'none'} onChange={(event) => updateField('type', event.target.value)} className="typo-meta mt-1 h-8 w-full rounded-[10px] border border-[#dbe6df] bg-white px-2 text-black outline-none focus:border-[#173324]">
+              <select value={source.type || 'none'} onChange={(event) => updateField('type', event.target.value)} className="ui-select-base typo-meta mt-1 w-full border border-[#dbe6df] bg-white text-black outline-none focus:border-[#173324]">
                 <option value="none">None</option>
                 <option value="ready-made">Ready-made</option>
                 <option value="custom">Custom</option>
@@ -868,7 +988,7 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
             </label>
             <label className="col-span-2 block">
               <span className="typo-caption text-[#5f7467]">Details</span>
-              <textarea value={source.notes || ''} onChange={(event) => updateField('notes', event.target.value)} className="typo-meta mt-1 min-h-12 w-full resize-none rounded-[10px] border border-[#dbe6df] bg-white px-2 py-2 text-black outline-none focus:border-[#173324]" />
+              <textarea value={source.notes || ''} onChange={(event) => updateField('notes', event.target.value)} className="ui-textarea-base typo-meta mt-1 min-h-12 w-full resize-none border border-[#dbe6df] bg-white text-black outline-none focus:border-[#173324]" />
             </label>
           </div>
 
@@ -936,23 +1056,23 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
   }
 
   if (screen === 'history') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderHistory()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderHistory()}</main>
   }
 
   if (screen === 'changes') {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderChanges()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderChanges()}</main>
   }
 
   if (screen === 'room' && selectedRoom) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderRoom()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderRoom()}</main>
   }
 
   if (screen === 'item' && selectedItem) {
-    return <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">{renderItem()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderItem()}</main>
   }
 
   return (
-    <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
+    <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       {boqMeta.status === 'approved' ? renderApproved() : renderHome()}
     </main>
   )
