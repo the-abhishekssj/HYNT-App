@@ -7,7 +7,6 @@ import {
   CheckCircle,
   FileArrowDown,
   House,
-  NotePencil,
   PencilSimpleLine,
   Plus,
   ArrowCounterClockwise,
@@ -279,51 +278,6 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     setView('draft')
   }
 
-  const renderNoSow = () => (
-    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
-      <StickyHeader title="Scope of Work" subtitle="No SOW yet" onBack={onBack} />
-
-      <div className="ui-screen-content">
-        <section className="rounded-[22px] border border-[#dbe6df] bg-white p-5 text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-[18px] border border-[#e0e0e0] bg-[#fbfbfb] text-black">
-            <NotePencil size={22} />
-          </div>
-          <h1 className="typo-page-title mt-4 text-black">Create the first SOW</h1>
-          <p className="typo-body mt-2 text-[#5f7467]">Choose a template to start. Standard clauses are pre-filled; customize anything after.</p>
-        </section>
-
-        <section className="mt-4 rounded-[20px] border border-[#dbe6df] bg-white p-4">
-          <p className="typo-label uppercase text-[#5f7467]">Template selector</p>
-          <div className="mt-3 grid gap-2">
-            {sowTemplates.slice(0, 3).map((template) => (
-              <button
-                key={template.id}
-                type="button"
-                onClick={() => {
-                  setSelectedTemplateId(template.id)
-                  setView('template')
-                }}
-                className="flex items-center justify-between rounded-2xl border border-[#e4ebe6] bg-[#fbfcfb] px-3 py-3 text-left"
-              >
-                <span>
-                  <span className="typo-body-strong block text-black">{template.name}</span>
-                  <span className="typo-meta mt-1 block text-[#6f7c74]">{template.subtitle}</span>
-                </span>
-                <ArrowRight size={16} />
-              </button>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <Button type="button" fullWidth trailingIcon={ArrowRight} onClick={() => setView('template')}>
-          Create SOW
-        </Button>
-      </div>
-    </section>
-  )
-
   const renderTemplateScreen = () => (
     <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
       <StickyHeader title="New SOW" subtitle="Choose a starting point" onBack={sow ? () => setView('draft') : onBack} />
@@ -332,7 +286,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         <section className="pb-5">
           <p className="typo-caption uppercase text-[#6e907d]">Template picker</p>
           <h1 className="typo-page-title mt-2 text-black">Choose the structure you want to begin with.</h1>
-          <p className="typo-body mt-2 text-[#6f6f6f]">This keeps the shared mock-state flow intact, but starts from the same HTML entry point.</p>
+          <p className="typo-body mt-2 text-[#6f6f6f]">Pick a template to start. Standard clauses stay pre-filled, and you can customize everything after.</p>
         </section>
 
         <div className="space-y-2">
@@ -966,12 +920,8 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
     </section>
   )
 
-  if (!sow && view === 'template') {
-    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderTemplateScreen()}</main>
-  }
-
   if (!sow) {
-    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderNoSow()}</main>
+    return <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">{renderTemplateScreen()}</main>
   }
 
   return (

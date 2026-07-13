@@ -30,7 +30,6 @@ import {
   Plus,
   Crosshair,
   DotsThreeVertical,
-  Scroll,
   NotePencil,
   ChatCircleText,
   SlidersHorizontal,
@@ -59,6 +58,7 @@ import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
 import ProSiteDiaryWorkspace from './features/siteDiary/ProSiteDiaryWorkspace'
 import ProTimelineWorkspace from './features/timeline/ProTimelineWorkspace'
 import ProArchiveWorkspace from './features/archive/ProArchiveWorkspace'
+import ProjectWorkspaceWidgets from './features/projects/ProjectWorkspaceWidgets'
 
 
 const INR = '\u20b9'
@@ -239,18 +239,6 @@ const proProjects = [
       },
     ],
   },
-]
-
-const projectDetailTools = [
-  { label: 'SOW', icon: NotePencil },
-  { label: 'Archive', icon: ImagesSquare },
-  { label: 'BOQ', icon: Scroll },
-  { label: 'Tasks', icon: CheckSquareOffset },
-  { label: 'Finance', icon: CurrencyInr },
-  { label: 'Contract', icon: Handshake },
-  { label: 'Team', icon: User },
-  { label: 'Floor plan', icon: House },
-  { label: 'Site diary', icon: PencilSimpleLine },
 ]
 
 const getDaysUntilDate = (value) => {
@@ -664,7 +652,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     memberships: sharedProjectMemberships,
     archiveItems: sharedProjectArchiveItems,
     financeInvoices: sharedFinanceInvoices,
+    financeExpenses: sharedFinanceExpenses,
     siteDiaryEntries: sharedSiteDiaryEntries,
+    siteDiaryIssues: sharedSiteDiaryIssues,
+    siteDiaryReferences: sharedSiteDiaryReferences,
     timelinePhases: sharedTimelinePhases,
     boqMeta: sharedProjectBoqMeta,
     boqItems: sharedProjectBoqItems,
@@ -1026,44 +1017,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     }
 
     if (selectedProject) {
-      const pendingL = Math.max(0, selectedProject.budgetL - selectedProject.receivedL)
-      const formatLakhs = (value) => `${value.toFixed(1)}L`
-      const parseAreaValue = (area) => {
-        if (typeof area === 'number') return area
-        const numeric = Number.parseFloat(String(area).replace(/[^0-9.]/g, ''))
-        return Number.isFinite(numeric) ? numeric : 0
-      }
-      const currentBoqItems = sharedProjectBoqItems?.length ? sharedProjectBoqItems : boqItems
-      const rowAmount = (row) => parseAreaValue(row.quantity ?? row.area) * row.rate
-      const formatRupees = (value) => `${Math.round(value).toLocaleString('en-IN')}`
-      const totalEstimate = currentBoqItems.reduce((acc, row) => acc + rowAmount(row), 0)
-      const projectInvoicesList = projectInvoices.filter((invoice) => invoice.projectId === selectedProject.id)
-      const selectedInvoice = projectInvoicesList.find((invoice) => invoice.id === selectedInvoiceId) || null
-      const workspaceToolCards = projectDetailTools
-      const openTaskCount = sharedProjectTasksPro.filter((task) => task.status !== 'done').length
-      const inProgressTaskCount = sharedProjectTasksPro.filter((task) => task.status === 'inprogress').length
-      const pendingApprovalCount = sharedTaskApprovalsPro.filter((approval) => ['pending', 'question'].includes(approval.status)).length
-      const teamMembers = sharedProjectMemberships.filter((membership) => membership.status !== 'rejected')
-      const outstandingInvoiceCount = sharedFinanceInvoices.filter((invoice) => !['paid', 'Paid'].includes(invoice.status)).length
-      const sowStatusLabel = sharedProjectSow?.status
-        ? sharedProjectSow.status.replace(/-/g, ' ')
-        : 'Draft ready'
-      const boqHistoryCount = sharedProjectBoqMeta?.history?.length || 0
-      const boqVersionLabel = boqHistoryCount
-        ? `${boqHistoryCount} signed`
-        : `v${sharedProjectBoqMeta?.version || 1}`
-      const boqTileStatusMap = {
-        draft: ['In progress', 'bg-[#eef7f1] text-[#267449]'],
-        ready: ['Ready', 'bg-[#e9f2ff] text-[#2f5f9f]'],
-        shared: ['Approval', 'bg-[#fff0dc] text-[#a55b13]'],
-        changesRequested: ['Remarks', 'bg-[#fff0dc] text-[#a55b13]'],
-        revised: ['Revised', 'bg-[#e9f2ff] text-[#2f5f9f]'],
-        approved: [sharedProjectBoqMeta?.financeScheduleCreated ? 'Finance' : 'Approved', 'bg-[#e4f5eb] text-[#24754b]'],
-      }
-      const [boqTileStatus, boqTileStatusClass] = boqTileStatusMap[sharedProjectBoqMeta?.status] || ['In progress', 'bg-[#eef7f1] text-[#267449]']
-      const budgetUsage = selectedProject.budgetL > 0
-        ? Math.min(Math.round((selectedProject.spentL / selectedProject.budgetL) * 100), 100)
-        : 0
       const projectDeadline = getDeadlineProgress(selectedProject)
       const projectDeadlineTone = getDeadlineTone(projectDeadline.daysLeft)
       const projectDueLabel = projectDeadline.daysLeft === null
@@ -1071,25 +1024,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         : projectDeadline.daysLeft < 0
           ? `${Math.abs(projectDeadline.daysLeft)} day${Math.abs(projectDeadline.daysLeft) === 1 ? '' : 's'} overdue`
           : `${projectDeadline.daysLeft} day${projectDeadline.daysLeft === 1 ? '' : 's'} left`
-
-      const shareBoq = async () => {
-        const shareText = currentBoqItems
-          .map((row) => `${row.item} | Area: ${row.area} | Rate: ${INR}${formatRupees(row.rate)} | Amount: ${INR}${formatRupees(rowAmount(row))}`)
-          .join('\n')
-        const payload = {
-          title: `${selectedProject.scope} - BOQ`,
-          text: `BOQ for ${selectedProject.client}\n\n${shareText}\n\nTotal: ${INR}${Math.round(totalEstimate).toLocaleString('en-IN')}`,
-        }
-        try {
-          if (navigator.share) {
-            await navigator.share(payload)
-            return
-          }
-          await navigator.clipboard.writeText(payload.text)
-        } catch {
-          // Intentionally no-op to keep flow smooth if share is dismissed.
-        }
-      }
 
       if (selectedProjectPage === 'boq') {
         return (
@@ -1416,176 +1350,23 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 </article>
               </section>
 
-              <section className="px-4 pb-6 pt-6">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="typo-section-title text-black">Workspace</h2>
-                  <span className="typo-caption text-[#8a8a8a]">{workspaceToolCards.length} widgets</span>
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  {workspaceToolCards.map((tool, index) => {
-                    const Icon = tool.icon
-                    const isArchive = tool.label === 'Archive'
-                    const isBoq = tool.label === 'BOQ'
-                    const isSiteDiary = tool.label === 'Site diary'
-                    const isSow = tool.label === 'SOW'
-                    const isTasks = tool.label === 'Tasks'
-                    const isFinance = tool.label === 'Finance'
-                    const isContract = tool.label === 'Contract'
-                    const isTeam = tool.label === 'Team'
-                    const isFloorPlan = tool.label === 'Floor plan'
-                    const isWideWidget = isSiteDiary
-
-                    return (
-                      <Fragment key={tool.label}>
-                      <button
-                        type="button"
-                        onClick={() => openProjectTool(tool.label)}
-                        className={`group flex h-[168px] min-w-0 flex-col overflow-hidden rounded-[20px] border p-[17px] text-left shadow-[0_18px_34px_rgba(16,36,24,0.12)] transition-transform active:scale-[0.985] ${
-                          isWideWidget
-                            ? 'col-span-2 border-[#dce8df] bg-[#fbfffd]'
-                            : 'border-[#dce8df] bg-[#fbfffd]'
-                        }`}
-                      >
-                        <div className="flex h-8 items-center justify-between gap-3">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="grid size-8 shrink-0 place-items-center rounded-[12px] bg-[#e7f5ed] text-[#226342]">
-                              <Icon size={16} weight="regular" />
-                            </span>
-                            <p className="typo-body-strong truncate text-black">{isSiteDiary ? 'Site Diary' : tool.label}</p>
-                          </div>
-                          <CaretRight size={16} className="mt-2 shrink-0 text-[#8fa098] transition-transform group-hover:translate-x-0.5" />
-                        </div>
-
-                        {isArchive ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <div className="hynt-tool-preview-stack flex h-[46px] items-center overflow-visible">
-                              {[
-                                '/hynt-home/idea-1.png',
-                                '/hynt-home/idea-2.png',
-                                '/hynt-home/product.png',
-                                '/hynt-home/idea-1.png',
-                                '/hynt-home/idea-2.png',
-                                '/hynt-home/product.png',
-                                '/hynt-home/idea-1.png',
-                              ].map((image, imageIndex) => (
-                                <img
-                                  key={`${image}-${imageIndex}`}
-                                  src={image}
-                                  alt=""
-                                  style={{ zIndex: 8 - imageIndex }}
-                                  className={`hynt-tool-preview-image ${imageIndex % 2 === 0 ? 'hynt-tool-preview-image--tilt-left' : 'hynt-tool-preview-image--tilt-right'}`}
-                                />
-                              ))}
-                            </div>
-                            <p className="typo-meta text-[#64766c]">{Math.min(sharedProjectArchiveItems.length || 5, 5)} folders</p>
-                          </div>
-                        ) : null}
-
-                        {isBoq ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <p className="typo-data-strong inline-flex items-center text-[#173c2a]"><CurrencyInr size={17} weight="bold" />{formatRupees(totalEstimate)}</p>
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="typo-meta whitespace-nowrap text-[#64766c]">{boqVersionLabel}</span>
-                              <span className={`typo-meta whitespace-nowrap rounded-full px-2 py-1 ${boqTileStatusClass}`}>{boqTileStatus}</span>
-                            </div>
-                          </div>
-                        ) : null}
-
-                        {isSow ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <span className="typo-meta w-fit rounded-full bg-[#e4f5eb] px-2 py-1 capitalize text-[#24754b]">{sowStatusLabel}</span>
-                            <div>
-                              <p className="typo-meta text-[#64766c]">scope completion</p>
-                              <div className="mt-2 flex gap-1">
-                              {[0, 1, 2, 3].map((step) => <span key={step} className={`h-1.5 flex-1 rounded-full ${step < 3 ? 'bg-[#5fc18a]' : 'bg-[#dce8df]'}`} />)}
-                              </div>
-                            </div>
-                          </div>
-                        ) : null}
-
-                        {isTasks ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <div className="flex items-end gap-2">
-                              <p className="typo-title-20 text-[#173c2a]">{openTaskCount}</p>
-                              <p className="typo-meta pb-0.5 text-[#64766c]">open tasks</p>
-                            </div>
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between"><span className="typo-meta text-[#64766c]">In progress</span><span className="typo-meta text-black">{inProgressTaskCount}</span></div>
-                              <div className="flex items-center justify-between"><span className="typo-meta text-[#64766c]">Approvals</span><span className="typo-meta text-black">{pendingApprovalCount}</span></div>
-                            </div>
-                          </div>
-                        ) : null}
-
-                        {isFinance ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <p className="typo-data-strong inline-flex items-center text-[#173c2a]"><CurrencyInr size={17} weight="bold" />{formatLakhs(selectedProject.spentL)}</p>
-                            <div>
-                              <p className="typo-meta text-[#64766c]">spent of {formatLakhs(selectedProject.budgetL)}</p>
-                              <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#e2ebe6]"><span className="block h-full rounded-full bg-[#5fc18a]" style={{ width: `${budgetUsage}%` }} /></div>
-                            </div>
-                            <p className="typo-meta text-[#64766c]">{outstandingInvoiceCount} payment{outstandingInvoiceCount === 1 ? '' : 's'} due</p>
-                          </div>
-                        ) : null}
-
-                        {isSiteDiary ? (
-                          <div className="hynt-site-diary-preview mt-2 h-[94px] overflow-hidden">
-                            <div className="flex h-[47px] items-center gap-3">
-                              <img src="/hynt-home/idea-2.png" alt="" className="size-9 rounded-[10px] border border-[#ebebeb] object-cover" />
-                              <div className="min-w-0">
-                                <p className="typo-body-strong text-black">Kitchen ceiling update</p>
-                                <p className="typo-meta text-[#7b8f84]">Progress image shared from site</p>
-                              </div>
-                            </div>
-                            <div className="flex h-[47px] items-center gap-3">
-                              <img src="/hynt-home/idea-1.png" alt="" className="size-9 rounded-[10px] border border-[#ebebeb] object-cover" />
-                              <div className="min-w-0">
-                                <p className="typo-body-strong text-black">Kitchen ceiling update</p>
-                                <p className="typo-meta text-[#7b8f84]">Progress image shared from site</p>
-                              </div>
-                            </div>
-                          </div>
-                        ) : null}
-
-                        {isContract ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <div className="flex items-center gap-2">
-                              <CheckCircle size={16} weight="fill" className="text-[#102418]" />
-                              <span className="typo-body-strong text-[#173c2a]">Agreement ready</span>
-                            </div>
-                            <p className="typo-meta text-[#64766c]">Linked to latest SOW</p>
-                          </div>
-                        ) : null}
-
-                        {isTeam ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <div className="flex -space-x-2">
-                              {teamMembers.slice(0, 3).map((member, index) => (
-                                member.user?.avatar || member.user?.image
-                                  ? <img key={member.id} src={member.user.avatar || member.user.image} alt="" className="size-10 rounded-full border-2 border-white object-cover" />
-                                  : <span key={member.id || index} className="typo-meta grid size-10 place-items-center rounded-full border-2 border-white bg-[#dff2e7] text-[#245e3f]">{member.user?.name?.slice(0, 1) || 'H'}</span>
-                              ))}
-                            </div>
-                            <p className="typo-meta text-[#64766c]">{teamMembers.length || 3} collaborators</p>
-                          </div>
-                        ) : null}
-
-                        {isFloorPlan ? (
-                          <div className="mt-2 flex h-[94px] flex-col justify-between">
-                            <div className="grid h-[68px] grid-cols-[38px_1fr_38px] gap-1 rounded-[12px] border border-[#cfe3d7] bg-white p-2">
-                              <div className="grid grid-rows-2 gap-1"><span className="rounded-[6px] bg-[#e7f5ed]" /><span className="rounded-[6px] border border-[#dbe8df]" /></div>
-                              <span className="rounded-[6px] border border-[#dbe8df]" />
-                              <span className="rounded-[6px] bg-[#f4eadb]" />
-                            </div>
-                            <p className="typo-meta text-[#8a9a91]">Not uploaded</p>
-                          </div>
-                        ) : null}
-                      </button>
-                      </Fragment>
-                    )
-                  })}
-                </div>
-              </section>
+              <ProjectWorkspaceWidgets
+                project={selectedProject}
+                sow={sharedProjectSow}
+                memberships={sharedProjectMemberships}
+                archiveItems={sharedProjectArchiveItems}
+                financeInvoices={sharedFinanceInvoices}
+                financeExpenses={sharedFinanceExpenses}
+                siteDiaryEntries={sharedSiteDiaryEntries}
+                siteDiaryIssues={sharedSiteDiaryIssues}
+                siteDiaryReferences={sharedSiteDiaryReferences}
+                boqMeta={sharedProjectBoqMeta}
+                boqItems={sharedProjectBoqItems}
+                fallbackBoqItems={boqItems}
+                projectTasks={sharedProjectTasksPro}
+                taskApprovals={sharedTaskApprovalsPro}
+                onOpenTool={openProjectTool}
+              />
             </div>
           </section>
 
