@@ -12,8 +12,8 @@ import {
   PencilSimple,
   Plus,
   Trash,
-  XCircle,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const tabs = [
@@ -171,40 +171,29 @@ function TaskRow({
   )
 }
 
-function ApprovalCard({ item, onOpen, compact = false }) {
+function ApprovalCard({ item, onOpen }) {
   const tone = approvalTone[item.status]
 
   return (
-    <article
-      className={`rounded-[20px] border bg-white ${compact ? 'p-4' : 'p-5'} ${
-        item.status === 'approved'
-          ? 'border-[#dbeee2]'
-          : item.status === 'rejected'
-            ? 'border-[#f0d4d4]'
-            : item.status === 'question'
-              ? 'border-[#ddd6fb]'
-              : 'border-[#eadcb2]'
-      }`}
+    <button
+      type="button"
+      onClick={() => onOpen(item.id)}
+      className="flex w-full gap-3 border-b border-[#e5ece7] py-4 text-left last:border-b-0"
     >
-      <button type="button" onClick={() => onOpen(item.id)} className="w-full text-left">
+      <img src={item.image} alt={item.title} className="size-14 shrink-0 rounded-[14px] object-cover" />
+      <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="typo-section-title text-[#121212]">{item.title}</p>
-            <p className="typo-meta mt-1 text-[#7b8780]">{item.type}</p>
+            <p className="typo-body-strong truncate text-[#121212]">{item.title}</p>
           </div>
-          <span className={`typo-caption shrink-0 rounded-full px-3 py-1 uppercase ${tone}`}>
+          <span className={`typo-caption shrink-0 whitespace-nowrap rounded-full px-3 py-1 uppercase ${tone}`}>
             {approvalLabel[item.status]}
           </span>
         </div>
-        <div className="mt-4 rounded-2xl bg-[#f3f7f4] px-4 py-5">
-          <div className="h-16 w-16 overflow-hidden rounded-2xl bg-white">
-            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-          </div>
-          <p className="typo-body mt-3 text-[#355244]">{item.description}</p>
-        </div>
-        <p className="typo-meta mt-3 text-[#8a948f]">Sent {item.sentAt} / Due {item.dueDate}</p>
-      </button>
-    </article>
+        <p className="typo-body mt-2 line-clamp-2 text-[#355244]">{item.description}</p>
+        <p className="typo-meta mt-2 text-[#8a948f]">Sent {item.sentAt} / Due {item.dueDate}</p>
+      </div>
+    </button>
   )
 }
 
@@ -334,6 +323,7 @@ export default function ProjectTasksWorkspace({
     isHomeowner: false,
   }
   const [activeTab, setActiveTab] = useState('my')
+  const [approvalView, setApprovalView] = useState('pending')
   const [taskFilter, setTaskFilter] = useState('All')
   const [viewMode, setViewMode] = useState('list')
   const [taskActionTargetId, setTaskActionTargetId] = useState(null)
@@ -349,6 +339,8 @@ export default function ProjectTasksWorkspace({
   const [newApprovalType, setNewApprovalType] = useState('Material selection')
   const [newApprovalDescription, setNewApprovalDescription] = useState('')
   const [newApprovalDueDate, setNewApprovalDueDate] = useState('')
+  const [newApprovalMediaType, setNewApprovalMediaType] = useState('image')
+  const [editingApprovalId, setEditingApprovalId] = useState(null)
   const [selectedApprovalId, setSelectedApprovalId] = useState(null)
   const [clientResponse, setClientResponse] = useState('')
   const viewerTaskAliases = useMemo(() => {
@@ -383,13 +375,6 @@ export default function ProjectTasksWorkspace({
     done: scopedTasks.filter((task) => task.status === 'done' || task.due === 'Done'),
   }), [scopedTasks])
 
-  const filteredTasks = useMemo(() => {
-    if (taskFilter === 'All') return scopedTasks
-    if (taskFilter === 'To do') return scopedTasks.filter((task) => task.status === 'todo')
-    if (taskFilter === 'In progress') return scopedTasks.filter((task) => task.status === 'inprogress')
-    return scopedTasks.filter((task) => task.status === 'done')
-  }, [scopedTasks, taskFilter])
-
   const getTaskCount = (filter) => {
     if (filter === 'All') return scopedTasks.length
     if (filter === 'To do') return scopedTasks.filter((task) => task.status === 'todo').length
@@ -411,6 +396,7 @@ export default function ProjectTasksWorkspace({
     pending: approvalItems.filter((item) => item.status === 'pending' || item.status === 'question'),
     completed: approvalItems.filter((item) => item.status === 'approved' || item.status === 'rejected'),
   }
+  const visibleApprovalItems = approvalView === 'pending' ? approvalSections.pending : approvalSections.completed
 
   const moveTaskStatus = (taskId, nextStatus) => {
     if (!resolvedPermissions.canUpdateTasks) return
@@ -466,33 +452,78 @@ export default function ProjectTasksWorkspace({
     setComposerMode(null)
   }
 
-  const createApproval = () => {
-    if (!resolvedPermissions.canApproveTasks || !newApprovalTitle.trim() || !newApprovalDescription.trim()) return
-    const now = new Date()
-    const dueDate = newApprovalDueDate
-      ? new Date(`${newApprovalDueDate}T00:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
-      : 'TBD'
-    updateApprovalItems((prev) => [{
-      id: `apr-${Date.now()}`,
-      projectId: selectedProject?.id || 'p-1',
-      title: newApprovalTitle.trim(),
-      type: newApprovalType,
-      status: 'pending',
-      description: newApprovalDescription.trim(),
-      dueDate,
-      sentAt: now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
-      sentBy: viewerName,
-      homeownerName: selectedProject?.client || homeownerClientName,
-      image: '/hynt-home/product.png',
-      clientQuestion: '',
-      respondedAt: null,
-    }, ...prev])
+  const resetApprovalDraft = () => {
     setNewApprovalTitle('')
     setNewApprovalType('Material selection')
     setNewApprovalDescription('')
     setNewApprovalDueDate('')
+    setNewApprovalMediaType('image')
+  }
+
+  const closeComposer = () => {
+    const approvalIdToRestore = editingApprovalId
+    setComposerMode(null)
+    setEditingApprovalId(null)
+    if (approvalIdToRestore) {
+      setSelectedApprovalId(approvalIdToRestore)
+    }
+  }
+
+  const openNewApprovalComposer = () => {
+    resetApprovalDraft()
+    setEditingApprovalId(null)
+    setComposerMode('approval')
+  }
+
+  const openApprovalEditor = (approval) => {
+    if (!approval) return
+    setNewApprovalTitle(approval.title || '')
+    setNewApprovalType(approval.type || 'Material selection')
+    setNewApprovalDescription(approval.description || '')
+    setNewApprovalDueDate(approval.dueDateInput || '')
+    setNewApprovalMediaType(approval.mediaType || 'image')
+    setEditingApprovalId(approval.id)
+    setSelectedApprovalId(null)
+    setComposerMode('approval')
+  }
+
+  const createApproval = () => {
+    if (!resolvedPermissions.canApproveTasks || !newApprovalTitle.trim() || !newApprovalDescription.trim()) return
+    const now = new Date()
+    const currentApproval = editingApprovalId ? approvalItems.find((item) => item.id === editingApprovalId) : null
+    const dueDate = newApprovalDueDate
+      ? new Date(`${newApprovalDueDate}T00:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+      : currentApproval?.dueDate || 'TBD'
+    const nextApprovalId = editingApprovalId || `apr-${Date.now()}`
+    const nextApproval = {
+      ...(currentApproval || {}),
+      id: nextApprovalId,
+      projectId: selectedProject?.id || 'p-1',
+      title: newApprovalTitle.trim(),
+      type: newApprovalType,
+      status: currentApproval?.status || 'pending',
+      description: newApprovalDescription.trim(),
+      dueDate,
+      dueDateInput: newApprovalDueDate || currentApproval?.dueDateInput || '',
+      sentAt: currentApproval?.sentAt || now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }),
+      sentBy: currentApproval?.sentBy || viewerName,
+      homeownerName: currentApproval?.homeownerName || selectedProject?.client || homeownerClientName,
+      image: newApprovalMediaType === 'video' ? '/hynt-home/idea-2.png' : '/hynt-home/product.png',
+      mediaType: newApprovalMediaType,
+      clientQuestion: currentApproval?.clientQuestion || '',
+      respondedAt: currentApproval?.respondedAt || null,
+    }
+    updateApprovalItems((prev) => editingApprovalId ? prev.map((item) => (
+      item.id === editingApprovalId ? nextApproval : item
+    )) : [nextApproval, ...prev])
+    const editedApprovalId = editingApprovalId
+    resetApprovalDraft()
+    setEditingApprovalId(null)
     setActiveTab('approvals')
     setComposerMode(null)
+    if (editedApprovalId) {
+      setSelectedApprovalId(editedApprovalId)
+    }
   }
 
   const handleApprovalResponse = (nextStatus) => {
@@ -582,11 +613,7 @@ export default function ProjectTasksWorkspace({
           <ProjectWorkspaceHeader title="Tasks" subtitle={`${homeownerDesignerName} / ${homeownerProjectName}`} onBack={onBack} />
 
           <div className="px-4 pt-5">
-            <div className="typo-body-strong rounded-[20px] bg-[#eaf5ee] px-4 py-3 text-[#267449]">
-              {homeownerDesignerName} has sent these items for your approval. Open each task to review and respond.
-            </div>
-
-            <section className="mt-6">
+            <section>
               <SectionHeader title="Needs your response" meta={String(approvalSections.pending.length)} tone="text-[#102418]" />
               <div className="space-y-3">
                 {approvalSections.pending.map((item) => (
@@ -657,6 +684,77 @@ export default function ProjectTasksWorkspace({
     )
   }
 
+  if (selectedApproval) {
+    return (
+      <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
+        <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
+          <ProjectWorkspaceHeader
+            title="Approval item"
+            subtitle={selectedProject?.scope || homeownerProjectName}
+            onBack={() => setSelectedApprovalId(null)}
+            actions={<span className={`typo-caption shrink-0 rounded-full px-3 py-1 uppercase ${approvalTone[selectedApproval.status]}`}>{approvalLabel[selectedApproval.status]}</span>}
+          />
+
+          <div className="ui-screen-content pt-6">
+            <section className="border-b border-[#e5ece7] pb-5">
+              <p className="typo-page-title text-[#102418]">{selectedApproval.title}</p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="typo-caption rounded-full bg-[#f3f6f4] px-3 py-1 text-[#5f6f66]">{selectedApproval.type}</span>
+                <span className="typo-caption text-[#7b8780]">Sent {selectedApproval.sentAt}</span>
+                <span className="typo-caption text-[#7b8780]">Due {selectedApproval.dueDate}</span>
+              </div>
+            </section>
+
+            <section className="border-b border-[#e5ece7] py-5">
+              <img src={selectedApproval.image} alt={selectedApproval.title} className="aspect-[4/3] w-full rounded-[22px] object-cover" />
+              <p className="typo-body mt-4 text-[#2a3b32]">{selectedApproval.description}</p>
+              {selectedApproval.clientQuestion ? (
+                <div className={`mt-4 rounded-[20px] px-4 py-3 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
+                  <p className={`typo-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
+                    {selectedApproval.status === 'rejected' ? 'Client feedback' : 'Client question'}
+                  </p>
+                  <p className="typo-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
+                </div>
+              ) : null}
+            </section>
+
+            <section className="py-5">
+              <p className="typo-label mb-3 uppercase text-[#7a8780]">Manage</p>
+              <div className="divide-y divide-[#e5ece7] border-y border-[#e5ece7]">
+                <button type="button" onClick={() => openApprovalEditor(selectedApproval)} className="typo-body-strong flex h-12 w-full items-center justify-between text-left text-[#355244]">
+                  <span>Edit item</span>
+                  <PencilSimple size={18} />
+                </button>
+                {selectedApproval.clientQuestion ? (
+                  <button type="button" className="typo-body-strong flex h-12 w-full items-center justify-between text-left text-[#6844d8]">
+                    <span>Reply to client</span>
+                    <ChatCircleDots size={18} />
+                  </button>
+                ) : null}
+              </div>
+            </section>
+          </div>
+
+          {['pending', 'question'].includes(selectedApproval.status) ? (
+            <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4">
+              <Button type="button" fullWidth leadingIcon={PaperPlaneTilt} className="h-12 rounded-[20px]">
+                Send reminder
+              </Button>
+            </div>
+          ) : null}
+        </section>
+      </main>
+    )
+  }
+
+  const workspaceHeaderAction = currentTab === 'approvals'
+    ? resolvedPermissions.canApproveTasks ? (
+        <Button type="button" icon={PaperPlaneTilt} onClick={openNewApprovalComposer} aria-label="Send for approval" className="size-10 rounded-[15px]" />
+      ) : null
+    : resolvedPermissions.canCreateTasks ? (
+        <Button type="button" icon={Plus} onClick={() => setComposerMode('task')} aria-label="Create task" className="size-10 rounded-[15px]" />
+      ) : null
+
   return (
     <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className="mx-auto w-full max-w-[390px] pb-24 pt-[120px]">
@@ -664,20 +762,7 @@ export default function ProjectTasksWorkspace({
           title="Tasks"
           subtitle={selectedProject?.scope || homeownerProjectName}
           onBack={onBack}
-          actions={(
-            <>
-              {resolvedPermissions.canApproveTasks ? (
-                <button type="button" onClick={() => setComposerMode('approval')} className="grid size-9 place-items-center rounded-full bg-[#f4efff] text-[#6844d8]" aria-label="Send for approval">
-                  <PaperPlaneTilt size={18} weight="bold" />
-                </button>
-              ) : null}
-              {resolvedPermissions.canCreateTasks ? (
-                <button type="button" onClick={() => setComposerMode('task')} className="grid size-9 place-items-center rounded-full bg-black text-white" aria-label="Create task">
-                  <Plus size={18} weight="bold" />
-                </button>
-              ) : null}
-            </>
-          )}
+          actions={workspaceHeaderAction}
           below={visibleTabs.length ? (
             <div className="no-scrollbar flex gap-2 overflow-x-auto" role="tablist" aria-label="Task workspace">
               {visibleTabs.map((tab) => {
@@ -925,71 +1010,73 @@ export default function ProjectTasksWorkspace({
           ) : null}
 
           {currentTab === 'approvals' ? (
-            <section className="space-y-6">
-              <div className="typo-body-strong rounded-[20px] bg-[#f3f7f4] px-4 py-3 text-[#355244]">
-                Items sent to {selectedProject?.client || homeownerClientName} for approval. The homeowner side uses the same structure and can respond from their task workspace.
+            <section>
+              <div className="no-scrollbar mb-4 flex gap-1.5 overflow-x-auto">
+                {[
+                  ['pending', 'Pending', approvalSections.pending.length, 'bg-[#d18c33]'],
+                  ['completed', 'Resolved', approvalSections.completed.length, 'bg-[#5fa87a]'],
+                ].map(([key, label, count, dotColor]) => {
+                  const selected = approvalView === key
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setApprovalView(key)}
+                      className={`typo-body inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors ${selected ? 'bg-[#ececec] text-black' : 'text-[#6f7d74] hover:bg-[#f2f2f2]'}`}
+                    >
+                      <span className={`size-1.5 rounded-full ${dotColor}`} />
+                      {label}
+                      <span className={`typo-caption ${selected ? 'text-[#5a5a5a]' : 'text-[#9b9b9b]'}`}>{count}</span>
+                    </button>
+                  )
+                })}
               </div>
 
-              <section>
-                <SectionHeader title="Pending" meta={String(approvalSections.pending.length)} tone="text-[#102418]" />
-                <div className="space-y-3">
-                  {approvalSections.pending.map((item) => (
-                    <ApprovalCard key={item.id} item={item} onOpen={setSelectedApprovalId} />
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <SectionHeader title="Resolved" meta={String(approvalSections.completed.length)} tone="text-[#102418]" />
-                <div className="space-y-3">
-                  {approvalSections.completed.map((item) => (
-                    <ApprovalCard key={item.id} item={item} onOpen={setSelectedApprovalId} compact />
-                  ))}
-                </div>
-              </section>
+              <div className="border-y border-[#e5ece7]">
+                {visibleApprovalItems.length ? visibleApprovalItems.map((item) => (
+                  <ApprovalCard key={item.id} item={item} onOpen={setSelectedApprovalId} />
+                )) : (
+                  <p className="typo-body px-1 py-4 text-[#6f7c74]">No {approvalView === 'pending' ? 'pending' : 'resolved'} approvals.</p>
+                )}
+              </div>
             </section>
           ) : null}
         </div>
       </section>
 
       {composerMode ? (
-        <div className="fixed inset-0 z-[100] bg-black/30">
-          <button type="button" onClick={() => setComposerMode(null)} className="absolute inset-0 cursor-default" aria-label="Close composer" />
-          <aside className="absolute inset-y-0 right-0 flex w-full max-w-[420px] flex-col border-l border-[#e3e9e5] bg-white shadow-[-18px_0_48px_rgba(16,36,24,0.14)]">
-            <header className="flex items-center justify-between border-b border-[#e6ece8] px-4 py-3">
-              <div>
-                <h2 className="typo-section-title text-[#102418]">{composerMode === 'task' ? 'Create a task' : 'Send for approval'}</h2>
-                <p className="typo-caption ui-muted mt-1">{selectedProject?.scope || homeownerProjectName}</p>
-              </div>
-              <button type="button" onClick={() => setComposerMode(null)} className="grid size-9 place-items-center rounded-full bg-[#f3f6f4] text-[#607169]" aria-label="Close composer">
-                <XCircle size={20} weight="fill" />
-              </button>
-            </header>
+        <main className="ui-screen-base ui-feature-surface fixed inset-0 z-[100] min-h-dvh w-full overflow-x-hidden bg-white text-black">
+          <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
+            <ProjectWorkspaceHeader
+              title={composerMode === 'task' ? 'Create task' : editingApprovalId ? 'Edit approval' : 'Send for approval'}
+              subtitle={selectedProject?.scope || homeownerProjectName}
+              onBack={closeComposer}
+            />
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6">
+            <div className="ui-screen-content pt-6">
               {composerMode === 'task' ? (
                 <div className="space-y-5">
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Task title</p>
-                    <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="What needs to be done?" autoFocus className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                    <input value={newTaskTitle} onChange={(event) => setNewTaskTitle(event.target.value)} placeholder="What needs to be done?" autoFocus className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
                   </label>
                   <div className="grid grid-cols-2 gap-4">
                     <label className="block">
                       <p className="typo-label mb-2 uppercase text-[#7a8780]">Assign to</p>
-                      <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      <select value={newTaskAssignee} onChange={(event) => setNewTaskAssignee(event.target.value)} className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-3 outline-none">
                         {['Me', 'Riya Desai', 'Aanya Rao', 'Nisha Reddy', 'Priya Sharma'].map((name) => <option key={name}>{name}</option>)}
                       </select>
                     </label>
                     <label className="block">
                       <p className="typo-label mb-2 uppercase text-[#7a8780]">Priority</p>
-                      <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                      <select value={newTaskPriority} onChange={(event) => setNewTaskPriority(event.target.value)} className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-3 outline-none">
                         {['High', 'Medium', 'Low'].map((priority) => <option key={priority}>{priority}</option>)}
                       </select>
                     </label>
                   </div>
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Due bucket</p>
-                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                    <select value={newTaskDue} onChange={(event) => setNewTaskDue(event.target.value)} className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-3 outline-none">
                       {['Today', 'Overdue', 'This week', 'Done'].map((option) => <option key={option}>{option}</option>)}
                     </select>
                   </label>
@@ -1001,42 +1088,66 @@ export default function ProjectTasksWorkspace({
                 <div className="space-y-5">
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Approval title</p>
-                    <input value={newApprovalTitle} onChange={(event) => setNewApprovalTitle(event.target.value)} placeholder="What should the homeowner decide?" autoFocus className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
+                    <input value={newApprovalTitle} onChange={(event) => setNewApprovalTitle(event.target.value)} placeholder="What should the homeowner decide?" autoFocus className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-4 outline-none placeholder:text-[#99a39d]" />
                   </label>
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Approval type</p>
-                    <select value={newApprovalType} onChange={(event) => setNewApprovalType(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-3 outline-none">
+                    <select value={newApprovalType} onChange={(event) => setNewApprovalType(event.target.value)} className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-3 outline-none">
                       {['Material selection', 'Design approval', 'Design selection', 'Change request', 'Other'].map((type) => <option key={type}>{type}</option>)}
                     </select>
                   </label>
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Description for homeowner</p>
-                    <textarea value={newApprovalDescription} onChange={(event) => setNewApprovalDescription(event.target.value)} rows={5} placeholder="Explain the decision and the available options" className="typo-body w-full resize-none rounded-xl border border-[#d8e2db] bg-white px-4 py-3 outline-none placeholder:text-[#99a39d]" />
+                    <textarea value={newApprovalDescription} onChange={(event) => setNewApprovalDescription(event.target.value)} rows={5} placeholder="Explain the decision and the available options" className="typo-body w-full resize-none rounded-[18px] border border-[#d8e2db] bg-white px-4 py-3 outline-none placeholder:text-[#99a39d]" />
                   </label>
+                  <div>
+                    <p className="typo-label mb-2 uppercase text-[#7a8780]">Add image/video</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        ['image', 'Add image'],
+                        ['video', 'Add video'],
+                      ].map(([type, label]) => {
+                        const selected = newApprovalMediaType === type
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => setNewApprovalMediaType(type)}
+                            className={`typo-body-strong flex h-20 flex-col items-center justify-center gap-2 rounded-[20px] border border-dashed ${selected ? 'border-black bg-[#f5f7f5] text-black' : 'border-[#cbd9d0] bg-white text-[#607169]'}`}
+                          >
+                            <Plus size={18} />
+                            {label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
                   <label className="block">
                     <p className="typo-label mb-2 uppercase text-[#7a8780]">Response needed by</p>
-                    <input type="date" value={newApprovalDueDate} onChange={(event) => setNewApprovalDueDate(event.target.value)} className="typo-body h-12 w-full rounded-xl border border-[#d8e2db] bg-white px-4 outline-none" />
+                    <input type="date" value={newApprovalDueDate} onChange={(event) => setNewApprovalDueDate(event.target.value)} className="typo-body h-12 w-full rounded-[18px] border border-[#d8e2db] bg-white px-4 outline-none" />
                   </label>
-                  <div className="border-l-2 border-[#6844d8] pl-3">
-                    <p className="typo-body text-[#5d566f]">This will appear immediately in {selectedProject?.client || homeownerClientName}&apos;s Tasks list.</p>
-                  </div>
                 </div>
               )}
             </div>
 
-            <footer className="grid grid-cols-[auto_1fr] gap-3 border-t border-[#e6ece8] bg-white px-5 pb-6 pt-4">
-              <button type="button" onClick={() => setComposerMode(null)} className="typo-body-strong h-12 rounded-xl border border-[#d8e2db] px-5 text-[#4f5d55]">Cancel</button>
-              <button
-                type="button"
-                onClick={composerMode === 'task' ? createTask : createApproval}
-                disabled={composerMode === 'task' ? !newTaskTitle.trim() : !newApprovalTitle.trim() || !newApprovalDescription.trim()}
-                className="typo-body-strong h-12 rounded-xl bg-[#173324] px-5 text-white disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {composerMode === 'task' ? 'Create task' : 'Send to homeowner'}
-              </button>
-            </footer>
-          </aside>
-        </div>
+            <div className="fixed bottom-0 left-1/2 z-[101] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e6ece8] bg-white px-4 pb-6 pt-4">
+              <div className="grid grid-cols-[auto_1fr] gap-3">
+                <Button type="button" variant="ghost" onClick={closeComposer} className="h-12 rounded-[20px] border border-[#d8e2db] px-5 text-[#4f5d55]">
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  fullWidth
+                  onClick={composerMode === 'task' ? createTask : createApproval}
+                  disabled={composerMode === 'task' ? !newTaskTitle.trim() : !newApprovalTitle.trim() || !newApprovalDescription.trim()}
+                  className="h-12 rounded-[20px]"
+                >
+                  {composerMode === 'task' ? 'Create task' : editingApprovalId ? 'Save changes' : 'Send to homeowner'}
+                </Button>
+              </div>
+            </div>
+          </section>
+        </main>
       ) : null}
 
       {taskActionTargetId && resolvedPermissions.canUpdateTasks ? (
@@ -1061,50 +1172,6 @@ export default function ProjectTasksWorkspace({
         </div>
       ) : null}
 
-      {selectedApproval ? (
-        <div className="fixed inset-0 z-[98] bg-black/30 backdrop-blur-sm">
-          <div className="mx-auto flex min-h-dvh w-full max-w-[390px] items-end">
-            <section className="w-full rounded-t-[32px] bg-white p-5 shadow-2xl">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="typo-label uppercase text-[#7a8780]">Approval item</p>
-                  <p className="typo-page-title mt-2 text-[#102418]">{selectedApproval.title}</p>
-                </div>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="grid size-10 place-items-center rounded-full bg-[#f4f6f5] text-[#607169]">
-                  <XCircle size={20} weight="fill" />
-                </button>
-              </div>
-
-              <div className="mt-5 rounded-[20px] bg-[#f3f7f4] px-4 py-4">
-                <p className="typo-body text-[#2a3b32]">{selectedApproval.description}</p>
-                {selectedApproval.clientQuestion ? (
-                  <div className={`mt-4 rounded-2xl px-4 py-3 ${selectedApproval.status === 'rejected' ? 'bg-[#fff2f2]' : 'bg-[#f4efff]'}`}>
-                    <p className={`typo-label uppercase ${selectedApproval.status === 'rejected' ? 'text-[#c34545]' : 'text-[#6844d8]'}`}>
-                      {selectedApproval.status === 'rejected' ? 'Client feedback' : 'Client question'}
-                    </p>
-                    <p className="typo-body mt-2 text-[#24362d]">{selectedApproval.clientQuestion}</p>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="mt-5 grid gap-3">
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#d8e2db] bg-white px-4 text-[#355244]">
-                  Edit item
-                  <PencilSimple size={16} />
-                </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#eadcb2] bg-[#fff9ee] px-4 text-[#a86a00]">
-                  Send reminder
-                  <PaperPlaneTilt size={16} />
-                </button>
-                <button type="button" onClick={() => setSelectedApprovalId(null)} className="typo-body-strong flex h-12 items-center justify-between rounded-2xl border border-[#ddd6fb] bg-[#f4efff] px-4 text-[#6844d8]">
-                  Reply to client
-                  <ChatCircleDots size={16} />
-                </button>
-              </div>
-            </section>
-          </div>
-        </div>
-      ) : null}
     </main>
   )
 }
