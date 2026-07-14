@@ -178,14 +178,6 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
   const addListItem = (key, value) => actions.updateSowDocument({ [key]: [...document[key], value] })
 
-  const updateRoom = (roomId, field, value) => {
-    actions.updateSowDocument({
-      rooms: document.rooms.map((room) => (
-        room.id === roomId ? { ...room, [field]: value } : room
-      )),
-    })
-  }
-
   const addRoom = () => {
     actions.updateSowDocument({
       rooms: [
@@ -788,7 +780,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
             <SOWSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')}>
               <div className="space-y-3">
-                {document.rooms.map((room) => (
+                {(document.rooms || []).map((room) => (
                   <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
                     <p className="typo-card-title text-black">{room.name}</p>
                     <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
@@ -799,7 +791,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
             <SOWSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')}>
               <div className="space-y-2">
-                {document.exclusions.map((item, index) => (
+                {(document.exclusions || []).map((item, index) => (
                   <div key={`${item}-${index}`} className="typo-body flex items-start gap-2 text-black">
                     <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                     <span>{item}</span>
@@ -832,12 +824,14 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
 
             <SOWSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')}>
               <div className="space-y-3">
-                {document.stages.map((stage) => (
-                  <div key={stage.id} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
-                    <span className="typo-body text-[#102418]">{stage.label}</span>
-                    <span className="typo-body-strong text-black">{stage.percentage}%</span>
+                {(document.paymentTerms || []).map((term, index) => (
+                  <div key={`${term}-${index}`} className="border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
+                    <p className="typo-body text-[#102418]">{term}</p>
                   </div>
                 ))}
+                {!(document.paymentTerms || []).length ? (
+                  <p className="typo-body text-[#5f7467]">No payment terms recorded.</p>
+                ) : null}
               </div>
             </SOWSection>
           </div>

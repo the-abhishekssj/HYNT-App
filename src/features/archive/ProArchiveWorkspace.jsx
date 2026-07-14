@@ -80,6 +80,12 @@ function getColourClass(colour, fallback = 'bg-[#C8A882]') {
   return colourClassMap.get(String(colour || '').toLowerCase()) || fallback
 }
 
+function getPaletteColours(item, index = 0) {
+  const preset = previewPalettes[index % previewPalettes.length]
+  if (!item?.colour) return preset
+  return Array.from(new Set([item.colour, '#8A7968', '#E8E0D5', '#4A5240']))
+}
+
 function moodboardItemKind(item) {
   const title = `${item.title || ''} ${item.linkedTo || ''}`.toLowerCase()
   if (title.trim().startsWith('note:')) return 'note'
@@ -193,7 +199,6 @@ function BoardCard({ folder, index, items, onOpen }) {
 function MoodboardItemCard({ item, index, onOpen }) {
   const kind = moodboardItemKind(item)
   const comments = item.comments?.length || 0
-  const palette = previewPalettes[index % previewPalettes.length]
   const size = moodboardItemSize(item)
   const isFullWidth = size === 'large'
   const fullWidthClass = isFullWidth ? '[column-span:all]' : ''
@@ -201,7 +206,7 @@ function MoodboardItemCard({ item, index, onOpen }) {
   const displayTitle = cleanMoodboardTitle(item, kind)
 
   if (kind === 'palette') {
-    const paletteColours = item.colour ? [item.colour, '#8A7968', '#E8E0D5', '#4A5240'] : palette
+    const paletteColours = getPaletteColours(item, index)
     return (
       <button type="button" onClick={() => onOpen(item.id)} className={cardClass}>
         <div className="bg-[#fbf8ef] p-3">
@@ -362,6 +367,9 @@ function ProArchiveWorkspace({ project, onBack }) {
   const openBoardItems = openBoard ? boardItemsFor(openBoard, archiveItems) : []
   const openItem = openBoardItems.find((item) => item.id === openItemId) || null
   const openItemKind = openItem ? moodboardItemKind(openItem) : null
+  const openItemPaletteColours = openItemKind === 'palette'
+    ? getPaletteColours(openItem, Math.max(0, openBoardItems.findIndex((item) => item.id === openItem?.id)))
+    : []
   const canCreateBoard = permissions.canCreateArchiveFolder
   const canManageSettings = permissions.canManageArchiveSettings
   const canContributeToBoard = (board) => {
@@ -566,18 +574,32 @@ function ProArchiveWorkspace({ project, onBack }) {
               <p className="typo-caption uppercase text-[#6f8178]">{moodboardItemKindLabel(openItemKind)}</p>
               <p className="typo-section-title mt-1 text-black">{openItem.title}</p>
               <p className="typo-meta mt-1 text-[#6f6f6f]">{openItem.linkedTo}</p>
-              <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">
-                {[
-                  ['Status', statusLabels[openItem.status] || openItem.status],
-                  ['Comments', openItem.comments?.length || 0],
-                  ['Access', openBoard.visibility === 'client-shared' ? 'Client' : 'Team'],
-                ].map(([label, value]) => (
-                  <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
-                    <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
-                    <p className="typo-meta mt-1 text-black">{value}</p>
+              {openItemKind === 'palette' ? (
+                <div className="mt-5">
+                  <p className="typo-caption uppercase text-[#7b7b7b]">Palette</p>
+                  <div className="mt-3 overflow-hidden rounded-[24px] border border-[#dbe6df]">
+                    {openItemPaletteColours.map((colour, index) => (
+                      <div key={`${colour}-${index}`} className="flex items-stretch border-b border-white last:border-b-0">
+                        <span className="h-16 flex-1" style={{ backgroundColor: colour }} />
+                        <span className="typo-body-strong flex w-28 items-center justify-end bg-white px-4 text-black">{colour}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : (
+                <div className="mt-4 grid grid-cols-3 border-y border-[#e5e5e5]">
+                  {[
+                    ['Status', statusLabels[openItem.status] || openItem.status],
+                    ['Comments', openItem.comments?.length || 0],
+                    ['Access', openBoard.visibility === 'client-shared' ? 'Client' : 'Team'],
+                  ].map(([label, value]) => (
+                    <div key={label} className="border-r border-[#e5e5e5] px-2 py-3 text-center last:border-r-0">
+                      <p className="typo-caption uppercase text-[#7b7b7b]">{label}</p>
+                      <p className="typo-meta mt-1 text-black">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               <Button
                 type="button"
                 variant="outline"
