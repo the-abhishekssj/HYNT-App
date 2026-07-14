@@ -89,7 +89,7 @@ function IssueRow({ issue }) {
           <p className="typo-meta mt-1 text-[#777]">{issue.reportedBy} / {formatDiaryDateLabel(issue.createdAt)}</p>
           <p className="typo-body mt-2 text-[#202020]">{issue.note}</p>
         </div>
-        <span className={`typo-caption rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
+        <span className={`typo-caption shrink-0 whitespace-nowrap rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
       </div>
     </article>
   )

@@ -159,7 +159,7 @@ function IssueCard({ issue, onUpdateStatus }) {
           <p className="typo-body mt-2 text-[#202020]">{issue.note}</p>
           {issue.linkedTaskLabel ? <p className="typo-caption mt-2 text-[#267449]">Linked task: {issue.linkedTaskLabel}</p> : null}
         </div>
-        <span className={`typo-caption rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
+        <span className={`typo-caption shrink-0 whitespace-nowrap rounded-full px-2 py-1 ${ISSUE_STATUS_TONE[issue.status]}`}>{ISSUE_STATUS_LABEL[issue.status]}</span>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {['open', 'in-progress', 'resolved'].map((status) => (
@@ -167,7 +167,7 @@ function IssueCard({ issue, onUpdateStatus }) {
             key={status}
             type="button"
             onClick={() => onUpdateStatus(issue.id, status)}
-            className={`typo-caption rounded-full px-3 py-2 ${issue.status === status ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#6f6f6f]'}`}
+            className={`typo-caption whitespace-nowrap rounded-full px-3 py-2 ${issue.status === status ? 'bg-black text-white' : 'border border-[#d8e2db] text-[#6f6f6f]'}`}
           >
             {ISSUE_STATUS_LABEL[status]}
           </button>
