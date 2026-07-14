@@ -51,12 +51,12 @@ const Button = React.forwardRef(({
     if (React.isValidElement(iconProp)) {
       return React.cloneElement(iconProp, {
         size: iconProp.props.size || iconSize,
-        weight: iconProp.props.weight || 'fill',
+        weight: iconProp.props.weight || 'regular',
         className: `shrink-0 ${iconProp.props.className || ''}`
       })
     }
     const IconComponent = iconProp
-    return <IconComponent size={iconSize} weight="fill" className="shrink-0" />
+    return <IconComponent size={iconSize} weight="regular" className="shrink-0" />
   }
 
   const Element = href ? 'a' : Component

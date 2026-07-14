@@ -61,7 +61,7 @@ function StickyHeader({ title, subtitle, onBack, actions = null }) {
   )
 }
 
-function SOWSection({ index, title, open, onToggle, badge, children }) {
+function SOWSection({ index, title, open, onToggle, badge, bodyClassName = 'border-t border-[#ececec] px-4 py-4', children }) {
   return (
     <article className="ui-card overflow-hidden">
       <button type="button" onClick={onToggle} className="flex w-full items-center justify-between px-4 py-3 text-left">
@@ -74,7 +74,7 @@ function SOWSection({ index, title, open, onToggle, badge, children }) {
           <CaretDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
         </span>
       </button>
-      {open ? <div className="border-t border-[#ececec] px-4 py-4">{children}</div> : null}
+      {open ? <div className={bodyClassName}>{children}</div> : null}
     </article>
   )
 }
@@ -298,21 +298,21 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
                 key={template.id}
                 type="button"
                 onClick={() => setSelectedTemplateId(template.id)}
-                className={`w-full rounded-[22px] border p-4 text-left ${selected ? 'border-black bg-white' : 'border-[#e1e1e1] bg-[#fbfbfb]'}`}
+                className={`w-full rounded-[18px] border p-4 text-left transition active:scale-[0.99] ${selected ? 'border-[#173324] bg-[#fbfffd] shadow-[0_10px_24px_rgba(16,36,24,0.07)]' : 'border-[#dfe8e2] bg-white'}`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <span className="grid size-11 place-items-center rounded-[16px] border border-[#e0e0e0] bg-white text-black">
+                  <span className={`grid size-11 place-items-center rounded-[14px] border ${selected ? 'border-[#cde7d7] bg-[#eef9f2] text-[#123d28]' : 'border-[#dfe8e2] bg-[#f7faf8] text-[#52665b]'}`}>
                     <Icon size={20} weight={selected ? 'fill' : 'regular'} />
                   </span>
-                  <span className="typo-caption rounded-full bg-white px-2 py-1 uppercase text-[#777777]">
+                  <span className={`typo-caption rounded-full px-2 py-1 uppercase ${selected ? 'bg-[#e7f5ed] text-[#267449]' : 'bg-[#f2f5f3] text-[#6f7d74]'}`}>
                     {template.id === 'residential' ? 'Homes' : template.id === 'commercial' ? 'Commercial' : 'Custom'}
                   </span>
                 </div>
-                <p className="typo-section-title mt-4 text-black">{template.name}</p>
-                <p className="typo-meta mt-1 text-[#808080]">{template.subtitle}</p>
+                <p className="typo-section-title mt-4 text-[#102418]">{template.name}</p>
+                <p className="typo-meta mt-1 text-[#5f7467]">{template.subtitle}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {template.tags.map((tag) => (
-                    <span key={tag} className="typo-caption rounded-full border border-[#e1e1e1] bg-white px-3 py-1 uppercase text-[#6f6f6f]">
+                    <span key={tag} className="typo-caption rounded-full border border-[#dbe6df] bg-white px-3 py-1 uppercase text-[#607269]">
                       {tag}
                     </span>
                   ))}
@@ -390,28 +390,26 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
             </div>
           </SOWSection>
 
-          <SOWSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')} badge={openRemarks.some((remark) => remark.sectionKey === 'rooms') ? 'Remark' : undefined}>
+          <SOWSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')} badge={openRemarks.some((remark) => remark.sectionKey === 'rooms') ? 'Remark' : undefined} bodyClassName="border-t border-[#ececec] px-0 py-3">
             <div className="space-y-3">
               {document.rooms.map((room) => (
-                <article key={room.id} className="rounded-[18px] border border-[#ebebeb] p-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <input
-                      value={room.name}
-                      onChange={(event) => updateRoom(room.id, 'name', event.target.value)}
-                      className="typo-card-title min-w-0 flex-1 bg-transparent text-black outline-none"
-                    />
-                    <button type="button" onClick={() => removeRoom(room.id)} className="grid size-8 place-items-center rounded-xl border border-[#e1b8b8] bg-white text-[#c34545]" aria-label="Remove room">
-                      <Trash size={15} />
+                <div key={room.id} className="border-b border-[#edf2ef] pb-3 last:border-b-0 last:pb-0">
+                  <div className="mb-1.5 flex items-center justify-between gap-2 px-4">
+                    <p className="typo-card-title min-w-0 flex-1 truncate text-[#102418]">{room.name}</p>
+                    <button type="button" onClick={() => removeRoom(room.id)} className="grid size-7 place-items-center rounded-full border border-[#e8c3c3] bg-white text-[#c34545]" aria-label="Remove room">
+                      <Trash size={14} />
                     </button>
                   </div>
                   <textarea
                     value={room.scope}
                     onChange={(event) => actions.updateRoomScope(room.id, event.target.value)}
-                    className="ui-textarea-base typo-body mt-3 min-h-20 w-full border border-[#dbe6df] bg-[#f7fbf8] text-[#102418] outline-none"
+                    className="ui-textarea-base typo-body mx-4 min-h-[58px] w-[calc(100%-32px)] resize-none border border-[#dbe6df] bg-[#fbfffd] text-[#102418] outline-none"
                   />
-                </article>
+                </div>
               ))}
-              <Button type="button" size="small" variant="outline" fullWidth leadingIcon={Plus} onClick={addRoom} className="border-[#e0e0e0] text-black">Add room</Button>
+              <div className="px-4">
+                <Button type="button" size="small" variant="outline" fullWidth leadingIcon={Plus} onClick={addRoom} className="border-[#e0e0e0] text-black">Add room</Button>
+              </div>
             </div>
           </SOWSection>
 

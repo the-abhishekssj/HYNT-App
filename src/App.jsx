@@ -33,6 +33,7 @@ import {
   NotePencil,
   ChatCircleText,
   SlidersHorizontal,
+  Trash,
   User,
   Eye,
   Microphone,
@@ -59,6 +60,7 @@ import ProSiteDiaryWorkspace from './features/siteDiary/ProSiteDiaryWorkspace'
 import ProTimelineWorkspace from './features/timeline/ProTimelineWorkspace'
 import ProArchiveWorkspace from './features/archive/ProArchiveWorkspace'
 import ProjectWorkspaceWidgets from './features/projects/ProjectWorkspaceWidgets'
+import Button from './components/ui/Button'
 
 
 const INR = '\u20b9'
@@ -630,6 +632,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProHomeDense, setIsProHomeDense] = useState(false)
   const [proPrompt, setProPrompt] = useState('')
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
+  const [isDeleteProjectConfirmOpen, setIsDeleteProjectConfirmOpen] = useState(false)
   const [newProjectForm, setNewProjectForm] = useState({
     client: '',
     phone: '',
@@ -698,6 +701,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       ? ['Completed', 'Done'].includes(project.status)
       : project.status === 'Active'
   ))
+  const projectEmptyState = projectStatusFilter === 'Completed'
+    ? {
+        title: 'No completed projects yet',
+        body: 'Closed-out projects will collect here once a job is marked complete.',
+      }
+    : {
+        title: 'No active projects yet',
+        body: 'Create a project to start tracking scope, timelines, and homeowner collaboration.',
+      }
   const selectedProject = projects.find((project) => project.id === selectedProjectId) || null
   const getProjectCount = (status) => projects.filter((project) => (
     status === 'Completed'
@@ -752,7 +764,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       setIsProSowOpen(true)
       return
     }
-    if (toolLabel === 'Archive') {
+    if (toolLabel === 'Moodboard') {
       setSelectedProjectPage('archive')
       return
     }
@@ -779,6 +791,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (toolLabel === 'Team') {
       setSelectedProjectPage('team')
     }
+  }
+  const deleteSelectedProject = () => {
+    if (!selectedProject) return
+    sharedProjectActions.deleteProject(selectedProject.id)
+    setIsDeleteProjectConfirmOpen(false)
+    setSelectedProjectId(null)
+    setSelectedProjectPage('overview')
   }
   useEffect(() => {
     const updateDenseState = () => {
@@ -986,8 +1005,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </section>
 
           <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-6 pt-4 shadow-[0_-8px_24px_rgba(0,0,0,0.08)]">
-            <button
+            <Button
               type="button"
+              fullWidth
+              className="h-12 rounded-[20px]"
               onClick={() => {
                 if (!newProjectForm.client.trim() || !newProjectForm.scope.trim()) return
                 const newProjectId = `p-${Date.now()}`
@@ -1007,10 +1028,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 })
                 setIsCreateProjectOpen(false)
               }}
-              className="typo-body-strong h-11 w-full rounded-full bg-black text-white"
             >
               Create project
-            </button>
+            </Button>
           </div>
         </main>
       )
@@ -1367,8 +1387,59 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                 taskApprovals={sharedTaskApprovalsPro}
                 onOpenTool={openProjectTool}
               />
+
+              <section className="px-4 pb-6 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  fullWidth
+                  leadingIcon={Trash}
+                  className="h-11 rounded-[18px] border-[#f0c9c9] bg-[#fffafa] !text-[#b42318] hover:border-[#b42318] hover:bg-[#fff5f5] [&_span]:!text-[#b42318] [&_svg]:!text-[#b42318]"
+                  onClick={() => setIsDeleteProjectConfirmOpen(true)}
+                >
+                  Delete project
+                </Button>
+              </section>
             </div>
           </section>
+
+          {isDeleteProjectConfirmOpen ? (
+            <div className="fixed inset-0 z-[120] flex items-end justify-center bg-black/30 px-3 pb-3">
+              <section className="w-full max-w-[390px] rounded-[28px] bg-white p-5 shadow-[0_24px_60px_rgba(0,0,0,0.22)]">
+                <div className="flex items-start gap-3">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-[18px] bg-[#fff1f1] text-[#b42318]">
+                    <Trash size={22} weight="bold" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="typo-card-title text-black">Delete this project?</p>
+                    <p className="typo-body mt-1 text-[#607269]">
+                      {selectedProject.scope} and all linked tool data will be removed from this mock workspace.
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-5 space-y-2">
+                  <Button
+                    type="button"
+                    fullWidth
+                    leadingIcon={Trash}
+                    className="h-12 rounded-[20px] bg-[#b42318] text-white hover:bg-[#8f1d14] focus-visible:ring-[#b42318]"
+                    onClick={deleteSelectedProject}
+                  >
+                    Delete project
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    fullWidth
+                    className="h-12 rounded-[20px] border-[#e0e0e0] text-black"
+                    onClick={() => setIsDeleteProjectConfirmOpen(false)}
+                  >
+                    Keep project
+                  </Button>
+                </div>
+              </section>
+            </div>
+          ) : null}
 
         </main>
       )
@@ -1422,44 +1493,66 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </header>
 
           <div className="px-4 py-6">
-            <div className="space-y-3">
-              {filteredProjects.map((project) => {
-                const { daysLeft, progress } = getDeadlineProgress(project)
-                const deadlineTone = getDeadlineTone(daysLeft)
-                const dueLabel = daysLeft === null
-                  ? 'Schedule pending'
-                  : daysLeft < 0
-                    ? `${Math.abs(daysLeft)} day${Math.abs(daysLeft) === 1 ? '' : 's'} overdue`
-                    : `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`
+            {filteredProjects.length ? (
+              <div className="space-y-3">
+                {filteredProjects.map((project) => {
+                  const { daysLeft, progress } = getDeadlineProgress(project)
+                  const deadlineTone = getDeadlineTone(daysLeft)
+                  const dueLabel = daysLeft === null
+                    ? 'Schedule pending'
+                    : daysLeft < 0
+                      ? `${Math.abs(daysLeft)} day${Math.abs(daysLeft) === 1 ? '' : 's'} overdue`
+                      : `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`
 
-                return (
-                  <article
-                    key={project.id}
-                    className="-mx-4 cursor-pointer border-b border-[#e0e0e0] bg-white px-4 py-4 transition-colors active:bg-[#f6faf8]"
+                  return (
+                    <article
+                      key={project.id}
+                      className="-mx-4 cursor-pointer border-b border-[#e0e0e0] bg-white px-4 py-4 transition-colors active:bg-[#f6faf8]"
+                      onClick={() => {
+                        setSelectedProjectId(project.id)
+                        setSelectedProjectPage('overview')
+                      }}
+                    >
+                      <div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span className={`size-2 shrink-0 rounded-full ${project.status === 'Active' ? 'bg-[#5fc18a]' : project.status === 'Pending' ? 'bg-[#efb24d]' : 'bg-[#6ea8ff]'}`} />
+                            <p className="typo-section-title min-w-0 flex-1 truncate text-[#102418]">{project.scope}</p>
+                            <span className={`typo-badge shrink-0 rounded-full px-2 py-1 ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#24754b]' : project.status === 'Pending' ? 'bg-[#fff3d9] text-[#9b6a00]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
+                            <CaretRight size={16} className="shrink-0 text-[#6f8178]" />
+                          </div>
+                          <p className="typo-body mt-1 truncate text-[#607269]">{project.client} {'\u00b7'} {project.location}</p>
+                          <span className={`typo-body-strong mt-3 inline-flex h-9 max-w-full items-center rounded-full px-3 ${deadlineTone.badge}`}>
+                            <span className="mr-1 opacity-75">Due</span>
+                            <span className="truncate">{project.dueDate}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="flex min-h-[60dvh] flex-col items-center justify-center px-2 pb-12 pt-4 text-center">
+                <img src="/empty-projects.svg" alt="" className="w-full max-w-[280px]" />
+                <h2 className="typo-section-title mt-6 text-black">{projectEmptyState.title}</h2>
+                <p className="typo-body mt-2 max-w-[290px] text-[#607269]">{projectEmptyState.body}</p>
+                <div className="mt-6 w-full max-w-[220px]">
+                  <Button
+                    type="button"
+                    fullWidth
+                    leadingIcon={Plus}
+                    className="h-12 rounded-[20px]"
                     onClick={() => {
-                      setSelectedProjectId(project.id)
-                      setSelectedProjectPage('overview')
+                      setIsCreateProjectOpen(true)
+                      setSelectedProjectId(null)
                     }}
                   >
-                    <div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className={`size-2 shrink-0 rounded-full ${project.status === 'Active' ? 'bg-[#5fc18a]' : project.status === 'Pending' ? 'bg-[#efb24d]' : 'bg-[#6ea8ff]'}`} />
-                          <p className="typo-section-title min-w-0 flex-1 truncate text-[#102418]">{project.scope}</p>
-                          <span className={`typo-badge shrink-0 rounded-full px-2 py-1 ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#24754b]' : project.status === 'Pending' ? 'bg-[#fff3d9] text-[#9b6a00]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
-                          <CaretRight size={16} className="shrink-0 text-[#6f8178]" />
-                        </div>
-                        <p className="typo-body mt-1 truncate text-[#607269]">{project.client} {'\u00b7'} {project.location}</p>
-                        <span className={`typo-body-strong mt-3 inline-flex h-9 max-w-full items-center rounded-full px-3 ${deadlineTone.badge}`}>
-                          <span className="mr-1 opacity-75">Due</span>
-                          <span className="truncate">{project.dueDate}</span>
-                        </span>
-                      </div>
-                    </div>
-                  </article>
-                )
-              })}
-            </div>
+                    Create Project
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

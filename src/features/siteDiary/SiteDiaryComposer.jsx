@@ -2,12 +2,15 @@ import { CaretLeft, Camera, Check, WarningCircle, X } from '@phosphor-icons/reac
 import { SITE_DIARY_BUCKETS } from './siteDiaryUtils'
 
 const weatherOptions = ['Sunny', 'Cloudy', 'Indoor', 'Rainy']
+const sourcingCategories = ['Tiles', 'Furniture', 'Hardware', 'Fabric', 'Lighting', 'Other']
 
 function FieldLabel({ children }) {
   return <span className="typo-label mb-2 block uppercase text-[#777]">{children}</span>
 }
 
 function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
+  const isSourcing = draft.type === 'sourcing'
+
   const togglePhoto = (photo) => {
     const selected = draft.photos.includes(photo)
     onChange({ photos: selected ? draft.photos.filter((item) => item !== photo) : [...draft.photos, photo] })
@@ -47,29 +50,60 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
 
         <section className="space-y-4 border-t border-[#e5e5e5] pt-5">
           <label className="block">
-            <FieldLabel>Title</FieldLabel>
-            <input value={draft.title} onChange={(event) => onChange({ title: event.target.value })} placeholder="What was completed today?" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
+            <FieldLabel>{isSourcing ? 'Caption' : 'Date'}</FieldLabel>
+            {isSourcing ? (
+              <input value={draft.title} onChange={(event) => onChange({ title: event.target.value })} placeholder="e.g. Teak veneer warm finish" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
+            ) : (
+              <input value={draft.date} onChange={(event) => onChange({ date: event.target.value })} type="date" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
+            )}
           </label>
-          <label className="block">
-            <FieldLabel>Work completed and observations</FieldLabel>
-            <textarea value={draft.note} onChange={(event) => onChange({ note: event.target.value })} placeholder="Record progress, decisions, materials received, or blockers." className="typo-body h-28 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none focus:border-black" />
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <label>
-              <FieldLabel>Weather</FieldLabel>
-              <select value={draft.weather} onChange={(event) => onChange({ weather: event.target.value })} className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none">
-                {weatherOptions.map((weather) => <option key={weather}>{weather}</option>)}
-              </select>
+          {!isSourcing ? (
+            <label className="block">
+              <FieldLabel>Work done today</FieldLabel>
+              <input value={draft.title} onChange={(event) => onChange({ title: event.target.value })} placeholder="What was completed today?" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
             </label>
-            <label>
-              <FieldLabel>Workers</FieldLabel>
-              <input value={draft.workerCount} onChange={(event) => onChange({ workerCount: event.target.value })} inputMode="numeric" placeholder="0" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
-            </label>
-          </div>
+          ) : null}
           <label className="block">
-            <FieldLabel>Areas and trades</FieldLabel>
-            <input value={draft.tags} onChange={(event) => onChange({ tags: event.target.value })} placeholder="Master bedroom, False ceiling" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+            <FieldLabel>{isSourcing ? 'Vendor / location' : 'Notes / observations'}</FieldLabel>
+            {isSourcing ? (
+              <input value={draft.vendorLocation} onChange={(event) => onChange({ vendorLocation: event.target.value })} placeholder="e.g. Raj Furniture, Goregaon" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none focus:border-black" />
+            ) : (
+              <textarea value={draft.note} onChange={(event) => onChange({ note: event.target.value })} placeholder="Record progress, decisions, materials received, or blockers." className="typo-body h-28 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none focus:border-black" />
+            )}
           </label>
+          {isSourcing ? (
+            <>
+              <label className="block">
+                <FieldLabel>Category</FieldLabel>
+                <select value={draft.category} onChange={(event) => onChange({ category: event.target.value })} className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none">
+                  {sourcingCategories.map((category) => <option key={category}>{category}</option>)}
+                </select>
+              </label>
+              <label className="block">
+                <FieldLabel>Notes</FieldLabel>
+                <textarea value={draft.note} onChange={(event) => onChange({ note: event.target.value })} placeholder="Price, availability, finish, or why this option matters." className="typo-body h-24 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none focus:border-black" />
+              </label>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <label>
+                  <FieldLabel>Weather</FieldLabel>
+                  <select value={draft.weather} onChange={(event) => onChange({ weather: event.target.value })} className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none">
+                    {weatherOptions.map((weather) => <option key={weather}>{weather}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <FieldLabel>Workers</FieldLabel>
+                  <input value={draft.workerCount} onChange={(event) => onChange({ workerCount: event.target.value })} inputMode="numeric" placeholder="0" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+                </label>
+              </div>
+              <label className="block">
+                <FieldLabel>Areas and trades</FieldLabel>
+                <input value={draft.tags} onChange={(event) => onChange({ tags: event.target.value })} placeholder="Master bedroom, False ceiling" className="typo-body h-12 w-full rounded-xl border border-[#d7d7d7] px-3 outline-none" />
+              </label>
+            </>
+          )}
         </section>
 
         <section className="border-t border-[#e5e5e5] pt-5">
@@ -93,7 +127,7 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
           </div>
         </section>
 
-        <section className="border-t border-[#e5e5e5] pt-5">
+        {!isSourcing ? <section className="border-t border-[#e5e5e5] pt-5">
           <button type="button" onClick={() => onChange({ createIssue: !draft.createIssue })} className="flex w-full items-center justify-between py-1 text-left">
             <span className="flex items-center gap-3">
               <WarningCircle size={20} className="text-[#d46f1f]" />
@@ -110,9 +144,9 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
               <textarea value={draft.issueNote} onChange={(event) => onChange({ issueNote: event.target.value })} placeholder="What needs to be corrected?" className="typo-body h-20 w-full resize-none rounded-xl border border-[#d7d7d7] px-3 py-3 outline-none" />
             </div>
           ) : null}
-        </section>
+        </section> : null}
 
-        <section className="border-t border-[#e5e5e5] pt-5">
+        {!isSourcing ? <section className="border-t border-[#e5e5e5] pt-5">
           <div className="flex w-full items-center justify-between py-1">
             <span className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-xl bg-slate-100 text-[#5fc18a]">
@@ -132,7 +166,7 @@ function SiteDiaryComposer({ draft, photoOptions, onChange, onClose, onSave }) {
               <span className={`block size-4 rounded-full bg-white transition-transform ${draft.shareWithClient !== false ? 'translate-x-5' : ''}`} />
             </button>
           </div>
-        </section>
+        </section> : null}
 
         <div className="sticky bottom-0 grid grid-cols-[auto_1fr] gap-3 bg-white py-3">
           <button type="button" onClick={onClose} className="typo-body-strong h-12 rounded-xl border border-[#d7d7d7] px-5">Cancel</button>

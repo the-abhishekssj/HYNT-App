@@ -14,7 +14,7 @@ import {
 
 const projectWorkspaceTools = [
   { label: 'SOW', icon: NotePencil },
-  { label: 'Archive', icon: ImagesSquare },
+  { label: 'Moodboard', icon: ImagesSquare },
   { label: 'BOQ', icon: Scroll },
   { label: 'Tasks', icon: CheckSquareOffset },
   { label: 'Finance', icon: CurrencyInr },
@@ -35,7 +35,7 @@ const formatRupees = (value) => `${Math.round(value).toLocaleString('en-IN')}`
 
 function getEmptyWidgetCopy(label) {
   if (label === 'SOW') return ['No SOW yet', 'Choose template']
-  if (label === 'Archive') return ['No files yet', 'Add uploads']
+  if (label === 'Moodboard') return ['No items yet', 'Open moodboard']
   if (label === 'BOQ') return ['No BOQ yet', 'Import or price']
   if (label === 'Tasks') return ['No tasks yet', 'Create task']
   if (label === 'Finance') return ['No invoices yet', 'Build schedule']
@@ -64,10 +64,10 @@ function EmptyWidgetPreview({ label }) {
     )
   }
 
-  if (label === 'Archive') {
+  if (label === 'Moodboard') {
     return (
       <div className="grid h-[52px] grid-cols-3 gap-2">
-        {['Moodboard', 'Plans', 'Bills'].map((folder) => (
+        {['Concept', 'Materials', 'Products'].map((folder) => (
           <span key={folder} className="relative rounded-[10px] border border-dashed border-[#c8d8cf] bg-white">
             <span className="absolute left-2 top-2 h-1.5 w-5 rounded-full bg-[#e3ede7]" />
             <span className="absolute bottom-2 left-2 right-2 h-1 rounded-full bg-[#eef5f1]" />
@@ -238,7 +238,7 @@ function ProjectWorkspaceWidgets({
       <div className="mt-4 grid grid-cols-2 gap-3">
         {projectWorkspaceTools.map((tool) => {
           const Icon = tool.icon
-          const isArchive = tool.label === 'Archive'
+          const isMoodboard = tool.label === 'Moodboard'
           const isBoq = tool.label === 'BOQ'
           const isSiteDiary = tool.label === 'Site diary'
           const isSow = tool.label === 'SOW'
@@ -249,7 +249,7 @@ function ProjectWorkspaceWidgets({
           const isFloorPlan = tool.label === 'Floor plan'
           const isWideWidget = isSiteDiary
           const isEmptyWidget = (
-            (isArchive && !hasArchiveContent)
+            (isMoodboard && !hasArchiveContent)
             || (isBoq && !hasBoqContent)
             || (isSiteDiary && !hasSiteDiaryContent)
             || (isSow && !hasSow)
@@ -292,7 +292,7 @@ function ProjectWorkspaceWidgets({
                 </div>
               ) : null}
 
-              {!isEmptyWidget && isArchive ? (
+              {!isEmptyWidget && isMoodboard ? (
                 <div className="mt-2 flex h-[94px] flex-col justify-between">
                   <div className="hynt-tool-preview-stack flex h-[46px] items-center overflow-visible">
                     {[
@@ -313,7 +313,7 @@ function ProjectWorkspaceWidgets({
                       />
                     ))}
                   </div>
-                  <p className="typo-meta text-[#64766c]">{archiveItems.length} file{archiveItems.length === 1 ? '' : 's'}</p>
+                  <p className="typo-meta text-[#64766c]">{archiveItems.length} moodboard item{archiveItems.length === 1 ? '' : 's'}</p>
                 </div>
               ) : null}
 

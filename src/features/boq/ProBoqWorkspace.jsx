@@ -152,22 +152,20 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
         type="button"
         variant="outline"
         size="small"
+        icon={FileArrowUp}
         onClick={() => setScreen('import')}
-        className="size-8 rounded-[16px] border-[#dbe6df] px-0"
+        className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]"
         aria-label="Import BOQ"
-      >
-        <FileArrowUp size={15} />
-      </Button>
+      />
       <Button
         type="button"
         variant="outline"
         size="small"
+        icon={ClockCounterClockwise}
         onClick={() => setScreen('history')}
-        className="size-8 rounded-[16px] border-[#dbe6df] px-0"
+        className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]"
         aria-label="View BOQ history"
-      >
-        <ClockCounterClockwise size={15} />
-      </Button>
+      />
     </>
   )
 
@@ -210,14 +208,14 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
           </div>
 
           {boqMeta.status !== 'approved' ? (
-            <div className="rounded-[18px] border border-[#e8efe9] bg-[#fbfffd] p-3">
+            <div className="py-1">
               <div className="flex items-center justify-between gap-3">
                 <p className="typo-section-title text-black">Readiness</p>
                 <span className={`typo-caption rounded-full px-2 py-1 ${canMarkReady ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#fff3dd] text-[#a86a00]'}`}>
                   {canMarkReady ? 'Can mark ready' : 'Needs pricing'}
                 </span>
               </div>
-              <div className="mt-2 space-y-1.5">
+              <div className="mt-2 space-y-1">
                 {readyChecklist.map((check) => (
                   <div key={check.label} className="flex items-center gap-2">
                     <span className={`size-2 shrink-0 rounded-full ${check.complete ? 'bg-[#5fc18a]' : check.optional ? 'bg-[#efb24d]' : 'bg-[#c34545]'}`} />

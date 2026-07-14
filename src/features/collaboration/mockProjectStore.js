@@ -255,7 +255,12 @@ export const mockInitialState = {
       id: 'inv-1',
       projectId: 'p-1',
       phone: '+91 90000 11223',
+      name: 'Kavya Shah',
       roleId: 'junior-designer',
+      roleLabel: 'Junior Designer',
+      inviteType: 'team',
+      seatFee: 500,
+      seatPayer: 'designer',
       status: 'pending',
       inviteUrl: 'https://hynt.local/invite/inv-1',
       createdAt: nowIso(),
@@ -1578,6 +1583,44 @@ export function useSharedProject(rawProjectId = 'p-1') {
 
       return addActivity(nextState, newProjectId, 'Riya Desai', `Created a new project for ${projectForm.client.trim()}`)
     }),
+    deleteProject: (targetProjectId = projectId) => update((current) => {
+      if (!targetProjectId) return current
+
+      const nextProjects = (current.projects || []).filter((item) => item.id !== targetProjectId)
+      const projectTaskIds = new Set((current.projectTasks || [])
+        .filter((task) => task.projectId === targetProjectId)
+        .map((task) => task.id))
+      const nextSows = Object.fromEntries(Object.entries(current.sows || {}).filter(([key]) => key !== targetProjectId))
+      const nextBoqMeta = Object.fromEntries(Object.entries(current.boqMeta || {}).filter(([key]) => key !== targetProjectId))
+      const nextTaskStepCompletion = Object.fromEntries(Object.entries(current.taskStepCompletion || {}).filter(([taskId]) => !projectTaskIds.has(taskId)))
+      const nextActiveProjectId = current.activeProjectId === targetProjectId
+        ? (nextProjects[0]?.id || null)
+        : current.activeProjectId
+
+      return {
+        ...current,
+        projects: nextProjects,
+        activeProjectId: nextActiveProjectId,
+        sows: nextSows,
+        boqMeta: nextBoqMeta,
+        memberships: (current.memberships || []).filter((membership) => membership.projectId !== targetProjectId),
+        invites: (current.invites || []).filter((invite) => invite.projectId !== targetProjectId),
+        activity: (current.activity || []).filter((entry) => entry.projectId !== targetProjectId),
+        archiveFolders: (current.archiveFolders || []).filter((folder) => folder.projectId !== targetProjectId),
+        archiveItems: (current.archiveItems || []).filter((item) => item.projectId !== targetProjectId),
+        financeInvoices: (current.financeInvoices || []).filter((invoice) => invoice.projectId !== targetProjectId),
+        financeExpenses: (current.financeExpenses || []).filter((expense) => expense.projectId !== targetProjectId),
+        boqRooms: (current.boqRooms || []).filter((room) => room.projectId !== targetProjectId),
+        boqItems: (current.boqItems || []).filter((item) => item.projectId !== targetProjectId),
+        projectTasks: (current.projectTasks || []).filter((task) => task.projectId !== targetProjectId),
+        taskApprovals: (current.taskApprovals || []).filter((approval) => approval.projectId !== targetProjectId),
+        taskStepCompletion: nextTaskStepCompletion,
+        siteDiaryEntries: (current.siteDiaryEntries || []).filter((entry) => entry.projectId !== targetProjectId),
+        siteDiaryIssues: (current.siteDiaryIssues || []).filter((issue) => issue.projectId !== targetProjectId),
+        siteDiaryReferences: (current.siteDiaryReferences || []).filter((reference) => reference.projectId !== targetProjectId),
+        timelinePhases: (current.timelinePhases || []).filter((phase) => phase.projectId !== targetProjectId),
+      }
+    }),
     setActiveProjectId: (id) => update((current) => ({
       ...current,
       activeProjectId: id,
@@ -1831,7 +1874,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.homeownerName, `Rejected amendment ${target.version}`)
     }),
-    createInvite: ({ phone, roleId, roleLabel = '', grants }) => update((current) => {
+    createInvite: ({ phone, roleId, roleLabel = '', grants, name = '', inviteType = 'team', seatFee = 0, seatPayer = 'designer' }) => update((current) => {
       const cleanPhone = phone.trim()
       if (!cleanPhone) return current
       const inviteId = makeId('inv')
@@ -1839,9 +1882,13 @@ export function useSharedProject(rawProjectId = 'p-1') {
         id: inviteId,
         projectId,
         phone: cleanPhone,
+        name: name.trim(),
         roleId,
         roleLabel: roleLabel.trim() || roleTemplates.find((role) => role.id === roleId)?.label || 'Team member',
         grants,
+        inviteType,
+        seatFee,
+        seatPayer,
         status: 'pending',
         inviteUrl: `https://hynt.local/invite/${inviteId}`,
         createdAt: nowIso(),
@@ -1859,7 +1906,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const role = roleTemplates.find((item) => item.id === invite.roleId)
       const user = {
         id: userId,
-        name: `Invited ${invite.phone.slice(-4)}`,
+        name: invite.name || `Invited ${invite.phone.slice(-4)}`,
         role: invite.roleLabel || role?.label || 'Team member',
         phone: invite.phone,
         avatar: '/hynt-home/pro-2.png',
@@ -1889,6 +1936,15 @@ export function useSharedProject(rawProjectId = 'p-1') {
       ...current,
       invites: (current.invites || []).filter((invite) => invite.id !== inviteId),
     })),
+    removeMembership: (membershipId) => update((current) => {
+      const membership = (current.memberships || []).find((item) => item.id === membershipId)
+      if (!membership || membership.roleId === 'principal-pro') return current
+      const user = (current.users || []).find((item) => item.id === membership.userId)
+      return addActivity({
+        ...current,
+        memberships: (current.memberships || []).filter((item) => item.id !== membershipId),
+      }, projectId, project.designerName, `Removed ${user?.name || 'a team member'} from project access`)
+    }),
     updateMembershipRole: (membershipId, roleId) => update((current) => {
       const role = roleTemplates.find((item) => item.id === roleId)
       return addActivity({
@@ -1910,24 +1966,36 @@ export function useSharedProject(rawProjectId = 'p-1') {
           ...membership,
           grants: grants.includes(grant)
             ? grants.filter((item) => item !== grant)
-            : [...grants, grant],
+          : [...grants, grant],
         }
       }),
     })),
+    setMembershipGrants: (membershipId, grants) => update((current) => {
+      const membership = (current.memberships || []).find((item) => item.id === membershipId)
+      if (!membership || membership.roleId === 'principal-pro') return current
+      return addActivity({
+        ...current,
+        memberships: (current.memberships || []).map((item) => (
+          item.id === membershipId
+            ? { ...item, grants: Array.from(new Set(grants)) }
+            : item
+        )),
+      }, projectId, project.designerName, 'Updated feature access')
+    }),
     setActiveViewerRole: (roleId) => update((current) => ({
       ...current,
       activeViewerRoleId: roleId,
     })),
-    createArchiveFolder: (name) => update((current) => {
+    createArchiveFolder: (name, options = {}) => update((current) => {
       const cleanName = name.trim()
       if (!cleanName) return current
       const folder = {
-        id: makeId('af'),
+        id: options.id || makeId('af'),
         projectId,
         name: cleanName,
-        type: 'custom',
-        visibility: 'team-only',
-        editAccess: 'pro-only',
+        type: options.type || 'custom',
+        visibility: options.visibility || 'team-only',
+        editAccess: options.editAccess || 'pro-only',
       }
       const next = {
         ...current,
@@ -1963,19 +2031,27 @@ export function useSharedProject(rawProjectId = 'p-1') {
       }
       return addActivity(next, projectId, project.designerName, 'Updated archive folder contribution access')
     }),
-    addArchiveItem: (folderId, title, src = null) => update((current) => {
+    addArchiveItem: (folderId, title, itemOptions = null) => update((current) => {
       const cleanTitle = title.trim()
       if (!cleanTitle) return current
       const folder = (current.archiveFolders || []).find((item) => item.id === folderId)
+      const options = typeof itemOptions === 'object' && itemOptions !== null
+        ? itemOptions
+        : { src: itemOptions }
+      const inferredImageItem = folder?.type === 'moodboard' || folder?.type === 'renders' || folder?.type === 'sketches'
+      const itemType = options.type || (options.src ? 'image' : (inferredImageItem ? 'image' : 'note'))
       const item = {
         id: makeId('ai'),
         projectId,
         folderId,
         title: cleanTitle,
-        type: src ? 'image' : (folder?.type === 'moodboard' || folder?.type === 'renders' || folder?.type === 'sketches' ? 'image' : 'note'),
-        src: src || (folder?.type === 'moodboard' || folder?.type === 'renders' || folder?.type === 'sketches' ? '/hynt-home/idea-1.png' : null),
+        type: itemType,
+        src: options.src || (itemType === 'image' && inferredImageItem ? '/hynt-home/idea-1.png' : null),
         status: folder?.visibility === 'client-shared' ? 'pending' : 'internal',
-        linkedTo: 'Unlinked',
+        linkedTo: options.linkedTo || 'Unlinked',
+        size: options.size || 'medium',
+        note: options.note || '',
+        colour: options.colour || null,
         comments: [],
       }
       const next = {
@@ -1983,6 +2059,15 @@ export function useSharedProject(rawProjectId = 'p-1') {
         archiveItems: [item, ...(current.archiveItems || [])],
       }
       return addActivity(next, projectId, project.designerName, `Added archive item: ${cleanTitle}`)
+    }),
+    deleteArchiveItem: (itemId) => update((current) => {
+      const target = (current.archiveItems || []).find((item) => item.id === itemId)
+      if (!target) return current
+      const next = {
+        ...current,
+        archiveItems: (current.archiveItems || []).filter((item) => item.id !== itemId),
+      }
+      return addActivity(next, projectId, project.designerName, `Deleted archive item: ${target.title}`)
     }),
     setArchiveItemStatus: (itemId, status) => update((current) => {
       const next = {
@@ -2691,17 +2776,18 @@ export function useSharedProject(rawProjectId = 'p-1') {
         ],
       }
     }),
-    addSiteDiaryEntry: ({ id = null, note = '', photos = [], title = '', type = 'daily-log', weather = 'Indoor', workerCount = 0, tags = [], linkedTaskLabel = null, linkedExpenseLabel = null, issue = null, createdBy = project.designerName, shareWithClient = true }) => update((current) => {
+    addSiteDiaryEntry: ({ id = null, note = '', photos = [], title = '', type = 'daily-log', weather = 'Indoor', workerCount = 0, tags = [], linkedTaskLabel = null, linkedExpenseLabel = null, issue = null, createdBy = project.designerName, shareWithClient = true, createdAt = null, vendorLocation = '', category = '' }) => update((current) => {
       const cleanNote = note.trim()
       const cleanTitle = title.trim()
       if (!cleanNote && !cleanTitle && photos.length === 0) return current
       const entryId = id || makeId('diary')
       const cleanIssueTitle = issue?.title?.trim() || ''
       const issueId = cleanIssueTitle ? (issue.id || makeId('issue')) : null
+      const entryCreatedAt = createdAt || nowIso()
       const entry = {
         id: entryId,
         projectId,
-        createdAt: nowIso(),
+        createdAt: entryCreatedAt,
         type,
         title: cleanTitle || 'Site update',
         createdBy,
@@ -2710,6 +2796,8 @@ export function useSharedProject(rawProjectId = 'p-1') {
         tags,
         note: cleanNote,
         photos,
+        vendorLocation: vendorLocation.trim(),
+        category: category.trim(),
         linkedTaskLabel,
         linkedExpenseLabel,
         issueId,
@@ -2726,7 +2814,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
               projectId,
               title: cleanIssueTitle,
               status: 'open',
-              createdAt: nowIso(),
+              createdAt: entryCreatedAt,
               reportedBy: createdBy,
               entryId,
               linkedTaskLabel: issue.linkedTaskLabel || linkedTaskLabel,
@@ -2864,6 +2952,46 @@ export function useSharedProject(rawProjectId = 'p-1') {
         )),
       }
       return addActivity(next, projectId, project.designerName, 'Replied to a homeowner reference')
+    }),
+    saveSiteDiaryReferenceToMoodboard: (referenceId) => update((current) => {
+      const reference = (current.siteDiaryReferences || []).find((item) => item.id === referenceId)
+      if (!reference) return current
+
+      const existingMoodboard = (current.archiveFolders || []).find((folder) => (
+        folder.projectId === projectId && folder.type === 'moodboard'
+      ))
+      const folder = existingMoodboard || {
+        id: makeId('af'),
+        projectId,
+        name: 'Moodboard',
+        type: 'moodboard',
+        visibility: 'client-shared',
+        editAccess: 'team-can-add',
+      }
+      const archiveItem = {
+        id: makeId('ai'),
+        projectId,
+        folderId: folder.id,
+        title: reference.title || 'Client reference',
+        type: 'image',
+        src: reference.image,
+        status: 'pending',
+        linkedTo: 'Site diary reference',
+        size: 'medium',
+        note: reference.note || '',
+        colour: null,
+        comments: [],
+      }
+
+      const next = {
+        ...current,
+        archiveFolders: existingMoodboard ? current.archiveFolders : [folder, ...(current.archiveFolders || [])],
+        archiveItems: [archiveItem, ...(current.archiveItems || [])],
+        siteDiaryReferences: (current.siteDiaryReferences || []).map((item) => (
+          item.id === referenceId ? { ...item, savedToMoodboard: true, savedAt: nowIso() } : item
+        )),
+      }
+      return addActivity(next, projectId, project.designerName, 'Saved a homeowner reference to Moodboard')
     }),
     toggleSiteDiaryReviewed: (entryId) => update((current) => {
       const target = (current.siteDiaryEntries || []).find((entry) => entry.id === entryId)
