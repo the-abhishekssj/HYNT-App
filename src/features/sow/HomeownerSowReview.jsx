@@ -1,28 +1,17 @@
 import { useState } from 'react'
-import { CaretDown, CaretLeft, CheckCircle, FileArrowDown, NotePencil } from '@phosphor-icons/react'
+import { CaretDown, CheckCircle, FileArrowDown, NotePencil } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 function ReviewHeader({ title, subtitle, onBack }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <div className="flex items-center justify-between py-1">
-          <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
-            <span className="grid size-6 shrink-0 place-items-center rounded">
-              <CaretLeft size={24} />
-            </span>
-            <span className="min-w-0 text-left">
-              <span className="typo-section-title ui-section-title block truncate">{title}</span>
-              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-            </span>
-          </button>
-          <button type="button" className="grid size-8 shrink-0 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
-            <FileArrowDown size={15} />
-          </button>
-        </div>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title={title}
+      subtitle={subtitle}
+      onBack={onBack}
+      actions={<Button type="button" variant="outline" icon={FileArrowDown} aria-label="Download SOW" />}
+    />
   )
 }
 
@@ -95,7 +84,12 @@ function HomeownerSowReview({ onBack }) {
     signatures: true,
   })
 
-  const document = sow?.document
+  const document = sow?.document || {}
+  const documentRooms = Array.isArray(document.rooms) ? document.rooms : []
+  const documentExclusions = Array.isArray(document.exclusions) ? document.exclusions : []
+  const documentPaymentTerms = Array.isArray(document.paymentTerms) ? document.paymentTerms : []
+  const documentTermsNotes = Array.isArray(document.termsNotes) ? document.termsNotes : []
+  const documentStages = Array.isArray(document.stages) ? document.stages : []
   const openRemarks = sow?.remarks?.filter((remark) => remark.status === 'open') || []
   const responses = sow?.responses || []
   const pendingAmendment = sow?.amendments?.find((amendment) => amendment.status === 'pending') || null
@@ -235,7 +229,7 @@ function HomeownerSowReview({ onBack }) {
 
           <ClientSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')} badge={openRemarks.some((remark) => remark.sectionKey === 'rooms') ? 'Remarked' : undefined}>
             <div className="space-y-3">
-              {document.rooms.map((room) => (
+              {documentRooms.map((room) => (
                 <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
                   <p className="typo-card-title text-black">{room.name}</p>
                   <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
@@ -258,7 +252,7 @@ function HomeownerSowReview({ onBack }) {
               <p className="typo-body mt-1 text-black">These stay outside scope unless your designer actively adds them.</p>
             </div>
             <div className="space-y-2">
-              {document.exclusions.map((item) => (
+              {documentExclusions.map((item) => (
                 <div key={item} className="typo-body flex items-start gap-2 text-black">
                   <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                   <span>{item}</span>
@@ -303,7 +297,7 @@ function HomeownerSowReview({ onBack }) {
 
           <ClientSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')} badge={openRemarks.some((remark) => remark.sectionKey === 'payment') ? 'Remarked' : undefined}>
             <div className="typo-body space-y-2 text-[#5f7467]">
-              {document.paymentTerms.map((term) => <p key={term}>{term}</p>)}
+              {documentPaymentTerms.map((term) => <p key={term}>{term}</p>)}
             </div>
             <button type="button" onClick={() => startRemark('payment', 'Payment terms', null, 'Can we discuss the payment milestones before I approve?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
@@ -313,7 +307,7 @@ function HomeownerSowReview({ onBack }) {
 
           <ClientSection index="7" title="Terms & notes" open={openSections.terms} onToggle={() => toggleSection('terms')} badge={openRemarks.some((remark) => remark.sectionKey === 'terms') ? 'Remarked' : undefined}>
             <div className="typo-body space-y-2 text-[#5f7467]">
-              {document.termsNotes.map((term) => <p key={term}>{term}</p>)}
+              {documentTermsNotes.map((term) => <p key={term}>{term}</p>)}
             </div>
             <button type="button" onClick={() => startRemark('terms', 'Terms and notes', null, 'Please clarify this term before I approve the SOW.')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
@@ -565,7 +559,7 @@ function HomeownerSowReview({ onBack }) {
 
             <ClientSection index="2" title="Scope - room wise" open={openSections.scope} onToggle={() => toggleSection('scope')}>
               <div className="space-y-3">
-                {document.rooms.map((room) => (
+                {documentRooms.map((room) => (
                   <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
                     <p className="typo-card-title text-black">{room.name}</p>
                     <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
@@ -576,7 +570,7 @@ function HomeownerSowReview({ onBack }) {
 
             <ClientSection index="3" title="Exclusions" open={openSections.exclusions} onToggle={() => toggleSection('exclusions')}>
               <div className="space-y-2">
-                {document.exclusions.map((item) => (
+                {documentExclusions.map((item) => (
                   <div key={item} className="typo-body flex items-start gap-2 text-black">
                     <span className="mt-1 size-1.5 rounded-full bg-[#8c8c8c]" />
                     <span>{item}</span>
@@ -609,7 +603,7 @@ function HomeownerSowReview({ onBack }) {
 
             <ClientSection index="6" title="Payment terms" open={openSections.payment} onToggle={() => toggleSection('payment')}>
               <div className="space-y-3">
-                {document.stages.map((stage) => (
+                {documentStages.map((stage) => (
                   <div key={stage.id} className="flex items-start justify-between gap-4 border-b border-[#ededed] pb-2 last:border-b-0 last:pb-0">
                     <span className="typo-body text-[#102418]">{stage.label}</span>
                     <span className="typo-body-strong text-black">{stage.percentage}%</span>

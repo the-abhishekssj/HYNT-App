@@ -36,7 +36,7 @@ function Header({ title = 'Site diary', subtitle, onBack, onCompose }) {
       title={title}
       subtitle={subtitle}
       onBack={onBack}
-      actions={onCompose ? <Button type="button" icon={Plus} onClick={onCompose} aria-label="Create diary log" className="size-10 rounded-[15px]" /> : null}
+      actions={onCompose ? <Button type="button" icon={Plus} onClick={onCompose} aria-label="Create diary log" /> : null}
     />
   )
 }

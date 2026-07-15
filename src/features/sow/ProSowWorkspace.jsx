@@ -3,7 +3,6 @@ import {
   ArrowRight,
   Buildings,
   CaretDown,
-  CaretLeft,
   CheckCircle,
   FileArrowDown,
   House,
@@ -21,6 +20,7 @@ import {
   sowStatusLabels,
 } from './sowFlowUtils'
 import Button from '../../components/ui/Button'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const templateIcons = {
   House,
@@ -40,24 +40,12 @@ function formatStamp(value) {
 
 function StickyHeader({ title, subtitle, onBack, actions = null }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <div className="flex items-center justify-between py-1">
-          <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
-            <span className="grid size-6 shrink-0 place-items-center rounded">
-              <CaretLeft size={24} />
-            </span>
-            <span className="min-w-0 text-left">
-              <span className="typo-section-title ui-section-title block truncate">{title}</span>
-              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-            </span>
-          </button>
-          <div className="flex items-center gap-2">
-            {actions}
-          </div>
-        </div>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title={title}
+      subtitle={subtitle}
+      onBack={onBack}
+      actions={actions}
+    />
   )
 }
 
@@ -331,12 +319,10 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         onBack={onBack}
         actions={(
           <>
-            <button type="button" onClick={actions.resetDemo} className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black" aria-label="Reset SOW">
-              <ArrowCounterClockwise size={15} />
-            </button>
-            <button type="button" onClick={() => setOpenSections((current) => ({ ...current, overview: true, scope: true }))} className="typo-label rounded-full border border-[#dbe6df] bg-white px-3 py-2 text-black">
+            <Button type="button" variant="outline" icon={ArrowCounterClockwise} onClick={actions.resetDemo} aria-label="Reset SOW" />
+            <Button type="button" variant="outline" onClick={() => setOpenSections((current) => ({ ...current, overview: true, scope: true }))}>
               Edit
-            </button>
+            </Button>
           </>
         )}
       />
@@ -703,7 +689,7 @@ function ProSowWorkspace({ project, onBack, entry = 'existing', initialView }) {
         title="Scope of Work"
         subtitle="Executed document"
         onBack={onBack}
-        actions={<button type="button" className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black"><FileArrowDown size={15} /></button>}
+        actions={<Button type="button" variant="outline" icon={FileArrowDown} aria-label="Download SOW" />}
       />
 
       <div className="ui-screen-content">

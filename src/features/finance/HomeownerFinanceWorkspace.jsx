@@ -9,6 +9,7 @@ import {
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 import PaymentMilestoneTimeline from './PaymentMilestoneTimeline'
+import Button from '../../components/ui/Button'
 
 const INR = '\u20b9'
 
@@ -109,9 +110,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
             subtitle={`${project.name} / ${selectedInvoice.stageLabel || selectedInvoice.title}`}
             onBack={() => setScreen('overview')}
             trailing={selectedInvoice.status === 'paid' ? (
-              <button type="button" onClick={() => triggerToast('Receipt downloaded!')} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white hover:bg-gray-50 transition-colors" aria-label="Download receipt">
-                <DownloadSimple size={17} />
-              </button>
+              <Button type="button" variant="outline" icon={DownloadSimple} onClick={() => triggerToast('Receipt downloaded!')} aria-label="Download receipt" />
             ) : null}
           />
 
@@ -328,9 +327,7 @@ function HomeownerFinanceWorkspace({ onBack }) {
           )}
           onBack={onBack}
           trailing={(
-            <button type="button" onClick={() => triggerToast('All receipts PDF downloaded!')} className="grid size-9 place-items-center rounded-xl border border-[#e0e0e0] bg-white hover:bg-gray-50 transition-colors" aria-label="Download receipts">
-              <DownloadSimple size={17} />
-            </button>
+            <Button type="button" variant="outline" icon={DownloadSimple} onClick={() => triggerToast('All receipts PDF downloaded!')} aria-label="Download receipts" />
           )}
         />
 

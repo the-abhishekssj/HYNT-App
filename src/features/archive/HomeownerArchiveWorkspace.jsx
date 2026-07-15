@@ -8,6 +8,7 @@ import {
   PaperPlaneTilt,
   XCircle,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
 import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
@@ -266,14 +267,12 @@ function HomeownerArchiveWorkspace({ onBack }) {
 
               {['moodboard', 'sketches', 'renders'].includes(openFolder.type) ? (
                 <div className="mt-4 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'approved')} className="typo-meta flex h-10 items-center justify-center gap-2 rounded-[14px] bg-black text-white">
-                    <CheckCircle size={15} />
+                  <Button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'approved')} fullWidth size="small" leadingIcon={CheckCircle}>
                     Approve
-                  </button>
-                  <button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'rejected')} className="typo-meta flex h-10 items-center justify-center gap-2 rounded-[14px] border border-[#e1b8b8] bg-white text-[#c34545]">
-                    <XCircle size={15} />
+                  </Button>
+                  <Button type="button" onClick={() => actions.setArchiveItemStatus(openItem.id, 'rejected')} fullWidth size="small" variant="ghost" leadingIcon={XCircle} className="text-[#b42318] hover:bg-[#fff5f5]">
                     Reject
-                  </button>
+                  </Button>
                 </div>
               ) : null}
             </section>

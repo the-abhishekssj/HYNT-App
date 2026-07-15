@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import { CaretLeft, FileArrowDown } from '@phosphor-icons/react'
+import { FileArrowDown } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 import { BoqHistoryDetailBody, BoqHistoryList } from '../boq/BoqHistoryViews'
 import { BoqParticularList, BoqQuestionThread, BoqRoomListSection } from '../boq/BoqRoomSections'
 import { formatBoqHistoryDate } from '../boq/boqHistoryUtils'
@@ -9,24 +10,12 @@ import { buildBoqRoomSummaries, boqStatusLabels, formatRupees, getBoqItemAmount 
 
 function Header({ title, subtitle, onBack }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <div className="flex items-center justify-between py-1">
-          <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
-            <span className="grid size-6 shrink-0 place-items-center rounded">
-              <CaretLeft size={24} />
-            </span>
-            <span className="min-w-0 text-left">
-              <span className="typo-section-title ui-section-title block truncate">{title}</span>
-              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-            </span>
-          </button>
-          <button type="button" className="grid size-8 place-items-center rounded-xl border border-[#dbe6df] bg-white text-black">
-            <FileArrowDown size={15} />
-          </button>
-        </div>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title={title}
+      subtitle={subtitle}
+      onBack={onBack}
+      actions={<Button type="button" variant="outline" icon={FileArrowDown} aria-label="Download quotation" />}
+    />
   )
 }
 

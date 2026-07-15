@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import {
-  CaretLeft,
   CaretUp,
   FileArrowUp,
   ClockCounterClockwise,
@@ -10,6 +9,7 @@ import {
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 import { BoqHistoryDetailBody, BoqHistoryList } from './BoqHistoryViews'
 import { BoqParticularList, BoqQuestionThread, BoqRoomListSection } from './BoqRoomSections'
 import { formatBoqHistoryDate } from './boqHistoryUtils'
@@ -24,22 +24,12 @@ import {
 
 function Header({ title, subtitle, onBack, right }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <div className="flex items-center justify-between py-1">
-          <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
-            <span className="grid size-6 shrink-0 place-items-center rounded">
-              <CaretLeft size={24} />
-            </span>
-            <span className="min-w-0 text-left">
-              <span className="typo-section-title ui-section-title block truncate">{title}</span>
-              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-            </span>
-          </button>
-          <div className="flex items-center gap-2">{right}</div>
-        </div>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title={title}
+      subtitle={subtitle}
+      onBack={onBack}
+      actions={right}
+    />
   )
 }
 
@@ -151,19 +141,15 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
       <Button
         type="button"
         variant="outline"
-        size="small"
         icon={FileArrowUp}
         onClick={() => setScreen('import')}
-        className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]"
         aria-label="Import BOQ"
       />
       <Button
         type="button"
         variant="outline"
-        size="small"
         icon={ClockCounterClockwise}
         onClick={() => setScreen('history')}
-        className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]"
         aria-label="View BOQ history"
       />
     </>
@@ -281,11 +267,8 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
                       <div className="flex items-start justify-between gap-2">
                         <button type="button" onClick={() => toggleInlineRoom(room)} className="flex min-w-0 flex-1 items-center justify-between gap-3 text-left">
                           <div className="min-w-0">
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
                               <p className="typo-body-strong text-black">{room.name}</p>
-                              {room.source === 'sow' ? (
-                                <span className="typo-caption rounded-full bg-[#e9f2ff] px-2 py-1 text-[#2f5f9f]">From SOW</span>
-                              ) : null}
                               {room.openQuestionCount ? (
                                 <span className="typo-caption rounded-full bg-[#fff3dd] px-2 py-1 text-[#a86a00]">{room.openQuestionCount} notes</span>
                               ) : null}
@@ -293,9 +276,16 @@ function ProBoqWorkspace({ project, onBack, onOpenFinance }) {
                             <p className="typo-meta mt-0.5 text-[#7b7b7b]">{room.itemCount} line items</p>
                             {room.note ? <p className="typo-meta mt-0.5 text-[#9a9a9a]">{room.note}</p> : null}
                           </div>
-                          <div className="flex shrink-0 items-center gap-2">
-                            <p className="typo-body-strong text-[#267449]">{formatRupees(room.total)}</p>
-                            <CaretUp size={14} className={`text-[#9a9a9a] transition-transform ${expanded ? '' : 'rotate-180'}`} />
+                          <div className="flex shrink-0 flex-col items-end gap-2">
+                            <div className="flex flex-wrap justify-end gap-2">
+                              <span className={`typo-caption rounded-full px-2 py-1 ${room.source === 'sow' ? 'bg-[#e9f2ff] text-[#2f5f9f]' : 'bg-[#eef7f1] text-[#267449]'}`}>
+                                {room.source === 'sow' ? 'From SOW' : 'BOQ-only'}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <p className="typo-body-strong text-[#267449]">{formatRupees(room.total)}</p>
+                              <CaretUp size={14} className={`text-[#9a9a9a] transition-transform ${expanded ? '' : 'rotate-180'}`} />
+                            </div>
                           </div>
                         </button>
                       </div>

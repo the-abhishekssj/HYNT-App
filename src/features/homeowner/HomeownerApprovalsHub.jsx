@@ -1,5 +1,4 @@
 import {
-  CaretLeft,
   CaretRight,
   CheckCircle,
   ClipboardText,
@@ -7,6 +6,7 @@ import {
   NotePencil,
 } from '@phosphor-icons/react'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const statusTone = {
   review: 'bg-[#fff5e6] text-[#a86a00]',
@@ -16,19 +16,11 @@ const statusTone = {
 
 function Header({ onBack }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4 py-1">
-          <span className="grid size-6 shrink-0 place-items-center">
-            <CaretLeft size={24} />
-          </span>
-          <span className="min-w-0 text-left">
-            <span className="typo-section-title ui-section-title block truncate">Approvals</span>
-            <span className="typo-caption ui-muted block truncate">Pending reviews and client decisions</span>
-          </span>
-        </button>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title="Approvals"
+      subtitle="Pending reviews and client decisions"
+      onBack={onBack}
+    />
   )
 }
 

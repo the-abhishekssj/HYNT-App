@@ -59,6 +59,7 @@ import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
 import ProSiteDiaryWorkspace from './features/siteDiary/ProSiteDiaryWorkspace'
 import ProTimelineWorkspace from './features/timeline/ProTimelineWorkspace'
 import ProArchiveWorkspace from './features/archive/ProArchiveWorkspace'
+import ProContractWorkspace from './features/contract/ProContractWorkspace'
 import ProjectWorkspaceWidgets from './features/projects/ProjectWorkspaceWidgets'
 import Button from './components/ui/Button'
 
@@ -754,7 +755,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       setIsProSowOpen(true)
       return
     }
-    if (alert.target === 'boq' || alert.target === 'tasks' || alert.target === 'finance' || alert.target === 'site-diary' || alert.target === 'team' || alert.target === 'archive' || alert.target === 'timeline') {
+    if (alert.target === 'boq' || alert.target === 'tasks' || alert.target === 'finance' || alert.target === 'contract' || alert.target === 'site-diary' || alert.target === 'team' || alert.target === 'archive' || alert.target === 'timeline') {
       setSelectedProjectPage(alert.target)
     }
   }
@@ -778,6 +779,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     }
     if (toolLabel === 'Finance') {
       setSelectedProjectPage('finance')
+      return
+    }
+    if (toolLabel === 'Contract') {
+      setSelectedProjectPage('contract')
       return
     }
     if (toolLabel === 'Site diary') {
@@ -1076,6 +1081,15 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       if (selectedProjectPage === 'finance') {
         return (
           <ProFinanceWorkspace
+            project={selectedProject}
+            onBack={() => setSelectedProjectPage('overview')}
+          />
+        )
+      }
+
+      if (selectedProjectPage === 'contract') {
+        return (
+          <ProContractWorkspace
             project={selectedProject}
             onBack={() => setSelectedProjectPage('overview')}
           />

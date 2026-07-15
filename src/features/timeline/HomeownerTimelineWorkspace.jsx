@@ -1,27 +1,19 @@
 import { useMemo } from 'react'
 import {
-  CaretLeft,
   Check,
 } from '@phosphor-icons/react'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const formatDate = (value) => new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
 
 function Header({ subtitle, onBack }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4 py-1">
-          <span className="grid size-6 shrink-0 place-items-center">
-            <CaretLeft size={24} />
-          </span>
-          <span className="min-w-0 text-left">
-            <span className="typo-section-title ui-section-title block truncate">Project timeline</span>
-            <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-          </span>
-        </button>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title="Project timeline"
+      subtitle={subtitle}
+      onBack={onBack}
+    />
   )
 }
 

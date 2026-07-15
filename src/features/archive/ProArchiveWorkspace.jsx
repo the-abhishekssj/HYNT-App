@@ -127,6 +127,13 @@ function boardCommentCount(items) {
   return items.reduce((count, item) => count + (item.comments?.length || 0), 0)
 }
 
+function estimateBoardCardHeight(board, index, items) {
+  const previewHeight = index % 3 === 1 ? 156 : 112
+  const commentHeight = boardCommentCount(items) ? 14 : 0
+  const titleHeight = String(board.name || '').length > 18 ? 18 : 0
+  return previewHeight + 116 + commentHeight + titleHeight
+}
+
 function BoardPreview({ items, tall = false }) {
   const previewItems = items.slice(0, 3)
   if (!previewItems.length) {
@@ -310,8 +317,8 @@ function CommentRow({ text, index }) {
 function Header({ project, openBoard, openItem, onBack, onCloseBoard, onCloseItem, onOpenSettings }) {
   const actions = openBoard && !openItem ? (
     <div className="flex items-center gap-2">
-      <Button type="button" variant="outline" size="small" icon={ShareNetwork} aria-label="Share moodboard" className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]" />
-      <Button type="button" variant="outline" size="small" icon={Gear} onClick={onOpenSettings} aria-label="Board settings" className="size-9 rounded-[14px] border-[#dbe6df] text-[#173324]" />
+      <Button type="button" variant="outline" icon={ShareNetwork} aria-label="Share moodboard" />
+      <Button type="button" variant="outline" icon={Gear} onClick={onOpenSettings} aria-label="Board settings" />
     </div>
   ) : null
 
@@ -358,6 +365,17 @@ function ProArchiveWorkspace({ project, onBack }) {
     () => visibleBoards.filter((board) => board.type === 'custom' || boardItemsFor(board, archiveItems).length > 0),
     [archiveItems, visibleBoards],
   )
+  const boardColumns = useMemo(() => {
+    const columns = [[], []]
+    const heights = [0, 0]
+    displayBoards.forEach((board, index) => {
+      const items = boardItemsFor(board, archiveItems)
+      const targetColumn = heights[0] <= heights[1] ? 0 : 1
+      columns[targetColumn].push({ board, index, items })
+      heights[targetColumn] += estimateBoardCardHeight(board, index, items)
+    })
+    return columns
+  }, [archiveItems, displayBoards])
 
   const openBoard = useMemo(
     () => visibleBoards.find((board) => board.id === openBoardId) || null,
@@ -512,8 +530,12 @@ function ProArchiveWorkspace({ project, onBack }) {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 items-start gap-3">
-                  {displayBoards.map((board, index) => (
-                    <BoardCard key={board.id} folder={board} index={index} items={boardItemsFor(board, archiveItems)} onOpen={setOpenBoardId} />
+                  {boardColumns.map((column, columnIndex) => (
+                    <div key={`board-column-${columnIndex}`} className="space-y-3">
+                      {column.map(({ board, index, items }) => (
+                        <BoardCard key={board.id} folder={board} index={index} items={items} onOpen={setOpenBoardId} />
+                      ))}
+                    </div>
                   ))}
                 </div>
               )}

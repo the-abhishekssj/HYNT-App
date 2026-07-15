@@ -1,11 +1,12 @@
 import { useMemo, useRef, useState } from 'react'
 import {
   CalendarDots,
-  CaretLeft,
   CheckCircle,
   Plus,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const phaseTone = {
   done: 'border-[#d8e9df] bg-[#f7fbf8]',
@@ -23,24 +24,12 @@ const formatDate = (value) => new Date(value).toLocaleDateString('en-IN', { day:
 
 function Header({ subtitle, onBack, onAdd }) {
   return (
-    <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-      <div className="ui-workspace-header-inner">
-        <div className="flex items-center justify-between py-1">
-          <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4">
-            <span className="grid size-6 shrink-0 place-items-center">
-              <CaretLeft size={24} />
-            </span>
-            <span className="min-w-0 text-left">
-              <span className="typo-section-title ui-section-title block truncate">Timeline</span>
-              <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-            </span>
-          </button>
-          <button type="button" onClick={onAdd} className="grid size-9 place-items-center rounded-xl bg-black text-white" aria-label="Add timeline phase">
-            <Plus size={18} />
-          </button>
-        </div>
-      </div>
-    </header>
+    <ProjectWorkspaceHeader
+      title="Timeline"
+      subtitle={subtitle}
+      onBack={onBack}
+      actions={<Button type="button" icon={Plus} onClick={onAdd} aria-label="Add timeline phase" />}
+    />
   )
 }
 

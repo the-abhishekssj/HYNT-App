@@ -436,6 +436,18 @@ body {
   padding: 12px var(--spacing-md);
 }
 
+.ui-workspace-header .ui-button-icon-default {
+  height: var(--control-height-small);
+  width: var(--control-height-small);
+  border-radius: var(--control-radius-small);
+}
+
+.ui-workspace-header .ui-button-size-default {
+  min-height: var(--control-height-small);
+  border-radius: var(--control-radius-small);
+  padding-inline: var(--control-padding-inline-small);
+}
+
 .ui-screen-content {
   padding: 20px var(--spacing-md) 32px;
 }

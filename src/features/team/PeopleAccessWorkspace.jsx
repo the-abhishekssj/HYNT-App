@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  CaretLeft,
   CaretRight,
   ChatCircleText,
   CheckCircle,
@@ -19,6 +18,7 @@ import {
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
 
 const teamRoleIds = ['junior-designer', 'site-supervisor', 'accounts']
 
@@ -159,22 +159,12 @@ function ScreenShell({ title, subtitle, onBack, action, children, bottomAction =
   return (
     <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
       <section className={`mx-auto w-full max-w-[390px] pt-16 ${bottomAction ? 'pb-32' : 'pb-8'}`}>
-        <header className="ui-workspace-header fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2">
-          <div className="ui-workspace-header-inner">
-            <div className="flex items-center justify-between gap-3 py-1">
-              <button type="button" onClick={onBack} className="flex min-w-0 items-center gap-4 text-left">
-                <span className="grid size-6 shrink-0 place-items-center rounded">
-                  <CaretLeft size={24} />
-                </span>
-                <span className="min-w-0">
-                  <span className="typo-section-title ui-section-title block truncate">{title}</span>
-                  <span className="typo-caption ui-muted block truncate">{subtitle}</span>
-                </span>
-              </button>
-              {action ? <div className="shrink-0">{action}</div> : null}
-            </div>
-          </div>
-        </header>
+        <ProjectWorkspaceHeader
+          title={title}
+          subtitle={subtitle}
+          onBack={onBack}
+          actions={action}
+        />
         {children}
       </section>
       {bottomAction ? (
@@ -390,7 +380,6 @@ function TeamHome({
       title="Team"
       subtitle={project?.scope || project?.name || 'Project access'}
       onBack={onBack}
-      action={<Button type="button" variant="outline" icon={UsersThree} onClick={onAddTeam} aria-label="Add team member" className="size-10 rounded-[15px]" />}
       bottomAction={(
         <div className="grid grid-cols-2 gap-3">
           <Button type="button" variant="ghost" fullWidth leadingIcon={UserCirclePlus} onClick={onAddClient}>

@@ -749,10 +749,10 @@ export default function ProjectTasksWorkspace({
 
   const workspaceHeaderAction = currentTab === 'approvals'
     ? resolvedPermissions.canApproveTasks ? (
-        <Button type="button" icon={PaperPlaneTilt} onClick={openNewApprovalComposer} aria-label="Send for approval" className="size-10 rounded-[15px]" />
+        <Button type="button" icon={PaperPlaneTilt} onClick={openNewApprovalComposer} aria-label="Send for approval" />
       ) : null
     : resolvedPermissions.canCreateTasks ? (
-        <Button type="button" icon={Plus} onClick={() => setComposerMode('task')} aria-label="Create task" className="size-10 rounded-[15px]" />
+        <Button type="button" icon={Plus} onClick={() => setComposerMode('task')} aria-label="Create task" />
       ) : null
 
   return (

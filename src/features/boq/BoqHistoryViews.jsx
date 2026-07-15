@@ -52,19 +52,19 @@ export function BoqHistoryList({ title, entries, onOpen, emptyLabel = null }) {
   if (!entries?.length && !emptyLabel) return null
 
   return (
-    <section className="border-t border-[#ececec] py-4">
-      <div className="flex items-center justify-between gap-3 px-4">
+    <section className="border-t border-[#ececec] py-3">
+      <div className="flex items-center justify-between gap-3">
         <p className="typo-section-title text-black">{title}</p>
         {entries?.length ? <p className="typo-meta text-[#7b7b7b]">{entries.length} signed</p> : null}
       </div>
       {entries?.length ? (
-        <div className="mt-3">
+        <div className="mt-3 border-y border-[#f2f2f2]">
           {entries.map((entry) => (
             <button
               key={entry.id}
               type="button"
               onClick={() => onOpen?.(entry)}
-              className="flex w-full items-center justify-between gap-3 border-b border-[#f2f2f2] px-4 py-3 text-left first:border-t first:border-[#f2f2f2]"
+              className="flex w-full items-center justify-between gap-3 border-b border-[#f2f2f2] py-3 text-left last:border-b-0"
             >
               <div className="min-w-0">
                 <p className="typo-body-strong text-black">{entry.title || `BOQ v${entry.version}`}</p>
@@ -77,7 +77,7 @@ export function BoqHistoryList({ title, entries, onOpen, emptyLabel = null }) {
           ))}
         </div>
       ) : emptyLabel ? (
-        <p className="typo-body px-4 pt-3 text-[#7b7b7b]">{emptyLabel}</p>
+        <p className="typo-body pt-3 text-[#7b7b7b]">{emptyLabel}</p>
       ) : null}
     </section>
   )
