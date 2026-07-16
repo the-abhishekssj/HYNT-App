@@ -54,6 +54,7 @@ import HomeownerBoqWorkspace from './features/homeowner/HomeownerBoqWorkspace'
 import HomeownerTimelineWorkspace from './features/timeline/HomeownerTimelineWorkspace'
 import HomeownerSiteDiaryWorkspace from './features/homeowner/HomeownerSiteDiaryWorkspace'
 import HomeownerHomeTab from './features/home/HomeownerHomeTab'
+import HomeBlogsPage from './features/home/HomeBlogsPage'
 import ProfessionalHomeTab from './features/home/ProfessionalHomeTab'
 import ProBoqWorkspace from './features/boq/ProBoqWorkspace'
 import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
@@ -631,7 +632,6 @@ function TaskStatusChip({ label, selected, onClick }) {
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
-  const [isProHomeDense, setIsProHomeDense] = useState(false)
   const [proPrompt, setProPrompt] = useState('')
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [isDeleteProjectConfirmOpen, setIsDeleteProjectConfirmOpen] = useState(false)
@@ -806,22 +806,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     setSelectedProjectId(null)
     setSelectedProjectPage('overview')
   }
-  useEffect(() => {
-    const updateDenseState = () => {
-      if (typeof window === 'undefined') return
-      const isDesktop = window.innerWidth >= 1024
-      setIsProHomeDense(isDesktop && !isProjectsViewOpen && proHomeTab === 'home' && window.scrollY > 180)
-    }
-
-    updateDenseState()
-    window.addEventListener('scroll', updateDenseState, { passive: true })
-    window.addEventListener('resize', updateDenseState)
-
-    return () => {
-      window.removeEventListener('scroll', updateDenseState)
-      window.removeEventListener('resize', updateDenseState)
-    }
-  }, [isProjectsViewOpen, proHomeTab])
   const renderProDesktopNav = () => (
     <aside className="hynt-home-shell__sidebar">
       <div className="hynt-home-shell__sidebar-rail">
@@ -1608,29 +1592,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           </div>
         </header>
 
-        <div className={`hynt-pro-topdock ${isProHomeDense ? 'hynt-pro-topdock--dense' : ''}`}>
-        <div className={`hynt-pro-summary px-4 pb-5 pt-5 ${isProHomeDense ? 'hynt-pro-summary--dense' : ''}`}>
-          <div className="hynt-pro-summary-card flex h-20 items-center justify-between rounded-2xl border border-[#d2d2d2] bg-white">
-            <button type="button" onClick={() => setIsProjectsViewOpen(true)} className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
-              <p className="typo-title-20-strong text-black">05</p>
-              <p className="typo-stat-label text-center text-[#888888]">Active projects</p>
-            </button>
-            <div className="h-full w-px bg-[#d2d2d2]" />
-            <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
-              <p className="typo-title-20-strong text-black">12</p>
-              <p className="typo-stat-label text-center text-[#888888]">New Leads</p>
-            </article>
-            <div className="h-full w-px bg-[#d2d2d2]" />
-            <article className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1">
-              <p className="typo-title-20-strong flex items-center gap-1 text-black"><CurrencyInr size={22} weight="regular" />4.2L</p>
-              <p className="typo-stat-label text-center text-[#888888]">This Month</p>
-            </article>
-          </div>
-        </div>
-        </div>
-
-        <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
         {proHomeTab === 'protools' ? (
           <>
             <div className="h-[6px] w-full bg-[#e0e0e0]" />
@@ -1642,12 +1603,14 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <ProfessionalHomeTab
             proPrompt={proPrompt}
             setProPrompt={setProPrompt}
-            roomTags={roomTags}
-            homepageIdeas={homepageIdeas}
-            homepageProducts={homepageProducts}
             homepagePros={homepagePros}
             homepageEvents={homepageEvents}
+            onOpenBlogs={() => setProHomeTab('blogs')}
           />
+        ) : null}
+
+        {proHomeTab === 'blogs' ? (
+          <HomeBlogsPage onBack={() => setProHomeTab('home')} />
         ) : null}
 
         {proHomeTab === 'ai' ? (
@@ -2751,10 +2714,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               isHomeDockDense={isHomeDockDense}
               setIsFlowSwitcherOpen={setIsFlowSwitcherOpen}
               quickActions={quickActions}
-              roomTags={roomTags}
-              homepageIdeas={homepageIdeas}
               homepagePros={homepagePros}
-              homepageProducts={homepageProducts}
               homepageEvents={homepageEvents}
               prompt={prompt}
               setPrompt={setPrompt}
@@ -2762,6 +2722,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               showHomeAiRive={showHomeAiRive}
               allowRiveLoader={allowRiveLoader}
               RivePlayer={RivePlayer}
+              onOpenBlogs={() => setHomeTab('blogs')}
             />
           ) : null}
           {homeTab === 'project' ? (
@@ -2779,6 +2740,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           {homeTab === 'post' ? renderPostPage() : null}
           {homeTab === 'events' ? renderEventsPage() : null}
           {homeTab === 'profile' ? renderProfilePage() : null}
+          {homeTab === 'blogs' ? <HomeBlogsPage onBack={() => setHomeTab('home')} /> : null}
         </div>
       </div>
 

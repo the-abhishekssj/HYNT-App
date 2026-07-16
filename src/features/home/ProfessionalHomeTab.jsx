@@ -1,27 +1,23 @@
 import {
   ArrowRight,
   ArrowUp,
-  BookmarkSimple,
   CalendarDots,
   CheckSquareOffset,
   IdentificationBadge,
   MapPinSimpleArea,
 } from '@phosphor-icons/react'
+import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 
 function ProfessionalHomeTab({
   proPrompt,
   setProPrompt,
-  roomTags,
-  homepageIdeas,
-  homepageProducts,
   homepagePros,
   homepageEvents,
+  onOpenBlogs,
 }) {
   return (
     <>
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
       <section className="px-4 py-5">
         <form
           onSubmit={(event) => event.preventDefault()}
@@ -56,58 +52,17 @@ function ProfessionalHomeTab({
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
       <section className="px-4 py-5">
-        <div className="flex items-center justify-between">
-          <h2 className="typo-section-title">Browse By Room</h2>
-          <div className="typo-utility flex items-center gap-1">See all <ArrowRight size={16} /></div>
-        </div>
-        <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto overflow-y-visible pb-1">
-          {roomTags.map((tag) => (
-            <div key={tag} className="typo-body flex h-10 shrink-0 items-center rounded-[20px] border border-[#9e9e9e] px-4">{tag}</div>
-          ))}
-        </div>
+        <article className="overflow-hidden rounded-3xl border border-[#143a27] bg-[#07140e] p-5 text-white shadow-[0_18px_38px_rgba(7,20,14,0.16)]">
+          <p className="typo-meta text-[#8fd5ae]">Upgrade workspace</p>
+          <h2 className="typo-title-20 mt-2 text-white">Upgrade to Pro</h2>
+          <p className="typo-body mt-2 max-w-[280px] text-white/72">Boost your profile, unlock lead insights, and get priority placement across HYNT discovery.</p>
+          <button type="button" className="typo-body-strong mt-4 rounded-full bg-[#5fc18a] px-5 py-3 text-[#07140e]">View plans</button>
+        </article>
       </section>
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
-      <section className="px-4 py-5">
-        <div className="flex items-center justify-between">
-          <h2 className="typo-section-title">Ideas For You</h2>
-          <div className="typo-utility flex items-center gap-1">Explore all <ArrowRight size={16} /></div>
-        </div>
-        <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
-          {homepageIdeas.map((idea) => (
-            <article key={idea.image} className="relative h-48 w-[175px] shrink-0 overflow-hidden rounded-2xl border border-[#e0e0e0]">
-              <img src={idea.image} alt="" className="size-full object-cover" />
-              {idea.badge ? <span className="typo-meta absolute right-2 top-2 rounded-lg bg-[#eee5d4] px-[11px] py-[3px] text-[#525252]">{idea.badge}</span> : null}
-              <button type="button" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white"><BookmarkSimple size={16} /></button>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-      <section className="px-4 py-5">
-        <div className="flex items-center justify-between">
-          <h2 className="typo-section-title">Products</h2>
-          <ArrowRight size={16} />
-        </div>
-        <div className="no-scrollbar mt-4 flex h-[249px] gap-3 overflow-x-auto overflow-y-hidden pb-1">
-          {homepageProducts.map((product, index) => (
-            <article key={`${product.title}-${index}`} className="h-[249px] w-[184px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-1">
-              <div className="relative h-[139px] overflow-hidden rounded-[15px] border border-[#e0e0e0] bg-white">
-                <img src={product.image} alt={product.title} className="size-full object-cover" />
-                <span className="typo-meta absolute right-2 top-2 rounded-lg bg-white px-2 py-1">1/5</span>
-              </div>
-              <div className="px-2 pb-2 pt-3">
-                <p className="typo-body-strong truncate">{product.title}</p>
-                <p className="typo-meta mt-1 text-[#808080]">{product.category}</p>
-                <button type="button" className="typo-meta mt-2 text-[#808080] underline decoration-dotted">Get a quote</button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      <HomeBlogsSection onViewAll={onOpenBlogs} />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 

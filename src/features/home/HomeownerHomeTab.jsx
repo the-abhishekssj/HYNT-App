@@ -2,7 +2,6 @@ import {
   ArrowRight,
   ArrowUp,
   Bell,
-  BookmarkSimple,
   CalendarDots,
   CaretDown,
   ChatsCircle,
@@ -11,6 +10,8 @@ import {
   MagnifyingGlass,
   MapPinSimpleArea,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
+import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 
 function HomeownerQuickActions({ quickActions }) {
@@ -38,10 +39,7 @@ function HomeownerHomeTab({
   isHomeDockDense,
   setIsFlowSwitcherOpen,
   quickActions,
-  roomTags,
-  homepageIdeas,
   homepagePros,
-  homepageProducts,
   homepageEvents,
   prompt,
   setPrompt,
@@ -49,6 +47,7 @@ function HomeownerHomeTab({
   showHomeAiRive,
   allowRiveLoader,
   RivePlayer,
+  onOpenBlogs,
 }) {
   return (
     <section className="hynt-home-mobile-canvas relative mx-auto w-full max-w-[390px] overflow-visible bg-white">
@@ -103,34 +102,21 @@ function HomeownerHomeTab({
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
-        <section className="mt-5 h-24 px-4 py-2">
-          <div className="flex h-6 items-center justify-between">
-            <h2 className="typo-section-title capitalize">browse by room</h2>
-            <button type="button" className="typo-utility flex h-5 items-center gap-1">See all <ArrowRight size={20} /></button>
-          </div>
-          <div className="no-scrollbar mt-4 flex h-10 gap-2 overflow-x-auto">
-            {roomTags.map((tag) => (
-              <button key={tag} type="button" className="typo-body h-10 shrink-0 overflow-hidden rounded-[20px] border border-[#9e9e9e] bg-white px-5 text-black hynt-room-chip">{tag}</button>
-            ))}
-          </div>
-        </section>
-
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
-        <section className="mt-5 h-64 py-2">
-          <div className="flex h-6 items-center justify-between px-4">
-            <h2 className="typo-section-title capitalize">Ideas for you</h2>
-            <button type="button" className="typo-utility flex h-5 items-center gap-1 hynt-section-link">Explore all <ArrowRight size={20} /></button>
-          </div>
-          <div className="no-scrollbar mt-4 flex h-[200px] gap-2 overflow-x-auto px-4 py-1">
-            {homepageIdeas.map((idea, index) => (
-              <article key={idea.image} className="relative h-48 w-[175px] shrink-0 overflow-hidden rounded-2xl border-[1.043px] border-[#e0e0e0] bg-white">
-                <img src={idea.image} alt={`Idea ${index + 1}`} className="size-full rounded-[10px] object-cover" />
-                {idea.badge ? <span className="typo-meta absolute right-2 top-2 rounded-lg bg-[#eee5d4] px-[11px] py-[3px] text-[#525252]">{idea.badge}</span> : null}
-                <button type="button" aria-label="Save idea" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white"><BookmarkSimple size={16} /></button>
-              </article>
-            ))}
-          </div>
+        <section className="px-4 py-5">
+          <article className="rounded-3xl border border-[#dce8df] bg-[linear-gradient(120deg,#f1f8f3,#ffffff)] p-4">
+            <span className="flex items-start gap-4">
+              <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#e6f5ec] text-[#267449]">
+                <img src="/hynt-home/logo-green.png" alt="" className="h-8 w-auto object-contain" />
+              </span>
+              <span className="min-w-0 flex-1 pt-0.5">
+                <span className="typo-title-16-strong block text-[#102418]">List your business on HYNT</span>
+                <span className="typo-meta mt-1 block text-[#607269]">Showcase your work and get quality inquiries.</span>
+              </span>
+            </span>
+            <Button type="button" fullWidth className="mt-4 h-11 rounded-2xl bg-[#267449] text-white hover:bg-[#1f603c] focus-visible:ring-[#267449]">
+              Start
+            </Button>
+          </article>
         </section>
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
@@ -168,32 +154,11 @@ function HomeownerHomeTab({
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
-        <section className="mt-5 h-[305px] py-2">
-          <div className="flex h-6 items-center justify-between px-4">
-            <h2 className="typo-section-title">Products you might like</h2>
-            <button type="button" className="typo-utility flex h-5 items-center gap-1">View all <ArrowRight size={20} /></button>
-          </div>
-          <div className="no-scrollbar mt-4 flex h-[249px] gap-3 overflow-x-auto overflow-y-hidden px-4">
-            {homepageProducts.map((product, index) => (
-              <article key={`${product.title}-${index}`} className="h-[249px] w-[184px] shrink-0 rounded-2xl border border-[#e0e0e0] bg-[#fbfbfb] p-1">
-                <div className="relative h-[139px] overflow-hidden rounded-[15px] border border-[#e0e0e0] bg-white">
-                  <img src={product.image} alt={product.title} className="size-full object-cover" />
-                  <span className="typo-meta absolute right-2 top-2 rounded-lg bg-white px-2 py-1">1/5</span>
-                  <button type="button" className="absolute bottom-2 right-2 grid size-7 place-items-center rounded-lg bg-white"><BookmarkSimple size={16} /></button>
-                </div>
-                <div className="px-2 pb-2 pt-3">
-                  <p className="typo-body-strong line-clamp-2">{product.title}</p>
-                  <p className="typo-meta mt-1 text-[#808080]">{product.category}</p>
-                  <button type="button" className="typo-meta mt-2 text-[#808080] underline decoration-dotted">Get a quote</button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <HomeownerQuickActions quickActions={quickActions} />
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
-        <HomeownerQuickActions quickActions={quickActions} />
+        <HomeBlogsSection onViewAll={onOpenBlogs} />
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
