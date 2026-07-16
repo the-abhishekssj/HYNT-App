@@ -1467,6 +1467,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             <div className="px-4 pb-4 pt-4">
               <div className="flex items-center justify-between gap-4">
                 <h1 className="typo-page-title text-black">Projects</h1>
+                <button type="button" aria-label="Notifications" className="relative grid size-10 shrink-0 place-items-center rounded-full border border-[#d8d8d8] bg-white text-black transition hover:bg-[#f7f7f7]">
+                  <Bell size={20} />
+                  <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-[#26c485]" />
+                </button>
               </div>
             </div>
 

@@ -3,9 +3,15 @@ import {
   CaretRight,
   FileText,
   Handshake,
+  ListBullets,
+  ListNumbers,
   PaperPlaneTilt,
   PencilSimpleLine,
   Plus,
+  Quotes,
+  TextB,
+  TextItalic,
+  TextUnderline,
   Trash,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
@@ -59,21 +65,158 @@ function SummaryLine({ label, value }) {
   )
 }
 
-function Field({ label, children }) {
+function EditorTool({ children, active = false, label, onClick }) {
   return (
-    <label className="block">
-      <span className="typo-label uppercase text-[#7b7b7b]">{label}</span>
-      <span className="mt-2 block">{children}</span>
-    </label>
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className={`grid size-9 shrink-0 place-items-center rounded-[10px] border ${
+        active ? 'border-[#102418] bg-[#102418] text-white' : 'border-[#d8e2db] bg-white text-[#33433a]'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
 
-function inputClass() {
-  return 'typo-body h-12 w-full rounded-2xl border border-[#d8e2db] bg-white px-4 text-black outline-none focus:border-black'
+function OutlineTab({ children, active = false, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`typo-caption shrink-0 rounded-full px-3 py-1.5 ${
+        active ? 'bg-[#102418] text-white' : 'border border-[#d8e2db] bg-white text-[#425349]'
+      }`}
+    >
+      {children}
+    </button>
+  )
 }
 
-function textareaClass() {
-  return 'typo-body min-h-28 w-full resize-none rounded-2xl border border-[#d8e2db] bg-white px-4 py-3 text-black outline-none focus:border-black'
+function cloneEditorBlocks(blocks = []) {
+  return blocks.map((block) => ({
+    ...block,
+    fields: block.fields ? { ...block.fields } : undefined,
+    rows: block.rows ? block.rows.map((row) => ({ ...row })) : undefined,
+    clauses: block.clauses ? block.clauses.map((clause) => ({ ...clause, marks: { ...(clause.marks || {}) } })) : undefined,
+    marks: { ...(block.marks || {}) },
+  }))
+}
+
+function newBlockId(type) {
+  return `${type}-${Date.now()}-${Math.round(Math.random() * 1000)}`
+}
+
+function createContractEditorBlocks(contract) {
+  if (contract.editorBlocks?.length) return cloneEditorBlocks(contract.editorBlocks)
+
+  return [
+    { id: 'title', type: 'heading', title: 'Title', text: contract.title, marks: {} },
+    {
+      id: 'parties',
+      type: 'parties',
+      title: 'Parties',
+      fields: {
+        designerName: contract.designerName,
+        clientName: contract.clientName,
+        location: contract.location,
+      },
+    },
+    {
+      id: 'commercial',
+      type: 'commercial',
+      title: 'Commercial basis',
+      fields: {
+        value: formatRupees(contract.value || 0),
+        sowReference: contract.sowReference,
+        boqReference: contract.boqReference,
+      },
+    },
+    {
+      id: 'terms',
+      type: 'clauses',
+      title: 'Terms',
+      clauses: contract.terms.map((term, index) => ({ id: `clause-${index + 1}`, text: term, marks: {} })),
+    },
+    {
+      id: 'payments',
+      type: 'paymentSchedule',
+      title: 'Payment schedule',
+      rows: [
+        { id: 'payment-1', milestone: 'Booking and mobilisation', amount: '10%', due: 'On contract signing' },
+        { id: 'payment-2', milestone: 'Execution milestone', amount: '40%', due: 'After material lock' },
+        { id: 'payment-3', milestone: 'Handover balance', amount: '50%', due: 'Before final handover' },
+      ],
+    },
+    {
+      id: 'signatures',
+      type: 'signatures',
+      title: 'Signatures',
+      fields: {
+        designerName: contract.designerName,
+        clientName: contract.clientName,
+      },
+    },
+    { id: 'notes', type: 'note', title: 'Special notes', text: contract.specialNotes || '', marks: {} },
+  ]
+}
+
+function createInsertedBlock(type) {
+  const id = newBlockId(type)
+  if (type === 'clauses') {
+    return {
+      id,
+      type,
+      title: 'New clause set',
+      clauses: [{ id: `${id}-clause-1`, text: 'Add a contract clause here.', marks: {} }],
+    }
+  }
+  if (type === 'paymentSchedule') {
+    return {
+      id,
+      type,
+      title: 'Payment schedule',
+      rows: [{ id: `${id}-row-1`, milestone: 'Milestone', amount: '0%', due: 'Due date' }],
+    }
+  }
+  if (type === 'signatures') {
+    return { id, type, title: 'Signatures', fields: { designerName: 'Designer', clientName: 'Client' } }
+  }
+  return { id, type: 'note', title: 'Note', text: 'Add supporting notes here.', marks: {} }
+}
+
+function textMarkClass(marks = {}) {
+  return [
+    marks.bold ? 'font-bold' : '',
+    marks.italic ? 'italic' : '',
+    marks.underline ? 'underline' : '',
+  ].filter(Boolean).join(' ')
+}
+
+function ClauseRow({ index, clause, selected, onSelect, onChange, onToggleMark, onDelete }) {
+  return (
+    <label className={`grid grid-cols-[34px_1fr] gap-3 border-b border-[#edf2ee] py-3 last:border-b-0 ${selected ? 'bg-[#fbfffd]' : ''}`}>
+      <span className="typo-caption mt-0.5 grid size-7 place-items-center rounded-full bg-[#e7f5ed] text-[#267449]">{index + 1}</span>
+      <span className="min-w-0">
+        <textarea
+          value={clause.text}
+          onFocus={onSelect}
+          onChange={(event) => onChange(event.target.value)}
+          className={`typo-body min-h-16 w-full resize-none border-none bg-transparent text-black outline-none ${textMarkClass(clause.marks)}`}
+        />
+        {selected ? (
+          <span className="mt-2 flex items-center gap-1">
+            <EditorTool label="Bold clause" active={Boolean(clause.marks?.bold)} onClick={() => onToggleMark('bold')}><TextB size={15} weight="bold" /></EditorTool>
+            <EditorTool label="Italic clause" active={Boolean(clause.marks?.italic)} onClick={() => onToggleMark('italic')}><TextItalic size={15} /></EditorTool>
+            <EditorTool label="Underline clause" active={Boolean(clause.marks?.underline)} onClick={() => onToggleMark('underline')}><TextUnderline size={15} /></EditorTool>
+            <button type="button" onClick={onDelete} className="typo-caption ml-auto h-9 rounded-[10px] px-2 text-[#b42318]">Delete</button>
+          </span>
+        ) : null}
+      </span>
+    </label>
+  )
 }
 
 function buildContractFromTemplate(template, { project, document, contractTotal, boqMeta }) {
@@ -203,26 +346,37 @@ function ProContractWorkspace({ project, onBack }) {
   const startEdit = () => {
     if (!selectedContract) return
     setDraft({
-      title: selectedContract.title,
-      clientName: selectedContract.clientName,
-      location: selectedContract.location,
-      specialNotes: selectedContract.specialNotes,
-      termsText: selectedContract.terms.join('\n'),
+      blocks: createContractEditorBlocks(selectedContract),
+      activeBlockId: 'terms',
+      activeClauseId: selectedContract.terms.length ? 'clause-1' : null,
     })
     setScreen('edit')
   }
 
   const saveDraft = () => {
     if (!selectedContract || !draft) return
+    const blocks = draft.blocks || []
+    const titleBlock = blocks.find((block) => block.type === 'heading')
+    const partiesBlock = blocks.find((block) => block.type === 'parties')
+    const commercialBlock = blocks.find((block) => block.type === 'commercial')
+    const noteBlocks = blocks.filter((block) => block.type === 'note')
+    const terms = blocks
+      .filter((block) => block.type === 'clauses')
+      .flatMap((block) => (block.clauses || []).map((clause) => clause.text.trim()).filter(Boolean))
+
     setContracts((current) => current.map((contract) => (
       contract.id === selectedContract.id
         ? {
           ...contract,
-          title: draft.title,
-          clientName: draft.clientName,
-          location: draft.location,
-          specialNotes: draft.specialNotes,
-          terms: draft.termsText.split('\n').map((term) => term.trim()).filter(Boolean),
+          title: titleBlock?.text?.trim() || contract.title,
+          clientName: partiesBlock?.fields?.clientName?.trim() || contract.clientName,
+          designerName: partiesBlock?.fields?.designerName?.trim() || contract.designerName,
+          location: partiesBlock?.fields?.location?.trim() || contract.location,
+          sowReference: commercialBlock?.fields?.sowReference?.trim() || contract.sowReference,
+          boqReference: commercialBlock?.fields?.boqReference?.trim() || contract.boqReference,
+          specialNotes: noteBlocks.map((block) => block.text?.trim()).filter(Boolean).join('\n\n'),
+          terms: terms.length ? terms : contract.terms,
+          editorBlocks: cloneEditorBlocks(blocks),
           status: contract.status === 'sent' ? 'sent' : 'ready',
         }
         : contract
@@ -275,26 +429,348 @@ function ProContractWorkspace({ project, onBack }) {
   }
 
   if (screen === 'edit' && selectedContract && draft) {
+    const blocks = draft.blocks || []
+    const activeBlock = blocks.find((block) => block.id === draft.activeBlockId) || blocks[0] || null
+    const activeBlockIndex = activeBlock ? blocks.findIndex((block) => block.id === activeBlock.id) : -1
+    const activeClause = activeBlock?.type === 'clauses'
+      ? (activeBlock.clauses || []).find((clause) => clause.id === draft.activeClauseId) || activeBlock.clauses?.[0]
+      : null
+
+    const updateBlocks = (producer) => {
+      setDraft((current) => ({ ...current, blocks: producer(current.blocks || []) }))
+    }
+
+    const selectBlock = (blockId, clauseId = null) => {
+      setDraft((current) => ({
+        ...current,
+        activeBlockId: blockId,
+        activeClauseId: clauseId,
+      }))
+    }
+
+    const updateBlock = (blockId, updater) => {
+      updateBlocks((currentBlocks) => currentBlocks.map((block) => (
+        block.id === blockId ? updater(block) : block
+      )))
+    }
+
+    const updateBlockField = (blockId, field, value) => {
+      updateBlock(blockId, (block) => ({ ...block, fields: { ...(block.fields || {}), [field]: value } }))
+    }
+
+    const updateClause = (blockId, clauseId, value) => {
+      updateBlock(blockId, (block) => ({
+        ...block,
+        clauses: (block.clauses || []).map((clause) => (
+          clause.id === clauseId ? { ...clause, text: value } : clause
+        )),
+      }))
+    }
+
+    const toggleClauseMark = (blockId, clauseId, mark) => {
+      updateBlock(blockId, (block) => ({
+        ...block,
+        clauses: (block.clauses || []).map((clause) => (
+          clause.id === clauseId
+            ? { ...clause, marks: { ...(clause.marks || {}), [mark]: !clause.marks?.[mark] } }
+            : clause
+        )),
+      }))
+    }
+
+    const addClause = (blockId) => {
+      const clauseId = newBlockId('clause')
+      updateBlock(blockId, (block) => ({
+        ...block,
+        clauses: [...(block.clauses || []), { id: clauseId, text: 'New clause', marks: {} }],
+      }))
+      selectBlock(blockId, clauseId)
+    }
+
+    const deleteClause = (blockId, clauseId) => {
+      updateBlock(blockId, (block) => {
+        const nextClauses = (block.clauses || []).filter((clause) => clause.id !== clauseId)
+        return { ...block, clauses: nextClauses.length ? nextClauses : block.clauses }
+      })
+      setDraft((current) => ({ ...current, activeClauseId: null }))
+    }
+
+    const updatePaymentRow = (blockId, rowId, field, value) => {
+      updateBlock(blockId, (block) => ({
+        ...block,
+        rows: (block.rows || []).map((row) => (row.id === rowId ? { ...row, [field]: value } : row)),
+      }))
+    }
+
+    const addPaymentRow = (blockId) => {
+      updateBlock(blockId, (block) => ({
+        ...block,
+        rows: [...(block.rows || []), { id: newBlockId('payment-row'), milestone: 'New milestone', amount: '0%', due: 'Due date' }],
+      }))
+    }
+
+    const insertBlock = (type) => {
+      setDraft((current) => {
+        const currentBlocks = current.blocks || []
+        const newBlock = createInsertedBlock(type)
+        const insertIndex = Math.max(0, currentBlocks.findIndex((block) => block.id === current.activeBlockId)) + 1
+        return {
+          ...current,
+          blocks: [...currentBlocks.slice(0, insertIndex), newBlock, ...currentBlocks.slice(insertIndex)],
+          activeBlockId: newBlock.id,
+          activeClauseId: newBlock.type === 'clauses' ? newBlock.clauses?.[0]?.id || null : null,
+        }
+      })
+    }
+
+    const moveBlock = (blockId, direction) => {
+      setDraft((current) => {
+        const currentBlocks = current.blocks || []
+        const index = currentBlocks.findIndex((block) => block.id === blockId)
+        const nextIndex = index + direction
+        if (index < 0 || nextIndex < 0 || nextIndex >= currentBlocks.length) return current
+        const nextBlocks = [...currentBlocks]
+        const [movedBlock] = nextBlocks.splice(index, 1)
+        nextBlocks.splice(nextIndex, 0, movedBlock)
+        return { ...current, blocks: nextBlocks }
+      })
+    }
+
+    const deleteBlock = (blockId) => {
+      setDraft((current) => {
+        const currentBlocks = current.blocks || []
+        const block = currentBlocks.find((item) => item.id === blockId)
+        if (!block || ['heading', 'parties'].includes(block.type) || currentBlocks.length <= 2) return current
+        const nextBlocks = currentBlocks.filter((item) => item.id !== blockId)
+        return {
+          ...current,
+          blocks: nextBlocks,
+          activeBlockId: nextBlocks[0]?.id || null,
+          activeClauseId: null,
+        }
+      })
+    }
+
+    const renderBlockBody = (block) => {
+      if (block.type === 'heading') {
+        return (
+          <input
+            value={block.text || ''}
+            onFocus={() => selectBlock(block.id)}
+            onChange={(event) => updateBlock(block.id, (current) => ({ ...current, text: event.target.value }))}
+            className="typo-page-title mt-1 w-full border-none bg-transparent text-black outline-none"
+          />
+        )
+      }
+
+      if (block.type === 'parties') {
+        return (
+          <div className="border-y border-[#edf2ee]">
+            {[
+              ['designerName', 'Designer'],
+              ['clientName', 'Client'],
+              ['location', 'Project site'],
+            ].map(([field, label]) => (
+              <label key={field} className="grid grid-cols-[92px_1fr] items-center gap-3 border-b border-[#edf2ee] py-3 last:border-b-0">
+                <span className="typo-label uppercase text-[#8a9891]">{label}</span>
+                <input
+                  value={block.fields?.[field] || ''}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updateBlockField(block.id, field, event.target.value)}
+                  className="typo-body-strong min-w-0 border-none bg-transparent text-black outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        )
+      }
+
+      if (block.type === 'commercial') {
+        return (
+          <div className="border-y border-[#edf2ee]">
+            {[
+              ['value', 'Value'],
+              ['sowReference', 'Scope'],
+              ['boqReference', 'Quotation'],
+            ].map(([field, label]) => (
+              <label key={field} className="grid grid-cols-[92px_1fr] items-center gap-3 border-b border-[#edf2ee] py-3 last:border-b-0">
+                <span className="typo-label uppercase text-[#8a9891]">{label}</span>
+                <input
+                  value={block.fields?.[field] || ''}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updateBlockField(block.id, field, event.target.value)}
+                  className="typo-body-strong min-w-0 border-none bg-transparent text-black outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        )
+      }
+
+      if (block.type === 'clauses') {
+        return (
+          <div>
+            <div className="border-y border-[#edf2ee]">
+              {(block.clauses || []).map((clause, index) => (
+                <ClauseRow
+                  key={clause.id}
+                  index={index}
+                  clause={clause}
+                  selected={block.id === draft.activeBlockId && clause.id === draft.activeClauseId}
+                  onSelect={() => selectBlock(block.id, clause.id)}
+                  onChange={(value) => updateClause(block.id, clause.id, value)}
+                  onToggleMark={(mark) => toggleClauseMark(block.id, clause.id, mark)}
+                  onDelete={() => deleteClause(block.id, clause.id)}
+                />
+              ))}
+            </div>
+            <button type="button" onClick={() => addClause(block.id)} className="typo-body mt-3 flex w-full items-center justify-center gap-2 rounded-[14px] border border-dashed border-[#b8c9be] px-4 py-3 text-[#4f6659]">
+              <Plus size={16} />
+              Add clause
+            </button>
+          </div>
+        )
+      }
+
+      if (block.type === 'paymentSchedule') {
+        return (
+          <div className="space-y-2">
+            {(block.rows || []).map((row) => (
+              <div key={row.id} className="grid grid-cols-[1fr_54px] gap-2 rounded-[14px] border border-[#edf2ee] p-3">
+                <input
+                  value={row.milestone}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updatePaymentRow(block.id, row.id, 'milestone', event.target.value)}
+                  className="typo-body-strong min-w-0 border-none bg-transparent text-black outline-none"
+                />
+                <input
+                  value={row.amount}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updatePaymentRow(block.id, row.id, 'amount', event.target.value)}
+                  className="typo-body-strong min-w-0 border-none bg-transparent text-right text-[#267449] outline-none"
+                />
+                <input
+                  value={row.due}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updatePaymentRow(block.id, row.id, 'due', event.target.value)}
+                  className="typo-caption col-span-2 min-w-0 border-none bg-transparent text-[#7a8b82] outline-none"
+                />
+              </div>
+            ))}
+            <button type="button" onClick={() => addPaymentRow(block.id)} className="typo-body flex h-10 items-center gap-2 rounded-[12px] text-[#4f6659]">
+              <Plus size={16} />
+              Add milestone
+            </button>
+          </div>
+        )
+      }
+
+      if (block.type === 'signatures') {
+        return (
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              ['designerName', 'Designer'],
+              ['clientName', 'Client'],
+            ].map(([field, label]) => (
+              <label key={field} className="rounded-[14px] border border-dashed border-[#c8d8cf] p-3">
+                <span className="typo-label uppercase text-[#8a9891]">{label}</span>
+                <input
+                  value={block.fields?.[field] || ''}
+                  onFocus={() => selectBlock(block.id)}
+                  onChange={(event) => updateBlockField(block.id, field, event.target.value)}
+                  className="typo-body-strong mt-5 w-full border-none bg-transparent text-black outline-none"
+                />
+              </label>
+            ))}
+          </div>
+        )
+      }
+
+      return (
+        <textarea
+          value={block.text || ''}
+          onFocus={() => selectBlock(block.id)}
+          onChange={(event) => updateBlock(block.id, (current) => ({ ...current, text: event.target.value }))}
+          className={`typo-body min-h-28 w-full resize-none border-none bg-[#fbfffd] text-black outline-none ${textMarkClass(block.marks)}`}
+        />
+      )
+    }
+
     return (
       <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
         <section className="mx-auto w-full max-w-[390px] pb-28 pt-16">
           <ProjectWorkspaceHeader title="Edit contract" subtitle={selectedContract.title} onBack={() => setScreen('preview')} />
-          <div className="ui-screen-content space-y-4 pt-6">
-            <Field label="Contract title">
-              <input value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} className={inputClass()} />
-            </Field>
-            <Field label="Client">
-              <input value={draft.clientName} onChange={(event) => setDraft((current) => ({ ...current, clientName: event.target.value }))} className={inputClass()} />
-            </Field>
-            <Field label="Project site">
-              <input value={draft.location} onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))} className={inputClass()} />
-            </Field>
-            <Field label="Terms">
-              <textarea value={draft.termsText} onChange={(event) => setDraft((current) => ({ ...current, termsText: event.target.value }))} className={textareaClass()} />
-            </Field>
-            <Field label="Special notes">
-              <textarea value={draft.specialNotes} onChange={(event) => setDraft((current) => ({ ...current, specialNotes: event.target.value }))} className={textareaClass()} />
-            </Field>
+          <div className="pt-5">
+            <div className="sticky top-16 z-[80] border-y border-[#e5ece7] bg-white/95 backdrop-blur">
+              <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-3">
+                {blocks.map((block) => (
+                  <OutlineTab key={block.id} active={block.id === activeBlock?.id} onClick={() => selectBlock(block.id, block.type === 'clauses' ? block.clauses?.[0]?.id || null : null)}>
+                    {block.title}
+                  </OutlineTab>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-b border-[#edf2ee] bg-[#fbfffd] px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="typo-label truncate uppercase text-[#7b8a82]">{activeBlock?.title || 'Document'}</p>
+                  <p className="typo-caption truncate text-[#8a9891]">
+                    {activeBlock?.type === 'clauses' ? 'Select a clause to format text' : 'Edit the selected document section'}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-1">
+                  <EditorTool label="Bold" active={Boolean(activeClause?.marks?.bold)} onClick={() => activeClause && toggleClauseMark(activeBlock.id, activeClause.id, 'bold')}><TextB size={16} weight="bold" /></EditorTool>
+                  <EditorTool label="Italic" active={Boolean(activeClause?.marks?.italic)} onClick={() => activeClause && toggleClauseMark(activeBlock.id, activeClause.id, 'italic')}><TextItalic size={16} /></EditorTool>
+                  <EditorTool label="Underline" active={Boolean(activeClause?.marks?.underline)} onClick={() => activeClause && toggleClauseMark(activeBlock.id, activeClause.id, 'underline')}><TextUnderline size={16} /></EditorTool>
+                </div>
+              </div>
+              <div className="mt-3 flex gap-2">
+                {[
+                  ['clauses', 'Clause'],
+                  ['paymentSchedule', 'Payment'],
+                  ['signatures', 'Signature'],
+                  ['note', 'Note'],
+                ].map(([type, label]) => (
+                  <button key={type} type="button" onClick={() => insertBlock(type)} className="typo-caption rounded-full border border-[#d8e2db] bg-white px-3 py-1.5 text-[#425349]">
+                    + {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <article className="bg-white pb-5">
+              <div className="min-h-[720px] bg-white px-4 py-5">
+                <p className="typo-caption uppercase text-[#267449]">Agreement builder</p>
+                {blocks.map((block) => {
+                  const selected = block.id === activeBlock?.id
+                  return (
+                    <section key={block.id} className={`mt-4 border-b border-[#edf2ee] pb-4 last:border-b-0 ${selected ? 'rounded-[16px] bg-[#fbfffd] px-3 py-3 ring-1 ring-[#bdd8c8]' : ''}`}>
+                      <div className="mb-3 flex items-center justify-between gap-2">
+                        <button type="button" onClick={() => selectBlock(block.id, block.type === 'clauses' ? block.clauses?.[0]?.id || null : null)} className="min-w-0 text-left">
+                          <span className="typo-label block truncate uppercase text-[#7b8a82]">{block.title}</span>
+                          <span className="typo-caption block truncate text-[#9aa6a0]">{block.type}</span>
+                        </button>
+                        {selected ? (
+                          <div className="flex shrink-0 gap-1">
+                            <button type="button" disabled={activeBlockIndex <= 0} onClick={() => moveBlock(block.id, -1)} className="typo-caption rounded-lg px-2 py-1 text-[#4f6659] disabled:opacity-35">Up</button>
+                            <button type="button" disabled={activeBlockIndex >= blocks.length - 1} onClick={() => moveBlock(block.id, 1)} className="typo-caption rounded-lg px-2 py-1 text-[#4f6659] disabled:opacity-35">Down</button>
+                            <button type="button" onClick={() => deleteBlock(block.id)} className="typo-caption rounded-lg px-2 py-1 text-[#b42318]">Delete</button>
+                          </div>
+                        ) : null}
+                      </div>
+                      {renderBlockBody(block)}
+                      {selected ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <button type="button" onClick={() => insertBlock('clauses')} className="typo-caption rounded-full bg-[#e7f5ed] px-3 py-1.5 text-[#267449]">Insert clause after</button>
+                          <button type="button" onClick={() => insertBlock('paymentSchedule')} className="typo-caption rounded-full bg-[#eef3f0] px-3 py-1.5 text-[#425349]">Insert payment schedule</button>
+                        </div>
+                      ) : null}
+                    </section>
+                  )
+                })}
+              </div>
+            </article>
           </div>
           <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
             <Button type="button" fullWidth onClick={saveDraft}>Save contract</Button>

@@ -24,6 +24,18 @@ const projectWorkspaceTools = [
   { label: 'Site diary', icon: PencilSimpleLine },
 ]
 
+const toolAlertTargets = {
+  SOW: ['sow'],
+  Moodboard: ['archive', 'moodboard'],
+  BOQ: ['boq'],
+  Tasks: ['tasks'],
+  Finance: ['finance'],
+  Contract: ['contract'],
+  Team: ['team'],
+  'Floor plan': ['floor-plan'],
+  'Site diary': ['site-diary'],
+}
+
 const parseAreaValue = (area) => {
   if (typeof area === 'number') return area
   const numeric = Number.parseFloat(String(area).replace(/[^0-9.]/g, ''))
@@ -260,6 +272,9 @@ function ProjectWorkspaceWidgets({
             || (isFloorPlan && !hasFloorPlanContent)
           )
           const emptyWidgetCopy = getEmptyWidgetCopy(tool.label)
+          const updateCount = (project?.alerts || []).filter((alert) => (
+            (toolAlertTargets[tool.label] || []).includes(alert.target)
+          )).length
 
           return (
             <button
@@ -279,7 +294,14 @@ function ProjectWorkspaceWidgets({
                   </span>
                   <p className="typo-body-strong truncate text-black">{isSiteDiary ? 'Site Diary' : tool.label}</p>
                 </div>
-                <CaretRight size={16} className="mt-2 shrink-0 text-[#8fa098] transition-transform group-hover:translate-x-0.5" />
+                <span className="flex h-8 shrink-0 items-center gap-1.5">
+                  {updateCount > 0 ? (
+                    <span className="typo-status-mini grid min-h-4 min-w-4 place-items-center rounded-full bg-[#26c485] px-1 text-white">
+                      {updateCount}
+                    </span>
+                  ) : null}
+                  <CaretRight size={16} className="shrink-0 text-[#8fa098] transition-transform group-hover:translate-x-0.5" />
+                </span>
               </div>
 
               {isEmptyWidget ? (
@@ -367,13 +389,13 @@ function ProjectWorkspaceWidgets({
                 <div className="hynt-site-diary-preview mt-2 h-[94px] overflow-hidden">
                   {latestDiaryEntries.map((entry) => (
                     <div key={entry.id} className="flex h-[47px] items-center gap-3">
-                      {entry.photos?.[0] ? (
-                        <img src={entry.photos[0]} alt="" className="size-9 rounded-[10px] border border-[#ebebeb] object-cover" />
-                      ) : (
-                        <span className="grid size-9 shrink-0 place-items-center rounded-[10px] border border-[#ebebeb] bg-white text-[#8ca096]">
+                      <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white text-[#8ca096]">
+                        {entry.photos?.[0] ? (
+                          <img src={entry.photos[0]} alt="" className="size-full object-cover" />
+                        ) : (
                           <PencilSimpleLine size={16} />
-                        </span>
-                      )}
+                        )}
+                      </span>
                       <div className="min-w-0">
                         <p className="typo-body-strong truncate text-black">{entry.title}</p>
                         <p className="typo-meta truncate text-[#7b8f84]">{entry.note || entry.tags?.[0] || 'Site update shared'}</p>
