@@ -1570,6 +1570,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     )
   }
 
+  if (proHomeTab === 'blogs') {
+    return <HomeBlogsPage onBack={() => setProHomeTab('home')} />
+  }
+
   return (
     <main className="hynt-home hynt-home-shell min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
       <div className="hynt-home-shell__layout">
@@ -1607,10 +1611,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             homepageEvents={homepageEvents}
             onOpenBlogs={() => setProHomeTab('blogs')}
           />
-        ) : null}
-
-        {proHomeTab === 'blogs' ? (
-          <HomeBlogsPage onBack={() => setProHomeTab('home')} />
         ) : null}
 
         {proHomeTab === 'ai' ? (
@@ -2703,6 +2703,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
     if (isHomeownerBoqOpen) return <HomeownerBoqWorkspace onBack={() => setIsHomeownerBoqOpen(false)} />
     if (isHomeownerTimelineOpen) return <HomeownerTimelineWorkspace onBack={() => setIsHomeownerTimelineOpen(false)} />
     if (isHomeownerSiteDiaryOpen) return <HomeownerSiteDiaryWorkspace onBack={() => setIsHomeownerSiteDiaryOpen(false)} />
+    if (homeTab === 'blogs') return <HomeBlogsPage onBack={() => setHomeTab('home')} />
 
     return (
     <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
@@ -2740,7 +2741,6 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
           {homeTab === 'post' ? renderPostPage() : null}
           {homeTab === 'events' ? renderEventsPage() : null}
           {homeTab === 'profile' ? renderProfilePage() : null}
-          {homeTab === 'blogs' ? <HomeBlogsPage onBack={() => setHomeTab('home')} /> : null}
         </div>
       </div>
 

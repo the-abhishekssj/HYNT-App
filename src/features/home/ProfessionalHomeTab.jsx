@@ -6,6 +6,7 @@ import {
   IdentificationBadge,
   MapPinSimpleArea,
 } from '@phosphor-icons/react'
+import Button from '../../components/ui/Button'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 
@@ -52,11 +53,13 @@ function ProfessionalHomeTab({
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
       <section className="px-4 py-5">
-        <article className="overflow-hidden rounded-3xl border border-[#143a27] bg-[#07140e] p-5 text-white shadow-[0_18px_38px_rgba(7,20,14,0.16)]">
+        <article className="overflow-hidden rounded-lg border border-[#143a27] bg-[#07140e] p-5 text-white shadow-[0_18px_38px_rgba(7,20,14,0.16)]">
           <p className="typo-meta text-[#8fd5ae]">Upgrade workspace</p>
           <h2 className="typo-title-20 mt-2 text-white">Upgrade to Pro</h2>
           <p className="typo-body mt-2 max-w-[280px] text-white/72">Boost your profile, unlock lead insights, and get priority placement across HYNT discovery.</p>
-          <button type="button" className="typo-body-strong mt-4 rounded-full bg-[#5fc18a] px-5 py-3 text-[#07140e]">View plans</button>
+          <Button type="button" fullWidth className="mt-4 h-11 rounded-lg bg-[#5fc18a] text-[#07140e] hover:bg-[#6bd798] focus-visible:ring-[#5fc18a]">
+            View plans
+          </Button>
         </article>
       </section>
 
