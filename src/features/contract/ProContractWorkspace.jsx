@@ -123,14 +123,14 @@ function ContractListItem({ contract, onOpen }) {
 
 function ContractPreview({ contract }) {
   return (
-    <article className="rounded-[26px] border border-[#dbe6df] bg-white p-5 shadow-[0_16px_34px_rgba(16,36,24,0.08)]">
-      <div className="border-b border-[#edf2ee] pb-4">
+    <article className="bg-white">
+      <div className="border-b border-[#edf2ee] px-5 py-5">
         <p className="typo-caption uppercase text-[#267449]">Agreement preview</p>
         <h1 className="typo-page-title mt-2 text-black">{contract.title}</h1>
         <p className="typo-body mt-2 text-[#5f7467]">{contract.projectName}</p>
       </div>
 
-      <section className="border-b border-[#edf2ee] py-4">
+      <section className="border-b border-[#edf2ee] px-5 py-4">
         <h2 className="typo-section-title text-black">Parties</h2>
         <div className="mt-3 border-y border-[#edf2ee]">
           <SummaryLine label="Designer" value={contract.designerName} />
@@ -139,7 +139,7 @@ function ContractPreview({ contract }) {
         </div>
       </section>
 
-      <section className="border-b border-[#edf2ee] py-4">
+      <section className="border-b border-[#edf2ee] px-5 py-4">
         <h2 className="typo-section-title text-black">Commercial basis</h2>
         <div className="mt-3 border-y border-[#edf2ee]">
           <SummaryLine label="Contract value" value={formatRupees(contract.value || 0)} />
@@ -148,7 +148,7 @@ function ContractPreview({ contract }) {
         </div>
       </section>
 
-      <section className="py-4">
+      <section className="px-5 py-4">
         <h2 className="typo-section-title text-black">Terms</h2>
         <div className="mt-3 space-y-3">
           {contract.terms.map((term, index) => (
@@ -317,15 +317,17 @@ function ProContractWorkspace({ project, onBack }) {
             onBack={() => setScreen('list')}
             actions={<Button type="button" variant="outline" icon={PencilSimpleLine} onClick={startEdit} aria-label="Edit contract" />}
           />
-          <div className="ui-screen-content pt-6">
-            <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="pt-6">
+            <div className="mb-4 flex items-center justify-between gap-3 px-4">
               <StatusPill tone={selectedContract.status}>{selectedContract.status}</StatusPill>
               <p className="typo-meta text-[#7b7b7b]">{selectedContract.createdAt}</p>
             </div>
             <ContractPreview contract={selectedContract} />
-            <Button type="button" variant="ghost" fullWidth leadingIcon={Trash} onClick={deleteContract} className="mt-4 text-[#b42318] hover:bg-[#fff5f5]">
-              Delete contract
-            </Button>
+            <div className="px-4">
+              <Button type="button" variant="ghost" fullWidth leadingIcon={Trash} onClick={deleteContract} className="mt-4 text-[#b42318] hover:bg-[#fff5f5]">
+                Delete contract
+              </Button>
+            </div>
           </div>
           <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
             {isSigned ? (

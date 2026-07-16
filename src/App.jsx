@@ -737,6 +737,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       setIsProjectsViewOpen(true)
       return
     }
+    setIsProjectsViewOpen(false)
     if (key === 'ai') {
       setProHomeTab('ai')
       return
@@ -1461,19 +1462,30 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
 
     return (
       <main className="min-h-dvh w-full overflow-x-hidden bg-white font-['Urbanist'] text-black">
-        <section className="mx-auto w-full max-w-[390px] pt-24">
-          <header className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 border-b border-[#ececec] bg-white/95 backdrop-blur">
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between py-1">
-                <button type="button" onClick={() => setIsProjectsViewOpen(false)} className="flex items-center gap-4">
-                  <span className="grid size-6 place-items-center rounded">
-                    <CaretLeft size={24} />
-                  </span>
-                  <span className="text-left">
-                    <span className="typo-section-title block text-black">Projects</span>
-                    <span className="typo-caption block text-[#999999]">Back to home</span>
-                  </span>
-                </button>
+        <section className="hynt-explore-canvas mx-auto w-full max-w-[390px] overflow-visible bg-white pb-[108px]">
+          <div className="hynt-explore-sticky">
+            <div className="px-4 pb-4 pt-4">
+              <div className="flex items-center justify-between gap-4">
+                <h1 className="typo-page-title text-black">Projects</h1>
+              </div>
+            </div>
+
+            <div className="border-b border-[rgba(0,0,0,0.08)] px-4 pb-3">
+              <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
+                {projectFilterChips.map((chip) => {
+                  const selected = projectStatusFilter === chip
+                  return (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => setProjectStatusFilter(chip)}
+                      className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-full py-2 pl-3 pr-2 ${selected ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
+                    >
+                      <span className={`typo-body ${selected ? 'typo-weight-semibold text-white' : 'text-black'}`}>{chip}</span>
+                      <span className="typo-badge grid size-6 place-items-center rounded-full bg-black text-white">{String(getProjectCount(chip)).padStart(2, '0')}</span>
+                    </button>
+                  )
+                })}
                 <button
                   type="button"
                   onClick={() => {
@@ -1481,43 +1493,18 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     setSelectedProjectId(null)
                   }}
                   aria-label="Create project"
-                  className="grid size-9 place-items-center"
+                  className="ml-auto grid size-10 shrink-0 place-items-center rounded-full border border-[#d8d8d8] bg-white text-black transition hover:bg-[#f7f7f7]"
                 >
                   <Plus size={22} />
                 </button>
               </div>
             </div>
-
-            <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3">
-              {projectFilterChips.map((chip) => {
-                const selected = projectStatusFilter === chip
-                return (
-                  <button
-                    key={chip}
-                    type="button"
-                    onClick={() => setProjectStatusFilter(chip)}
-                    className={`flex h-10 shrink-0 items-center gap-2 overflow-hidden rounded-full py-2 pl-3 pr-2 ${selected ? 'bg-[#5fc18a]' : 'border border-[#d1d1d1] bg-white'}`}
-                  >
-                    <span className={`typo-body ${selected ? 'typo-weight-semibold text-white' : 'text-black'}`}>{chip}</span>
-                    <span className="typo-badge grid size-6 place-items-center rounded-full bg-black text-white">{String(getProjectCount(chip)).padStart(2, '0')}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </header>
+          </div>
 
           <div className="px-4 py-6">
             {filteredProjects.length ? (
               <div className="space-y-3">
                 {filteredProjects.map((project) => {
-                  const { daysLeft, progress } = getDeadlineProgress(project)
-                  const deadlineTone = getDeadlineTone(daysLeft)
-                  const dueLabel = daysLeft === null
-                    ? 'Schedule pending'
-                    : daysLeft < 0
-                      ? `${Math.abs(daysLeft)} day${Math.abs(daysLeft) === 1 ? '' : 's'} overdue`
-                      : `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`
-
                   return (
                     <article
                       key={project.id}
@@ -1532,14 +1519,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                           <div className="flex min-w-0 items-center gap-2">
                             <span className={`size-2 shrink-0 rounded-full ${project.status === 'Active' ? 'bg-[#5fc18a]' : project.status === 'Pending' ? 'bg-[#efb24d]' : 'bg-[#6ea8ff]'}`} />
                             <p className="typo-section-title min-w-0 flex-1 truncate text-[#102418]">{project.scope}</p>
-                            <span className={`typo-badge shrink-0 rounded-full px-2 py-1 ${project.status === 'Active' ? 'bg-[#eaf9f1] text-[#24754b]' : project.status === 'Pending' ? 'bg-[#fff3d9] text-[#9b6a00]' : 'bg-[#e9f2ff] text-[#2c67b4]'}`}>{project.status}</span>
                             <CaretRight size={16} className="shrink-0 text-[#6f8178]" />
                           </div>
                           <p className="typo-body mt-1 truncate text-[#607269]">{project.client} {'\u00b7'} {project.location}</p>
-                          <span className={`typo-body-strong mt-3 inline-flex h-9 max-w-full items-center rounded-full px-3 ${deadlineTone.badge}`}>
-                            <span className="mr-1 opacity-75">Due</span>
-                            <span className="truncate">{project.dueDate}</span>
-                          </span>
                         </div>
                       </div>
                     </article>
@@ -1569,6 +1551,31 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             )}
           </div>
         </section>
+
+        <nav className="hynt-home-shell__nav fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
+          {proSidebarItems.map(([key, label, Icon, kind]) => {
+            const selected = key === 'protools'
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => handleProNavSelect(key)}
+                className="typo-utility flex w-[70px] flex-col items-center justify-center gap-1.5 rounded-[20px] px-2 py-2 text-center text-black"
+              >
+                {kind === 'hynt-ai' ? (
+                  <img src="/hynt-home/door-and-star.svg" alt="" className="size-5 saturate-0 brightness-0" />
+                ) : (
+                  <Icon size={20} weight={selected ? 'fill' : 'regular'} />
+                )}
+                {label === 'HYNT AI' ? (
+                  <span className={proHomeTab === 'ai' ? 'typo-nav-active hynt-nav-home' : 'typo-nav-idle hynt-nav-item'}>HYNT AI</span>
+                ) : (
+                  <span className={selected ? 'typo-nav-active hynt-nav-home' : 'typo-nav-idle hynt-nav-item'}>{label}</span>
+                )}
+              </button>
+            )
+          })}
+        </nav>
 
       </main>
     )
