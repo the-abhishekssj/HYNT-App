@@ -3,7 +3,7 @@ import { CircleNotch } from '@phosphor-icons/react'
 
 const Button = React.forwardRef(({
   children,
-  variant = 'primary', // 'primary' | 'outline' | 'ghost'
+  variant = 'primary', // 'primary' | 'outline' | 'ghost' | 'inverted'
   size = 'default',    // 'default' | 'small'
   leadingIcon: LeadingIcon = null,
   trailingIcon: TrailingIcon = null,
@@ -35,6 +35,7 @@ const Button = React.forwardRef(({
     primary: 'bg-black text-white hover:bg-neutral-800 active:scale-[0.98] focus-visible:ring-black',
     outline: 'bg-transparent border-[1.5px] border-[#dfdfdf] text-black hover:border-black hover:bg-neutral-50 active:scale-[0.98] focus-visible:ring-neutral-200',
     ghost: 'bg-transparent text-black hover:bg-neutral-100 active:scale-[0.98] focus-visible:ring-neutral-200',
+    inverted: 'border-[1.5px] border-white bg-white text-black hover:bg-neutral-100 active:scale-[0.98] focus-visible:ring-white',
   }
 
   const disabledStyles = 'opacity-50 cursor-not-allowed active:scale-100 hover:bg-inherit hover:border-inherit hover:text-inherit'

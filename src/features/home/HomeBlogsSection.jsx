@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react'
 import { ArrowRight } from '@phosphor-icons/react'
 
 export const homeBlogArticles = [
@@ -22,6 +23,13 @@ export const homeBlogArticles = [
 ]
 
 function HomeBlogsSection({ onViewAll }) {
+  const railRef = useRef(null)
+
+  useLayoutEffect(() => {
+    if (!railRef.current) return
+    railRef.current.scrollLeft = 0
+  }, [])
+
   return (
     <section className="px-4 py-5">
       <div className="flex items-center justify-between">
@@ -30,7 +38,7 @@ function HomeBlogsSection({ onViewAll }) {
           View all <ArrowRight size={16} />
         </button>
       </div>
-      <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto pb-1">
+      <div ref={railRef} className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
         {homeBlogArticles.slice(0, 3).map((article) => (
           <article key={article.title} className="w-[184px] shrink-0 overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
             <img src={article.image} alt="" className="h-[116px] w-full object-cover" />

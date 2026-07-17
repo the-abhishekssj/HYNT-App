@@ -1,54 +1,183 @@
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
-  ArrowUp,
   CalendarDots,
   CheckSquareOffset,
-  IdentificationBadge,
   MapPinSimpleArea,
+  NotePencil,
+  PencilSimpleLine,
+  Scroll,
+  Wallet,
+  X,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 
+const professionalProjectTools = [
+  { label: 'SOW', page: 'sow', Icon: NotePencil },
+  { label: 'BOQ', page: 'boq', Icon: Scroll },
+  { label: 'Tasks', page: 'tasks', Icon: CheckSquareOffset },
+  { label: 'Finance', page: 'finance', Icon: Wallet },
+  { label: 'Diary', page: 'site-diary', Icon: PencilSimpleLine },
+]
+
+function getVisibleProjects(projects = []) {
+  const activeProjects = projects.filter((project) => project.status === 'Active')
+  const projectPool = activeProjects.length ? activeProjects : projects
+  return projectPool.filter((project) => (project.alerts || []).length > 0)
+}
+
+function getAlertToolPage(alert) {
+  if (!alert) return null
+  if (alert.target === 'archive' || alert.target === 'moodboard') return 'archive'
+  return alert.target || null
+}
+
+function getProjectUpdateTools(project) {
+  const countsByPage = (project.alerts || []).reduce((counts, alert) => {
+    const page = getAlertToolPage(alert)
+    if (!page) return counts
+    return {
+      ...counts,
+      [page]: (counts[page] || 0) + 1,
+    }
+  }, {})
+
+  return professionalProjectTools
+    .map((tool) => ({
+      ...tool,
+      count: countsByPage[tool.page] || 0,
+    }))
+    .filter((tool) => tool.count > 0)
+}
+
+function ProjectTodayCard({ project, onOpenProject, onDismiss, isSingle }) {
+  const primaryAlert = project.alerts?.[0] || null
+  const updateTools = getProjectUpdateTools(project)
+
+  return (
+    <article className={`${isSingle ? 'w-full' : 'w-[330px]'} shrink-0 rounded-lg border border-[#dce8df] bg-[#f7fbf8] p-3`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="typo-meta text-[#267449]">Today</p>
+          <h2 className="typo-title-16-strong mt-1 truncate text-black">{project.scope}</h2>
+          <p className="typo-meta mt-1 truncate text-[#607269]">{project.client} {'\u00b7'} {project.location}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <span className="typo-meta rounded-lg bg-white px-2 py-1 text-[#267449] shadow-[0_4px_16px_rgba(38,116,73,0.08)]">{project.progress}%</span>
+          <button type="button" onClick={() => onDismiss(project.id)} aria-label={`Dismiss ${project.scope} update`} className="grid size-7 place-items-center rounded-lg bg-white text-[#607269] shadow-[0_4px_16px_rgba(38,116,73,0.08)]">
+            <X size={14} weight="bold" />
+          </button>
+        </div>
+      </div>
+
+      <button type="button" onClick={() => onOpenProject(project.id, primaryAlert?.target || 'overview')} className="mt-3 block w-full text-left">
+        <div className="flex items-center justify-between gap-2">
+          <p className="typo-meta text-[#6f8178]">{primaryAlert ? primaryAlert.label : 'Next workspace action'}</p>
+          <p className="typo-meta shrink-0 text-[#607269]">{primaryAlert ? primaryAlert.time : `Due ${project.dueDate}`}</p>
+        </div>
+        <p className="typo-body-strong mt-1 line-clamp-2 text-black">{primaryAlert ? primaryAlert.title : `Open ${project.scope}`}</p>
+      </button>
+
+      {updateTools.length ? (
+        <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto border-t border-[#dce8df] pt-3">
+          {updateTools.map(({ label, page, Icon, count }) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => onOpenProject(project.id, page)}
+              className="typo-meta flex h-9 shrink-0 items-center gap-2 rounded-full border border-[#dfe8e3] bg-white px-3 text-[#102418]"
+            >
+              <span className="text-[#267449]">
+                <Icon size={16} weight="fill" />
+              </span>
+              <span>{label}</span>
+              <span className="rounded-full bg-[#eef7f1] px-1.5 py-0.5 text-[#267449]">{String(count).padStart(2, '0')}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </article>
+  )
+}
+
+function ProfessionalTodayRail({ projects, onOpenProject }) {
+  const projectRailRef = useRef(null)
+  const [dismissedProjectIds, setDismissedProjectIds] = useState([])
+  const visibleProjects = getVisibleProjects(projects).filter((project) => !dismissedProjectIds.includes(project.id))
+  const isSingleProjectUpdate = visibleProjects.length === 1
+
+  useLayoutEffect(() => {
+    if (!projectRailRef.current) return
+    projectRailRef.current.scrollLeft = 0
+  }, [])
+
+  if (!projects.length) {
+    return (
+      <section className="px-4 py-5">
+        <article className="rounded-lg border border-[#dce8df] bg-[#f7fbf8] p-4">
+          <p className="typo-meta text-[#267449]">Workspace</p>
+          <h2 className="typo-title-20 mt-2 text-black">No active projects yet</h2>
+          <p className="typo-body mt-2 text-[#607269]">Create a project to start tracking scope, timeline, finance, and site updates.</p>
+          <Button type="button" fullWidth onClick={() => onOpenProject(null, 'overview')} className="mt-4 h-11 rounded-lg">
+            Open projects
+          </Button>
+        </article>
+      </section>
+    )
+  }
+
+  if (!visibleProjects.length) return null
+
+  return (
+    <section className="py-4">
+      <div className="mb-3 flex h-6 items-center justify-between px-4">
+        <h2 className="typo-section-title">Project updates</h2>
+        <span className="typo-meta text-[#607269]">{visibleProjects.length} active</span>
+      </div>
+      {isSingleProjectUpdate ? (
+        <div className="px-4">
+          <ProjectTodayCard
+            project={visibleProjects[0]}
+            onOpenProject={onOpenProject}
+            onDismiss={(projectId) => setDismissedProjectIds((current) => [...current, projectId])}
+            isSingle
+          />
+        </div>
+      ) : (
+      <div ref={projectRailRef} className="no-scrollbar flex gap-3 overflow-x-auto overflow-y-visible pl-4 pr-4">
+        {visibleProjects.map((project) => (
+          <ProjectTodayCard
+            key={project.id}
+            project={project}
+            onOpenProject={onOpenProject}
+            onDismiss={(projectId) => setDismissedProjectIds((current) => [...current, projectId])}
+            isSingle={isSingleProjectUpdate}
+          />
+        ))}
+      </div>
+      )}
+    </section>
+  )
+}
+
 function ProfessionalHomeTab({
-  proPrompt,
-  setProPrompt,
-  homepagePros,
   homepageEvents,
   onOpenBlogs,
+  projects = [],
+  onOpenProject,
 }) {
+  const eventsRailRef = useRef(null)
+
+  useLayoutEffect(() => {
+    if (!eventsRailRef.current) return
+    eventsRailRef.current.scrollLeft = 0
+  }, [])
+
   return (
     <>
-      <section className="px-4 py-5">
-        <form
-          onSubmit={(event) => event.preventDefault()}
-          className="h-28 overflow-hidden rounded-3xl border border-[rgba(95,193,138,0.24)] bg-black p-4"
-        >
-          <div className="flex h-6 items-center gap-2">
-            <span className="grid size-6 place-items-center overflow-hidden">
-              <img src="/hynt-home/door-and-star.svg" alt="" className="size-6" />
-            </span>
-            <p className="typo-body whitespace-nowrap text-white">
-              Home planning with <span className="typo-weight-heavy">HYNT</span> <span className="typo-caption text-[#5fc18a]">AI</span>
-            </p>
-          </div>
-          <div className="mt-2 flex h-12 items-center overflow-hidden rounded-2xl border border-[#5fc18a] bg-[#fbfbfb] py-[5px] pl-4 pr-1.5">
-            <input
-              value={proPrompt}
-              onChange={(event) => setProPrompt(event.target.value)}
-              placeholder="Ask anything"
-              className="typo-input h-[24px] min-w-0 flex-1 bg-transparent text-black outline-none placeholder:text-[#808080]"
-            />
-            <button type="submit" aria-label="Send" className="grid h-9 w-6 shrink-0 place-items-center rounded-[10px] bg-[#26c485] text-black">
-              <ArrowUp size={12} weight="bold" />
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-      <HomeExploreCategoriesGrid />
+      <ProfessionalTodayRail projects={projects} onOpenProject={onOpenProject} />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
@@ -57,11 +186,15 @@ function ProfessionalHomeTab({
           <p className="typo-meta text-[#8fd5ae]">Upgrade workspace</p>
           <h2 className="typo-title-20 mt-2 text-white">Upgrade to Pro</h2>
           <p className="typo-body mt-2 max-w-[280px] text-white/72">Boost your profile, unlock lead insights, and get priority placement across HYNT discovery.</p>
-          <Button type="button" fullWidth className="mt-4 h-11 rounded-lg bg-[#5fc18a] text-[#07140e] hover:bg-[#6bd798] focus-visible:ring-[#5fc18a]">
+          <Button variant="inverted" type="button" fullWidth className="mt-4 h-11 rounded-lg">
             View plans
           </Button>
         </article>
       </section>
+
+      <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+      <HomeExploreCategoriesGrid title="Explore HYNT" />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
@@ -71,33 +204,12 @@ function ProfessionalHomeTab({
 
       <section className="px-4 py-5">
         <div className="flex items-center justify-between">
-          <h2 className="typo-section-title">Professionals</h2>
-          <div className="typo-utility flex items-center gap-1">View all <ArrowRight size={16} /></div>
-        </div>
-        <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
-          {homepagePros.map((pro) => (
-            <article key={pro.name} className="h-[222px] w-[138px] shrink-0 rounded-2xl border border-[#e6e6e6] bg-white p-2">
-              <img src={pro.image} alt={pro.name} className="h-[110px] w-[122px] rounded-xl object-cover" />
-              <div className="mt-2 px-1">
-                <p className="typo-body-strong truncate text-black">{pro.name}</p>
-                <p className="typo-meta truncate text-[#5f5f5f]">{pro.role}</p>
-              </div>
-              <div className="typo-meta mt-2 flex h-[30px] items-center gap-2 px-0.5 text-[#808080]"><span className="flex items-center gap-1"><CheckSquareOffset size={16} />42</span><span className="h-3 w-px bg-[#d1d1d1]" /><span className="flex items-center gap-1"><IdentificationBadge size={16} />5 years</span></div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-      <section className="px-4 py-5">
-        <div className="flex items-center justify-between">
           <h2 className="typo-section-title">Upcoming Events</h2>
           <div className="typo-utility flex items-center gap-1">View all <ArrowRight size={16} /></div>
         </div>
-        <div className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
+        <div ref={eventsRailRef} className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible pb-1">
           {homepageEvents.map((event) => (
-            <article key={event.title} className="h-[252px] w-[175px] shrink-0 rounded-3xl border border-[#e0e0e0] bg-[#fbfbfb] p-2">
+            <article key={event.title} className="min-h-[252px] w-[175px] shrink-0 rounded-3xl border border-[#e0e0e0] bg-[#fbfbfb] p-2">
               <div className="relative h-36 overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
                 <img src={event.image} alt={event.title} className="size-full object-cover" />
                 <span className="typo-meta absolute right-2 top-2 rounded-lg border border-[#333] bg-black/70 px-2 py-1 text-white backdrop-blur">{event.interested}</span>

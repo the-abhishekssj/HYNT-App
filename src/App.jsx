@@ -72,7 +72,6 @@ const RANGE_DASH = '\u2013'
 const FLOW_STORAGE_KEY = 'hynt-active-flow'
 
 const quickActions = [
-  { label: 'Brand of the day', icon: null },
   { label: 'Saved Ideas', icon: ImagesSquare },
   { label: 'Saved Products', icon: Bookmark },
   { label: 'Shortlisted Pros', icon: Handshake },
@@ -92,23 +91,6 @@ const homepageIdeas = [
   },
 ]
 
-const homepagePros = [
-  {
-    name: 'Rohan Kapoor',
-    role: 'Interior Designer',
-    image: '/hynt-home/pro-1.png',
-  },
-  {
-    name: 'Arjun Murthy',
-    role: 'Interior Designer',
-    image: '/hynt-home/pro-2.png',
-  },
-  {
-    name: 'Maya Jain',
-    role: 'Vastu Specialist',
-    image: '/hynt-home/pro-2.png',
-  },
-]
 const homepageProducts = [
   {
     title: 'Alto Modular Kitchen L-Shape',
@@ -749,6 +731,26 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     if (key === 'ai') return proHomeTab === 'ai'
     if (key === 'protools') return isProjectsViewOpen
     return proHomeTab === 'home' && key === 'home'
+  }
+  const openProfessionalProjectFromHome = (projectId, page = 'overview') => {
+    const fallbackProjectId = projectId || projects.find((project) => project.status === 'Active')?.id || projects[0]?.id || null
+    setIsProjectsViewOpen(true)
+    setProHomeTab('home')
+    setSelectedProjectId(fallbackProjectId)
+
+    if (!fallbackProjectId) {
+      setSelectedProjectPage('overview')
+      return
+    }
+
+    if (page === 'sow') {
+      setProSowInitialView('remarks')
+      setIsProSowOpen(true)
+      return
+    }
+
+    setIsProSowOpen(false)
+    setSelectedProjectPage(page || 'overview')
   }
   const openProjectAlert = (alert) => {
     setSelectedProjectPage('overview')
@@ -1607,9 +1609,10 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
           <ProfessionalHomeTab
             proPrompt={proPrompt}
             setProPrompt={setProPrompt}
-            homepagePros={homepagePros}
             homepageEvents={homepageEvents}
             onOpenBlogs={() => setProHomeTab('blogs')}
+            projects={projects}
+            onOpenProject={openProfessionalProjectFromHome}
           />
         ) : null}
 
@@ -2715,7 +2718,6 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               isHomeDockDense={isHomeDockDense}
               setIsFlowSwitcherOpen={setIsFlowSwitcherOpen}
               quickActions={quickActions}
-              homepagePros={homepagePros}
               homepageEvents={homepageEvents}
               prompt={prompt}
               setPrompt={setPrompt}
@@ -2724,6 +2726,11 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               allowRiveLoader={allowRiveLoader}
               RivePlayer={RivePlayer}
               onOpenBlogs={() => setHomeTab('blogs')}
+              onOpenProject={() => setHomeTab('project')}
+              onOpenApprovals={() => setIsHomeownerTasksOpen(true)}
+              onOpenFinance={() => setIsHomeownerFinanceOpen(true)}
+              onOpenTasks={() => setIsHomeownerTasksOpen(true)}
+              onOpenSiteDiary={() => setIsHomeownerSiteDiaryOpen(true)}
             />
           ) : null}
           {homeTab === 'project' ? (

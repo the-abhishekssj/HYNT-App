@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Bookmark,
   Crosshair,
   Handshake,
@@ -24,7 +25,7 @@ function HomeExploreCategoriesGrid({ title = 'Explore Categories' }) {
     <section className="px-4 py-5">
       <div className="flex items-center justify-between">
         <h2 className="typo-section-title">{title}</h2>
-        <button type="button" className="typo-utility text-[#267449]">See all</button>
+        <button type="button" className="typo-utility flex items-center gap-1">View all <ArrowRight size={16} /></button>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2">
         {exploreCategories.map(({ label, Icon, spotlight }) => (
