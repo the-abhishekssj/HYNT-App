@@ -292,7 +292,7 @@
 }
 
 .hynt-category-spotlight {
-  box-shadow: 0 10px 28px rgba(38, 116, 73, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.78);
+  box-shadow: 0 10px 28px rgba(38, 196, 133, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.78);
 }
 
 .hynt-category-spotlight::after {
@@ -312,7 +312,7 @@
   width: 74px;
   height: 74px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(95, 193, 138, 0.32), rgba(95, 193, 138, 0) 70%);
+  background: radial-gradient(circle, rgba(38, 196, 133, 0.34), rgba(38, 196, 133, 0) 70%);
   animation: hyntCategorySpotlightHalo 2.8s ease-in-out infinite;
 }
 

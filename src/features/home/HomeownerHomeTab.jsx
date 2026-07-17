@@ -23,12 +23,14 @@ function HomeownerQuickActions({ quickActions }) {
         <h2 className="typo-section-title">Saved shortcuts</h2>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2">
-        {quickActions.map(({ label, icon: Icon }) => (
-          <button key={label} type="button" className="hynt-home-quick-action-item flex min-w-0 flex-col items-center gap-3 text-center">
+        {quickActions.map(({ label, displayLines, icon: Icon }) => (
+          <button key={label} type="button" aria-label={label} className="hynt-home-quick-action-item flex min-w-0 flex-col items-center gap-3 text-center">
             <span className="hynt-home-quick-action-icon grid size-14 place-items-center overflow-hidden rounded-[22px] border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]">
               <Icon size={21} weight="fill" />
             </span>
-            <span className="typo-label hynt-home-quick-action-label w-full whitespace-normal text-center text-black">{label}</span>
+            <span className="typo-label hynt-home-quick-action-label flex min-h-8 w-full flex-col justify-start text-center text-black">
+              {(displayLines || [label]).map((line) => <span key={line}>{line}</span>)}
+            </span>
           </button>
         ))}
       </div>

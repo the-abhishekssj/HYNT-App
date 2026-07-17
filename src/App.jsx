@@ -72,10 +72,10 @@ const RANGE_DASH = '\u2013'
 const FLOW_STORAGE_KEY = 'hynt-active-flow'
 
 const quickActions = [
-  { label: 'Saved Ideas', icon: ImagesSquare },
-  { label: 'Saved Products', icon: Bookmark },
-  { label: 'Shortlisted Pros', icon: Handshake },
-  { label: 'Posted Requirements', icon: HandDeposit },
+  { label: 'Saved Ideas', displayLines: ['Saved', 'Ideas'], icon: ImagesSquare },
+  { label: 'Saved Products', displayLines: ['Saved', 'Products'], icon: Bookmark },
+  { label: 'Shortlisted Pros', displayLines: ['Shortlisted', 'Pros'], icon: Handshake },
+  { label: 'Posted Requirements', displayLines: ['Posted', 'Requirements'], icon: HandDeposit },
 ]
 
 const roomTags = ['Living Room', 'Bedroom', 'Kitchen', 'Home Office', 'Bathroom']
@@ -1612,6 +1612,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             homepageEvents={homepageEvents}
             onOpenBlogs={() => setProHomeTab('blogs')}
             projects={projects}
+            quickActions={quickActions}
             onOpenProject={openProfessionalProjectFromHome}
           />
         ) : null}

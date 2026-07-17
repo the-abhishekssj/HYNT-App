@@ -162,10 +162,38 @@ function ProfessionalTodayRail({ projects, onOpenProject }) {
   )
 }
 
+function ProfessionalShortcuts({ quickActions }) {
+  return (
+    <section className="px-4 py-5">
+      <div className="flex h-6 items-center justify-between">
+        <h2 className="typo-section-title">Saved shortcuts</h2>
+      </div>
+      <div className="mt-4 grid grid-cols-4 gap-2">
+        {quickActions.map(({ label, displayLines, icon: Icon }) => (
+          <button
+            key={label}
+            type="button"
+            aria-label={label}
+            className="flex min-w-0 flex-col items-center gap-3 text-center"
+          >
+            <span className="grid size-14 place-items-center overflow-hidden rounded-[22px] border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]">
+              <Icon size={21} weight="fill" />
+            </span>
+            <span className="typo-label flex min-h-8 w-full flex-col justify-start text-center text-black">
+              {(displayLines || [label]).map((line) => <span key={line}>{line}</span>)}
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function ProfessionalHomeTab({
   homepageEvents,
   onOpenBlogs,
   projects = [],
+  quickActions = [],
   onOpenProject,
 }) {
   const eventsRailRef = useRef(null)
@@ -181,6 +209,14 @@ function ProfessionalHomeTab({
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
+      <ProfessionalShortcuts quickActions={quickActions} />
+
+      <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+      <HomeExploreCategoriesGrid title="Explore HYNT" />
+
+      <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
       <section className="px-4 py-5">
         <article className="overflow-hidden rounded-lg border border-[#143a27] bg-[#07140e] p-5 text-white shadow-[0_18px_38px_rgba(7,20,14,0.16)]">
           <p className="typo-meta text-[#8fd5ae]">Upgrade workspace</p>
@@ -191,10 +227,6 @@ function ProfessionalHomeTab({
           </Button>
         </article>
       </section>
-
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-      <HomeExploreCategoriesGrid title="Explore HYNT" />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
