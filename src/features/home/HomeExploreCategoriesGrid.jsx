@@ -1,23 +1,41 @@
 import {
   ArrowRight,
-  Bookmark,
-  Crosshair,
-  Handshake,
-  House,
-  ImagesSquare,
-  NotePencil,
-  SlidersHorizontal,
 } from '@phosphor-icons/react'
 
 const exploreCategories = [
-  { label: 'Brands', spotlight: true },
-  { label: 'Interior Designers', Icon: Handshake },
-  { label: 'Architects', Icon: NotePencil },
-  { label: 'Home Automation', Icon: House },
-  { label: 'Vastu Consultants', Icon: Crosshair },
-  { label: 'Furniture & Decor', Icon: Bookmark },
-  { label: 'Lighting', Icon: ImagesSquare },
-  { label: 'Solar & Sustainability', Icon: SlidersHorizontal },
+  {
+    label: 'Brands',
+    image: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&w=360&q=80',
+    spotlight: true,
+  },
+  {
+    label: 'Interior Designers',
+    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Architects',
+    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Home Automation',
+    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Vastu Consultants',
+    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Furniture & Decor',
+    image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Lighting',
+    image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    label: 'Solar & Sustainability',
+    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=360&q=80',
+  },
 ]
 
 function HomeExploreCategoriesGrid({ title = 'Explore Categories' }) {
@@ -28,32 +46,18 @@ function HomeExploreCategoriesGrid({ title = 'Explore Categories' }) {
         <button type="button" className="typo-utility flex items-center gap-1">View all <ArrowRight size={16} /></button>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2">
-        {exploreCategories.map(({ label, Icon, spotlight }) => (
+        {exploreCategories.map(({ label, image, spotlight }) => (
           <button
             key={label}
             type="button"
-            className={`relative flex min-h-[104px] flex-col items-center justify-center gap-2 overflow-hidden rounded-[17px] px-1 py-3 text-center shadow-[0_4px_12px_rgba(0,0,0,0.03)] ${
-              spotlight
-                ? 'hynt-category-spotlight border border-[#26C485] bg-[linear-gradient(145deg,#f6fffa,#e8fbf1)]'
-                : 'border border-[#e0e0e0] bg-white'
+            className={`relative flex min-h-[104px] overflow-hidden rounded-[17px] bg-[#102418] text-left ${
+              spotlight ? 'hynt-category-image-spotlight border border-[#26C485]' : 'border border-[#e0e0e0]'
             }`}
           >
-            {spotlight ? (
-              <>
-                <span className="hynt-category-spotlight__halo" aria-hidden="true" />
-                <span className="relative z-10 grid size-[58px] place-items-center rounded-full bg-white shadow-[0_10px_24px_rgba(38,196,133,0.22)]">
-                  <img src="/hynt-home/brand.png" alt="" className="size-12 rounded-full border border-white object-cover" />
-                </span>
-                <span className="typo-caption relative z-10 max-w-full text-balance text-black">{label}</span>
-              </>
-            ) : (
-              <>
-                <span className="grid size-10 place-items-center rounded-full bg-[#e9fbf3] text-[#26C485]">
-                  <Icon size={19} weight="fill" />
-                </span>
-                <span className="typo-caption max-w-full text-balance text-black">{label}</span>
-              </>
-            )}
+            {spotlight ? <span className="hynt-category-image-spotlight__glow" aria-hidden="true" /> : null}
+            <img src={image} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
+            <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/82 via-black/42 to-transparent" />
+            <span className="typo-caption relative z-10 mt-auto w-full px-2 pb-2 text-balance text-white">{label}</span>
           </button>
         ))}
       </div>

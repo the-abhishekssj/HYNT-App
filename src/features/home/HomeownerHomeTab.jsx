@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
   Bell,
@@ -7,14 +7,16 @@ import {
   ChatsCircle,
   ClipboardText,
   FileText,
-  MagnifyingGlass,
   MapPinSimpleArea,
   Wallet,
+  X,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import { useSharedProject } from '../collaboration/mockProjectStore'
+import HomeBannerCarousel from './HomeBannerCarousel'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
+import HomeSearchBar from './HomeSearchBar'
 
 function HomeownerQuickActions({ quickActions }) {
   return (
@@ -146,6 +148,9 @@ function HomeownerNextStepCard({
     onOpenSiteDiary,
   })
   const Icon = nextStep.icon
+  const [isDismissed, setIsDismissed] = useState(false)
+
+  if (isDismissed) return null
 
   return (
     <section className="px-4 py-5">
@@ -160,6 +165,14 @@ function HomeownerNextStepCard({
             <p className="typo-body mt-2 line-clamp-2 text-[#607269]">{nextStep.body}</p>
             <p className="typo-meta mt-3 text-[#6f8178]">{nextStep.meta}</p>
           </div>
+          <button
+            type="button"
+            onClick={() => setIsDismissed(true)}
+            aria-label={`Dismiss ${nextStep.title}`}
+            className="grid size-7 shrink-0 place-items-center rounded-lg bg-white text-[#607269] shadow-[0_4px_16px_rgba(38,116,73,0.08)]"
+          >
+            <X size={14} weight="bold" />
+          </button>
         </div>
         <Button type="button" fullWidth onClick={nextStep.onClick} className="mt-4 h-11 rounded-lg bg-[#267449] text-white hover:bg-[#1f603c] focus-visible:ring-[#267449]">
           {nextStep.cta}
@@ -200,24 +213,29 @@ function HomeownerHomeTab({
   return (
     <section className="hynt-home-mobile-canvas relative mx-auto w-full max-w-[390px] overflow-visible bg-white">
       <div className={`hynt-home-topdock ${isHomeDockDense ? 'hynt-home-topdock--dense' : ''}`}>
-        <header className="h-[57px] overflow-hidden bg-gradient-to-b from-white to-white/0 backdrop-blur-[12px]">
-          <div className="flex h-[57px] items-center justify-between pl-6 pr-4">
-            <button type="button" className="typo-body-strong flex w-[119px] items-center text-[#26c485]">
-              <span>Mumbai</span>
+        <header className="overflow-hidden bg-gradient-to-b from-white to-white/0 backdrop-blur-[12px]">
+          <div className="flex h-[57px] items-center justify-between pl-4 pr-3">
+            <button type="button" className="typo-body-strong flex min-w-0 items-center text-[#26c485]">
+              <span className="truncate">Mumbai</span>
               <CaretDown className="ml-1" size={12} weight="bold" />
             </button>
-            <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-8 w-[53.152px] opacity-0" />
-            <div className="flex items-center gap-1 lg:hidden">
-              <button type="button" aria-label="Search" className="grid size-[37px] place-items-center rounded-[10px] opacity-0"><MagnifyingGlass size={20} /></button>
+            <div className="flex shrink-0 items-center gap-0.5 lg:hidden">
               <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px]"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" /></button>
               <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]"><ChatsCircle size={24} /><span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-center text-white">3</span></button>
             </div>
+          </div>
+          <div className="px-4 pb-3">
+            <HomeSearchBar />
           </div>
         </header>
         <div className="h-px w-full bg-[#e0e0e0]" />
       </div>
 
       <div>
+        <HomeBannerCarousel audience="homeowner" />
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
         <HomeownerNextStepCard
           onOpenProject={onOpenProject}
           onOpenApprovals={onOpenApprovals}
@@ -262,11 +280,6 @@ function HomeownerHomeTab({
           </div>
         </section>
 
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
-        <div className="mt-5 flex h-24 items-center justify-center opacity-30">
-          <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-[58px] w-24 object-contain grayscale" />
-        </div>
       </div>
     </section>
   )

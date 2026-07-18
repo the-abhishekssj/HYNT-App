@@ -291,6 +291,39 @@
   }
 }
 
+@keyframes hyntCategoryImageGlow {
+  0%, 100% {
+    opacity: 0.46;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+}
+
+.hynt-category-image-spotlight {
+  box-shadow: 0 0 0 1px rgba(38, 196, 133, 0.34), 0 12px 24px rgba(38, 196, 133, 0.18);
+}
+
+.hynt-category-image-spotlight__glow {
+  position: absolute;
+  inset: -18%;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(circle at 70% 30%, rgba(38, 196, 133, 0.62), transparent 38%),
+    radial-gradient(circle at 18% 82%, rgba(38, 196, 133, 0.42), transparent 44%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: hyntCategoryImageGlow 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hynt-category-image-spotlight__glow {
+    animation: none;
+  }
+}
+
 .hynt-category-spotlight {
   box-shadow: 0 10px 28px rgba(38, 196, 133, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.78);
 }

@@ -11,6 +11,7 @@ import {
   X,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
+import HomeBannerCarousel from './HomeBannerCarousel'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 
@@ -20,6 +21,31 @@ const professionalProjectTools = [
   { label: 'Tasks', page: 'tasks', Icon: CheckSquareOffset },
   { label: 'Finance', page: 'finance', Icon: Wallet },
   { label: 'Diary', page: 'site-diary', Icon: PencilSimpleLine },
+]
+
+const professionalLeads = [
+  {
+    id: 'lead-1',
+    name: 'Priya Mehta',
+    area: 'Bandra',
+    scope: '3BHK',
+    spaces: 'Living room + Kitchen',
+    budget: '\u20b98-12L',
+    status: 'Starting soon',
+    time: '5m ago',
+    avatar: '/hynt-home/pro-2.png',
+  },
+  {
+    id: 'lead-2',
+    name: 'Rohan Shah',
+    area: 'Juhu',
+    scope: 'Villa',
+    spaces: 'Bedrooms + Terrace',
+    budget: '\u20b920-28L',
+    status: 'Brief ready',
+    time: '18m ago',
+    avatar: '/hynt-home/pro-1.png',
+  },
 ]
 
 function getVisibleProjects(projects = []) {
@@ -162,6 +188,59 @@ function ProfessionalTodayRail({ projects, onOpenProject }) {
   )
 }
 
+function ProfessionalLeadInboxPreview() {
+  const leadsRailRef = useRef(null)
+
+  useLayoutEffect(() => {
+    if (!leadsRailRef.current) return
+    leadsRailRef.current.scrollLeft = 0
+  }, [])
+
+  return (
+    <section className="pb-4">
+      <div className="px-4">
+        <button type="button" className="flex h-[75px] w-full items-center justify-between rounded-lg bg-black px-4 text-left text-white">
+          <span className="min-w-0">
+            <span className="typo-body-strong block">See all my leads</span>
+            <span className="typo-meta mt-1 block truncate text-white/64">You have 12 leads waiting for you...</span>
+          </span>
+          <span className="grid size-[42px] shrink-0 place-items-center rounded-[14px] bg-white text-black">
+            <ArrowRight size={18} weight="bold" />
+          </span>
+        </button>
+      </div>
+
+      <div ref={leadsRailRef} className="no-scrollbar mt-3 flex snap-x snap-mandatory gap-2 overflow-x-auto overflow-y-visible scroll-px-4 px-4">
+        {professionalLeads.map((lead) => (
+          <article key={lead.id} className="w-[358px] shrink-0 snap-start rounded-[22px] border border-[#e5e5e5] bg-white p-4">
+            <div className="flex items-start gap-3">
+              <img src={lead.avatar} alt="" className="size-12 shrink-0 rounded-full object-cover" />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="typo-body-strong truncate text-black">{lead.name} <span className="px-1.5 text-[#6f6f6f]">{'\u00b7'}</span> {lead.area}</p>
+                    <p className="typo-meta mt-1 truncate text-[#607269]">{lead.scope} <span className="px-1.5">{'\u00b7'}</span> {lead.spaces}</p>
+                  </div>
+                  <span className="typo-meta shrink-0 text-[#8a8a8a]">{lead.time}</span>
+                </div>
+                <p className="typo-meta mt-3 truncate text-[#607269]">{lead.budget} <span className="px-1.5">{'\u00b7'}</span> {lead.status}</p>
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button type="button" fullWidth className="h-12 rounded-[17px]">
+                Respond
+              </Button>
+              <Button type="button" variant="outline" fullWidth className="h-12 rounded-[17px] border-black bg-white text-black hover:bg-white">
+                View brief
+              </Button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function ProfessionalShortcuts({ quickActions }) {
   return (
     <section className="px-4 py-5">
@@ -205,11 +284,11 @@ function ProfessionalHomeTab({
 
   return (
     <>
+      <HomeBannerCarousel audience="professional" />
+
+      <ProfessionalLeadInboxPreview />
+
       <ProfessionalTodayRail projects={projects} onOpenProject={onOpenProject} />
-
-      <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-      <ProfessionalShortcuts quickActions={quickActions} />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
@@ -256,9 +335,9 @@ function ProfessionalHomeTab({
         </div>
       </section>
 
-      <div className="flex h-24 items-center justify-center py-5 opacity-30">
-        <img src="/hynt-home/logo-green.png" alt="HYNT" className="h-[58px] w-24 object-contain grayscale" />
-      </div>
+      <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+      <ProfessionalShortcuts quickActions={quickActions} />
     </>
   )
 }
