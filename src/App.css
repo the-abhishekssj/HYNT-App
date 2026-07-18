@@ -306,6 +306,10 @@
   box-shadow: 0 0 0 1px rgba(38, 196, 133, 0.34), 0 12px 24px rgba(38, 196, 133, 0.18);
 }
 
+.hynt-category-image-card {
+  clip-path: inset(0 round 17px);
+}
+
 .hynt-category-image-spotlight__glow {
   position: absolute;
   inset: -18%;

@@ -50,13 +50,15 @@ function HomeExploreCategoriesGrid({ title = 'Explore Categories' }) {
           <button
             key={label}
             type="button"
-            className={`relative flex min-h-[104px] overflow-hidden rounded-[17px] bg-[#102418] text-left ${
+            className={`hynt-category-image-card relative flex min-h-[104px] overflow-hidden rounded-[17px] bg-[#102418] text-left ${
               spotlight ? 'hynt-category-image-spotlight border border-[#26C485]' : 'border border-[#e0e0e0]'
             }`}
           >
-            {spotlight ? <span className="hynt-category-image-spotlight__glow" aria-hidden="true" /> : null}
-            <img src={image} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
-            <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/82 via-black/42 to-transparent" />
+            <span className="absolute inset-0 overflow-hidden">
+              {spotlight ? <span className="hynt-category-image-spotlight__glow" aria-hidden="true" /> : null}
+              <img src={image} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
+              <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/82 via-black/42 to-transparent" />
+            </span>
             <span className="typo-caption relative z-10 mt-auto w-full px-2 pb-2 text-balance text-white">{label}</span>
           </button>
         ))}

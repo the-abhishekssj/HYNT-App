@@ -57,6 +57,7 @@ import HomeownerHomeTab from './features/home/HomeownerHomeTab'
 import HomeBlogsPage from './features/home/HomeBlogsPage'
 import ProfessionalHomeTab from './features/home/ProfessionalHomeTab'
 import HomeSearchBar from './features/home/HomeSearchBar'
+import ExplorePage from './features/explore/ExplorePage'
 import ProBoqWorkspace from './features/boq/ProBoqWorkspace'
 import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
 import ProSiteDiaryWorkspace from './features/siteDiary/ProSiteDiaryWorkspace'
@@ -726,11 +727,16 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       setProHomeTab('ai')
       return
     }
+    if (key === 'explore') {
+      setProHomeTab('explore')
+      return
+    }
     setProHomeTab('home')
   }
   const isProNavSelected = (key) => {
     if (key === 'ai') return proHomeTab === 'ai'
     if (key === 'protools') return isProjectsViewOpen
+    if (key === 'explore') return proHomeTab === 'explore'
     return proHomeTab === 'home' && key === 'home'
   }
   const openProfessionalProjectFromHome = (projectId, page = 'overview') => {
@@ -1583,28 +1589,32 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
         {renderProDesktopNav()}
         <div className="hynt-home-shell__main">
       <section className="hynt-pro-home-canvas mx-auto w-full max-w-[390px] overflow-visible pb-[108px]">
-        <div className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 bg-white/95 backdrop-blur lg:hidden">
-          <header className="pb-3">
-            <div className="flex h-14 items-center justify-between px-4">
-              <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 shrink-0 rounded-full border border-[#e0e0e0] object-cover" />
-              <div className="flex shrink-0 items-center gap-0.5">
-                <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
-                  <Bell size={24} />
-                  <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
-                </button>
-                <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]">
-                  <ChatsCircle size={24} />
-                  <span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-white">3</span>
-                </button>
-              </div>
+        {proHomeTab === 'home' ? (
+          <>
+            <div className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 bg-white/95 backdrop-blur lg:hidden">
+              <header className="pb-3">
+                <div className="flex h-14 items-center justify-between px-4">
+                  <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 shrink-0 rounded-full border border-[#e0e0e0] object-cover" />
+                  <div className="flex shrink-0 items-center gap-0.5">
+                    <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
+                      <Bell size={24} />
+                      <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
+                    </button>
+                    <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]">
+                      <ChatsCircle size={24} />
+                      <span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-white">3</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="px-4">
+                  <HomeSearchBar />
+                </div>
+              </header>
+              <div className="h-px w-full bg-[#e0e0e0]" />
             </div>
-            <div className="px-4">
-              <HomeSearchBar />
-            </div>
-          </header>
-          <div className="h-px w-full bg-[#e0e0e0]" />
-        </div>
-        <div className="h-[117px] lg:hidden" aria-hidden="true" />
+            <div className="h-[117px] lg:hidden" aria-hidden="true" />
+          </>
+        ) : null}
 
         {proHomeTab === 'protools' ? (
           <>
@@ -1624,6 +1634,8 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             onOpenProject={openProfessionalProjectFromHome}
           />
         ) : null}
+
+        {proHomeTab === 'explore' ? <ExplorePage /> : null}
 
         {proHomeTab === 'ai' ? (
           <>
@@ -2753,7 +2765,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               onOpenSiteDiary={() => setIsHomeownerSiteDiaryOpen(true)}
             />
           ) : null}
-          {homeTab === 'explore' ? renderExplorePage() : null}
+          {homeTab === 'explore' ? <ExplorePage /> : null}
           {homeTab === 'post' ? renderPostPage() : null}
           {homeTab === 'events' ? renderEventsPage() : null}
           {homeTab === 'profile' ? renderProfilePage() : null}
