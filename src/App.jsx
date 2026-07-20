@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   Bell,
@@ -57,6 +57,7 @@ import HomeownerHomeTab from './features/home/HomeownerHomeTab'
 import HomeBlogsPage from './features/home/HomeBlogsPage'
 import ProfessionalHomeTab from './features/home/ProfessionalHomeTab'
 import HomeSearchBar from './features/home/HomeSearchBar'
+import HomeTopPromo from './features/home/HomeTopPromo'
 import ExplorePage from './features/explore/ExplorePage'
 import ProBoqWorkspace from './features/boq/ProBoqWorkspace'
 import ProFinanceWorkspace from './features/finance/ProFinanceWorkspace'
@@ -617,6 +618,9 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
   const [isProUpgraded, setIsProUpgraded] = useState(false)
+  const [isProHeaderCollapsed, setIsProHeaderCollapsed] = useState(false)
+  const [proHeaderSpacerHeight, setProHeaderSpacerHeight] = useState(0)
+  const proHeaderRef = useRef(null)
   const [proPrompt, setProPrompt] = useState('')
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [isDeleteProjectConfirmOpen, setIsDeleteProjectConfirmOpen] = useState(false)
@@ -760,6 +764,41 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
     setIsProSowOpen(false)
     setSelectedProjectPage(page || 'overview')
   }
+
+  useEffect(() => {
+    const updateProHeaderState = () => {
+      if (typeof window === 'undefined') return
+      setIsProHeaderCollapsed(proHomeTab === 'home' && !isProjectsViewOpen && window.scrollY > 64)
+    }
+
+    updateProHeaderState()
+    window.addEventListener('scroll', updateProHeaderState, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', updateProHeaderState)
+    }
+  }, [isProjectsViewOpen, proHomeTab])
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined' || proHomeTab !== 'home' || isProjectsViewOpen) return undefined
+    const header = proHeaderRef.current
+    if (!header) return undefined
+
+    const updateSpacerHeight = () => {
+      setProHeaderSpacerHeight(Math.ceil(header.getBoundingClientRect().height))
+    }
+
+    updateSpacerHeight()
+    const observer = window.ResizeObserver ? new window.ResizeObserver(updateSpacerHeight) : null
+    observer?.observe(header)
+    window.addEventListener('resize', updateSpacerHeight)
+
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', updateSpacerHeight)
+    }
+  }, [isProjectsViewOpen, isProHeaderCollapsed, proHomeTab])
+
   const openProjectAlert = (alert) => {
     setSelectedProjectPage('overview')
     if (alert.target === 'sow') {
@@ -1592,28 +1631,37 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
       <section className="hynt-pro-home-canvas mx-auto w-full max-w-[390px] overflow-visible pb-[108px]">
         {proHomeTab === 'home' ? (
           <>
-            <div className="fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 bg-white/95 backdrop-blur lg:hidden">
+            <div
+              ref={proHeaderRef}
+              className={`hynt-home-green-dock fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 lg:hidden ${isProHeaderCollapsed ? 'hynt-home-green-dock--collapsed' : ''}`}
+            >
               <header className="pb-3">
-                <div className="flex h-14 items-center justify-between px-4">
-                  <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 shrink-0 rounded-full border border-[#e0e0e0] object-cover" />
+                <div className="hynt-topbar-primary flex h-14 items-center justify-between px-4">
+                  <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 shrink-0 rounded-full border border-white/45 object-cover" />
                   <div className="flex shrink-0 items-center gap-0.5">
-                    <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px]">
+                    <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px] text-white">
                       <Bell size={24} />
-                      <span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" />
+                      <span className="absolute right-0 top-0.5 size-2 rounded-full bg-white" />
                     </button>
-                    <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]">
+                    <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px] text-white">
                       <ChatsCircle size={24} />
-                      <span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-white">3</span>
+                      <span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-white text-[#26c485]">3</span>
                     </button>
                   </div>
                 </div>
-                <div className="px-4">
-                  <HomeSearchBar />
+                <div className="hynt-topbar-search px-4">
+                  <HomeSearchBar fieldClassName="!bg-white text-[#102418] !ring-white/70 focus-within:!ring-white" />
+                </div>
+                <div className="hynt-top-promo-wrap mt-3">
+                  <HomeTopPromo audience="professional" />
                 </div>
               </header>
-              <div className="h-px w-full bg-[#e0e0e0]" />
             </div>
-            <div className="h-[117px] lg:hidden" aria-hidden="true" />
+            <div
+              className="transition-[height] duration-300 ease-out lg:hidden"
+              style={{ height: proHeaderSpacerHeight }}
+              aria-hidden="true"
+            />
           </>
         ) : null}
 
@@ -1631,7 +1679,6 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             homepageEvents={homepageEvents}
             onOpenBlogs={() => setProHomeTab('blogs')}
             projects={projects}
-            quickActions={quickActions}
             onOpenProject={openProfessionalProjectFromHome}
             isProUpgraded={isProUpgraded}
             onUpgradeToPro={() => setIsProUpgraded(true)}
@@ -1940,8 +1987,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   useEffect(() => {
     const updateDenseState = () => {
       if (typeof window === 'undefined') return
-      const isDesktop = window.innerWidth >= 1024
-      setIsHomeDockDense(isDesktop && homeTab === 'home' && window.scrollY > 220)
+      setIsHomeDockDense(homeTab === 'home' && window.scrollY > 64)
     }
 
     updateDenseState()
@@ -2746,7 +2792,6 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
             <HomeownerHomeTab
               isHomeDockDense={isHomeDockDense}
               setIsFlowSwitcherOpen={setIsFlowSwitcherOpen}
-              quickActions={quickActions}
               homepageEvents={homepageEvents}
               prompt={prompt}
               setPrompt={setPrompt}

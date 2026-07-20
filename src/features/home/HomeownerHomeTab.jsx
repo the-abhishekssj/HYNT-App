@@ -12,28 +12,7 @@ import HomeBannerCarousel from './HomeBannerCarousel'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 import HomeSearchBar from './HomeSearchBar'
-
-function HomeownerQuickActions({ quickActions }) {
-  return (
-    <section className="mt-5 px-4 py-2">
-      <div className="flex h-6 items-center justify-between">
-        <h2 className="typo-section-title">Saved shortcuts</h2>
-      </div>
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        {quickActions.map(({ label, displayLines, icon: Icon }) => (
-          <button key={label} type="button" aria-label={label} className="hynt-home-quick-action-item flex min-w-0 flex-col items-center gap-3 text-center">
-            <span className="hynt-home-quick-action-icon grid size-14 place-items-center overflow-hidden rounded-[22px] border-[0.875px] border-[#a3a3a3] bg-white text-[#26c485]">
-              <Icon size={21} weight="fill" />
-            </span>
-            <span className="typo-label hynt-home-quick-action-label flex min-h-8 w-full flex-col justify-start text-center text-black">
-              {(displayLines || [label]).map((line) => <span key={line}>{line}</span>)}
-            </span>
-          </button>
-        ))}
-      </div>
-    </section>
-  )
-}
+import HomeTopPromo from './HomeTopPromo'
 
 function HomeownerRequirementCta() {
   return (
@@ -59,7 +38,6 @@ function HomeownerRequirementCta() {
 function HomeownerHomeTab({
   isHomeDockDense,
   setIsFlowSwitcherOpen,
-  quickActions,
   homepageEvents,
   onOpenBlogs,
 }) {
@@ -72,23 +50,23 @@ function HomeownerHomeTab({
 
   return (
     <section className="hynt-home-mobile-canvas relative mx-auto w-full max-w-[390px] overflow-visible bg-white">
-      <div className={`hynt-home-topdock ${isHomeDockDense ? 'hynt-home-topdock--dense' : ''}`}>
-        <header className="overflow-hidden bg-gradient-to-b from-white to-white/0 backdrop-blur-[12px]">
-          <div className="flex h-[57px] items-center justify-between pl-4 pr-3">
-            <button type="button" className="typo-body-strong flex min-w-0 items-center text-[#26c485]">
+      <div className={`hynt-home-topdock hynt-home-green-dock ${isHomeDockDense ? 'hynt-home-topdock--dense hynt-home-green-dock--collapsed' : ''}`}>
+        <header className="overflow-hidden">
+          <div className="hynt-topbar-primary flex h-[57px] items-center justify-between pl-4 pr-3">
+            <button type="button" className="typo-body-strong flex min-w-0 items-center text-white">
               <span className="truncate">Mumbai</span>
               <CaretDown className="ml-1" size={12} weight="bold" />
             </button>
             <div className="flex shrink-0 items-center gap-0.5 lg:hidden">
-              <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px]"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-[#26c485]" /></button>
-              <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px]"><ChatsCircle size={24} /><span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-[#26c485] text-center text-white">3</span></button>
+              <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px] text-white"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-white" /></button>
+              <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px] text-white"><ChatsCircle size={24} /><span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-white text-[#26c485]">3</span></button>
             </div>
           </div>
-          <div className="px-4 pb-3">
-            <HomeSearchBar />
+          <div className="hynt-topbar-search px-4 pb-3">
+            <HomeSearchBar fieldClassName="!bg-white text-[#102418] !ring-white/70 focus-within:!ring-white" />
           </div>
+          <HomeTopPromo audience="homeowner" />
         </header>
-        <div className="h-px w-full bg-[#e0e0e0]" />
       </div>
 
       <div>
@@ -101,10 +79,6 @@ function HomeownerHomeTab({
         <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
         <HomeownerRequirementCta />
-
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
-        <HomeownerQuickActions quickActions={quickActions} />
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 

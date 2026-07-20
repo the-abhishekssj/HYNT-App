@@ -188,6 +188,179 @@
   transition: box-shadow 180ms ease;
 }
 
+.hynt-home-green-dock {
+  overflow: hidden;
+  background: linear-gradient(150deg, #26c485 0%, #19b878 56%, #0d8c60 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(38, 196, 133, 0.2);
+  transition: box-shadow 220ms ease, background 220ms ease, color 220ms ease;
+}
+
+.hynt-home-green-dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(132deg, transparent 0 56%, rgba(255, 255, 255, 0.15) 56% 70%, transparent 70%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.hynt-home-green-dock > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hynt-home-green-dock--collapsed {
+  background: #ffffff;
+  color: #102418;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+.hynt-home-green-dock--collapsed::before {
+  opacity: 0;
+}
+
+.hynt-home-green-dock--collapsed header {
+  padding-bottom: 0;
+}
+
+.hynt-topbar-primary {
+  max-height: 57px;
+  opacity: 1;
+  overflow: hidden;
+  transform: translateY(0);
+  transition: max-height 260ms ease, opacity 180ms ease, transform 260ms ease;
+}
+
+.hynt-home-green-dock--collapsed .hynt-topbar-primary {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.hynt-topbar-search {
+  transition: padding-top 260ms ease;
+}
+
+.hynt-home-green-dock--collapsed .hynt-topbar-search {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.hynt-home-green-dock--collapsed .hynt-topbar-search label {
+  box-shadow: inset 0 0 0 1px #d7d7d7;
+}
+
+.hynt-top-promo,
+.hynt-top-promo-wrap {
+  max-height: 140px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: max-height 280ms ease, margin 280ms ease, opacity 180ms ease, transform 280ms ease;
+}
+
+.hynt-home-green-dock--collapsed .hynt-top-promo {
+  max-height: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+.hynt-home-green-dock--collapsed .hynt-top-promo-wrap {
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes hyntTopPromoGlow {
+  0% {
+    transform: translateX(-18%);
+  }
+  50% {
+    transform: translateX(18%);
+  }
+  100% {
+    transform: translateX(-18%);
+  }
+}
+
+@keyframes hyntTopPromoVisual {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(2deg);
+  }
+}
+
+@keyframes hyntTopPromoSpark {
+  0%, 100% {
+    opacity: 0.42;
+    transform: translateY(0) scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.08);
+  }
+}
+
+.hynt-top-promo {
+  position: relative;
+}
+
+.hynt-top-promo__glow {
+  position: absolute;
+  inset: 2px -28px 0 28%;
+  background: linear-gradient(128deg, transparent 0 24%, rgba(255, 255, 255, 0.24) 24% 42%, transparent 42% 100%);
+  animation: hyntTopPromoGlow 4.8s ease-in-out infinite;
+}
+
+.hynt-top-promo__band {
+  position: absolute;
+  bottom: -26px;
+  right: -34px;
+  width: 170px;
+  height: 118px;
+  border-radius: 34px 0 0 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
+  transform: skewX(-18deg);
+}
+
+.hynt-top-promo__visual {
+  display: grid;
+  height: 82px;
+  width: 104px;
+  place-items: center;
+  align-self: stretch;
+  color: rgba(255, 255, 255, 0.92);
+  animation: hyntTopPromoVisual 2.8s ease-in-out infinite;
+}
+
+.hynt-top-promo__spark {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.72);
+  animation: hyntTopPromoSpark 2.4s ease-in-out infinite;
+}
+
+.hynt-top-promo__spark--one {
+  right: 82px;
+  top: 16px;
+}
+
+.hynt-top-promo__spark--two {
+  bottom: 18px;
+  right: 24px;
+  animation-delay: 420ms;
+}
+
 .hynt-home-mobile-canvas {
   transform-origin: top center;
 }
@@ -323,6 +496,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hynt-top-promo__glow,
+  .hynt-top-promo__visual,
+  .hynt-top-promo__spark {
+    animation: none;
+  }
+
   .hynt-category-image-spotlight__glow {
     animation: none;
   }

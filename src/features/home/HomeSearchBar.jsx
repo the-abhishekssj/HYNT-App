@@ -1,7 +1,7 @@
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import InputBar from '../../components/ui/InputBar'
 
-function HomeSearchBar({ placeholder = 'Search HYNT', className = '' }) {
+function HomeSearchBar({ placeholder = 'Search HYNT', className = '', fieldClassName = '', inputClassName = '' }) {
   return (
     <InputBar
       type="search"
@@ -9,6 +9,8 @@ function HomeSearchBar({ placeholder = 'Search HYNT', className = '' }) {
       placeholder={placeholder}
       leadingIcon={MagnifyingGlass}
       className={className}
+      fieldClassName={fieldClassName}
+      inputClassName={inputClassName}
     />
   )
 }
