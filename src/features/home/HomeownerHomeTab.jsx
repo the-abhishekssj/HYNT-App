@@ -1,18 +1,13 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import {
   ArrowRight,
   Bell,
   CalendarDots,
   CaretDown,
   ChatsCircle,
-  ClipboardText,
-  FileText,
   MapPinSimpleArea,
-  Wallet,
-  X,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
-import { useSharedProject } from '../collaboration/mockProjectStore'
 import HomeBannerCarousel from './HomeBannerCarousel'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
@@ -40,152 +35,22 @@ function HomeownerQuickActions({ quickActions }) {
   )
 }
 
-function getHomeownerNextStep({
-  project,
-  taskApprovals,
-  financeInvoices,
-  projectTasks,
-  siteDiaryEntries,
-  onOpenProject,
-  onOpenApprovals,
-  onOpenFinance,
-  onOpenTasks,
-  onOpenSiteDiary,
-}) {
-  const pendingApprovals = taskApprovals.filter((approval) => ['pending', 'question'].includes(approval.status))
-  if (pendingApprovals.length > 0) {
-    const primaryApproval = pendingApprovals[0]
-    const hasMultipleApprovals = pendingApprovals.length > 1
-
-    return {
-      eyebrow: 'Needs your review',
-      title: hasMultipleApprovals ? `${pendingApprovals.length} reviews waiting` : primaryApproval.title,
-      body: hasMultipleApprovals
-        ? pendingApprovals.slice(0, 2).map((approval) => approval.title).join(' \u00b7 ')
-        : primaryApproval.description || 'A selection is waiting for your response.',
-      meta: primaryApproval.dueDate ? `Next due ${primaryApproval.dueDate}` : project?.name || 'Project approval',
-      cta: hasMultipleApprovals ? 'Review all' : 'Review',
-      icon: ClipboardText,
-      items: pendingApprovals,
-      onClick: onOpenApprovals,
-    }
-  }
-
-  const dueInvoice = financeInvoices.find((invoice) => invoice.status === 'due')
-  if (dueInvoice) {
-    return {
-      eyebrow: 'Payment due',
-      title: dueInvoice.stageLabel || dueInvoice.title,
-      body: dueInvoice.summary || 'A project payment needs attention.',
-      meta: dueInvoice.dueDate ? `Due ${dueInvoice.dueDate}` : dueInvoice.number,
-      cta: 'Open finance',
-      icon: Wallet,
-      onClick: onOpenFinance,
-    }
-  }
-
-  const activeTask = projectTasks.find((task) => task.status !== 'done')
-  if (activeTask) {
-    return {
-      eyebrow: 'Project task',
-      title: activeTask.title,
-      body: activeTask.note || activeTask.sourceLabel || 'Track what the team is working on next.',
-      meta: activeTask.dueDate ? `${activeTask.due} \u00b7 ${activeTask.dueDate}` : activeTask.due,
-      cta: 'View task',
-      icon: ClipboardText,
-      onClick: onOpenTasks,
-    }
-  }
-
-  const latestDiary = siteDiaryEntries[0]
-  if (latestDiary) {
-    return {
-      eyebrow: 'Latest site update',
-      title: latestDiary.title,
-      body: latestDiary.note || 'The project team shared a new site diary update.',
-      meta: latestDiary.createdBy || project?.designerName || 'Project team',
-      cta: 'Open diary',
-      icon: FileText,
-      onClick: onOpenSiteDiary,
-    }
-  }
-
-  return {
-    eyebrow: project ? 'Project workspace' : 'Start planning',
-    title: project ? project.name : 'Plan your home with HYNT',
-    body: project ? 'Open your private project workspace for approvals, payments, timeline, and shared files.' : 'Begin with categories, ideas, and a private requirement when you are ready.',
-    meta: project?.status || 'Private planning',
-    cta: project ? 'Open project' : 'Explore',
-    icon: ClipboardText,
-    onClick: onOpenProject,
-  }
-}
-
-function HomeownerNextStepCard({
-  onOpenProject,
-  onOpenApprovals,
-  onOpenFinance,
-  onOpenTasks,
-  onOpenSiteDiary,
-}) {
-  const {
-    project,
-    taskApprovals = [],
-    financeInvoices = [],
-    projectTasks = [],
-    siteDiaryEntries = [],
-  } = useSharedProject('p-1')
-  const nextStep = getHomeownerNextStep({
-    project,
-    taskApprovals,
-    financeInvoices,
-    projectTasks,
-    siteDiaryEntries,
-    onOpenProject,
-    onOpenApprovals,
-    onOpenFinance,
-    onOpenTasks,
-    onOpenSiteDiary,
-  })
-  const Icon = nextStep.icon
-  const [isDismissed, setIsDismissed] = useState(false)
-
-  if (isDismissed) return null
-
+function HomeownerRequirementCta() {
   return (
     <section className="px-4 py-5">
-      <article className="rounded-lg border border-[#dce8df] bg-[#f7fbf8] p-4">
-        <div className="flex items-start gap-3">
-          <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-white text-[#267449] shadow-[0_4px_16px_rgba(38,116,73,0.08)]">
-            <Icon size={22} weight="fill" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="typo-meta text-[#267449]">{nextStep.eyebrow}</p>
-            <h2 className="typo-title-16-strong mt-1 text-black">{nextStep.title}</h2>
-            <p className="typo-body mt-2 line-clamp-2 text-[#607269]">{nextStep.body}</p>
-            <p className="typo-meta mt-3 text-[#6f8178]">{nextStep.meta}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsDismissed(true)}
-            aria-label={`Dismiss ${nextStep.title}`}
-            className="grid size-7 shrink-0 place-items-center rounded-lg bg-white text-[#607269] shadow-[0_4px_16px_rgba(38,116,73,0.08)]"
-          >
-            <X size={14} weight="bold" />
-          </button>
-        </div>
-        <Button type="button" fullWidth onClick={nextStep.onClick} className="mt-4 h-11 rounded-lg bg-[#267449] text-white hover:bg-[#1f603c] focus-visible:ring-[#267449]">
-          {nextStep.cta}
+      <article className="w-full rounded-2xl border border-[#dce8df] bg-[#f7fbf8] px-4 py-5">
+        <p className="typo-meta text-[#267449]">Post your requirement</p>
+        <h2 className="typo-title-16-strong mt-1 text-black">What do you need help with</h2>
+        <p className="typo-body mt-2 max-w-[290px] text-[#607269]">
+          Describe your project once and get quotes from up to 5 verified pros within 24 hours.
+        </p>
+        <Button
+          type="button"
+          fullWidth
+          className="mt-4 h-11 rounded-lg bg-[#267449] text-white hover:bg-[#1f603c] focus-visible:ring-[#267449]"
+        >
+          Post your requirement
         </Button>
-        {nextStep.items?.length > 1 ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {nextStep.items.slice(0, 3).map((item) => (
-              <button key={item.id} type="button" onClick={nextStep.onClick} className="typo-meta rounded-full border border-[#dce8df] bg-white px-3 py-1 text-[#102418]">
-                {item.type}
-              </button>
-            ))}
-          </div>
-        ) : null}
       </article>
     </section>
   )
@@ -197,11 +62,6 @@ function HomeownerHomeTab({
   quickActions,
   homepageEvents,
   onOpenBlogs,
-  onOpenProject,
-  onOpenApprovals,
-  onOpenFinance,
-  onOpenTasks,
-  onOpenSiteDiary,
 }) {
   const eventsRailRef = useRef(null)
 
@@ -232,29 +92,19 @@ function HomeownerHomeTab({
       </div>
 
       <div>
-        <HomeBannerCarousel audience="homeowner" />
-
-        <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-        <HomeownerNextStepCard
-          onOpenProject={onOpenProject}
-          onOpenApprovals={onOpenApprovals}
-          onOpenFinance={onOpenFinance}
-          onOpenTasks={onOpenTasks}
-          onOpenSiteDiary={onOpenSiteDiary}
-        />
-
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
-        <HomeownerQuickActions quickActions={quickActions} />
-
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
         <HomeExploreCategoriesGrid />
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
-        <HomeBlogsSection onViewAll={onOpenBlogs} />
+        <HomeBannerCarousel audience="homeowner" />
+
+        <div className="h-[6px] w-full bg-[#e0e0e0]" />
+
+        <HomeownerRequirementCta />
+
+        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
+
+        <HomeownerQuickActions quickActions={quickActions} />
 
         <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
 
@@ -279,6 +129,10 @@ function HomeownerHomeTab({
             ))}
           </div>
         </section>
+
+        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
+
+        <HomeBlogsSection onViewAll={onOpenBlogs} />
 
       </div>
     </section>
