@@ -1,40 +1,55 @@
 import {
   ArrowRight,
+  Armchair,
+  Buildings,
+  Compass,
+  LampPendant,
+  PlugsConnected,
+  SolarPanel,
+  Storefront,
+  UsersThree,
 } from '@phosphor-icons/react'
 
 const exploreCategories = [
   {
     label: 'Brands',
-    image: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&w=360&q=80',
-    spotlight: true,
+    Icon: Storefront,
+    tone: 'bg-[#eaf7ef] text-[#267449]',
   },
   {
     label: 'Interior Designers',
-    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=360&q=80',
+    Icon: UsersThree,
+    tone: 'bg-[#eef3fb] text-[#315f8f]',
   },
   {
     label: 'Architects',
-    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=360&q=80',
+    Icon: Buildings,
+    tone: 'bg-[#f4f0ea] text-[#7b5a31]',
   },
   {
     label: 'Home Automation',
-    image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=360&q=80',
+    Icon: PlugsConnected,
+    tone: 'bg-[#eef5f7] text-[#2d6874]',
   },
   {
     label: 'Vastu Consultants',
-    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=360&q=80',
+    Icon: Compass,
+    tone: 'bg-[#f8f0ec] text-[#9a5436]',
   },
   {
     label: 'Furniture & Decor',
-    image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=360&q=80',
+    Icon: Armchair,
+    tone: 'bg-[#f2f5ec] text-[#637a32]',
   },
   {
     label: 'Lighting',
-    image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=360&q=80',
+    Icon: LampPendant,
+    tone: 'bg-[#f8f4df] text-[#927317]',
   },
   {
     label: 'Solar & Sustainability',
-    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=360&q=80',
+    Icon: SolarPanel,
+    tone: 'bg-[#eaf6f2] text-[#2f7568]',
   },
 ]
 
@@ -45,21 +60,18 @@ function HomeExploreCategoriesGrid({ title = 'Explore Categories' }) {
         <h2 className="typo-section-title">{title}</h2>
         <button type="button" className="typo-utility flex items-center gap-1">View all <ArrowRight size={16} /></button>
       </div>
-      <div className="mt-4 grid grid-cols-4 gap-2">
-        {exploreCategories.map(({ label, image, spotlight }) => (
+      <div className="mt-4 grid grid-cols-4 gap-x-2 gap-y-4">
+        {exploreCategories.map(({ label, Icon, tone }) => (
           <button
             key={label}
             type="button"
-            className={`hynt-category-image-card relative flex min-h-[104px] overflow-hidden rounded-[17px] bg-[#102418] text-left ${
-              spotlight ? 'hynt-category-image-spotlight border border-[#26C485]' : 'border border-[#e0e0e0]'
-            }`}
+            aria-label={label}
+            className="flex min-w-0 flex-col items-center text-center"
           >
-            <span className="absolute inset-0 overflow-hidden">
-              {spotlight ? <span className="hynt-category-image-spotlight__glow" aria-hidden="true" /> : null}
-              <img src={image} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
-              <span className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/82 via-black/42 to-transparent" />
+            <span className={`grid size-16 place-items-center rounded-full border border-white shadow-[0_8px_22px_rgba(22,44,32,0.08)] ${tone}`}>
+              <Icon size={28} weight="duotone" />
             </span>
-            <span className="typo-caption relative z-10 mt-auto w-full px-2 pb-2 text-balance text-white">{label}</span>
+            <span className="typo-caption mt-2 block min-h-8 w-full text-balance px-1 text-black">{label}</span>
           </button>
         ))}
       </div>

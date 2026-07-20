@@ -616,6 +616,7 @@ function TaskStatusChip({ label, selected, onClick }) {
 function ProfessionalHome({ onOpenFlowSwitcher }) {
   const [isProjectsViewOpen, setIsProjectsViewOpen] = useState(false)
   const [proHomeTab, setProHomeTab] = useState('home')
+  const [isProUpgraded, setIsProUpgraded] = useState(false)
   const [proPrompt, setProPrompt] = useState('')
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false)
   const [isDeleteProjectConfirmOpen, setIsDeleteProjectConfirmOpen] = useState(false)
@@ -1632,6 +1633,13 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
             projects={projects}
             quickActions={quickActions}
             onOpenProject={openProfessionalProjectFromHome}
+            isProUpgraded={isProUpgraded}
+            onUpgradeToPro={() => setIsProUpgraded(true)}
+            onOpenProjects={() => {
+              setIsProjectsViewOpen(true)
+              setProHomeTab('home')
+            }}
+            onOpenPortfolio={() => setProHomeTab('explore')}
           />
         ) : null}
 
