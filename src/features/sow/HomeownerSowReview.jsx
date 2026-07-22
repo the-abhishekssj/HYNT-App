@@ -71,6 +71,7 @@ function HomeownerSowReview({ onBack }) {
   const [showExecutedDetails, setShowExecutedDetails] = useState(false)
   const [remarkDraft, setRemarkDraft] = useState('')
   const [remarkTarget, setRemarkTarget] = useState(null)
+  const [pendingRemarks, setPendingRemarks] = useState([])
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', ''])
   const [amendmentResponse, setAmendmentResponse] = useState('')
   const [openSections, setOpenSections] = useState({
@@ -95,9 +96,41 @@ function HomeownerSowReview({ onBack }) {
   const pendingAmendment = sow?.amendments?.find((amendment) => amendment.status === 'pending') || null
   const executedAmendments = sow?.amendments?.filter((amendment) => amendment.status !== 'pending') || []
   const toggleSection = (key) => setOpenSections((current) => ({ ...current, [key]: !current[key] }))
+  const getRemarkResponses = (sectionKey, targetId) => responses
+    .map((response) => ({
+      response,
+      remark: sow?.remarks?.find((item) => item.id === response.remarkId),
+    }))
+    .filter(({ remark }) => remark?.sectionKey === sectionKey && (targetId === undefined || remark.targetId === targetId))
+
+  const renderRemarkResponses = (sectionKey, targetId) => {
+    const items = getRemarkResponses(sectionKey, targetId)
+    if (!items.length) return null
+
+    return (
+      <div className="mt-3 space-y-2">
+        {items.map(({ response, remark }) => (
+          <article key={response.id} className={`rounded-[16px] border p-3 ${response.decision === 'approve' ? 'border-[#dbe6df] bg-[#f4fbf7]' : 'border-[#f1d7d7] bg-[#fff7f7]'}`}>
+            <div className="flex items-center justify-between gap-2">
+              <p className="typo-caption uppercase text-[#73867c]">Your remark</p>
+              <span className={`typo-caption shrink-0 rounded-full px-2 py-1 uppercase ${response.decision === 'approve' ? 'bg-[#eaf9f1] text-[#267449]' : 'bg-[#fdecec] text-[#c34545]'}`}>
+                {response.decision === 'approve' ? 'Updated' : 'Rejected'}
+              </span>
+            </div>
+            <p className="typo-body mt-2 text-black">{remark?.body}</p>
+            <div className={`mt-3 rounded-[14px] p-3 ${response.decision === 'approve' ? 'bg-[#eef7f1]' : 'bg-[#fff0f0]'}`}>
+              <p className="typo-caption uppercase text-[#73867c]">Professional response</p>
+              <p className="typo-meta mt-1 text-[#5f7467]">{response.body}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    )
+  }
   const effectiveView = sow?.status === 'executed' && pendingAmendment && view === 'review'
     ? 'amendment'
     : view
+  const effectiveClientView = view === 'waiting' && sow?.status === 'revision-ready' ? 'review' : effectiveView
 
   const startRemark = (sectionKey, sectionTitle, targetId = null, starter = '') => {
     setRemarkTarget({ sectionKey, sectionTitle, targetId })
@@ -107,9 +140,24 @@ function HomeownerSowReview({ onBack }) {
 
   const sendRemark = () => {
     if (!remarkTarget || !remarkDraft.trim()) return
-    actions.addClientRemark(remarkTarget.sectionKey, remarkTarget.sectionTitle, remarkDraft, remarkTarget.targetId)
+    setPendingRemarks((current) => ([
+      ...current,
+      {
+        id: `pending-${Date.now()}`,
+        sectionKey: remarkTarget.sectionKey,
+        sectionTitle: remarkTarget.sectionTitle,
+        body: remarkDraft.trim(),
+        targetId: remarkTarget.targetId,
+      },
+    ]))
     setRemarkDraft('')
     setRemarkTarget(null)
+    setView('review')
+  }
+
+  const sendRemarks = () => {
+    pendingRemarks.forEach((remark) => actions.addClientRemark(remark.sectionKey, remark.sectionTitle, remark.body, remark.targetId))
+    setPendingRemarks([])
     setView('waiting')
   }
 
@@ -194,21 +242,6 @@ function HomeownerSowReview({ onBack }) {
           </div>
         </section>
 
-        {responses.length ? (
-          <section className="space-y-2 pb-5">
-            {responses.slice(-3).map((response) => {
-              const remark = sow.remarks.find((item) => item.id === response.remarkId)
-              return (
-                <article key={response.id} className={`rounded-[18px] border p-4 ${response.decision === 'approve' ? 'border-[#dbe6df] bg-[#f4fbf7]' : 'border-[#f1d7d7] bg-[#fff7f7]'}`}>
-                  <p className="typo-label uppercase text-[#5f7467]">{response.decision === 'approve' ? 'Updated' : 'Rejected'}</p>
-                  <p className="typo-body mt-2 text-black">{remark?.body}</p>
-                  <p className="typo-meta mt-2 text-[#5f7467]">{response.body}</p>
-                </article>
-              )
-            })}
-          </section>
-        ) : null}
-
         <section className="space-y-3 py-5">
           <ClientSection index="1" title="Project overview" open={openSections.overview} onToggle={() => toggleSection('overview')}>
             <div className="space-y-3">
@@ -233,6 +266,7 @@ function HomeownerSowReview({ onBack }) {
                 <article key={room.id} className="border-b border-[#ededed] pb-3 last:border-b-0 last:pb-0">
                   <p className="typo-card-title text-black">{room.name}</p>
                   <p className="typo-body mt-1 text-[#5f7467]">{room.scope}</p>
+                  {renderRemarkResponses('rooms', room.id)}
                   <button
                     type="button"
                     onClick={() => startRemark('rooms', `${room.name} scope`, room.id, room.id === 'kitchen' ? 'Please include granite countertop and chimney provision in the kitchen scope.' : '')}
@@ -288,6 +322,7 @@ function HomeownerSowReview({ onBack }) {
             <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
               <p className="typo-caption uppercase text-[#73849d]">Total value</p>
               <p className="typo-page-title mt-2 text-black">INR {document.totalValueLabel}</p>
+              {renderRemarkResponses('budget')}
             </div>
             <button type="button" onClick={() => startRemark('budget', 'Budget estimate', null, 'Can we discuss the overall estimate before I approve the SOW?')} className="typo-label mt-3 flex items-center gap-2 rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 text-black">
               <NotePencil size={14} />
@@ -337,12 +372,23 @@ function HomeownerSowReview({ onBack }) {
       </div>
 
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
-        <Button type="button" fullWidth onClick={() => setView('otp')}>
-          Looks good - sign and accept
-        </Button>
-        <Button type="button" variant="outline" fullWidth onClick={() => startRemark('general', 'General SOW feedback')} className="mt-2 border-[#e0e0e0] text-[#4b4b4b]">
-          Add general remark
-        </Button>
+        {sow.status === 'revision-ready' && !openRemarks.length && !pendingRemarks.length ? (
+          <Button type="button" fullWidth onClick={() => setView('otp')}>
+            Looks good - sign and accept
+          </Button>
+        ) : (
+          <Button type="button" fullWidth onClick={() => setView('summary')}>
+            Review & submit remarks →
+          </Button>
+        )}
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <Button type="button" variant="outline" fullWidth onClick={() => setView('otp')} className="border-[#e0e0e0] text-[#4b4b4b]">
+            Proceed without remarks
+          </Button>
+          <Button type="button" variant="outline" fullWidth onClick={() => startRemark('general', 'General SOW feedback')} className="border-[#e0e0e0] text-[#4b4b4b]">
+            Add general remark
+          </Button>
+        </div>
       </div>
     </section>
   )
@@ -366,6 +412,39 @@ function HomeownerSowReview({ onBack }) {
       <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
         <Button type="button" fullWidth onClick={sendRemark} disabled={!remarkDraft.trim()}>
           Send remark to designer
+        </Button>
+      </div>
+    </section>
+  )
+
+  const renderSummary = () => (
+    <section className="mx-auto w-full max-w-[390px] pb-[132px] pt-[56px]">
+      <ReviewHeader title="Review remarks" subtitle="Before sending to designer" onBack={() => setView('review')} />
+
+      <div className="ui-screen-content space-y-3">
+        <article className="rounded-[20px] border border-[#dbe6df] bg-white p-4">
+          <p className="typo-section-title text-black">Your remarks are ready</p>
+          <p className="typo-body mt-1 text-[#5f7467]">Review the points below before sending them to the designer. Each remark will be actioned before the SOW can be resubmitted.</p>
+        </article>
+        {pendingRemarks.length ? pendingRemarks.map((remark) => (
+          <article key={remark.id} className="rounded-[18px] border border-[#dbe6df] bg-white p-4">
+            <p className="typo-label uppercase text-[#5f7467]">{remark.sectionTitle}</p>
+            <p className="typo-body mt-2 text-black">{remark.body}</p>
+          </article>
+        )) : (
+          <article className="rounded-[18px] border border-[#efe2c8] bg-[#fff9ef] p-4">
+            <p className="typo-label uppercase text-[#9f8350]">No new remarks</p>
+            <p className="typo-body mt-1 text-black">The existing client remarks will remain available for the designer to action.</p>
+          </article>
+        )}
+      </div>
+
+      <div className="fixed bottom-0 left-1/2 z-[95] w-full max-w-[390px] -translate-x-1/2 border-t border-[#e0e0e0] bg-white px-4 pb-5 pt-3">
+        <Button type="button" fullWidth onClick={sendRemarks}>
+          Send remarks to designer →
+        </Button>
+        <Button type="button" variant="outline" fullWidth onClick={() => setView('review')} className="mt-2 border-[#e0e0e0] text-[#4b4b4b]">
+          ← Edit remarks
         </Button>
       </div>
     </section>
@@ -646,10 +725,11 @@ function HomeownerSowReview({ onBack }) {
 
   return (
     <main className="ui-screen-base ui-feature-surface min-h-dvh w-full overflow-x-hidden bg-white text-black">
-      {effectiveView === 'review' ? renderReview() : null}
-      {effectiveView === 'remark' ? renderRemark() : null}
-      {effectiveView === 'waiting' ? renderWaiting() : null}
-      {effectiveView === 'otp' ? renderOtp() : null}
+      {effectiveClientView === 'review' ? renderReview() : null}
+      {effectiveClientView === 'remark' ? renderRemark() : null}
+      {effectiveClientView === 'summary' ? renderSummary() : null}
+      {effectiveClientView === 'waiting' ? renderWaiting() : null}
+      {effectiveClientView === 'otp' ? renderOtp() : null}
     </main>
   )
 }

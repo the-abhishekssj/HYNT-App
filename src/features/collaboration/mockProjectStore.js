@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createInitialSowDocument } from '../sow/sowData.js'
+import { createInitialSowDocument, sowClientRemarks } from '../sow/sowData.js'
 import { applySowAmendmentPatchToDocument, cloneSowDocument } from '../sow/sowFlowUtils.js'
 import {
   boqImportPreviewRows,
@@ -153,12 +153,22 @@ const roleTemplates = [
   {
     id: 'junior-designer',
     label: 'Junior Designer',
-    grants: ['sow.view', 'tasks.update', 'archive.create', 'moodboard.create', 'finance.expense.create'],
+    grants: ['sow.view', 'boq.view', 'tasks.update', 'siteDiary.view', 'siteDiary.create', 'siteDiary.share', 'contract.view', 'timeline.view', 'archive.view', 'archive.create', 'archive.upload', 'moodboard.create'],
   },
   {
     id: 'site-supervisor',
     label: 'Site Supervisor',
-    grants: ['tasks.update', 'siteDiary.create', 'archive.upload', 'boq.measurements.view'],
+    grants: ['boq.view', 'boq.measurements.view', 'tasks.update', 'siteDiary.view', 'siteDiary.create', 'siteDiary.share', 'timeline.view', 'archive.upload'],
+  },
+  {
+    id: 'contractor',
+    label: 'Contractor',
+    grants: ['tasks.update', 'siteDiary.view', 'siteDiary.create', 'archive.upload'],
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    grants: ['sow.view', 'sow.edit', 'boq.view', 'boq.edit', 'tasks.view', 'tasks.create', 'tasks.update', 'finance.view', 'finance.edit', 'siteDiary.view', 'siteDiary.create', 'siteDiary.share', 'contract.view', 'contract.edit', 'timeline.view', 'timeline.edit', 'archive.view', 'archive.create', 'archive.upload'],
   },
   {
     id: 'accounts',
@@ -168,7 +178,7 @@ const roleTemplates = [
   {
     id: 'homeowner',
     label: 'Homeowner',
-    grants: ['sow.review', 'tasks.client.view', 'archive.client.view', 'finance.client.view'],
+    grants: ['sow.review', 'boq.client.view', 'tasks.client.view', 'archive.client.view', 'finance.client.view', 'siteDiary.client.view', 'contract.sign', 'timeline.client.view'],
   },
 ]
 
@@ -246,7 +256,7 @@ export const mockInitialState = {
   projects: [demoProject],
   memberships: [
     { id: 'm-pro-1', projectId: 'p-1', userId: 'u-pro-1', roleId: 'principal-pro', status: 'accepted', grants: ['all'] },
-    { id: 'm-client-1', projectId: 'p-1', userId: 'u-client-1', roleId: 'homeowner', status: 'accepted', grants: ['sow.review', 'tasks.client.view', 'archive.client.view', 'finance.client.view'] },
+    { id: 'm-client-1', projectId: 'p-1', userId: 'u-client-1', roleId: 'homeowner', status: 'accepted', grants: ['sow.review', 'boq.client.view', 'tasks.client.view', 'archive.client.view', 'finance.client.view', 'siteDiary.client.view', 'contract.sign', 'timeline.client.view'] },
     { id: 'm-junior-1', projectId: 'p-1', userId: 'u-junior-1', roleId: 'junior-designer', status: 'accepted', grants: ['sow.view', 'tasks.update', 'archive.create', 'moodboard.create', 'finance.expense.create'] },
     { id: 'm-site-1', projectId: 'p-1', userId: 'u-site-1', roleId: 'site-supervisor', status: 'accepted', grants: ['tasks.update', 'siteDiary.create', 'archive.upload', 'boq.measurements.view'] },
   ],
@@ -1486,7 +1496,7 @@ export function useSharedProject(rawProjectId = 'p-1') {
       const nextMemberships = [
         ...(current.memberships || []),
         { id: `m-pro-${newProjectId}`, projectId: newProjectId, userId: 'u-pro-1', roleId: 'principal-pro', status: 'accepted', grants: ['all'] },
-        { id: `m-client-${newProjectId}`, projectId: newProjectId, userId: 'u-client-1', roleId: 'homeowner', status: 'accepted', grants: ['sow.review', 'tasks.client.view', 'archive.client.view', 'finance.client.view'] },
+        { id: `m-client-${newProjectId}`, projectId: newProjectId, userId: 'u-client-1', roleId: 'homeowner', status: 'accepted', grants: ['sow.review', 'boq.client.view', 'tasks.client.view', 'archive.client.view', 'finance.client.view', 'siteDiary.client.view', 'contract.sign', 'timeline.client.view'] },
         { id: `m-junior-${newProjectId}`, projectId: newProjectId, userId: 'u-junior-1', roleId: 'junior-designer', status: 'accepted', grants: ['sow.view', 'tasks.update', 'archive.create', 'moodboard.create', 'finance.expense.create'] },
         { id: `m-site-${newProjectId}`, projectId: newProjectId, userId: 'u-site-1', roleId: 'site-supervisor', status: 'accepted', grants: ['tasks.update', 'siteDiary.create', 'archive.upload', 'boq.measurements.view'] },
       ]
@@ -1706,13 +1716,42 @@ export function useSharedProject(rawProjectId = 'p-1') {
           ...current.sows,
           [projectId]: {
             ...existing,
-            status: 'client-review',
+            status: existing.revision > 1 ? 'revision-ready' : 'client-review',
             sentAt: nowIso(),
             updatedAt: nowIso(),
           },
         },
       }
       return addActivity(next, projectId, project.designerName, `Sent SOW revision ${existing.revision} to homeowner`)
+    }),
+    seedSowClientRemarks: () => update((current) => {
+      const existing = current.sows[projectId]
+      if (!existing || existing.remarks?.length) return current
+      const seededRemarks = sowClientRemarks.map((remark) => ({
+        id: makeId('remark'),
+        sectionKey: remark.sectionKey,
+        sectionTitle: remark.title,
+        targetId: remark.targetRoomId || null,
+        body: remark.remark,
+        proposedValue: remark.proposedScope || '',
+        rejectionReason: remark.rejectionReason || '',
+        status: 'open',
+        createdBy: project.homeownerName,
+        createdAt: nowIso(),
+      }))
+      const next = {
+        ...current,
+        sows: {
+          ...current.sows,
+          [projectId]: {
+            ...existing,
+            status: 'remarks',
+            remarks: seededRemarks,
+            updatedAt: nowIso(),
+          },
+        },
+      }
+      return addActivity(next, projectId, project.homeownerName, 'Added 2 client remarks to the SOW')
     }),
     addClientRemark: (sectionKey, sectionTitle, body, targetId = null) => update((current) => {
       const existing = current.sows[projectId]
