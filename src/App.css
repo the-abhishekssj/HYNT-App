@@ -280,85 +280,8 @@
   pointer-events: none;
 }
 
-@keyframes hyntTopPromoGlow {
-  0% {
-    transform: translateX(-18%);
-  }
-  50% {
-    transform: translateX(18%);
-  }
-  100% {
-    transform: translateX(-18%);
-  }
-}
-
-@keyframes hyntTopPromoVisual {
-  0%, 100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-3px) rotate(2deg);
-  }
-}
-
-@keyframes hyntTopPromoSpark {
-  0%, 100% {
-    opacity: 0.42;
-    transform: translateY(0) scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-4px) scale(1.08);
-  }
-}
-
 .hynt-top-promo {
   position: relative;
-}
-
-.hynt-top-promo__glow {
-  position: absolute;
-  inset: 2px -28px 0 28%;
-  background: linear-gradient(128deg, transparent 0 24%, rgba(255, 255, 255, 0.24) 24% 42%, transparent 42% 100%);
-  animation: hyntTopPromoGlow 4.8s ease-in-out infinite;
-}
-
-.hynt-top-promo__band {
-  position: absolute;
-  bottom: -26px;
-  right: -34px;
-  width: 170px;
-  height: 118px;
-  border-radius: 34px 0 0 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04));
-  transform: skewX(-18deg);
-}
-
-.hynt-top-promo__visual {
-  display: grid;
-  height: 82px;
-  width: 104px;
-  place-items: center;
-  align-self: stretch;
-  color: rgba(255, 255, 255, 0.92);
-  animation: hyntTopPromoVisual 2.8s ease-in-out infinite;
-}
-
-.hynt-top-promo__spark {
-  position: absolute;
-  color: rgba(255, 255, 255, 0.72);
-  animation: hyntTopPromoSpark 2.4s ease-in-out infinite;
-}
-
-.hynt-top-promo__spark--one {
-  right: 82px;
-  top: 16px;
-}
-
-.hynt-top-promo__spark--two {
-  bottom: 18px;
-  right: 24px;
-  animation-delay: 420ms;
 }
 
 .hynt-home-mobile-canvas {
@@ -496,12 +419,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hynt-top-promo__glow,
-  .hynt-top-promo__visual,
-  .hynt-top-promo__spark {
-    animation: none;
-  }
-
   .hynt-category-image-spotlight__glow {
     animation: none;
   }
