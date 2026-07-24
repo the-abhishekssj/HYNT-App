@@ -1636,7 +1636,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
               className={`hynt-home-green-dock fixed left-1/2 top-0 z-[90] w-full max-w-[390px] -translate-x-1/2 lg:hidden ${isProHeaderCollapsed ? 'hynt-home-green-dock--collapsed' : ''}`}
             >
               <header className="pb-3">
-                <div className="hynt-topbar-primary flex h-14 items-center justify-between px-4">
+                <div className="hynt-topbar-primary flex items-center justify-between px-4 py-2">
                   <img src="/hynt-home/pro-1.png" alt="Profile" className="size-10 shrink-0 rounded-full border border-white/45 object-cover" />
                   <div className="flex shrink-0 items-center gap-0.5">
                     <button type="button" aria-label="Notifications" onClick={onOpenFlowSwitcher} className="relative grid size-[37px] place-items-center rounded-[10px] text-white">
@@ -1649,7 +1649,7 @@ function ProfessionalHome({ onOpenFlowSwitcher }) {
                     </button>
                   </div>
                 </div>
-                <div className="hynt-topbar-search px-4">
+                <div className="hynt-topbar-search px-4 pt-3">
                   <HomeSearchBar fieldClassName="!bg-white text-[#102418] !ring-white/70 focus-within:!ring-white" />
                 </div>
                 <div className="hynt-top-promo-wrap mt-3">
@@ -1772,6 +1772,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
   const [exploreFilter, setExploreFilter] = useState('Show all')
   const [exploreIdeaFeed, setExploreIdeaFeed] = useState(fallbackDesktopExploreIdeaCards)
   const [isExploreSearchOpen, setIsExploreSearchOpen] = useState(false)
+  const [isExploreNested, setIsExploreNested] = useState(false)
   const [isHomeDockDense, setIsHomeDockDense] = useState(false)
   const [chatDraft, setChatDraft] = useState('')
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -1998,6 +1999,10 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       window.removeEventListener('scroll', updateDenseState)
       window.removeEventListener('resize', updateDenseState)
     }
+  }, [homeTab])
+
+  useEffect(() => {
+    if (homeTab !== 'explore') setIsExploreNested(false)
   }, [homeTab])
 
   useEffect(() => {
@@ -2396,9 +2401,9 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
 
   const homeownerNavItems = [
     ['home', 'Home', House],
-    ['project', 'Project', NotePencil],
     ['explore', 'Explore', Kanban],
-    ['post', 'Post', Plus],
+    ['ai', 'AI', House],
+    ['post', 'Requirements', Plus],
     ['profile', 'Profile', User],
   ]
 
@@ -2455,11 +2460,19 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
       <nav className="hynt-home-shell__nav fixed bottom-0 left-1/2 z-30 flex h-[92px] w-full max-w-[390px] -translate-x-1/2 items-start justify-between border-t border-[#e6e6e6] bg-white/95 px-3 pb-5 pt-3 backdrop-blur">
         {homeownerNavItems.map(([key, label, Icon]) => {
           const selected = homeTab === key
+          const handleNavClick = () => {
+            if (key === 'ai') {
+              setIsChatOpen(true)
+              return
+            }
+            setHomeTab(key)
+          }
+
           return (
             <button
               key={key}
               type="button"
-              onClick={() => setHomeTab(key)}
+              onClick={handleNavClick}
               className="typo-utility flex w-16 flex-col items-center justify-center gap-1.5 rounded-[20px] px-2.5 py-2 text-center text-black"
             >
               <Icon size={20} weight={selected ? 'fill' : 'regular'} />
@@ -2783,10 +2796,12 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
     if (isHomeownerSiteDiaryOpen) return <HomeownerSiteDiaryWorkspace onBack={() => setIsHomeownerSiteDiaryOpen(false)} />
     if (homeTab === 'blogs') return <HomeBlogsPage onBack={() => setHomeTab('home')} />
 
+    const shouldHideHomeNav = homeTab === 'explore' && isExploreNested
+
     return (
-    <main className="hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] pb-[92px] font-['Urbanist'] text-black">
+    <main className={`hynt-home hynt-home-shell min-h-dvh w-full bg-[#eef3f0] font-['Urbanist'] text-black ${shouldHideHomeNav ? '' : 'pb-[92px]'}`}>
       <div className="hynt-home-shell__layout">
-        {renderHomeNav()}
+        {shouldHideHomeNav ? null : renderHomeNav()}
         <div className="hynt-home-shell__main">
           {homeTab === 'home' ? (
             <HomeownerHomeTab
@@ -2818,7 +2833,7 @@ function HomeownerFlow({ activeFlow, onSelectFlow }) {
               onOpenSiteDiary={() => setIsHomeownerSiteDiaryOpen(true)}
             />
           ) : null}
-          {homeTab === 'explore' ? <ExplorePage /> : null}
+          {homeTab === 'explore' ? <ExplorePage onDepthChange={setIsExploreNested} /> : null}
           {homeTab === 'post' ? renderPostPage() : null}
           {homeTab === 'events' ? renderEventsPage() : null}
           {homeTab === 'profile' ? renderProfilePage() : null}

@@ -1,5 +1,5 @@
 import ProjectWorkspaceHeader from '../shared/ProjectWorkspaceHeader'
-import { homeBlogArticles } from './HomeBlogsSection'
+import { homeBlogArticles } from './homeBlogArticles'
 
 function HomeBlogsPage({ onBack }) {
   return (

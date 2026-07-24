@@ -1,49 +1,39 @@
-import { ArrowRight, Buildings, HouseLine, Sparkle } from '@phosphor-icons/react'
+import { CaretRight } from '@phosphor-icons/react'
 
 const promoCopy = {
   homeowner: {
-    eyebrow: 'HYNT Assist',
-    title: 'Post once. Compare 5 verified pros.',
-    detail: 'Brief, quotes, and next steps in one place.',
-    cta: 'Start brief',
-    Icon: HouseLine,
+    title: "India's Home App",
+    detail: 'Discover. Connect. Manage.',
+    cta: 'Start now',
+    image: '/hynt-home/homepagerev/hero-people.png',
   },
   professional: {
-    eyebrow: 'HYNT Growth',
-    title: 'Get discovered by ready homeowners.',
-    detail: 'Boost profile reach and lead quality this week.',
+    title: 'Grow on HYNT',
+    detail: 'Get discovered by ready homeowners.',
     cta: 'Boost now',
-    Icon: Buildings,
+    image: '/hynt-home/homepagerev/hero-people.png',
   },
 }
 
 function HomeTopPromo({ audience = 'homeowner' }) {
   const copy = promoCopy[audience] || promoCopy.homeowner
-  const Icon = copy.Icon
 
   return (
-    <section className={`hynt-top-promo hynt-top-promo--${audience} overflow-hidden px-4 pb-6 pt-1 text-white`}>
-      <div className="hynt-top-promo__glow" aria-hidden="true" />
-      <div className="hynt-top-promo__band" aria-hidden="true" />
-      <div className="relative grid min-h-[100px] grid-cols-[minmax(0,1fr)_104px] items-end gap-3">
-        <div className="min-w-0 pb-0.5">
-          <p className="typo-caption text-white/72">{copy.eyebrow}</p>
-          <p className="typo-title-16-strong mt-1 text-balance text-white">{copy.title}</p>
-          <p className="typo-meta mt-1 line-clamp-1 text-white/72">{copy.detail}</p>
-          <span className="typo-body-strong mt-3 flex h-6 items-center gap-2 leading-none text-white">
-            {copy.cta}
-            <ArrowRight size={16} weight="bold" />
-          </span>
-        </div>
+    <section className={`hynt-top-promo hynt-top-promo--${audience} relative overflow-hidden px-4 pb-4 pt-3 text-white`}>
+      <div className="relative min-h-[96px]">
         <div className="hynt-top-promo__visual" aria-hidden="true">
-          <Icon size={54} weight="duotone" />
+          <img src={copy.image} alt="" />
+          <span className="hynt-top-promo__visual-wash" />
         </div>
-        <span className="hynt-top-promo__spark hynt-top-promo__spark--one" aria-hidden="true">
-          <Sparkle size={14} weight="fill" />
-        </span>
-        <span className="hynt-top-promo__spark hynt-top-promo__spark--two" aria-hidden="true">
-          <Sparkle size={10} weight="fill" />
-        </span>
+
+        <div className="relative z-[2] min-w-0 max-w-[214px]">
+          <h1 className="text-[20px] font-black leading-[1.6] text-white">{copy.title}</h1>
+          <p className="mt-0 text-[14px] font-semibold leading-[1.6] text-white/72">{copy.detail}</p>
+          <button type="button" className="mt-2 inline-flex h-8 items-center gap-1 rounded-[10px] pr-2 text-[16px] font-semibold leading-none text-white">
+            {copy.cta}
+            <CaretRight size={16} weight="bold" />
+          </button>
+        </div>
       </div>
     </section>
   )

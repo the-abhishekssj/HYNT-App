@@ -143,7 +143,7 @@
 
   font-family: var(--font-family-base);
   color: #0f172a;
-  background: #ffffff;
+  background: #5fc18a;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -154,11 +154,15 @@
   box-sizing: border-box;
 }
 
+html {
+  background: #5fc18a;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100dvh;
-  background: #ffffff;
+  background: #5fc18a;
 }
 
 .typo-display,
@@ -640,6 +644,7 @@ button:disabled {
 
 #root {
   min-height: 100dvh;
+  background: #5fc18a;
 }
 
 * {

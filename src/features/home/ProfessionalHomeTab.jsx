@@ -243,11 +243,11 @@ function ProfessionalHomeTab({
         />
       ) : null}
 
-      <ProfessionalTodayRail projects={projects} onOpenProject={onOpenProject} />
+      {isProUpgraded ? <ProfessionalTodayRail projects={projects} onOpenProject={onOpenProject} /> : null}
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 
-      <HomeExploreCategoriesGrid title="Grow your network" />
+      <HomeExploreCategoriesGrid title="Grow your Network" />
 
       <div className="h-[6px] w-full bg-[#e0e0e0]" />
 

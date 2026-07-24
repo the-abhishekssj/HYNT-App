@@ -3,13 +3,16 @@ import {
   ArrowRight,
   BookmarkSimple,
   CaretLeft,
-  CheckCircle,
+  DotsThreeVertical,
   House,
   ImagesSquare,
   MagnifyingGlass,
   MapPin,
+  PaperPlaneTilt,
+  PhoneCall,
   SlidersHorizontal,
-  Storefront,
+  Star,
+  WhatsappLogo,
 } from '@phosphor-icons/react'
 import Button from '../../components/ui/Button'
 import InputBar from '../../components/ui/InputBar'
@@ -74,6 +77,28 @@ const ideaCards = [
   ['idea-7', 'h-[150px]', 'https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=700&q=80'],
   ['idea-8', 'h-[120px]', 'https://images.unsplash.com/photo-1598928636135-d146006ff4be?auto=format&fit=crop&w=700&q=80'],
 ].map(([id, height, image]) => ({ id, height, image }))
+
+const projectViewerImages = [
+  '/hynt-home/explore/project-view-1.png',
+  '/hynt-home/explore/project-view-2.png',
+  'https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&w=900&q=80',
+]
+
+const projectViewerCreator = {
+  name: 'Neha Singh',
+  role: 'Interior Designer',
+  city: 'Mumbai',
+  rating: '4.5',
+  ratingsCount: '42',
+  avatar: '/hynt-home/explore/neha-singh.png',
+}
+
+const projectViewerProject = {
+  title: 'Mehta 3BHK, Bandra West',
+  subtitle: 'By Neha Singh',
+}
 
 const trendingBrands = [
   ['Meraki Interiors', 'Furniture', '#E67E22'],
@@ -179,13 +204,12 @@ function ExploreSearch() {
 
 function ModeTabs({ mode, setMode }) {
   const tabs = [
-    { id: 'brand', label: 'Brand of the day', icon: Storefront },
     { id: 'ideas', label: 'Ideas', icon: ImagesSquare },
     { id: 'products', label: 'Products', icon: House },
   ]
 
   return (
-    <div className="grid grid-cols-3 gap-2 px-4 pb-5">
+    <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-3">
       {tabs.map(({ id, label, icon: Icon }) => {
         const selected = mode === id
         return (
@@ -193,14 +217,14 @@ function ModeTabs({ mode, setMode }) {
             key={id}
             type="button"
             onClick={() => setMode(id)}
-            className={`flex min-h-[54px] items-center gap-2 rounded-[16px] border px-3 text-left ${
+            className={`typo-label flex h-9 shrink-0 items-center gap-2 rounded-full border px-3 ${
               selected ? 'border-[#26c485] bg-[#eefaf3]' : 'border-[#e0e0e0] bg-white'
             }`}
           >
-            <span className={`grid size-7 shrink-0 place-items-center rounded-full ${id === 'brand' ? 'bg-[#e67e22] text-white' : 'bg-[#e9fbf3] text-[#267449]'}`}>
-              {id === 'brand' ? <span className="typo-caption font-bold">M</span> : <Icon size={15} weight="fill" />}
+            <span className="grid size-5 shrink-0 place-items-center text-[#267449]">
+              <Icon size={14} weight="fill" />
             </span>
-            <span className="typo-label leading-tight text-black">{label}</span>
+            <span className="leading-none text-black">{label}</span>
           </button>
         )
       })}
@@ -210,7 +234,7 @@ function ModeTabs({ mode, setMode }) {
 
 function SponsoredBanner() {
   return (
-    <section className="mb-6 px-4">
+    <section className="my-5 px-4">
       <article className="grid min-h-[154px] grid-cols-[1fr_1.1fr] overflow-hidden rounded-[18px] border border-[#e5e5e5] bg-[#f4f1ea]">
         <div className="flex flex-col justify-center p-4">
           <p className="typo-title-16-strong uppercase leading-tight text-black">Kitchens that <span className="block text-[#12352A]">inspire</span></p>
@@ -234,25 +258,40 @@ function CategoryCard({ item, onClick }) {
     <button type="button" onClick={onClick} className="overflow-hidden rounded-[18px] border border-[#e5e5e5] bg-white text-left">
       <div className="relative h-[126px] overflow-hidden bg-[#102418]">
         <img src={item.image} alt="" className="size-full object-cover" loading="lazy" />
-        <span className="absolute -bottom-4 left-3 grid size-10 place-items-center rounded-full bg-white text-[#267449] shadow-[0_8px_18px_rgba(16,36,24,0.16)]">
-          <House size={18} weight="fill" />
-        </span>
       </div>
-      <div className="px-4 pb-4 pt-7">
+      <div className="px-4 py-4">
         <h3 className="typo-body-strong text-black">{item.title}</h3>
-        <p className="typo-meta mt-1 text-[#607269]">{item.count}</p>
       </div>
     </button>
   )
 }
 
 function IdeasLanding({ setView, setSelectedRoom }) {
+  const firstCategoryRow = roomCategories.slice(0, 2)
+  const remainingCategories = roomCategories.slice(2)
+
   return (
     <>
+      <section>
+        <div className="grid grid-cols-2 gap-3 px-4">
+          {firstCategoryRow.map((room) => (
+            <CategoryCard
+              key={room.id}
+              item={room}
+              onClick={() => {
+                setSelectedRoom(room)
+                setView('room')
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
       <SponsoredBanner />
+
       <section className="mb-6">
         <div className="grid grid-cols-2 gap-3 px-4">
-          {roomCategories.map((room) => (
+          {remainingCategories.map((room) => (
             <CategoryCard
               key={room.id}
               item={room}
@@ -306,30 +345,6 @@ function ProductsLanding() {
   )
 }
 
-function BrandOfDay() {
-  return (
-    <section className="mb-6 px-4">
-      <article className="overflow-hidden rounded-[22px] bg-[#07140e] text-white">
-        <div className="relative h-[180px]">
-          <img src="https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=900&q=80" alt="" className="absolute inset-0 size-full object-cover opacity-58" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4">
-            <p className="typo-caption uppercase tracking-[0.12em] text-[#8fd5ae]">Featured partner</p>
-            <h2 className="typo-title-20 mt-1 text-white">Meraki Interiors</h2>
-            <p className="typo-body mt-2 max-w-[260px] text-white/74">Premium interiors, furniture, and decor packages curated for modern Indian homes.</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-between gap-3 p-4">
-          <span className="typo-meta flex items-center gap-1 text-white/72"><CheckCircle size={15} weight="fill" className="text-[#26c485]" /> Verified Partner</span>
-          <Button type="button" variant="inverted" size="small" trailingIcon={ArrowRight} className="rounded-full px-3">
-            Explore
-          </Button>
-        </div>
-      </article>
-    </section>
-  )
-}
-
 function RoomFeed({ room, setView }) {
   const [filter, setFilter] = useState('All')
 
@@ -338,7 +353,6 @@ function RoomFeed({ room, setView }) {
       <ExploreChrome>
         <ExploreTopbar
           title={room?.title || 'Living Room'}
-          subtitle={room?.count || '20,350+ ideas'}
           onBack={() => setView('landing')}
         />
         <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 pb-4">
@@ -352,7 +366,7 @@ function RoomFeed({ room, setView }) {
       <div className="h-[126px]" />
       <div className="hynt-explore-masonry px-2 pb-8">
         {ideaCards.map((card) => (
-          <button key={card.id} type="button" onClick={() => setView('detail')} className={`hynt-explore-masonry-item relative mb-2 w-full overflow-hidden rounded-2xl bg-[#102418] text-left ${card.height}`}>
+          <button key={card.id} type="button" onClick={() => setView('viewer')} className={`hynt-explore-masonry-item relative mb-2 w-full overflow-hidden rounded-2xl bg-[#102418] text-left ${card.height}`}>
             <img src={card.image} alt="" className="size-full object-cover" loading="lazy" />
             <span className="absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-white text-black">
               <BookmarkSimple size={16} />
@@ -361,6 +375,84 @@ function RoomFeed({ room, setView }) {
         ))}
       </div>
     </>
+  )
+}
+
+function ProjectFullscreenViewer({ room, onBack, onOpenProfile }) {
+  const creator = projectViewerCreator
+
+  return (
+    <section className="fixed left-1/2 top-0 z-[120] flex h-dvh w-full max-w-[390px] -translate-x-1/2 flex-col overflow-hidden bg-black text-white">
+      <div className="shrink-0 border-b border-[#e0e0e0] bg-[rgba(255,255,255,0.92)] text-black backdrop-blur-[16px]">
+        <ExploreTopbar
+          title={projectViewerProject.title}
+          subtitle={projectViewerProject.subtitle}
+          onBack={onBack}
+          actions={(
+            <button type="button" aria-label="More project actions" className="grid size-9 place-items-center rounded-full text-black">
+              <DotsThreeVertical size={22} weight="bold" />
+            </button>
+          )}
+        />
+      </div>
+
+      <main className="relative min-h-0 flex-1 overflow-hidden bg-black">
+        <div className="no-scrollbar flex h-full snap-x snap-mandatory overflow-x-auto">
+          {projectViewerImages.map((image, index) => (
+            <div key={`${image}-${index}`} className="relative h-full w-full shrink-0 snap-center">
+              <img src={image} alt="" className="absolute inset-0 size-full object-cover" />
+            </div>
+        ))}
+        </div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/12 via-transparent to-black/48" />
+
+        <span className="typo-meta absolute right-4 top-4 z-20 rounded-lg bg-white px-2.5 py-1 text-black">
+          1/5
+        </span>
+      </main>
+
+      <footer className="shrink-0 rounded-t-[16px] bg-[#161616] pb-[max(16px,env(safe-area-inset-bottom))]">
+        <div className="flex justify-center py-2">
+          <span className="h-[5px] w-9 rounded-full bg-white/88" />
+        </div>
+        <button
+          type="button"
+          onClick={() => onOpenProfile?.(creator)}
+          className="flex w-full items-center gap-3 border-b border-white/[0.04] bg-[#121212] p-4 text-left"
+        >
+          <img src={creator.avatar} alt={creator.name} className="size-14 shrink-0 rounded-[13px] border border-white/40 object-cover" />
+          <span className="min-w-0 flex-1">
+            <span className="typo-body-strong block truncate text-white">{creator.name}</span>
+            <span className="typo-meta mt-1 block truncate text-white/64">{creator.role}, {creator.city}</span>
+          </span>
+          <span className="flex shrink-0 flex-col items-end gap-1">
+            <span className="flex items-center gap-1.5">
+              <Star size={16} weight="fill" className="text-[#ffd34e]" />
+              <span className="typo-body-strong text-white">{creator.rating}</span>
+            </span>
+            <span className="typo-caption text-white/48">{creator.ratingsCount} Ratings</span>
+          </span>
+        </button>
+
+        <div className="flex h-[72px] items-center gap-2 px-4 pt-2">
+          <button type="button" aria-label="Save project" className="grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-[#5fc18a] text-white">
+            <BookmarkSimple size={17} weight="fill" />
+          </button>
+          <button type="button" className="typo-body-strong flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-[16px] bg-white px-4 text-black shadow-[0_4px_8px_-2px_rgba(0,0,0,0.16)]">
+            <PaperPlaneTilt size={20} weight="fill" />
+            <span>Send Inquiry</span>
+          </button>
+          <a href="tel:+910000000000" aria-label="Call designer" className="grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-white text-black">
+            <PhoneCall size={17} weight="fill" />
+          </a>
+          <a href="https://wa.me/910000000000" aria-label="Message designer on WhatsApp" className="grid h-12 w-12 shrink-0 place-items-center rounded-[16px] bg-white text-black">
+            <WhatsappLogo size={17} weight="fill" />
+          </a>
+        </div>
+      </footer>
+
+      <span className="sr-only">{room?.title || 'Explore'} project preview</span>
+    </section>
   )
 }
 
@@ -427,13 +519,27 @@ function IdeaDetail({ setView }) {
   )
 }
 
-function ExploreLanding() {
+function ExploreLanding({ onDepthChange }) {
   const [mode, setMode] = useState('ideas')
   const [view, setView] = useState('landing')
   const [selectedRoom, setSelectedRoom] = useState(roomCategories[3])
+  const [, setSelectedCreator] = useState(null)
   const chromeHidden = useExploreChromeVisibility()
 
+  useEffect(() => {
+    onDepthChange?.(view !== 'landing')
+  }, [onDepthChange, view])
+
   if (view === 'room') return <RoomFeed room={selectedRoom} setView={setView} />
+  if (view === 'viewer') {
+    return (
+      <ProjectFullscreenViewer
+        room={selectedRoom}
+        onBack={() => setView('room')}
+        onOpenProfile={(creator) => setSelectedCreator(creator)}
+      />
+    )
+  }
   if (view === 'detail') return <IdeaDetail setView={setView} />
 
   return (
@@ -445,18 +551,17 @@ function ExploreLanding() {
         <ExploreSearch />
         <ModeTabs mode={mode} setMode={setMode} />
       </ExploreChrome>
-      <div className="h-[196px]" />
-      {mode === 'brand' ? <BrandOfDay /> : null}
+      <div className="h-[184px]" />
       {mode === 'ideas' ? <IdeasLanding setView={setView} setSelectedRoom={setSelectedRoom} /> : null}
       {mode === 'products' ? <ProductsLanding /> : null}
     </>
   )
 }
 
-function ExplorePage() {
+function ExplorePage({ onDepthChange }) {
   return (
     <section className="hynt-explore-canvas mx-auto w-full max-w-[390px] overflow-visible bg-white pb-[108px]">
-      <ExploreLanding />
+      <ExploreLanding onDepthChange={onDepthChange} />
     </section>
   )
 }

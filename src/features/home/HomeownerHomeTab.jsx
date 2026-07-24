@@ -1,36 +1,23 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
-  Bell,
   CalendarDots,
-  CaretDown,
-  ChatsCircle,
   MapPinSimpleArea,
 } from '@phosphor-icons/react'
-import Button from '../../components/ui/Button'
 import HomeBannerCarousel from './HomeBannerCarousel'
 import HomeBlogsSection from './HomeBlogsSection'
 import HomeExploreCategoriesGrid from './HomeExploreCategoriesGrid'
 import HomeSearchBar from './HomeSearchBar'
 import HomeTopPromo from './HomeTopPromo'
 
-function HomeownerRequirementCta() {
+function HomeDivider({ thick = false }) {
+  return <div className={`${thick ? 'h-[6px]' : 'h-px'} w-full bg-[#e0e0e0]`} />
+}
+
+function HomeBrandWatermark() {
   return (
-    <section className="px-4 py-5">
-      <article className="w-full rounded-2xl border border-[#dce8df] bg-[#f7fbf8] px-4 py-5">
-        <p className="typo-meta text-[#267449]">Post your requirement</p>
-        <h2 className="typo-title-16-strong mt-1 text-black">What do you need help with</h2>
-        <p className="typo-body mt-2 max-w-[290px] text-[#607269]">
-          Describe your project once and get quotes from up to 5 verified pros within 24 hours.
-        </p>
-        <Button
-          type="button"
-          fullWidth
-          className="mt-4 h-11 rounded-lg bg-[#267449] text-white hover:bg-[#1f603c] focus-visible:ring-[#267449]"
-        >
-          Post your requirement
-        </Button>
-      </article>
+    <section className="grid h-24 place-items-center overflow-hidden border-t border-[#e0e0e0] bg-white">
+      <img src="/hynt-home/logo-green.png" alt="" className="h-[130px] w-[216px] object-contain opacity-[0.06] grayscale" />
     </section>
   )
 }
@@ -42,52 +29,65 @@ function HomeownerHomeTab({
   onOpenBlogs,
 }) {
   const eventsRailRef = useRef(null)
+  const topDockRef = useRef(null)
+  const [topDockSpacerHeight, setTopDockSpacerHeight] = useState(0)
 
   useLayoutEffect(() => {
     if (!eventsRailRef.current) return
     eventsRailRef.current.scrollLeft = 0
   }, [])
 
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined' || !topDockRef.current) return undefined
+    const topDock = topDockRef.current
+
+    const updateSpacerHeight = () => {
+      setTopDockSpacerHeight(Math.ceil(topDock.getBoundingClientRect().height))
+    }
+
+    updateSpacerHeight()
+    const observer = window.ResizeObserver ? new window.ResizeObserver(updateSpacerHeight) : null
+    observer?.observe(topDock)
+    window.addEventListener('resize', updateSpacerHeight)
+
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', updateSpacerHeight)
+    }
+  }, [isHomeDockDense])
+
   return (
     <section className="hynt-home-mobile-canvas relative mx-auto w-full max-w-[390px] overflow-visible bg-white">
-      <div className={`hynt-home-topdock hynt-home-green-dock ${isHomeDockDense ? 'hynt-home-topdock--dense hynt-home-green-dock--collapsed' : ''}`}>
+      <div ref={topDockRef} className={`hynt-home-topdock hynt-home-topdock--fixed hynt-home-topdock--safe hynt-home-green-dock ${isHomeDockDense ? 'hynt-home-topdock--dense hynt-home-green-dock--collapsed' : ''}`}>
         <header className="overflow-hidden">
-          <div className="hynt-topbar-primary flex h-[57px] items-center justify-between pl-4 pr-3">
-            <button type="button" className="typo-body-strong flex min-w-0 items-center text-white">
-              <span className="truncate">Mumbai</span>
-              <CaretDown className="ml-1" size={12} weight="bold" />
-            </button>
+          <div className="hynt-topbar-primary flex items-center justify-between py-2 pl-6 pr-4">
+            <img src="/hynt-home/homepagerev/hero-logo.svg" alt="HYNT" className="h-8 w-[108px] object-contain object-left" />
             <div className="flex shrink-0 items-center gap-0.5 lg:hidden">
-              <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px] text-white"><Bell size={24} /><span className="absolute right-0 top-0.5 size-2 rounded-full bg-white" /></button>
-              <button type="button" aria-label="Messages" className="relative grid size-[37px] place-items-center rounded-[10px] text-white"><ChatsCircle size={24} /><span className="typo-status-mini absolute -right-px -top-[3.5px] grid size-4 place-items-center rounded-lg bg-white text-[#26c485]">3</span></button>
+              <button type="button" aria-label="Notifications" onClick={() => setIsFlowSwitcherOpen(true)} className="relative grid size-[37px] place-items-center rounded-[10px]">
+                <img src="/hynt-home/homepagerev/hero-notification.svg" alt="" className="h-[18px] w-[16px] object-contain" />
+                <span className="absolute right-0 top-0.5 size-2 rounded-full bg-white" />
+              </button>
             </div>
           </div>
-          <div className="hynt-topbar-search px-4 pb-3">
+          <div className="hynt-topbar-search px-4 pb-3 pt-3">
             <HomeSearchBar fieldClassName="!bg-white text-[#102418] !ring-white/70 focus-within:!ring-white" />
           </div>
           <HomeTopPromo audience="homeowner" />
         </header>
       </div>
+      <div className="transition-[height] duration-300 ease-out" style={{ height: topDockSpacerHeight }} aria-hidden="true" />
 
-      <div>
+      <div className="pb-4">
         <HomeExploreCategoriesGrid />
 
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
+        <HomeDivider thick />
 
-        <HomeBannerCarousel audience="homeowner" />
-
-        <div className="h-[6px] w-full bg-[#e0e0e0]" />
-
-        <HomeownerRequirementCta />
-
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
-
-        <section className="mt-5">
+        <section className="py-4">
           <div className="flex h-6 items-center justify-between px-4">
-            <h2 className="typo-section-title">Upcoming events</h2>
+            <h2 className="typo-section-title">Events</h2>
             <button type="button" className="typo-utility flex h-5 items-center gap-1">View all <ArrowRight size={20} /></button>
           </div>
-          <div ref={eventsRailRef} className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible px-4 pb-1">
+          <div ref={eventsRailRef} className="no-scrollbar mt-4 flex gap-3 overflow-x-auto overflow-y-visible px-3 pb-1">
             {homepageEvents.map((event) => (
               <article key={event.title} className="min-h-[252px] w-[175px] shrink-0 rounded-3xl border border-[#e0e0e0] bg-[#fbfbfb] p-2">
                 <div className="relative h-36 overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
@@ -104,10 +104,15 @@ function HomeownerHomeTab({
           </div>
         </section>
 
-        <div className="mt-5 h-px w-full bg-[#e0e0e0]" />
+        <HomeDivider thick />
+
+        <HomeBannerCarousel audience="homeowner" />
+
+        <HomeDivider thick />
 
         <HomeBlogsSection onViewAll={onOpenBlogs} />
 
+        <HomeBrandWatermark />
       </div>
     </section>
   )

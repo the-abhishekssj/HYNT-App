@@ -188,11 +188,26 @@
   transition: box-shadow 180ms ease;
 }
 
+.hynt-home-topdock--fixed {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  z-index: 90;
+  width: 100%;
+  max-width: 390px;
+  transform: translateX(-50%);
+}
+
+.hynt-home-topdock--safe {
+  padding-top: env(safe-area-inset-top);
+}
+
 .hynt-home-green-dock {
   overflow: hidden;
-  background: linear-gradient(150deg, #26c485 0%, #19b878 56%, #0d8c60 100%);
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.48) 0%, rgba(154, 154, 154, 0.48) 100%),
+    linear-gradient(90deg, #5fc18a 0%, #5fc18a 100%);
   color: #ffffff;
-  box-shadow: 0 14px 30px rgba(38, 196, 133, 0.2);
+  box-shadow: none;
   transition: box-shadow 220ms ease, background 220ms ease, color 220ms ease;
 }
 
@@ -200,10 +215,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(132deg, transparent 0 56%, rgba(255, 255, 255, 0.15) 56% 70%, transparent 70%),
-    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 18px);
-  opacity: 1;
+  background: none;
+  opacity: 0;
   pointer-events: none;
   transition: opacity 220ms ease;
 }
@@ -228,7 +241,7 @@
 }
 
 .hynt-topbar-primary {
-  max-height: 57px;
+  max-height: 48px;
   opacity: 1;
   overflow: hidden;
   transform: translateY(0);
@@ -257,7 +270,7 @@
 
 .hynt-top-promo,
 .hynt-top-promo-wrap {
-  max-height: 140px;
+  max-height: 220px;
   opacity: 1;
   transform: translateY(0);
   transition: max-height 280ms ease, margin 280ms ease, opacity 180ms ease, transform 280ms ease;
@@ -318,14 +331,15 @@
 
 .hynt-top-promo__glow {
   position: absolute;
-  inset: 2px -28px 0 28%;
+  inset: 12px -28px 6px 25%;
   background: linear-gradient(128deg, transparent 0 24%, rgba(255, 255, 255, 0.24) 24% 42%, transparent 42% 100%);
   animation: hyntTopPromoGlow 4.8s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .hynt-top-promo__band {
   position: absolute;
-  bottom: -26px;
+  bottom: -18px;
   right: -34px;
   width: 170px;
   height: 118px;
@@ -335,13 +349,68 @@
 }
 
 .hynt-top-promo__visual {
-  display: grid;
-  height: 82px;
-  width: 104px;
-  place-items: center;
-  align-self: stretch;
+  position: absolute;
+  bottom: -1px;
+  left: 44%;
+  right: -28px;
+  top: -9px;
+  overflow: hidden;
+  border-radius: 0;
   color: rgba(255, 255, 255, 0.92);
-  animation: hyntTopPromoVisual 2.8s ease-in-out infinite;
+  animation: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%),
+    linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 100%),
+    linear-gradient(180deg, #000 0%, #000 74%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hynt-top-promo__visual img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  object-position: right bottom;
+  opacity: 1;
+}
+
+.hynt-top-promo__visual-wash {
+  position: absolute;
+  inset: -1px;
+  background:
+    linear-gradient(90deg, rgba(95, 193, 138, 0.62) 0%, rgba(95, 193, 138, 0.18) 24%, rgba(95, 193, 138, 0) 48%),
+    linear-gradient(180deg, rgba(95, 193, 138, 0) 58%, rgba(95, 193, 138, 0.42) 100%);
+}
+
+.hynt-top-promo__visual-icon {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  height: 68px;
+  width: 68px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 22px;
+  background: rgba(15, 130, 92, 0.28);
+  color: rgba(255, 255, 255, 0.96);
+  transform: translateY(-50%);
+  backdrop-filter: blur(3px);
+}
+
+.hynt-top-promo__visual-icon svg {
+  position: relative;
+  z-index: 1;
+}
+
+.hynt-top-promo__visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
 }
 
 .hynt-top-promo__spark {
