@@ -215,29 +215,23 @@ function HomeownerSowReview({ onBack }) {
       <ReviewHeader title={sow.status === 'revision-ready' ? 'Revised SOW' : 'Scope of Work'} subtitle={`Revision ${sow.revision}`} onBack={onBack} />
 
       <div className="ui-screen-content">
-        <section className="pb-5">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="typo-section-title truncate text-[#102418]">{document.projectName}</p>
-              <p className="typo-body mt-1 truncate text-[#5f7467]">From {project.designerName} | {document.location}</p>
-            </div>
+        <section className="pb-1">
+          <div className="mb-3 flex items-center justify-between gap-3">
             <span className={`typo-caption shrink-0 rounded-full px-3 py-1 uppercase ${sow.status === 'revision-ready' ? 'bg-[#eef7f1] text-[#267449]' : 'bg-[#f2f5ff] text-[#4d5fb3]'}`}>
               {sow.status === 'revision-ready' ? 'Revised' : 'For review'}
             </span>
+            <span className="typo-meta truncate text-right text-[#8a8a8a]">Residential Template</span>
           </div>
 
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <div className="rounded-[18px] border border-[#dbe6df] bg-white px-3 py-3">
-              <p className="typo-utility text-[#73867c]">Type</p>
-              <p className="typo-card-title mt-2 text-[#102418]">{document.projectType}</p>
-            </div>
-            <div className="rounded-[18px] border border-[#dce7f3] bg-white px-3 py-3">
-              <p className="typo-utility text-[#73849d]">Value</p>
-              <p className="typo-card-title mt-2 text-[#102418]">INR {document.totalValueLabel}</p>
-            </div>
-            <div className="rounded-[18px] border border-[#efe2c8] bg-white px-3 py-3">
-              <p className="typo-utility text-[#987f53]">Open remarks</p>
-              <p className="typo-card-title mt-2 text-[#102418]">{openRemarks.length}</p>
+          <div className="rounded-[18px] border border-[#dbe6df] bg-[#eef7f1] px-4 py-3">
+            <p className="typo-section-title truncate text-[#1a3d2b]">{document.projectName}</p>
+            <p className="typo-body mt-1 truncate text-[#5f7467]">{document.clientName} · {document.location}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="typo-caption rounded-full bg-[#dceee3] px-3 py-1 text-[#267449]">{document.projectType}</span>
+              <span className="typo-caption rounded-full bg-[#dceee3] px-3 py-1 text-[#267449]">INR {document.totalValueLabel}</span>
+              <span className="typo-caption rounded-full bg-[#dceee3] px-3 py-1 text-[#267449]">Start {document.startMonth}</span>
+              <span className="typo-caption rounded-full bg-[#dceee3] px-3 py-1 text-[#267449]">Handover {document.handoverMonth}</span>
+              <span className="typo-caption rounded-full bg-[#fff3dd] px-3 py-1 text-[#a86a00]">{openRemarks.length} open remark{openRemarks.length === 1 ? '' : 's'}</span>
             </div>
           </div>
         </section>
@@ -383,10 +377,10 @@ function HomeownerSowReview({ onBack }) {
         )}
         <div className="mt-2 grid grid-cols-2 gap-2">
           <Button type="button" variant="outline" fullWidth onClick={() => setView('otp')} className="border-[#e0e0e0] text-[#4b4b4b]">
-            Proceed without remarks
+            Skip remarks
           </Button>
           <Button type="button" variant="outline" fullWidth onClick={() => startRemark('general', 'General SOW feedback')} className="border-[#e0e0e0] text-[#4b4b4b]">
-            Add general remark
+            Add remark
           </Button>
         </div>
       </div>
